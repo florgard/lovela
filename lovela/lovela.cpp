@@ -23,6 +23,33 @@ void TestLexer(ILexer& lexer)
     }
 
     {
+        std::istringstream iss{ "abc" };
+        const auto expected = std::vector<Token>{
+            {.type{TokenType::Identifier}, .value{"abc"} },
+        };
+        const auto tokens = lexer.Lex(iss);
+        assert(tokens == expected);
+    }
+
+    //{
+    //    std::istringstream iss{ "\u65E5\u672C" };
+    //    const auto expected = std::vector<Token>{
+    //        {.type{TokenType::Identifier}, .value{"\u65E5\u672C"} },
+    //    };
+    //    const auto tokens = lexer.Lex(iss);
+    //    assert(tokens == expected);
+    //}
+
+    //{
+    //    std::istringstream iss{ "\u0061\u0300" };
+    //    const auto expected = std::vector<Token>{
+    //        {.type{TokenType::Identifier}, .value{"\u0061\u0300"} },
+    //    };
+    //    const auto tokens = lexer.Lex(iss);
+    //    assert(tokens == expected);
+    //}
+
+    {
         std::istringstream iss{ "123" };
         const auto expected = std::vector<Token>{
             {.type{TokenType::LiteralInteger}, .value{"123"} },
