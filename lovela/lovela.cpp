@@ -6,6 +6,80 @@
 void TestLexer(ILexer& lexer)
 {
     {
+        std::istringstream iss{ "" };
+        const auto expected = std::vector<Token>{
+        };
+        const auto tokens = lexer.Lex(iss);
+        assert(tokens == expected);
+    }
+
+    {
+        std::istringstream iss{ "." };
+        const auto expected = std::vector<Token>{
+            {.type{TokenType::SeparatorDot}, .value{"."} },
+        };
+        const auto tokens = lexer.Lex(iss);
+        assert(tokens == expected);
+    }
+
+    {
+        std::istringstream iss{ "123" };
+        const auto expected = std::vector<Token>{
+            {.type{TokenType::LiteralInteger}, .value{"123"} },
+        };
+        const auto tokens = lexer.Lex(iss);
+        assert(tokens == expected);
+    }
+
+    {
+        std::istringstream iss{ "123.456" };
+        const auto expected = std::vector<Token>{
+            {.type{TokenType::LiteralDecimal}, .value{"123.456"} },
+        };
+        const auto tokens = lexer.Lex(iss);
+        assert(tokens == expected);
+    }
+
+    {
+        std::istringstream iss{ "''" };
+        const auto expected = std::vector<Token>{
+            {.type{TokenType::LiteralString}, .value{""} },
+        };
+        const auto tokens = lexer.Lex(iss);
+        assert(tokens == expected);
+    }
+
+    {
+        std::istringstream iss{ "'abc'" };
+        const auto expected = std::vector<Token>{
+            {.type{TokenType::LiteralString}, .value{"abc"} },
+        };
+        const auto tokens = lexer.Lex(iss);
+        assert(tokens == expected);
+    }
+
+    {
+        std::istringstream iss{ "'ab''c'" };
+        const auto expected = std::vector<Token>{
+            {.type{TokenType::LiteralString}, .value{"ab'c"} },
+        };
+        const auto tokens = lexer.Lex(iss);
+        assert(tokens == expected);
+    }
+
+    {
+        std::istringstream iss{ "func: 123 ." };
+        const auto expected = std::vector<Token>{
+            {.type{TokenType::Identifier}, .value{"func"} },
+            {.type{TokenType::OperatorColon}, .value{":"} },
+            {.type{TokenType::LiteralInteger}, .value{"123"} },
+            {.type{TokenType::SeparatorDot}, .value{"."} },
+        };
+        const auto tokens = lexer.Lex(iss);
+        assert(tokens == expected);
+    }
+
+    {
         std::istringstream iss{ "func: 123 ." };
         const auto expected = std::vector<Token>{
             {.type{TokenType::Identifier}, .value{"func"} },
@@ -117,6 +191,6 @@ int main()
 {
     Lexer1 lexer1;
     Lexer2 lexer2;
-    TestLexer(lexer1);
+    //TestLexer(lexer1);
     TestLexer(lexer2);
 }

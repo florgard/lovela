@@ -210,6 +210,7 @@ std::vector<Token> Lexer1::Lex(std::istream& charStream) noexcept
 					.type = TokenType::LiteralString,
 					.value = lexeme
 					});
+				lexeme.clear();
 
 				state.inStringLiteral = false;
 				state.quotationMark = 0;
@@ -283,119 +284,101 @@ std::vector<Token> Lexer2::Lex(std::istream& charStream) noexcept
 
 	struct State
 	{
+		bool skipNext = false;
 		bool inNumberLiteral = false;
 		bool inStringLiteral = false;
-		char quotationMark = 0;
-		bool inOpenComment = false;
-		bool inCloseComment = false;
 		int commentLevel = 0;
 	} state;
 
-	char c, prev = 0;
+	char c = 0, prev = 0, next = 0;
 
 	auto& stream = charStream >> std::noskipws;
 
-	while (stream >> c)
+	stream >> c;
+
+	while (c)
 	{
+		next = 0;
+		stream >> next;
+	
+		if (state.skipNext)
+		{
+			state.skipNext = false;
+			goto readNext;
+		}
+
 		if (c == '<')
 		{
-			if (state.inOpenComment)
+			if (c == prev)
 			{
 				// Still opening comment
-				prev = c;
-				continue;
+				goto readNext;
 			}
-			else if (c == prev)
+			else if (c == next)
 			{
 				// Begin opening comment
-				state.inOpenComment = true;
-				state.inCloseComment = false;
 				state.commentLevel++;
 
-				lexeme.clear();
-				prev = c;
-				continue;
-			}
-			else if (!state.commentLevel)
-			{
 				AddToken(lexeme, tokens);
 				lexeme.clear();
-
-				lexeme += c;
-				prev = c;
-				continue;
+				goto readNext;
 			}
-		}
-		else
-		{
-			state.inOpenComment = false;
 		}
 
 		if (c == '>')
 		{
-			if (state.inCloseComment)
+			if (c == prev)
 			{
 				// Still closing comment
-				prev = c;
-				continue;
+				goto readNext;
 			}
-			else if (c == prev)
+			else if (c == next)
 			{
 				// Begin closing comment
-				state.inOpenComment = false;
-				state.inCloseComment = true;
 				state.commentLevel--;
 
 				lexeme.clear();
-				prev = c;
-				continue;
+				goto readNext;
 			}
-			else if (!state.commentLevel)
-			{
-				AddToken(lexeme, tokens);
-				lexeme.clear();
-
-				lexeme += c;
-				prev = c;
-				continue;
-			}
-		}
-		else
-		{
-			state.inCloseComment = false;
 		}
 
 		if (state.commentLevel)
 		{
 			// Consume the comment
-			prev = c;
-			continue;
+			goto readNext;
 		}
 		else if (state.inStringLiteral)
 		{
-			if (c == state.quotationMark)
+			if (c == '\'')
 			{
-				tokens.emplace_back(Token{
-					.type = TokenType::LiteralString,
-					.value = lexeme
-					});
+				if (c == next)
+				{
+					// Keep a single escaped quotation mark
+					lexeme += c;
+					state.skipNext = true;
+					goto readNext;
+				}
+				else
+				{
+					tokens.emplace_back(Token{
+						.type = TokenType::LiteralString,
+						.value = lexeme
+						});
+					lexeme.clear();
 
-				state.inStringLiteral = false;
-				state.quotationMark = 0;
-				prev = c;
-				continue;
+					state.inStringLiteral = false;
+					goto readNext;
+				}
 			}
 		}
-		else if (c == '\'' || c == '"')
+		else if (c == '\'')
 		{
 			AddToken(lexeme, tokens);
 			lexeme.clear();
 			state = State{};
 
 			state.inStringLiteral = true;
-			state.quotationMark = c;
-			prev = c;
-			continue;
+			goto readNext;
 		}
 		else if (state.inNumberLiteral && c == '.')
 		{
@@ -418,8 +401,7 @@ std::vector<Token> Lexer2::Lex(std::istream& charStream) noexcept
 			state = State{};
 
 			AddToken(c, tokens);
-			prev = c;
-			continue;
+			goto readNext;
 		}
 
 		if (!std::isspace(c))
@@ -427,7 +409,9 @@ std::vector<Token> Lexer2::Lex(std::istream& charStream) noexcept
 			lexeme += c;
 		}
 
+	readNext:
 		prev = c;
+		c = next;
 	}
 
 	if (!state.commentLevel)
