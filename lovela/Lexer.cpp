@@ -6,30 +6,31 @@
 #include <array>
 #include <algorithm>
 #include <iostream>
+#include <cwctype>
 
 using namespace std::literals::string_view_literals;
 
-constexpr std::string_view Trim(const std::string_view& input) noexcept
+constexpr std::wstring_view Trim(const std::wstring_view& input) noexcept
 {
-	constexpr char whitespace[]{ " \t\r\n\f\v" };
+	constexpr wchar_t whitespace[]{ L" \t\r\n\f\v" };
 
 	const auto start = input.find_first_not_of(whitespace);
 	if (start == input.npos)
 	{
-		return "";
+		return {};
 	}
 
 	const auto end = input.find_last_not_of(whitespace);
 	return input.substr(start, end - start + 1);
 }
 
-static_assert(Trim(""sv) == ""sv);
-static_assert(Trim(" \t\r\n\f\v"sv) == ""sv);
-static_assert(Trim("a b c \r\n"sv) == "a b c"sv);
+static_assert(Trim(L""sv) == L""sv);
+static_assert(Trim(L" \t\r\n\f\v"sv) == L""sv);
+static_assert(Trim(L"a b c \r\n"sv) == L"a b c"sv);
 
-constexpr TokenType GetTokenType(char lexeme) noexcept
+constexpr TokenType GetTokenType(wchar_t lexeme) noexcept
 {
-	constexpr std::array<std::pair<char, TokenType>, 13> characters{ {
+	constexpr std::array<std::pair<wchar_t, TokenType>, 13> characters{ {
 		{'(', TokenType::ParenRoundOpen },
 		{')', TokenType::ParenRoundClose },
 		{'[', TokenType::ParenSquareOpen },
@@ -51,7 +52,7 @@ static_assert(GetTokenType('(') == TokenType::ParenRoundOpen);
 static_assert(GetTokenType('.') == TokenType::SeparatorDot);
 static_assert(GetTokenType(' ') == TokenType::Unknown);
 
-constexpr bool AddToken(char lexeme, std::vector<Token>& tokens) noexcept
+constexpr bool AddToken(wchar_t lexeme, std::vector<Token>& tokens) noexcept
 {
 	auto type = GetTokenType(lexeme);
 	if (type == TokenType::Unknown)
@@ -59,20 +60,20 @@ constexpr bool AddToken(char lexeme, std::vector<Token>& tokens) noexcept
 		return false;
 	}
 
-	tokens.emplace_back(Token{ .type = type, .value = std::string(1, lexeme) });
+	tokens.emplace_back(Token{ .type = type, .value = std::wstring(1, lexeme) });
 
 	return true;
 }
 
-void AddToken(const std::string_view& lexeme, std::vector<Token>& tokens)
+void AddToken(const std::wstring_view& lexeme, std::vector<Token>& tokens)
 {
-	static const std::vector<std::pair<std::regex, TokenType>> tokenRegexes{
-		{ std::regex{ R"(\d+)" }, TokenType::LiteralInteger },
-		{ std::regex{ R"(\d+\.\d+)" }, TokenType::LiteralDecimal },
-		{ std::regex{ R"(\w+)" }, TokenType::Identifier },
-		{ std::regex{ R"(<|>|<>|<=|>=|=)" }, TokenType::OperatorComparison },
-		{ std::regex{ R"(\+|-|\*|/|%)" }, TokenType::OperatorArithmetic },
-		{ std::regex{ R"(\*\*|\+\+|--)" }, TokenType::OperatorBitwise },
+	static const std::vector<std::pair<std::wregex, TokenType>> tokenRegexes{
+		{ std::wregex{ LR"(\d+)" }, TokenType::LiteralInteger },
+		{ std::wregex{ LR"(\d+\.\d+)" }, TokenType::LiteralDecimal },
+		{ std::wregex{ LR"(\w+)" }, TokenType::Identifier },
+		{ std::wregex{ LR"(<|>|<>|<=|>=|=)" }, TokenType::OperatorComparison },
+		{ std::wregex{ LR"(\+|-|\*|/|%)" }, TokenType::OperatorArithmetic },
+		{ std::wregex{ LR"(\*\*|\+\+|--)" }, TokenType::OperatorBitwise },
 	};
 	
 	auto trimmed = Trim(lexeme);
@@ -102,27 +103,27 @@ void AddToken(const std::string_view& lexeme, std::vector<Token>& tokens)
 		}
 	}
 
-	std::cerr << "Syntax error near \"" << trimmed << "\".\n";
+	std::wcerr << "Syntax error near \"" << trimmed << "\".\n";
 }
 
-std::vector<Token> Lexer1::Lex(std::istream& charStream) noexcept
+std::vector<Token> Lexer1::Lex(std::wistream& charStream) noexcept
 {
-	static constexpr std::string_view delimiters{ "()[]{}.,:;!?" };
+	static constexpr std::wstring_view delimiters{ L"()[]{}.,:;!?" };
 
 	std::vector<Token> tokens;
-	std::string lexeme;
+	std::wstring lexeme;
 
 	struct State
 	{
 		bool inNumberLiteral = false;
 		bool inStringLiteral = false;
-		char quotationMark = 0;
+		wchar_t quotationMark = 0;
 		bool inOpenComment = false;
 		bool inCloseComment = false;
 		int commentLevel = 0;
 	} state;
 
-	char c, prev = 0;
+	wchar_t c, prev = 0;
 
 	auto& stream = charStream >> std::noskipws;
 
@@ -233,11 +234,11 @@ std::vector<Token> Lexer1::Lex(std::istream& charStream) noexcept
 		{
 			// Decimal literal, don't break the lexeme.
 		}
-		else if (std::isdigit(c) && lexeme.empty())
+		else if (std::iswdigit(c) && lexeme.empty())
 		{
 			state.inNumberLiteral = true;
 		}
-		else if (std::isspace(c))
+		else if (std::iswspace(c))
 		{
 			AddToken(lexeme, tokens);
 			lexeme.clear();
@@ -254,7 +255,7 @@ std::vector<Token> Lexer1::Lex(std::istream& charStream) noexcept
 			continue;
 		}
 
-		if (!std::isspace(c))
+		if (!std::iswspace(c))
 		{
 			lexeme += c;
 		}
@@ -275,12 +276,12 @@ std::vector<Token> Lexer1::Lex(std::istream& charStream) noexcept
 	return tokens;
 }
 
-std::vector<Token> Lexer2::Lex(std::istream& charStream) noexcept
+std::vector<Token> Lexer2::Lex(std::wistream& charStream) noexcept
 {
-	static constexpr std::string_view delimiters{ "()[]{}.,:;!?" };
+	static constexpr std::wstring_view delimiters{ L"()[]{}.,:;!?" };
 
 	std::vector<Token> tokens;
-	std::string lexeme;
+	std::wstring lexeme;
 
 	struct State
 	{
@@ -290,7 +291,7 @@ std::vector<Token> Lexer2::Lex(std::istream& charStream) noexcept
 		int commentLevel = 0;
 	} state;
 
-	char c = 0, prev = 0, next = 0;
+	wchar_t c = 0, prev = 0, next = 0;
 
 	auto& stream = charStream >> std::noskipws;
 
@@ -384,11 +385,11 @@ std::vector<Token> Lexer2::Lex(std::istream& charStream) noexcept
 		{
 			// Decimal literal, don't break the lexeme.
 		}
-		else if (std::isdigit(c) && lexeme.empty())
+		else if (std::iswdigit(c) && lexeme.empty())
 		{
 			state.inNumberLiteral = true;
 		}
-		else if (std::isspace(c))
+		else if (std::iswspace(c))
 		{
 			AddToken(lexeme, tokens);
 			lexeme.clear();
@@ -404,7 +405,7 @@ std::vector<Token> Lexer2::Lex(std::istream& charStream) noexcept
 			goto readNext;
 		}
 
-		if (!std::isspace(c))
+		if (!std::iswspace(c))
 		{
 			lexeme += c;
 		}

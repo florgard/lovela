@@ -28,7 +28,7 @@ enum class TokenType
 struct Token
 {
 	TokenType type;
-	std::string value;
+	std::wstring value;
 
 	constexpr bool operator<=>(const Token& rhs) const noexcept = default;
 };
