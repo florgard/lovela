@@ -59,6 +59,16 @@ void TestLexer(ILexer& lexer)
     }
 
     {
+        std::wistringstream iss{ L"123." };
+        const auto expected = std::vector<Token>{
+            {.type{TokenType::LiteralInteger}, .value{L"123"} },
+            {.type{TokenType::SeparatorDot}, .value{L"."} },
+        };
+        const auto tokens = lexer.Lex(iss);
+        assert(tokens == expected);
+    }
+
+    {
         std::wistringstream iss{ L"123.456" };
         const auto expected = std::vector<Token>{
             {.type{TokenType::LiteralDecimal}, .value{L"123.456"} },
@@ -71,6 +81,15 @@ void TestLexer(ILexer& lexer)
         std::wistringstream iss{ L"''" };
         const auto expected = std::vector<Token>{
             {.type{TokenType::LiteralString}, .value{L""} },
+        };
+        const auto tokens = lexer.Lex(iss);
+        assert(tokens == expected);
+    }
+
+    {
+        std::wistringstream iss{ L"''''" };
+        const auto expected = std::vector<Token>{
+            {.type{TokenType::LiteralString}, .value{L"'"} },
         };
         const auto tokens = lexer.Lex(iss);
         assert(tokens == expected);
@@ -95,7 +114,7 @@ void TestLexer(ILexer& lexer)
     }
 
     {
-        std::wistringstream iss{ L"func: 123 ." };
+        std::wistringstream iss{ L"func: 123." };
         const auto expected = std::vector<Token>{
             {.type{TokenType::Identifier}, .value{L"func"} },
             {.type{TokenType::OperatorColon}, .value{L":"} },
@@ -107,7 +126,7 @@ void TestLexer(ILexer& lexer)
     }
 
     {
-        std::wistringstream iss{ L"func: 123 ." };
+        std::wistringstream iss{ L"func: 123." };
         const auto expected = std::vector<Token>{
             {.type{TokenType::Identifier}, .value{L"func"} },
             {.type{TokenType::OperatorColon}, .value{L":"} },
@@ -119,7 +138,7 @@ void TestLexer(ILexer& lexer)
     }
 
     {
-        std::wistringstream iss{ L"func : 123.4 ." };
+        std::wistringstream iss{ L"func : 123.4." };
         const auto expected = std::vector<Token>{
             {.type{TokenType::Identifier}, .value{L"func"} },
             {.type{TokenType::OperatorColon}, .value{L":"} },

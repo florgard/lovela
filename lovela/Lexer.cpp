@@ -116,8 +116,8 @@ std::vector<Token> Lexer2::Lex(std::wistream& charStream) noexcept
 	struct State
 	{
 		bool skipNext = false;
-		bool inNumberLiteral = false;
-		bool inStringLiteral = false;
+		bool integerLiteral = false;
+		bool stringLiteral = false;
 		int commentLevel = 0;
 	} state;
 
@@ -178,7 +178,7 @@ std::vector<Token> Lexer2::Lex(std::wistream& charStream) noexcept
 			// Consume the comment
 			goto readNext;
 		}
-		else if (state.inStringLiteral)
+		else if (state.stringLiteral)
 		{
 			if (c == '\'')
 			{
@@ -197,7 +197,7 @@ std::vector<Token> Lexer2::Lex(std::wistream& charStream) noexcept
 						});
 					lexeme.clear();
 
-					state.inStringLiteral = false;
+					state.stringLiteral = false;
 					goto readNext;
 				}
 			}
@@ -208,16 +208,17 @@ std::vector<Token> Lexer2::Lex(std::wistream& charStream) noexcept
 			lexeme.clear();
 			state = State{};
 
-			state.inStringLiteral = true;
+			state.stringLiteral = true;
 			goto readNext;
 		}
-		else if (state.inNumberLiteral && c == '.')
+		else if (state.integerLiteral && c == '.' && std::iswdigit(next))
 		{
-			// Decimal literal, don't break the lexeme.
+			// Decimal number literal
+			state.integerLiteral = false;
 		}
 		else if (std::iswdigit(c) && lexeme.empty())
 		{
-			state.inNumberLiteral = true;
+			state.integerLiteral = true;
 		}
 		else if (std::iswspace(c))
 		{
