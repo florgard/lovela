@@ -105,7 +105,176 @@ void AddToken(const std::string_view& lexeme, std::vector<Token>& tokens)
 	std::cerr << "Syntax error near \"" << trimmed << "\".\n";
 }
 
-std::vector<Token> Lex(std::istream& charStream) noexcept
+std::vector<Token> Lexer1::Lex(std::istream& charStream) noexcept
+{
+	static constexpr std::string_view delimiters{ "()[]{}.,:;!?" };
+
+	std::vector<Token> tokens;
+	std::string lexeme;
+
+	struct State
+	{
+		bool inNumberLiteral = false;
+		bool inStringLiteral = false;
+		char quotationMark = 0;
+		bool inOpenComment = false;
+		bool inCloseComment = false;
+		int commentLevel = 0;
+	} state;
+
+	char c, prev = 0;
+
+	auto& stream = charStream >> std::noskipws;
+
+	while (stream >> c)
+	{
+		if (c == '<')
+		{
+			if (state.inOpenComment)
+			{
+				// Still opening comment
+				prev = c;
+				continue;
+			}
+			else if (c == prev)
+			{
+				// Begin opening comment
+				state.inOpenComment = true;
+				state.inCloseComment = false;
+				state.commentLevel++;
+
+				lexeme.clear();
+				prev = c;
+				continue;
+			}
+			else if (!state.commentLevel)
+			{
+				AddToken(lexeme, tokens);
+				lexeme.clear();
+
+				lexeme += c;
+				prev = c;
+				continue;
+			}
+		}
+		else
+		{
+			state.inOpenComment = false;
+		}
+
+		if (c == '>')
+		{
+			if (state.inCloseComment)
+			{
+				// Still closing comment
+				prev = c;
+				continue;
+			}
+			else if (c == prev)
+			{
+				// Begin closing comment
+				state.inOpenComment = false;
+				state.inCloseComment = true;
+				state.commentLevel--;
+
+				lexeme.clear();
+				prev = c;
+				continue;
+			}
+			else if (!state.commentLevel)
+			{
+				AddToken(lexeme, tokens);
+				lexeme.clear();
+
+				lexeme += c;
+				prev = c;
+				continue;
+			}
+		}
+		else
+		{
+			state.inCloseComment = false;
+		}
+
+		if (state.commentLevel)
+		{
+			// Consume the comment
+			prev = c;
+			continue;
+		}
+		else if (state.inStringLiteral)
+		{
+			if (c == state.quotationMark)
+			{
+				tokens.emplace_back(Token{
+					.type = TokenType::LiteralString,
+					.value = lexeme
+					});
+
+				state.inStringLiteral = false;
+				state.quotationMark = 0;
+				prev = c;
+				continue;
+			}
+		}
+		else if (c == '\'' || c == '"')
+		{
+			AddToken(lexeme, tokens);
+			lexeme.clear();
+			state = State{};
+
+			state.inStringLiteral = true;
+			state.quotationMark = c;
+			prev = c;
+			continue;
+		}
+		else if (state.inNumberLiteral && c == '.')
+		{
+			// Decimal literal, don't break the lexeme.
+		}
+		else if (std::isdigit(c) && lexeme.empty())
+		{
+			state.inNumberLiteral = true;
+		}
+		else if (std::isspace(c))
+		{
+			AddToken(lexeme, tokens);
+			lexeme.clear();
+			state = State{};
+		}
+		else if (delimiters.find(c) != delimiters.npos)
+		{
+			AddToken(lexeme, tokens);
+			lexeme.clear();
+			state = State{};
+
+			AddToken(c, tokens);
+			prev = c;
+			continue;
+		}
+
+		if (!std::isspace(c))
+		{
+			lexeme += c;
+		}
+
+		prev = c;
+	}
+
+	if (!state.commentLevel)
+	{
+		AddToken(lexeme, tokens);
+		lexeme.clear();
+	}
+	else
+	{
+		std::cerr << "Mismatch in the number of opening and closing double angle quotation marks for nested comments.\n";
+	}
+
+	return tokens;
+}
+
+std::vector<Token> Lexer2::Lex(std::istream& charStream) noexcept
 {
 	static constexpr std::string_view delimiters{ "()[]{}.,:;!?" };
 
