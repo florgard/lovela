@@ -4,7 +4,7 @@
 #include "Testing.h"
 #include "Lexer.h"
 
-void Test(const char* name, ILexer&, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
+void Test(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
 {
 	std::wistringstream input(std::wstring(code.data(), code.size()));
 	Lexer lexer(input);
