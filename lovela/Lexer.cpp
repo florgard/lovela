@@ -1,71 +1,22 @@
 #include "Lexer.h"
 #include <string>
 #include <string_view>
-#include <map>
 #include <regex>
-#include <array>
 #include <algorithm>
 #include <iostream>
 #include <cwctype>
 
 using namespace std::literals::string_view_literals;
 
-constexpr std::wstring_view Trim(const std::wstring_view& input) noexcept
-{
-	constexpr wchar_t whitespace[]{ L" \t\r\n\f\v" };
+static_assert(LexerBase::Trim(L""sv) == L""sv);
+static_assert(LexerBase::Trim(L" \t\r\n\f\v"sv) == L""sv);
+static_assert(LexerBase::Trim(L"a b c \r\n"sv) == L"a b c"sv);
 
-	const auto start = input.find_first_not_of(whitespace);
-	if (start == input.npos)
-	{
-		return {};
-	}
+static_assert(LexerBase::GetTokenType('(') == TokenType::ParenRoundOpen);
+static_assert(LexerBase::GetTokenType('.') == TokenType::SeparatorDot);
+static_assert(LexerBase::GetTokenType(' ') == TokenType::Unknown);
 
-	const auto end = input.find_last_not_of(whitespace);
-	return input.substr(start, end - start + 1);
-}
-
-static_assert(Trim(L""sv) == L""sv);
-static_assert(Trim(L" \t\r\n\f\v"sv) == L""sv);
-static_assert(Trim(L"a b c \r\n"sv) == L"a b c"sv);
-
-constexpr TokenType GetTokenType(wchar_t lexeme) noexcept
-{
-	constexpr std::array<std::pair<wchar_t, TokenType>, 13> characters{ {
-		{'(', TokenType::ParenRoundOpen },
-		{')', TokenType::ParenRoundClose },
-		{'[', TokenType::ParenSquareOpen },
-		{']', TokenType::ParenSquareClose },
-		{'{', TokenType::ParenCurlyOpen },
-		{'}', TokenType::ParenCurlyClose },
-		{'.', TokenType::SeparatorDot },
-		{',', TokenType::SeparatorComma },
-		{'!', TokenType::SeparatorExclamation },
-		{'?', TokenType::SeparatorQuestion },
-		{':', TokenType::OperatorColon },
-	} };
-
-	auto iter = std::find_if(characters.begin(), characters.end(), [&](const auto& pair) { return pair.first == lexeme; });
-	return (iter != characters.end()) ? iter->second : TokenType::Unknown;
-}
-
-static_assert(GetTokenType('(') == TokenType::ParenRoundOpen);
-static_assert(GetTokenType('.') == TokenType::SeparatorDot);
-static_assert(GetTokenType(' ') == TokenType::Unknown);
-
-constexpr bool AddToken(wchar_t lexeme, std::vector<Token>& tokens) noexcept
-{
-	auto type = GetTokenType(lexeme);
-	if (type == TokenType::Unknown)
-	{
-		return false;
-	}
-
-	tokens.emplace_back(Token{ .type = type, .value = std::wstring(1, lexeme) });
-
-	return true;
-}
-
-void AddToken(const std::wstring_view& lexeme, std::vector<Token>& tokens)
+void Lexer2::AddToken(const std::wstring_view& lexeme, std::vector<Token>& tokens)
 {
 	static const std::vector<std::pair<std::wregex, TokenType>> tokenRegexes{
 		{ std::wregex{ LR"(\d+)" }, TokenType::LiteralInteger },
@@ -103,7 +54,7 @@ void AddToken(const std::wstring_view& lexeme, std::vector<Token>& tokens)
 		}
 	}
 
-	std::wcerr << "Syntax error near \"" << trimmed << "\".\n";
+	errors.emplace_back(Error{ .code = Error::Code::SyntaxError, .message = L"Syntax error near \"" + std::wstring(trimmed.data(), trimmed.size()) + L"\"." });
 }
 
 std::vector<Token> Lexer2::Lex(std::wistream& charStream) noexcept
@@ -253,7 +204,7 @@ std::vector<Token> Lexer2::Lex(std::wistream& charStream) noexcept
 	}
 	else
 	{
-		std::cerr << "Mismatch in the number of opening and closing double angle quotation marks for nested comments.\n";
+		errors.emplace_back(Error{ .code = Error::Code::CommentBracketMismatch, .message = L"Mismatch in the number of opening and closing double angle quotation marks for nested comments." });
 	}
 
 	return tokens;
