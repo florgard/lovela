@@ -16,7 +16,7 @@ static_assert(LexerBase::GetTokenType('(') == TokenType::ParenRoundOpen);
 static_assert(LexerBase::GetTokenType('.') == TokenType::SeparatorDot);
 static_assert(LexerBase::GetTokenType(' ') == TokenType::Unknown);
 
-void Lexer::AddToken(const std::wstring_view& lexeme, std::vector<Token>& tokens)
+void LexerBase::AddToken(const std::wstring_view& lexeme, std::vector<Token>& tokens)
 {
 	static const std::vector<std::pair<std::wregex, TokenType>> tokenRegexes{
 		{ std::wregex{ LR"(\d+)" }, TokenType::LiteralInteger },

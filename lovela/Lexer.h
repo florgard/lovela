@@ -65,12 +65,6 @@ public:
 		auto iter = std::find_if(characters.begin(), characters.end(), [&](const auto& pair) { return pair.first == lexeme; });
 		return (iter != characters.end()) ? iter->second : TokenType::Unknown;
 	}
-};
-
-class Lexer : public LexerBase
-{
-public:
-	std::vector<Token> Lex(std::wistream& charStream) noexcept override;
 
 protected:
 	void AddToken(const std::wstring_view& lexeme, std::vector<Token>& tokens);
@@ -87,4 +81,10 @@ protected:
 
 		return true;
 	}
+};
+
+class Lexer : public LexerBase
+{
+public:
+	std::vector<Token> Lex(std::wistream& charStream) noexcept override;
 };
