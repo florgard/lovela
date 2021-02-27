@@ -163,6 +163,12 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 					goto readNext;
 				}
 			}
+			else
+			{
+				// Consume the string literal
+				lexeme += c;
+				goto readNext;
+			}
 		}
 		else if (c == '\'')
 		{
