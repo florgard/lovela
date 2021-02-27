@@ -64,6 +64,7 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 	std::vector<Token> tokens;
 	std::wstring lexeme;
 	currentLine = 1;
+	currentColumn = 1;
 	errors.clear();
 
 	struct State
@@ -206,11 +207,13 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 		else if (c == '\n')
 		{
 			currentLine++;
+			currentColumn = 1;
 		}
 
 	readNext:
 		prev = c;
 		c = next;
+		currentColumn++;
 	}
 
 	if (state.commentLevel)

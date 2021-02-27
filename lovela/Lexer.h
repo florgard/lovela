@@ -17,6 +17,7 @@ public:
 			OpenStringLiteral,
 		} code{};
 		int line{};
+		int column{};
 		std::wstring message;
 	};
 
@@ -29,6 +30,7 @@ class LexerBase : public ILexer
 protected:
 	std::vector<Error> errors;
 	int currentLine{};
+	int currentColumn{};
 
 public:
 	const std::vector<Error>& GetErrors() noexcept override
@@ -88,7 +90,7 @@ protected:
 
 	void AddError(Error::Code code, const std::wstring& message)
 	{
-		errors.emplace_back(Error{ .code = code, .line = currentLine, .message = message });
+		errors.emplace_back(Error{ .code = code, .line = currentLine, .column = currentColumn, .message = message });
 	}
 };
 

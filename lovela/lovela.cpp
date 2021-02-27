@@ -7,19 +7,32 @@ void TestCode(ILexer& lexer, std::wstring_view code, const std::vector<Token>& e
 {
 	std::wistringstream input(std::wstring(code.data(), code.size()));
 	const auto tokens = lexer.Lex(input);
-	assert(tokens == expectedTokens);
+	const bool tokensMatch = tokens == expectedTokens;
+	assert(tokensMatch);
+	if (!tokensMatch)
+	{
+		return;
+	}
+
 	auto& errors = lexer.GetErrors();
-	assert(errors.size() == expectedErrors.size());
-	for (int i = 0; i < errors.size() && i < expectedErrors.size(); i++)
+	const bool errorCountMatches = errors.size() == expectedErrors.size();
+	assert(errorCountMatches);
+	if (!errorCountMatches)
+	{
+		return;
+	}
+
+	for (int i = 0; i < errors.size(); i++)
 	{
 		auto& error = errors[i];
 		auto& expectedError = expectedErrors[i];
-		const bool equal = error.code == expectedError.code && error.line == expectedError.line;
-		if (!equal)
+		const bool errorMatches = error.code == expectedError.code && error.line == expectedError.line;
+		if (!errorMatches)
 		{
-			std::wcerr << "Error " << static_cast<int>(error.code) << " at line " << error.line << ": " << error.message << '\n';
+			std::wcerr << '(' << error.line << ':' << error.column << ") error " << static_cast<int>(error.code) << ": " << error.message << '\n';
+			assert(errorMatches);
+			return;
 		}
-		assert(error.code == expectedError.code && error.line == expectedError.line);
 	}
 }
 
@@ -59,6 +72,8 @@ void TestLexer(ILexer& lexer)
 		{.type = TokenType::LiteralString, .value = L"ab"},
 		{.type = TokenType::LiteralString, .value = L"c"},
 		}, {});
+	TestCode(lexer, L"'<< abc >>'", { {.type = TokenType::LiteralString, .value = L"<< abc >>" } }, {});
+	TestCode(lexer, L"'", {}, { {.code = ILexer::Error::Code::OpenStringLiteral, .line = 1 } });
 	TestCode(lexer, L"'abc", {}, { {.code = ILexer::Error::Code::OpenStringLiteral, .line = 1 } });
 	TestCode(lexer, L"\r\n'abc", {}, { {.code = ILexer::Error::Code::OpenStringLiteral, .line = 2 } });
 	TestCode(lexer, L"\n'abc", {}, { {.code = ILexer::Error::Code::OpenStringLiteral, .line = 2 } });
