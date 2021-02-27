@@ -26,7 +26,7 @@ void TestCode(ILexer& lexer, std::wstring_view code, const std::vector<Token>& e
 	{
 		auto& error = errors[i];
 		auto& expectedError = expectedErrors[i];
-		const bool errorMatches = error.code == expectedError.code && error.line == expectedError.line;
+		const bool errorMatches = error.code == expectedError.code && (!expectedError.line || error.line == expectedError.line);
 		if (!errorMatches)
 		{
 			std::wcerr << '(' << error.line << ':' << error.column << ") error " << static_cast<int>(error.code) << ": " << error.message << '\n';
@@ -73,7 +73,7 @@ void TestLexer(ILexer& lexer)
 		{.type = TokenType::LiteralString, .value = L"c"},
 		}, {});
 	TestCode(lexer, L"'<< abc >>'", { {.type = TokenType::LiteralString, .value = L"<< abc >>" } }, {});
-	TestCode(lexer, L"'", {}, { {.code = ILexer::Error::Code::OpenStringLiteral, .line = 1 } });
+	TestCode(lexer, L"'", {}, { {.code = ILexer::Error::Code::OpenStringLiteral } });
 	TestCode(lexer, L"'abc", {}, { {.code = ILexer::Error::Code::OpenStringLiteral, .line = 1 } });
 	TestCode(lexer, L"\r\n'abc", {}, { {.code = ILexer::Error::Code::OpenStringLiteral, .line = 2 } });
 	TestCode(lexer, L"\n'abc", {}, { {.code = ILexer::Error::Code::OpenStringLiteral, .line = 2 } });
@@ -85,6 +85,9 @@ void TestLexer(ILexer& lexer)
 	TestCode(lexer, L"'{n}'", { {.type = TokenType::LiteralString, .value = L"\n" } }, {});
 	TestCode(lexer, L"'{t}{n}{r}'", { {.type = TokenType::LiteralString, .value = L"\t\n\r" } }, {});
 	TestCode(lexer, L"'abc{r}{n}def'", { {.type = TokenType::LiteralString, .value = L"abc\r\ndef" } }, {});
+	TestCode(lexer, L"'{n'", {}, { {.code = ILexer::Error::Code::StringFieldIllformed}, {.code = ILexer::Error::Code::OpenStringLiteral} });
+	TestCode(lexer, L"'{nn}'", { {.type = TokenType::LiteralString, .value = L"}"} }, { {.code = ILexer::Error::Code::StringFieldIllformed} });
+	TestCode(lexer, L"'{m}'", { {.type = TokenType::LiteralString, .value = L"m}"} }, { {.code = ILexer::Error::Code::StringFieldUnknown} });
 
 	TestCode(lexer, L"func: 123.", {
 			{.type = TokenType::Identifier, .value = L"func"},
