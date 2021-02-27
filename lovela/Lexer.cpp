@@ -23,7 +23,7 @@ void LexerBase::AddToken(const std::wstring_view& lexeme, std::vector<Token>& to
 		{ std::wregex{ LR"(\d+\.\d+)" }, TokenType::LiteralDecimal },
 		{ std::wregex{ LR"(\w+)" }, TokenType::Identifier },
 		{ std::wregex{ LR"(<|>|<>|<=|>=|=)" }, TokenType::OperatorComparison },
-		{ std::wregex{ LR"(\+|-|\*|/|%)" }, TokenType::OperatorArithmetic },
+		{ std::wregex{ LR"(\+|-|\*|/|/*)" }, TokenType::OperatorArithmetic },
 		{ std::wregex{ LR"(\*\*|\+\+|--)" }, TokenType::OperatorBitwise },
 	};
 	
