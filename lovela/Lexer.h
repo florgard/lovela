@@ -67,7 +67,7 @@ public:
 	}
 };
 
-class Lexer2 : public LexerBase
+class Lexer : public LexerBase
 {
 public:
 	std::vector<Token> Lex(std::wistream& charStream) noexcept override;

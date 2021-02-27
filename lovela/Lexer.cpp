@@ -16,7 +16,7 @@ static_assert(LexerBase::GetTokenType('(') == TokenType::ParenRoundOpen);
 static_assert(LexerBase::GetTokenType('.') == TokenType::SeparatorDot);
 static_assert(LexerBase::GetTokenType(' ') == TokenType::Unknown);
 
-void Lexer2::AddToken(const std::wstring_view& lexeme, std::vector<Token>& tokens)
+void Lexer::AddToken(const std::wstring_view& lexeme, std::vector<Token>& tokens)
 {
 	static const std::vector<std::pair<std::wregex, TokenType>> tokenRegexes{
 		{ std::wregex{ LR"(\d+)" }, TokenType::LiteralInteger },
@@ -57,7 +57,7 @@ void Lexer2::AddToken(const std::wstring_view& lexeme, std::vector<Token>& token
 	errors.emplace_back(Error{ .code = Error::Code::SyntaxError, .message = L"Syntax error near \"" + std::wstring(trimmed.data(), trimmed.size()) + L"\"." });
 }
 
-std::vector<Token> Lexer2::Lex(std::wistream& charStream) noexcept
+std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 {
 	static constexpr std::wstring_view delimiters{ L"()[]{}.,:;!?" };
 

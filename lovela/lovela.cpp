@@ -235,6 +235,6 @@ void TestLexer(ILexer& lexer)
 
 int main()
 {
-    Lexer2 lexer2;
+    Lexer lexer2;
     TestLexer(lexer2);
 }
