@@ -72,6 +72,7 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 		bool skipNext = false;
 		bool integerLiteral = false;
 		bool stringLiteral = false;
+		wchar_t stringFieldCode = 0;
 		int commentLevel = 0;
 	} state;
 
@@ -92,6 +93,21 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 			goto readNext;
 		}
 
+		if (state.stringFieldCode)
+		{
+			if (c == '}')
+			{
+				lexeme += GetStringField(state.stringFieldCode);
+			}
+			else
+			{
+				AddError(Error::Code::StringFieldIllformed, std::wstring(L"Ill-formed string field \"") + state.stringFieldCode + L"\".");
+			}
+
+			state.stringFieldCode = 0;
+			goto readNext;
+		}
+
 		if (state.stringLiteral)
 		{
 			if (c == '\'')
@@ -101,7 +117,6 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 					// Keep a single escaped quotation mark
 					lexeme += c;
 					state.skipNext = true;
-					goto readNext;
 				}
 				else
 				{
@@ -112,15 +127,36 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 					lexeme.clear();
 
 					state.stringLiteral = false;
-					goto readNext;
+				}
+			}
+			else if (c == '{')
+			{
+				if (c == next)
+				{
+					// Keep a single escaped curly bracket
+					lexeme += c;
+					state.skipNext = true;
+				}
+				else
+				{
+					if (GetStringField(next).empty())
+					{
+						AddError(Error::Code::StringFieldUnknown, std::wstring(L"Unknown string field code \"") + next + L"\".");
+					}
+					else
+					{
+						state.stringFieldCode = next;
+						state.skipNext = true;
+					}
 				}
 			}
 			else
 			{
 				// Consume the string literal
 				lexeme += c;
-				goto readNext;
 			}
+
+			goto readNext;
 		}
 
 		if (state.integerLiteral && c == '.' && std::iswdigit(next))

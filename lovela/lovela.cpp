@@ -79,6 +79,12 @@ void TestLexer(ILexer& lexer)
 	TestCode(lexer, L"\n'abc", {}, { {.code = ILexer::Error::Code::OpenStringLiteral, .line = 2 } });
 	TestCode(lexer, L"\r'abc", {}, { {.code = ILexer::Error::Code::OpenStringLiteral, .line = 1 } });
 	TestCode(lexer, L"\t'ab\r\n\tc'\r\n", { {.type = TokenType::LiteralString, .value = L"ab\r\n\tc" }}, {});
+	TestCode(lexer, L"'{{'", { {.type = TokenType::LiteralString, .value = L"{" } }, {});
+	TestCode(lexer, L"'{{}'", { {.type = TokenType::LiteralString, .value = L"{}" } }, {});
+	TestCode(lexer, L"'}'", { {.type = TokenType::LiteralString, .value = L"}" } }, {});
+	TestCode(lexer, L"'{n}'", { {.type = TokenType::LiteralString, .value = L"\n" } }, {});
+	TestCode(lexer, L"'{t}{n}{r}'", { {.type = TokenType::LiteralString, .value = L"\t\n\r" } }, {});
+	TestCode(lexer, L"'abc{r}{n}def'", { {.type = TokenType::LiteralString, .value = L"abc\r\ndef" } }, {});
 
 	TestCode(lexer, L"func: 123.", {
 			{.type = TokenType::Identifier, .value = L"func"},

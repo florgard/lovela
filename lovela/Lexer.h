@@ -15,6 +15,8 @@ public:
 			SyntaxError,
 			OpenComment,
 			OpenStringLiteral,
+			StringFieldIllformed,
+			StringFieldUnknown,
 		} code{};
 		int line{};
 		int column{};
@@ -70,6 +72,17 @@ public:
 
 		auto iter = std::find_if(characters.begin(), characters.end(), [&](const auto& pair) { return pair.first == lexeme; });
 		return (iter != characters.end()) ? iter->second : TokenType::Unknown;
+	}
+
+	static constexpr std::wstring_view GetStringField(wchar_t code) noexcept
+	{
+		switch (code)
+		{
+		case 't': return L"\t";
+		case 'n': return L"\n";
+		case 'r': return L"\r";
+		default: return {};
+		}
 	}
 
 protected:
