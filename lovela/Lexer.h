@@ -61,20 +61,8 @@ public:
 	}
 
 protected:
-	void AddToken(const std::wstring_view& lexeme, std::vector<Token>& tokens);
-
-	constexpr bool AddToken(wchar_t lexeme, std::vector<Token>& tokens) noexcept
-	{
-		auto type = GetTokenType(lexeme);
-		if (type == TokenType::Empty)
-		{
-			return false;
-		}
-
-		tokens.emplace_back(Token{ .type = type, .value = std::wstring(1, lexeme) });
-
-		return true;
-	}
+	Token GetToken(wchar_t lexeme) noexcept;
+	Token GetToken(const std::wstring_view& lexeme) noexcept;
 
 	void AddError(Error::Code code, const std::wstring& message)
 	{
@@ -84,6 +72,9 @@ protected:
 
 class Lexer : public LexerBase
 {
+	std::wistream& charStream;
+
 public:
-	std::vector<Token> Lex(std::wistream& charStream) noexcept override;
+	Lexer(std::wistream& charStream) noexcept;
+	TokenGenerator Lex() noexcept override;
 };

@@ -5,7 +5,8 @@
 
 void TestLexer()
 {
-	Lexer lexer;
+	std::wistringstream input;
+	Lexer lexer(input);
 
 	Test("empty expression", lexer, L"", {}, {});
 	Test("single character", lexer, L".", { {.type = TokenType::SeparatorDot, .value = L"." }}, {});
@@ -141,9 +142,9 @@ void TestLexer()
 void TestParser()
 {
 	std::wistringstream input(L"func: 123.");
-	Lexer lexer;
+	Lexer lexer(input);
 	Parser parser;
-	parser.Parse(lexer.Lex(input));
+	parser.Parse(lexer.Lex());
 }
 
 int main()

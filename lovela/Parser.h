@@ -1,9 +1,8 @@
 #pragma once
-#include <vector>
-#include "Token.h"
+#include "ILexer.h"
 
 class Parser
 {
 public:
-	void Parse(const std::vector<Token>& tokens) noexcept;
+	void Parse(TokenGenerator tokenGenerator) noexcept;
 };

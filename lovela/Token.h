@@ -5,6 +5,7 @@
 enum class TokenType
 {
 	Empty,
+	Error,
 	Identifier,
 	LiteralString,
 	LiteralStringInterpolation,
@@ -32,4 +33,5 @@ struct Token
 	std::wstring value;
 
 	constexpr bool operator<=>(const Token& rhs) const noexcept = default;
+	constexpr operator bool() const noexcept { return type != TokenType::Empty; };
 };

@@ -1,8 +1,10 @@
 #pragma once
 #include <string>
 #include <vector>
-#include <istream>
+#include <experimental/generator>
 #include "Token.h"
+
+using TokenGenerator = std::experimental::generator<Token>;
 
 class ILexer
 {
@@ -27,6 +29,6 @@ public:
 		constexpr bool operator<=>(const Error& rhs) const noexcept = default;
 	};
 
-	virtual std::vector<Token> Lex(std::wistream& charStream) noexcept = 0;
+	virtual TokenGenerator Lex() noexcept = 0;
 	virtual const std::vector<Error>& GetErrors() noexcept = 0;
 };

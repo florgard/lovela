@@ -17,7 +17,18 @@ static_assert(LexerBase::GetTokenType('(') == TokenType::ParenRoundOpen);
 static_assert(LexerBase::GetTokenType('.') == TokenType::SeparatorDot);
 static_assert(LexerBase::GetTokenType(' ') == TokenType::Empty);
 
-void LexerBase::AddToken(const std::wstring_view& lexeme, std::vector<Token>& tokens)
+Token LexerBase::GetToken(wchar_t lexeme) noexcept
+{
+	auto type = GetTokenType(lexeme);
+	if (type == TokenType::Empty)
+	{
+		return {};
+	}
+
+	return { .type = type, .value = std::wstring(1, lexeme) };
+}
+
+Token LexerBase::GetToken(const std::wstring_view& lexeme) noexcept
 {
 	static const std::vector<std::pair<std::wregex, TokenType>> tokenRegexes{
 		{ std::wregex{ LR"(\d+)" }, TokenType::LiteralInteger },
@@ -32,14 +43,15 @@ void LexerBase::AddToken(const std::wstring_view& lexeme, std::vector<Token>& to
 
 	if (trimmed.empty())
 	{
-		return;
+		return {};
 	}
 
 	if (trimmed.length() == 1)
 	{
-		if (AddToken(trimmed[0], tokens))
+		auto token = GetToken(trimmed[0]);
+		if (token)
 		{
-			return;
+			return token;
 		}
 	}
 
@@ -47,22 +59,23 @@ void LexerBase::AddToken(const std::wstring_view& lexeme, std::vector<Token>& to
 	{
 		if (std::regex_match(trimmed.begin(), trimmed.end(), pair.first))
 		{
-			tokens.emplace_back(Token{
-				.type = pair.second,
-				.value{ trimmed.data(), trimmed.size() }
-				});
-			return;
+			return { .type = pair.second, .value = std::wstring(trimmed.data(), trimmed.size()) };
 		}
 	}
 
 	AddError(Error::Code::SyntaxError, L"Syntax error near \"" + std::wstring(trimmed.data(), trimmed.size()) + L"\".");
+
+	return {};
 }
 
-std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
+Lexer::Lexer(std::wistream& charStream) noexcept : charStream(charStream)
+{
+}
+
+TokenGenerator Lexer::Lex() noexcept
 {
 	static constexpr std::wstring_view delimiters{ L"()[]{}.,:;!?" };
 
-	std::vector<Token> tokens;
 	std::wstring lexeme;
 	currentLine = 1;
 	currentColumn = 1;
@@ -102,11 +115,11 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 				if (std::iswdigit(state.stringFieldCode))
 				{
 					// Indexed string interpolation. Add the string literal up to this point as a token.
-					tokens.emplace_back(Token{ .type = TokenType::LiteralString, .value = lexeme });
+					co_yield Token{ .type = TokenType::LiteralString, .value = lexeme };
 					lexeme.clear();
 
 					// Add a string literal interpolation token with the given index.
-					tokens.emplace_back(Token{ .type = TokenType::LiteralStringInterpolation, .value = std::wstring(1, state.stringFieldCode) });
+					co_yield Token{ .type = TokenType::LiteralStringInterpolation, .value = std::wstring(1, state.stringFieldCode) };
 				}
 				else
 				{
@@ -135,7 +148,7 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 				}
 				else
 				{
-					tokens.emplace_back(Token{.type = TokenType::LiteralString, .value = lexeme});
+					co_yield Token{.type = TokenType::LiteralString, .value = lexeme};
 					lexeme.clear();
 
 					state.stringLiteral = false;
@@ -153,7 +166,7 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 				else if (next == '}')
 				{
 					// Unindexed string interpolation. Add the string literal up to this point as a token.
-					tokens.emplace_back(Token{ .type = TokenType::LiteralString, .value = lexeme });
+					co_yield Token{ .type = TokenType::LiteralString, .value = lexeme };
 					lexeme.clear();
 
 					// Add a string literal interpolation token with the next free index.
@@ -163,7 +176,7 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 					}
 					else
 					{
-						tokens.emplace_back(Token{ .type = TokenType::LiteralStringInterpolation, .value = std::wstring(1, state.nextStringInterpolation) });
+						co_yield Token{ .type = TokenType::LiteralStringInterpolation, .value = std::wstring(1, state.nextStringInterpolation) };
 						state.nextStringInterpolation++;
 					}
 
@@ -208,7 +221,11 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 				// Begin opening comment
 				state.commentLevel++;
 
-				AddToken(lexeme, tokens);
+				auto token = GetToken(lexeme);
+				if (token)
+				{
+					co_yield token;
+				}
 				lexeme.clear();
 				goto readNext;
 			}
@@ -239,7 +256,11 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 
 		if (c == '\'')
 		{
-			AddToken(lexeme, tokens);
+			auto token = GetToken(lexeme);
+			if (token)
+			{
+				co_yield token;
+			}
 			lexeme.clear();
 			state = State{};
 
@@ -252,17 +273,29 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 		}
 		else if (std::iswspace(c))
 		{
-			AddToken(lexeme, tokens);
+			auto token = GetToken(lexeme);
+			if (token)
+			{
+				co_yield token;
+			}
 			lexeme.clear();
 			state = State{};
 		}
 		else if (delimiters.find(c) != delimiters.npos)
 		{
-			AddToken(lexeme, tokens);
+			auto token = GetToken(lexeme);
+			if (token)
+			{
+				co_yield token;
+			}
 			lexeme.clear();
 			state = State{};
 
-			AddToken(c, tokens);
+			token = GetToken(c);
+			if (token)
+			{
+				co_yield token;
+			}
 			goto readNext;
 		}
 
@@ -292,9 +325,11 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 	}
 	else
 	{
-		AddToken(lexeme, tokens);
+		auto token = GetToken(lexeme);
+		if (token)
+		{
+			co_yield token;
+		}
 		lexeme.clear();
 	}
-
-	return tokens;
 }
