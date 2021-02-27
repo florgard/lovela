@@ -3,7 +3,7 @@
 #include <sstream>
 #include <cassert>
 
-void TestCode(const char* name, ILexer& lexer, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
+void Test(const char* name, ILexer& lexer, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
 {
 	std::wistringstream input(std::wstring(code.data(), code.size()));
 	auto tokens = lexer.Lex(input);
