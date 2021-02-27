@@ -18,9 +18,12 @@ public:
 			StringFieldIllformed,
 			StringFieldUnknown,
 		} code{};
+
 		int line{};
 		int column{};
 		std::wstring message;
+
+		constexpr bool operator<=>(const Error& rhs) const noexcept = default;
 	};
 
 	virtual std::vector<Token> Lex(std::wistream& charStream) noexcept = 0;
