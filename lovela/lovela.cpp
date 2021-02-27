@@ -72,6 +72,18 @@ void TestLexer(ILexer& lexer)
 		{.type = TokenType::LiteralStringInterpolation, .value = L"2" },
 		{.type = TokenType::LiteralString, .value = L"" },
 		}, {});
+	TestCode("unindexed string interpolation", lexer, L"'{2}'", {
+		{.type = TokenType::LiteralString, .value = L"" },
+		{.type = TokenType::LiteralStringInterpolation, .value = L"2" },
+		{.type = TokenType::LiteralString, .value = L"" },
+		}, {});
+	TestCode("unindexed string interpolations", lexer, L"'abc{4}{1}'", {
+		{.type = TokenType::LiteralString, .value = L"abc" },
+		{.type = TokenType::LiteralStringInterpolation, .value = L"4" },
+		{.type = TokenType::LiteralString, .value = L"" },
+		{.type = TokenType::LiteralStringInterpolation, .value = L"1" },
+		{.type = TokenType::LiteralString, .value = L"" },
+		}, {});
 
 	TestCode("trivial integer function", lexer, L"func: 123.", {
 			{.type = TokenType::Identifier, .value = L"func"},

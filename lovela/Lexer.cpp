@@ -106,7 +106,7 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 					lexeme.clear();
 
 					// Add a string literal interpolation token with the given index.
-					tokens.emplace_back(Token{ .type = TokenType::LiteralStringInterpolation, .value{1, state.stringFieldCode} });
+					tokens.emplace_back(Token{ .type = TokenType::LiteralStringInterpolation, .value = std::wstring(1, state.stringFieldCode) });
 				}
 				else
 				{
