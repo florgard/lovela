@@ -173,7 +173,6 @@ void TestLexer(ILexer& lexer)
         assert(errors.size() == 1 && errors[0].code == ILexer::Error::Code::OpenStringLiteral && errors[0].line == 2);
     }
 
-
     {
         std::wistringstream iss{ L"\r'abc" };
         const auto expected = std::vector<Token>{
