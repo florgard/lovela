@@ -92,10 +92,10 @@ void TestLexer(ILexer& lexer)
         const auto expected = std::vector<Token>{
             {.type{TokenType::LiteralDecimal}, .value{L"123.456"} },
             {.type{TokenType::SeparatorDot}, .value{L"."} },
+            {.type{TokenType::LiteralInteger}, .value{L"7"} },
         };
         const auto tokens = lexer.Lex(iss);
-        auto& errors = lexer.GetErrors();
-        assert(errors.size() == 1 && errors[0].code == ILexer::Error::Code::SyntaxError && errors[0].line == 1);
+        assert(tokens == expected);
     }
 
     {

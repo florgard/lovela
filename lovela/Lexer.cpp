@@ -130,7 +130,16 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 			// Consume the comment
 			goto readNext;
 		}
-		else if (state.stringLiteral)
+
+		if (state.integerLiteral && c == '.' && std::iswdigit(next))
+		{
+			// Accept a single decimal point in numbers. Go from integer to decimal literal.
+			state.integerLiteral = false;
+			lexeme += c;
+			goto readNext;
+		}
+
+		if (state.stringLiteral)
 		{
 			if (c == '\'')
 			{
@@ -162,11 +171,6 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 
 			state.stringLiteral = true;
 			goto readNext;
-		}
-		else if (state.integerLiteral && c == '.' && std::iswdigit(next))
-		{
-			// Decimal number literal
-			state.integerLiteral = false;
 		}
 		else if (std::iswdigit(c) && lexeme.empty())
 		{
