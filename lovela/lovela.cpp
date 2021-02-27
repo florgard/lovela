@@ -140,8 +140,8 @@ void TestParser()
 {
 	std::wistringstream input(L"func: 123.");
 	Lexer lexer(input);
-	Parser parser;
-	parser.Parse(lexer.Lex());
+	Parser parser(lexer.Lex());
+	parser.Parse();
 }
 
 int main()

@@ -1,8 +1,17 @@
 #pragma once
 #include "ILexer.h"
 
+class Node
+{
+
+};
+
 class Parser
 {
+	TokenGenerator tokenGenerator;
+
 public:
-	void Parse(TokenGenerator tokenGenerator) noexcept;
+	Parser(TokenGenerator&& tokenGenerator) noexcept;
+
+	Node Parse() noexcept;
 };
