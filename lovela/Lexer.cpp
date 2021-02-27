@@ -92,6 +92,45 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 			goto readNext;
 		}
 
+		if (state.stringLiteral)
+		{
+			if (c == '\'')
+			{
+				if (c == next)
+				{
+					// Keep a single escaped quotation mark
+					lexeme += c;
+					state.skipNext = true;
+					goto readNext;
+				}
+				else
+				{
+					tokens.emplace_back(Token{
+						.type = TokenType::LiteralString,
+						.value = lexeme
+						});
+					lexeme.clear();
+
+					state.stringLiteral = false;
+					goto readNext;
+				}
+			}
+			else
+			{
+				// Consume the string literal
+				lexeme += c;
+				goto readNext;
+			}
+		}
+
+		if (state.integerLiteral && c == '.' && std::iswdigit(next))
+		{
+			// Accept a single decimal point in numbers. Go from integer to decimal literal.
+			state.integerLiteral = false;
+			lexeme += c;
+			goto readNext;
+		}
+
 		if (c == '<')
 		{
 			if (c == prev)
@@ -133,45 +172,7 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 			goto readNext;
 		}
 
-		if (state.integerLiteral && c == '.' && std::iswdigit(next))
-		{
-			// Accept a single decimal point in numbers. Go from integer to decimal literal.
-			state.integerLiteral = false;
-			lexeme += c;
-			goto readNext;
-		}
-
-		if (state.stringLiteral)
-		{
-			if (c == '\'')
-			{
-				if (c == next)
-				{
-					// Keep a single escaped quotation mark
-					lexeme += c;
-					state.skipNext = true;
-					goto readNext;
-				}
-				else
-				{
-					tokens.emplace_back(Token{
-						.type = TokenType::LiteralString,
-						.value = lexeme
-						});
-					lexeme.clear();
-
-					state.stringLiteral = false;
-					goto readNext;
-				}
-			}
-			else
-			{
-				// Consume the string literal
-				lexeme += c;
-				goto readNext;
-			}
-		}
-		else if (c == '\'')
+		if (c == '\'')
 		{
 			AddToken(lexeme, tokens);
 			lexeme.clear();
