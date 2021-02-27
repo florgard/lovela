@@ -13,7 +13,8 @@ public:
 		{
 			UnknownError,
 			SyntaxError,
-			CommentBracketMismatch,
+			OpenComment,
+			OpenStringLiteral,
 		} code{};
 		int line{};
 		std::wstring message;

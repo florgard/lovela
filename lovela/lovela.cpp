@@ -135,6 +135,26 @@ void TestLexer(ILexer& lexer)
     }
 
     {
+        std::wistringstream iss{ L"'abc" };
+        const auto expected = std::vector<Token>{
+        };
+        const auto tokens = lexer.Lex(iss);
+        assert(tokens == expected);
+        auto& errors = lexer.GetErrors();
+        assert(errors.size() == 1 && errors[0].code == ILexer::Error::Code::OpenStringLiteral && errors[0].line == 1);
+    }
+
+    {
+        std::wistringstream iss{ L"\r\n'abc" };
+        const auto expected = std::vector<Token>{
+        };
+        const auto tokens = lexer.Lex(iss);
+        assert(tokens == expected);
+        auto& errors = lexer.GetErrors();
+        assert(errors.size() == 1 && errors[0].code == ILexer::Error::Code::OpenStringLiteral && errors[0].line == 2);
+    }
+
+    {
         std::wistringstream iss{ L"func: 123." };
         const auto expected = std::vector<Token>{
             {.type{TokenType::Identifier}, .value{L"func"} },
@@ -240,7 +260,7 @@ void TestLexer(ILexer& lexer)
         const auto tokens = lexer.Lex(iss);
         assert(tokens == expected);
         auto& errors = lexer.GetErrors();
-        assert(errors.size() == 1 && errors[0].code == ILexer::Error::Code::CommentBracketMismatch && errors[0].line == 1);
+        assert(errors.size() == 1 && errors[0].code == ILexer::Error::Code::OpenComment && errors[0].line == 1);
     }
 
     {

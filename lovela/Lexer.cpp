@@ -64,6 +64,7 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 	std::vector<Token> tokens;
 	std::wstring lexeme;
 	currentLine = 1;
+	errors.clear();
 
 	struct State
 	{
@@ -206,14 +207,18 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 		c = next;
 	}
 
-	if (!state.commentLevel)
+	if (state.commentLevel)
 	{
-		AddToken(lexeme, tokens);
-		lexeme.clear();
+		AddError(Error::Code::OpenComment, L"A comment has not been terminated.");
+	}
+	else if (state.stringLiteral)
+	{
+		AddError(Error::Code::OpenStringLiteral, L"A string literal has not been terminated.");
 	}
 	else
 	{
-		AddError(Error::Code::CommentBracketMismatch, L"Mismatch in the number of opening and closing double angle brackets for nested comments.");
+		AddToken(lexeme, tokens);
+		lexeme.clear();
 	}
 
 	return tokens;
