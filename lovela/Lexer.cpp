@@ -13,14 +13,14 @@ static_assert(LexerBase::Trim(L""sv) == L""sv);
 static_assert(LexerBase::Trim(L" \t\r\n\f\v"sv) == L""sv);
 static_assert(LexerBase::Trim(L"a b c \r\n"sv) == L"a b c"sv);
 
-static_assert(LexerBase::GetTokenType('(') == TokenType::ParenRoundOpen);
-static_assert(LexerBase::GetTokenType('.') == TokenType::SeparatorDot);
-static_assert(LexerBase::GetTokenType(' ') == TokenType::Empty);
+static_assert(LexerBase::GetTokenType('(') == Token::Type::ParenRoundOpen);
+static_assert(LexerBase::GetTokenType('.') == Token::Type::SeparatorDot);
+static_assert(LexerBase::GetTokenType(' ') == Token::Type::Empty);
 
 Token LexerBase::GetToken(wchar_t lexeme) noexcept
 {
 	auto type = GetTokenType(lexeme);
-	if (type == TokenType::Empty)
+	if (type == Token::Type::Empty)
 	{
 		return {};
 	}
@@ -30,13 +30,13 @@ Token LexerBase::GetToken(wchar_t lexeme) noexcept
 
 Token LexerBase::GetToken(const std::wstring_view& lexeme) noexcept
 {
-	static const std::vector<std::pair<std::wregex, TokenType>> tokenRegexes{
-		{ std::wregex{ LR"(\d+)" }, TokenType::LiteralInteger },
-		{ std::wregex{ LR"(\d+\.\d+)" }, TokenType::LiteralDecimal },
-		{ std::wregex{ LR"(\w+)" }, TokenType::Identifier },
-		{ std::wregex{ LR"(<|>|<>|<=|>=|=)" }, TokenType::OperatorComparison },
-		{ std::wregex{ LR"(\+|-|\*|/|/*)" }, TokenType::OperatorArithmetic },
-		{ std::wregex{ LR"(\*\*|\+\+|--)" }, TokenType::OperatorBitwise },
+	static const std::vector<std::pair<std::wregex, Token::Type>> tokenRegexes{
+		{ std::wregex{ LR"(\d+)" }, Token::Type::LiteralInteger },
+		{ std::wregex{ LR"(\d+\.\d+)" }, Token::Type::LiteralDecimal },
+		{ std::wregex{ LR"(\w+)" }, Token::Type::Identifier },
+		{ std::wregex{ LR"(<|>|<>|<=|>=|=)" }, Token::Type::OperatorComparison },
+		{ std::wregex{ LR"(\+|-|\*|/|/*)" }, Token::Type::OperatorArithmetic },
+		{ std::wregex{ LR"(\*\*|\+\+|--)" }, Token::Type::OperatorBitwise },
 	};
 	
 	auto trimmed = Trim(lexeme);
@@ -115,11 +115,11 @@ TokenGenerator Lexer::Lex() noexcept
 				if (std::iswdigit(state.stringFieldCode))
 				{
 					// Indexed string interpolation. Add the string literal up to this point as a token.
-					co_yield Token{ .type = TokenType::LiteralString, .value = lexeme };
+					co_yield Token{ .type = Token::Type::LiteralString, .value = lexeme };
 					lexeme.clear();
 
 					// Add a string literal interpolation token with the given index.
-					co_yield Token{ .type = TokenType::LiteralStringInterpolation, .value = std::wstring(1, state.stringFieldCode) };
+					co_yield Token{ .type = Token::Type::LiteralStringInterpolation, .value = std::wstring(1, state.stringFieldCode) };
 				}
 				else
 				{
@@ -148,7 +148,7 @@ TokenGenerator Lexer::Lex() noexcept
 				}
 				else
 				{
-					co_yield Token{.type = TokenType::LiteralString, .value = lexeme};
+					co_yield Token{.type = Token::Type::LiteralString, .value = lexeme};
 					lexeme.clear();
 
 					state.stringLiteral = false;
@@ -166,7 +166,7 @@ TokenGenerator Lexer::Lex() noexcept
 				else if (next == '}')
 				{
 					// Unindexed string interpolation. Add the string literal up to this point as a token.
-					co_yield Token{ .type = TokenType::LiteralString, .value = lexeme };
+					co_yield Token{ .type = Token::Type::LiteralString, .value = lexeme };
 					lexeme.clear();
 
 					// Add a string literal interpolation token with the next free index.
@@ -176,7 +176,7 @@ TokenGenerator Lexer::Lex() noexcept
 					}
 					else
 					{
-						co_yield Token{ .type = TokenType::LiteralStringInterpolation, .value = std::wstring(1, state.nextStringInterpolation) };
+						co_yield Token{ .type = Token::Type::LiteralStringInterpolation, .value = std::wstring(1, state.nextStringInterpolation) };
 						state.nextStringInterpolation++;
 					}
 

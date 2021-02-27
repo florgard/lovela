@@ -29,24 +29,24 @@ public:
 		return input.substr(start, end - start + 1);
 	}
 
-	static constexpr TokenType GetTokenType(wchar_t lexeme) noexcept
+	static constexpr Token::Type GetTokenType(wchar_t lexeme) noexcept
 	{
-		constexpr std::array<std::pair<wchar_t, TokenType>, 13> characters{ {
-			{'(', TokenType::ParenRoundOpen },
-			{')', TokenType::ParenRoundClose },
-			{'[', TokenType::ParenSquareOpen },
-			{']', TokenType::ParenSquareClose },
-			{'{', TokenType::ParenCurlyOpen },
-			{'}', TokenType::ParenCurlyClose },
-			{'.', TokenType::SeparatorDot },
-			{',', TokenType::SeparatorComma },
-			{'!', TokenType::SeparatorExclamation },
-			{'?', TokenType::SeparatorQuestion },
-			{':', TokenType::OperatorColon },
+		constexpr std::array<std::pair<wchar_t, Token::Type>, 13> characters{ {
+			{'(', Token::Type::ParenRoundOpen },
+			{')', Token::Type::ParenRoundClose },
+			{'[', Token::Type::ParenSquareOpen },
+			{']', Token::Type::ParenSquareClose },
+			{'{', Token::Type::ParenCurlyOpen },
+			{'}', Token::Type::ParenCurlyClose },
+			{'.', Token::Type::SeparatorDot },
+			{',', Token::Type::SeparatorComma },
+			{'!', Token::Type::SeparatorExclamation },
+			{'?', Token::Type::SeparatorQuestion },
+			{':', Token::Type::OperatorColon },
 		} };
 
 		auto iter = std::find_if(characters.begin(), characters.end(), [&](const auto& pair) { return pair.first == lexeme; });
-		return (iter != characters.end()) ? iter->second : TokenType::Empty;
+		return (iter != characters.end()) ? iter->second : Token::Type::Empty;
 	}
 
 	static constexpr std::wstring_view GetStringField(wchar_t code) noexcept
