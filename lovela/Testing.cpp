@@ -20,8 +20,8 @@ void TestCode(const char* name, ILexer& lexer, std::wstring_view code, const std
 		if (actual != expected)
 		{
 			success = false;
-			std::wcerr << "Test \"" << name << "\": Token mismatch: Token is (" << static_cast<int>(actual.type) << ' ' << actual.value
-				<< "), expected (" << static_cast<int>(expected.type) << ' ' << expected.value << ").\n";
+			std::wcerr << "Test \"" << name << "\" error: Token " << i << " is (" << static_cast<int>(actual.type) << " \"" << actual.value
+				<< "\"), expected (" << static_cast<int>(expected.type) << " \"" << expected.value << "\").\n";
 		}
 	}
 
@@ -37,13 +37,13 @@ void TestCode(const char* name, ILexer& lexer, std::wstring_view code, const std
 		if (actual.code != expected.code)
 		{
 			success = false;
-			std::wcerr << "Test \"" << name << "\": Error mismatch: Code is " << static_cast<int>(actual.code) << ", expected " << static_cast<int>(expected.code) << ".\n"
+			std::wcerr << "Test \"" << name << "\" error: Error " << i << " code is " << static_cast<int>(actual.code) << ", expected " << static_cast<int>(expected.code) << ".\n"
 				<< '(' << actual.line << ':' << actual.column << ") error " << static_cast<int>(actual.code) << ": " << actual.message << '\n';
 		}
 		else if (expected.line && actual.line != expected.line)
 		{
 			success = false;
-			std::wcerr << "Test \"" << name << "\": Error mismatch: Line is " << actual.line << ", expected " << expected.line << ".\n"
+			std::wcerr << "Test \"" << name << "\" error: Error " << i << " line number is " << actual.line << ", expected " << expected.line << ".\n"
 				<< '(' << actual.line << ':' << actual.column << ") error " << static_cast<int>(actual.code) << ": " << actual.message << '\n';
 		}
 	}

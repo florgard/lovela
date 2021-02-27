@@ -46,7 +46,7 @@ public:
 		} };
 
 		auto iter = std::find_if(characters.begin(), characters.end(), [&](const auto& pair) { return pair.first == lexeme; });
-		return (iter != characters.end()) ? iter->second : TokenType::Unknown;
+		return (iter != characters.end()) ? iter->second : TokenType::Empty;
 	}
 
 	static constexpr std::wstring_view GetStringField(wchar_t code) noexcept
@@ -66,7 +66,7 @@ protected:
 	constexpr bool AddToken(wchar_t lexeme, std::vector<Token>& tokens) noexcept
 	{
 		auto type = GetTokenType(lexeme);
-		if (type == TokenType::Unknown)
+		if (type == TokenType::Empty)
 		{
 			return false;
 		}

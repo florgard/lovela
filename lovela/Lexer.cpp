@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <iostream>
 #include <cwctype>
+#include <sstream>
 
 using namespace std::literals::string_view_literals;
 
@@ -14,7 +15,7 @@ static_assert(LexerBase::Trim(L"a b c \r\n"sv) == L"a b c"sv);
 
 static_assert(LexerBase::GetTokenType('(') == TokenType::ParenRoundOpen);
 static_assert(LexerBase::GetTokenType('.') == TokenType::SeparatorDot);
-static_assert(LexerBase::GetTokenType(' ') == TokenType::Unknown);
+static_assert(LexerBase::GetTokenType(' ') == TokenType::Empty);
 
 void LexerBase::AddToken(const std::wstring_view& lexeme, std::vector<Token>& tokens)
 {
@@ -73,6 +74,7 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 		bool integerLiteral = false;
 		bool stringLiteral = false;
 		wchar_t stringFieldCode = 0;
+		wchar_t nextStringInterpolation = '1';
 		int commentLevel = 0;
 	} state;
 
@@ -97,7 +99,20 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 		{
 			if (c == '}')
 			{
-				lexeme += GetStringField(state.stringFieldCode);
+				if (std::iswdigit(state.stringFieldCode))
+				{
+					// Indexed string interpolation. Add the string literal up to this point as a token.
+					tokens.emplace_back(Token{ .type = TokenType::LiteralString, .value = lexeme });
+					lexeme.clear();
+
+					// Add a string literal interpolation token with the given index.
+					tokens.emplace_back(Token{ .type = TokenType::LiteralStringInterpolation, .value{1, state.stringFieldCode} });
+				}
+				else
+				{
+					// Add the string field value to the string literal.
+					lexeme += GetStringField(state.stringFieldCode);
+				}
 			}
 			else
 			{
@@ -120,13 +135,11 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 				}
 				else
 				{
-					tokens.emplace_back(Token{
-						.type = TokenType::LiteralString,
-						.value = lexeme
-						});
+					tokens.emplace_back(Token{.type = TokenType::LiteralString, .value = lexeme});
 					lexeme.clear();
 
 					state.stringLiteral = false;
+					state.nextStringInterpolation = '1';
 				}
 			}
 			else if (c == '{')
@@ -137,17 +150,33 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 					lexeme += c;
 					state.skipNext = true;
 				}
-				else
+				else if (next == '}')
 				{
-					if (GetStringField(next).empty())
+					// Unindexed string interpolation. Add the string literal up to this point as a token.
+					tokens.emplace_back(Token{ .type = TokenType::LiteralString, .value = lexeme });
+					lexeme.clear();
+
+					// Add a string literal interpolation token with the next free index.
+					if (state.nextStringInterpolation > '9')
 					{
-						AddError(Error::Code::StringFieldUnknown, std::wstring(L"Unknown string field code \"") + next + L"\".");
+						AddError(Error::Code::StringInterpolationOverLimit, std::wstring(L"Too many string interpolations, index out of bounds (greater than 9)."));
 					}
 					else
 					{
-						state.stringFieldCode = next;
-						state.skipNext = true;
+						tokens.emplace_back(Token{ .type = TokenType::LiteralStringInterpolation, .value = std::wstring(1, state.nextStringInterpolation) });
+						state.nextStringInterpolation++;
 					}
+
+					state.skipNext = true;
+				}
+				else if (std::iswdigit(next) || !GetStringField(next).empty())
+				{
+					state.stringFieldCode = next;
+					state.skipNext = true;
+				}
+				else
+				{
+					AddError(Error::Code::StringFieldUnknown, std::wstring(L"Unknown string field code \"") + next + L"\".");
 				}
 			}
 			else

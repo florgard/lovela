@@ -44,15 +44,34 @@ void TestLexer(ILexer& lexer)
 	TestCode("non-closed string literal on line 2", lexer, L"\n'abc", {}, { {.code = ILexer::Error::Code::OpenStringLiteral, .line = 2 } });
 	TestCode("non-closed string literal on line 1", lexer, L"\r'abc", {}, { {.code = ILexer::Error::Code::OpenStringLiteral, .line = 1 } });
 	TestCode("whitespace outside and within string literal", lexer, L"\t'ab\r\n\tc'\r\n", { {.type = TokenType::LiteralString, .value = L"ab\r\n\tc" }}, {});
+
 	TestCode("escaped curly bracket", lexer, L"'{{'", { {.type = TokenType::LiteralString, .value = L"{" } }, {});
 	TestCode("escaped curly bracket", lexer, L"'{{}'", { {.type = TokenType::LiteralString, .value = L"{}" } }, {});
 	TestCode("single closing curly bracket", lexer, L"'}'", { {.type = TokenType::LiteralString, .value = L"}" } }, {});
-	TestCode("string replacement field", lexer, L"'{n}'", { {.type = TokenType::LiteralString, .value = L"\n" } }, {});
-	TestCode("string replacement fields", lexer, L"'{t}{n}{r}'", { {.type = TokenType::LiteralString, .value = L"\t\n\r" } }, {});
-	TestCode("embedded string replacement fields", lexer, L"'abc{r}{n}def'", { {.type = TokenType::LiteralString, .value = L"abc\r\ndef" } }, {});
-	TestCode("non-closed string replacement field", lexer, L"'{n'", {}, { {.code = ILexer::Error::Code::StringFieldIllformed}, {.code = ILexer::Error::Code::OpenStringLiteral} });
-	TestCode("ill-formed string replacement field", lexer, L"'{nn}'", { {.type = TokenType::LiteralString, .value = L"}"} }, { {.code = ILexer::Error::Code::StringFieldIllformed} });
-	TestCode("unknown string replacement field", lexer, L"'{m}'", { {.type = TokenType::LiteralString, .value = L"m}"} }, { {.code = ILexer::Error::Code::StringFieldUnknown} });
+	TestCode("string field", lexer, L"'{n}'", { {.type = TokenType::LiteralString, .value = L"\n" } }, {});
+	TestCode("string fields", lexer, L"'{t}{n}{r}'", { {.type = TokenType::LiteralString, .value = L"\t\n\r" } }, {});
+	TestCode("embedded string fields", lexer, L"'abc{r}{n}def'", { {.type = TokenType::LiteralString, .value = L"abc\r\ndef" } }, {});
+	TestCode("non-closed string field", lexer, L"'{n'", {}, { {.code = ILexer::Error::Code::StringFieldIllformed}, {.code = ILexer::Error::Code::OpenStringLiteral} });
+	TestCode("ill-formed string field", lexer, L"'{nn}'", { {.type = TokenType::LiteralString, .value = L"}"} }, { {.code = ILexer::Error::Code::StringFieldIllformed} });
+	TestCode("unknown string field", lexer, L"'{m}'", { {.type = TokenType::LiteralString, .value = L"m}"} }, { {.code = ILexer::Error::Code::StringFieldUnknown} });
+
+	TestCode("unindexed string interpolation", lexer, L"'{}'", {
+		{.type = TokenType::LiteralString, .value = L"" },
+		{.type = TokenType::LiteralStringInterpolation, .value = L"1" },
+		{.type = TokenType::LiteralString, .value = L"" },
+		}, {});
+	TestCode("embedded unindexed string interpolation", lexer, L"'abc{}'", {
+		{.type = TokenType::LiteralString, .value = L"abc" },
+		{.type = TokenType::LiteralStringInterpolation, .value = L"1" },
+		{.type = TokenType::LiteralString, .value = L"" },
+		}, {});
+	TestCode("unindexed string interpolations", lexer, L"'abc{}{}'", {
+		{.type = TokenType::LiteralString, .value = L"abc" },
+		{.type = TokenType::LiteralStringInterpolation, .value = L"1" },
+		{.type = TokenType::LiteralString, .value = L"" },
+		{.type = TokenType::LiteralStringInterpolation, .value = L"2" },
+		{.type = TokenType::LiteralString, .value = L"" },
+		}, {});
 
 	TestCode("trivial integer function", lexer, L"func: 123.", {
 			{.type = TokenType::Identifier, .value = L"func"},

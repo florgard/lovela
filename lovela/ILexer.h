@@ -17,6 +17,7 @@ public:
 			OpenStringLiteral,
 			StringFieldIllformed,
 			StringFieldUnknown,
+			StringInterpolationOverLimit,
 		} code{};
 
 		int line{};

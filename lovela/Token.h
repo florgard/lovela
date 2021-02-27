@@ -4,9 +4,10 @@
 
 enum class TokenType
 {
-	Unknown,
+	Empty,
 	Identifier,
 	LiteralString,
+	LiteralStringInterpolation,
 	LiteralInteger,
 	LiteralDecimal,
 	ParenRoundOpen,
