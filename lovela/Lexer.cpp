@@ -172,7 +172,7 @@ TokenGenerator Lexer::Lex() noexcept
 					// Add a string literal interpolation token with the next free index.
 					if (state.nextStringInterpolation > '9')
 					{
-						AddError(Error::Code::StringInterpolationOverLimit, std::wstring(L"Too many string interpolations, index out of bounds (greater than 9)."));
+						AddError(Error::Code::StringInterpolationOverflow, std::wstring(L"Too many string interpolations, index out of bounds (greater than 9)."));
 					}
 					else
 					{
@@ -317,11 +317,11 @@ TokenGenerator Lexer::Lex() noexcept
 
 	if (state.commentLevel)
 	{
-		AddError(Error::Code::OpenComment, L"A comment has not been terminated.");
+		AddError(Error::Code::CommentOpen, L"A comment has not been terminated.");
 	}
 	else if (state.stringLiteral)
 	{
-		AddError(Error::Code::OpenStringLiteral, L"A string literal has not been terminated.");
+		AddError(Error::Code::StringLiteralOpen, L"A string literal has not been terminated.");
 	}
 	else
 	{

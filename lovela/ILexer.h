@@ -15,11 +15,11 @@ public:
 		{
 			UnknownError,
 			SyntaxError,
-			OpenComment,
-			OpenStringLiteral,
+			CommentOpen,
+			StringLiteralOpen,
 			StringFieldIllformed,
 			StringFieldUnknown,
-			StringInterpolationOverLimit,
+			StringInterpolationOverflow,
 		} code{};
 
 		int line{};

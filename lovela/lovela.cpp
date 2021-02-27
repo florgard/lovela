@@ -40,11 +40,11 @@ void TestLexer()
 		{.type = Token::Type::LiteralString, .value = L"c"},
 		}, {});
 	Test("comment in string literal", L"'<< abc >>'", { {.type = Token::Type::LiteralString, .value = L"<< abc >>" } }, {});
-	Test("non-closed string literal", L"'", {}, { {.code = ILexer::Error::Code::OpenStringLiteral } });
-	Test("non-closed string literal on line 1", L"'abc", {}, { {.code = ILexer::Error::Code::OpenStringLiteral, .line = 1 } });
-	Test("non-closed string literal on line 2", L"\r\n'abc", {}, { {.code = ILexer::Error::Code::OpenStringLiteral, .line = 2 } });
-	Test("non-closed string literal on line 2", L"\n'abc", {}, { {.code = ILexer::Error::Code::OpenStringLiteral, .line = 2 } });
-	Test("non-closed string literal on line 1", L"\r'abc", {}, { {.code = ILexer::Error::Code::OpenStringLiteral, .line = 1 } });
+	Test("non-closed string literal", L"'", {}, { {.code = ILexer::Error::Code::StringLiteralOpen } });
+	Test("non-closed string literal on line 1", L"'abc", {}, { {.code = ILexer::Error::Code::StringLiteralOpen, .line = 1 } });
+	Test("non-closed string literal on line 2", L"\r\n'abc", {}, { {.code = ILexer::Error::Code::StringLiteralOpen, .line = 2 } });
+	Test("non-closed string literal on line 2", L"\n'abc", {}, { {.code = ILexer::Error::Code::StringLiteralOpen, .line = 2 } });
+	Test("non-closed string literal on line 1", L"\r'abc", {}, { {.code = ILexer::Error::Code::StringLiteralOpen, .line = 1 } });
 	Test("whitespace outside and within string literal", L"\t'ab\r\n\tc'\r\n", { {.type = Token::Type::LiteralString, .value = L"ab\r\n\tc" }}, {});
 
 	Test("escaped curly bracket", L"'{{'", { {.type = Token::Type::LiteralString, .value = L"{" } }, {});
@@ -53,7 +53,7 @@ void TestLexer()
 	Test("string field", L"'{n}'", { {.type = Token::Type::LiteralString, .value = L"\n" } }, {});
 	Test("string fields", L"'{t}{n}{r}'", { {.type = Token::Type::LiteralString, .value = L"\t\n\r" } }, {});
 	Test("embedded string fields", L"'abc{r}{n}def'", { {.type = Token::Type::LiteralString, .value = L"abc\r\ndef" } }, {});
-	Test("non-closed string field", L"'{n'", {}, { {.code = ILexer::Error::Code::StringFieldIllformed}, {.code = ILexer::Error::Code::OpenStringLiteral} });
+	Test("non-closed string field", L"'{n'", {}, { {.code = ILexer::Error::Code::StringFieldIllformed}, {.code = ILexer::Error::Code::StringLiteralOpen} });
 	Test("ill-formed string field", L"'{nn}'", { {.type = Token::Type::LiteralString, .value = L"}"} }, { {.code = ILexer::Error::Code::StringFieldIllformed} });
 	Test("unknown string field", L"'{m}'", { {.type = Token::Type::LiteralString, .value = L"m}"} }, { {.code = ILexer::Error::Code::StringFieldUnknown} });
 
@@ -128,7 +128,7 @@ void TestLexer()
 		}, {});
 	Test("non-closed comment", L"<<<<123>>ident234<<<<123<<456>>>:>.", {
 			{.type = Token::Type::Identifier, .value = L"ident234"},
-		}, { {.code = ILexer::Error::Code::OpenComment, .line = 1} });
+		}, { {.code = ILexer::Error::Code::CommentOpen, .line = 1} });
 	Test("comparison operator", L"1 < 2", {
 			{.type = Token::Type::LiteralInteger, .value = L"1"},
 			{.type = Token::Type::OperatorComparison, .value = L"<"},
