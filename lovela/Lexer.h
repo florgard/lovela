@@ -11,9 +11,11 @@ public:
 	{
 		enum class Code
 		{
+			UnknownError,
 			SyntaxError,
 			CommentBracketMismatch,
-		} code;
+		} code{};
+		int line{};
 		std::wstring message;
 	};
 
@@ -25,6 +27,7 @@ class LexerBase : public ILexer
 {
 protected:
 	std::vector<Error> errors;
+	int currentLine{};
 
 public:
 	const std::vector<Error>& GetErrors() noexcept override
@@ -80,6 +83,11 @@ protected:
 		tokens.emplace_back(Token{ .type = type, .value = std::wstring(1, lexeme) });
 
 		return true;
+	}
+
+	void AddError(Error::Code code, const std::wstring& message)
+	{
+		errors.emplace_back(Error{ .code = code, .line = currentLine, .message = message });
 	}
 };
 

@@ -54,7 +54,7 @@ void LexerBase::AddToken(const std::wstring_view& lexeme, std::vector<Token>& to
 		}
 	}
 
-	errors.emplace_back(Error{ .code = Error::Code::SyntaxError, .message = L"Syntax error near \"" + std::wstring(trimmed.data(), trimmed.size()) + L"\"." });
+	AddError(Error::Code::SyntaxError, L"Syntax error near \"" + std::wstring(trimmed.data(), trimmed.size()) + L"\".");
 }
 
 std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
@@ -63,6 +63,7 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 
 	std::vector<Token> tokens;
 	std::wstring lexeme;
+	currentLine = 1;
 
 	struct State
 	{
@@ -191,6 +192,10 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 		{
 			lexeme += c;
 		}
+		else if (c == '\n')
+		{
+			currentLine++;
+		}
 
 	readNext:
 		prev = c;
@@ -204,7 +209,7 @@ std::vector<Token> Lexer::Lex(std::wistream& charStream) noexcept
 	}
 	else
 	{
-		errors.emplace_back(Error{ .code = Error::Code::CommentBracketMismatch, .message = L"Mismatch in the number of opening and closing double angle quotation marks for nested comments." });
+		AddError(Error::Code::CommentBracketMismatch, L"Mismatch in the number of opening and closing double angle brackets for nested comments.");
 	}
 
 	return tokens;

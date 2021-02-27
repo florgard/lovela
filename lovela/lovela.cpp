@@ -78,6 +78,27 @@ void TestLexer(ILexer& lexer)
     }
 
     {
+        std::wistringstream iss{ L"123.456." };
+        const auto expected = std::vector<Token>{
+            {.type{TokenType::LiteralDecimal}, .value{L"123.456"} },
+            {.type{TokenType::SeparatorDot}, .value{L"."} },
+        };
+        const auto tokens = lexer.Lex(iss);
+        assert(tokens == expected);
+    }
+
+    {
+        std::wistringstream iss{ L"123.456.7" };
+        const auto expected = std::vector<Token>{
+            {.type{TokenType::LiteralDecimal}, .value{L"123.456"} },
+            {.type{TokenType::SeparatorDot}, .value{L"."} },
+        };
+        const auto tokens = lexer.Lex(iss);
+        auto& errors = lexer.GetErrors();
+        assert(errors.size() == 1 && errors[0].code == ILexer::Error::Code::SyntaxError && errors[0].line == 1);
+    }
+
+    {
         std::wistringstream iss{ L"''" };
         const auto expected = std::vector<Token>{
             {.type{TokenType::LiteralString}, .value{L""} },
@@ -211,15 +232,16 @@ void TestLexer(ILexer& lexer)
         assert(tokens == expected);
     }
 
-    //{
-    //    // Error
-    //    std::wistringstream iss{ L"<<<<123>>ident234<<<<123<<456>>>:>." };
-    //    const auto expected = std::vector<Token>{
-    //        {.type{TokenType::Identifier}, .value{L"ident234"} },
-    //    };
-    //    const auto tokens = lexer.Lex(iss);
-    //    assert(tokens == expected);
-    //}
+    {
+        std::wistringstream iss{ L"<<<<123>>ident234<<<<123<<456>>>:>." };
+        const auto expected = std::vector<Token>{
+            {.type{TokenType::Identifier}, .value{L"ident234"} },
+        };
+        const auto tokens = lexer.Lex(iss);
+        assert(tokens == expected);
+        auto& errors = lexer.GetErrors();
+        assert(errors.size() == 1 && errors[0].code == ILexer::Error::Code::CommentBracketMismatch && errors[0].line == 1);
+    }
 
     {
         std::wistringstream iss{ L"1 < 2" };
