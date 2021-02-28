@@ -3,6 +3,7 @@
 #include <cassert>
 #include "Testing.h"
 #include "Lexer.h"
+#include "magic_enum.hpp"
 
 void Test(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
 {
@@ -23,8 +24,10 @@ void Test(const char* name, std::wstring_view code, const std::vector<Token>& ex
 		if (actual != expected)
 		{
 			success = false;
-			std::wcerr << "Test \"" << name << "\" error: Token " << i << " is (" << static_cast<int>(actual.type) << " \"" << actual.value
-				<< "\"), expected (" << static_cast<int>(expected.type) << " \"" << expected.value << "\").\n";
+			std::cerr << "Test \"" << name << "\" error: Token " << i << " is " << magic_enum::enum_name(actual.type) << " \"";
+			std::wcerr << actual.value;
+			std::cerr << "\", expected " << magic_enum::enum_name(expected.type) << " \"";
+			std::wcerr << expected.value << "\".\n";
 		}
 	}
 
@@ -40,14 +43,16 @@ void Test(const char* name, std::wstring_view code, const std::vector<Token>& ex
 		if (actual.code != expected.code)
 		{
 			success = false;
-			std::wcerr << "Test \"" << name << "\" error: Error " << i << " code is " << static_cast<int>(actual.code) << ", expected " << static_cast<int>(expected.code) << ".\n"
-				<< '(' << actual.line << ':' << actual.column << ") error " << static_cast<int>(actual.code) << ": " << actual.message << '\n';
+			std::cerr << "Test \"" << name << "\" error: Error " << i << " code is " << magic_enum::enum_name(actual.code) << ", expected " << magic_enum::enum_name(expected.code) << ".\n";
+			std::cerr << '(' << actual.line << ':' << actual.column << ") error " << magic_enum::enum_name(actual.code) << ": ";
+			std::wcerr << actual.message << '\n';
 		}
 		else if (expected.line && actual.line != expected.line)
 		{
 			success = false;
-			std::wcerr << "Test \"" << name << "\" error: Error " << i << " line number is " << actual.line << ", expected " << expected.line << ".\n"
-				<< '(' << actual.line << ':' << actual.column << ") error " << static_cast<int>(actual.code) << ": " << actual.message << '\n';
+			std::cerr << "Test \"" << name << "\" error: Error " << i << " line number is " << actual.line << ", expected " << expected.line << ".\n";
+			std::cerr << '(' << actual.line << ':' << actual.column << ") error " << magic_enum::enum_name(actual.code) << ": ";
+			std::wcerr << actual.message << '\n';
 		}
 	}
 

@@ -29,6 +29,7 @@ struct Token
 
 	std::wstring value;
 
-	constexpr bool operator<=>(const Token& rhs) const noexcept = default;
-	constexpr operator bool() const noexcept { return type != Type::Empty; };
+	bool operator<=>(const Token& rhs) const noexcept = default;
+	bool operator!=(const Token& rhs) const noexcept = default;
+	operator bool() const noexcept { return type != Type::Empty; };
 };
