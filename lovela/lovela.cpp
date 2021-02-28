@@ -6,10 +6,10 @@
 void TestLexer()
 {
 	Test("empty expression", L"", {}, {});
-	Test("single character", L".", { {.type = Token::Type::SeparatorDot, .value = L"." }}, {});
+	Test("single character", L".", { {.type = Token::Type::SeparatorDot, .value = L"." } }, {});
 
-	Test("simple identifier", L"abc", { {.type = Token::Type::Identifier, .value = L"abc" }}, {});
-	Test("Unicode identifier", L"\u65E5\u672C", { {.type = Token::Type::Identifier, .value = L"\u65E5\u672C" }}, {});
+	Test("simple identifier", L"abc", { {.type = Token::Type::Identifier, .value = L"abc" } }, {});
+	Test("Unicode identifier", L"\u65E5\u672C", { {.type = Token::Type::Identifier, .value = L"\u65E5\u672C" } }, {});
 	//Test(L"\u0061\u0300", { { .type = Token::Type::Identifier, .value = L"\u0061\u0300" }}, {});
 
 	Test("integer literal", L"123", {
@@ -19,7 +19,7 @@ void TestLexer()
 		{.type = Token::Type::LiteralInteger, .value = L"123"},
 		{.type = Token::Type::SeparatorDot, .value = L"."},
 		}, {});
-	Test("decimal literal", L"123.456", { {.type = Token::Type::LiteralDecimal, .value = L"123.456" }}, {});
+	Test("decimal literal", L"123.456", { {.type = Token::Type::LiteralDecimal, .value = L"123.456" } }, {});
 	Test("decimal literal and full stop", L"123.456.", {
 		{.type = Token::Type::LiteralDecimal, .value = L"123.456"},
 		{.type = Token::Type::SeparatorDot, .value = L"."},
@@ -30,11 +30,11 @@ void TestLexer()
 		{.type = Token::Type::LiteralInteger, .value = L"7"},
 		}, {});
 
-	Test("empty string literal", L"''", { {.type = Token::Type::LiteralString, .value = L"" }}, {});
-	Test("single escaped quotation mark", L"''''", { {.type = Token::Type::LiteralString, .value = L"'" }}, {});
-	Test("simple string literal", L"'abc'", { {.type = Token::Type::LiteralString, .value = L"abc" }}, {});
-	Test("string literal with whitespace", L"'ab c'", { {.type = Token::Type::LiteralString, .value = L"ab c" }}, {});
-	Test("string literal with escaped quotation mark", L"'ab''c'", { {.type = Token::Type::LiteralString, .value = L"ab'c" }}, {});
+	Test("empty string literal", L"''", { {.type = Token::Type::LiteralString, .value = L"" } }, {});
+	Test("single escaped quotation mark", L"''''", { {.type = Token::Type::LiteralString, .value = L"'" } }, {});
+	Test("simple string literal", L"'abc'", { {.type = Token::Type::LiteralString, .value = L"abc" } }, {});
+	Test("string literal with whitespace", L"'ab c'", { {.type = Token::Type::LiteralString, .value = L"ab c" } }, {});
+	Test("string literal with escaped quotation mark", L"'ab''c'", { {.type = Token::Type::LiteralString, .value = L"ab'c" } }, {});
 	Test("separated string literals", L"'ab' 'c'", {
 		{.type = Token::Type::LiteralString, .value = L"ab"},
 		{.type = Token::Type::LiteralString, .value = L"c"},
@@ -45,7 +45,7 @@ void TestLexer()
 	Test("non-closed string literal on line 2", L"\r\n'abc", {}, { {.code = ILexer::Error::Code::StringLiteralOpen, .line = 2 } });
 	Test("non-closed string literal on line 2", L"\n'abc", {}, { {.code = ILexer::Error::Code::StringLiteralOpen, .line = 2 } });
 	Test("non-closed string literal on line 1", L"\r'abc", {}, { {.code = ILexer::Error::Code::StringLiteralOpen, .line = 1 } });
-	Test("whitespace outside and within string literal", L"\t'ab\r\n\tc'\r\n", { {.type = Token::Type::LiteralString, .value = L"ab\r\n\tc" }}, {});
+	Test("whitespace outside and within string literal", L"\t'ab\r\n\tc'\r\n", { {.type = Token::Type::LiteralString, .value = L"ab\r\n\tc" } }, {});
 
 	Test("escaped curly bracket", L"'{{'", { {.type = Token::Type::LiteralString, .value = L"{" } }, {});
 	Test("escaped curly bracket", L"'{{}'", { {.type = Token::Type::LiteralString, .value = L"{}" } }, {});
