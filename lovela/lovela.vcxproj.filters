@@ -5,6 +5,7 @@
     <ClCompile Include="lovela.cpp" />
     <ClCompile Include="Testing.cpp" />
     <ClCompile Include="Parser.cpp" />
+    <ClCompile Include="LexerBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lexer.h" />
@@ -12,5 +13,6 @@
     <ClInclude Include="Testing.h" />
     <ClInclude Include="ILexer.h" />
     <ClInclude Include="Parser.h" />
+    <ClInclude Include="LexerBase.h" />
   </ItemGroup>
 </Project>
