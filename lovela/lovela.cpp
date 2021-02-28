@@ -88,51 +88,51 @@ void TestLexer()
 		}, {});
 
 	Test("trivial integer function", L"func: 123.", {
-			{.type = Token::Type::Identifier, .value = L"func"},
-			{.type = Token::Type::OperatorColon, .value = L":"},
-			{.type = Token::Type::LiteralInteger, .value = L"123"},
-			{.type = Token::Type::SeparatorDot, .value = L"."},
+		{.type = Token::Type::Identifier, .value = L"func"},
+		{.type = Token::Type::OperatorColon, .value = L":"},
+		{.type = Token::Type::LiteralInteger, .value = L"123"},
+		{.type = Token::Type::SeparatorDot, .value = L"."},
 		}, {});
 	Test("trivial decimal function with whitespace", L"func : 123.4.", {
-			{.type = Token::Type::Identifier, .value = L"func"},
-			{.type = Token::Type::OperatorColon, .value = L":"},
-			{.type = Token::Type::LiteralDecimal, .value = L"123.4"},
-			{.type = Token::Type::SeparatorDot, .value = L"."},
+		{.type = Token::Type::Identifier, .value = L"func"},
+		{.type = Token::Type::OperatorColon, .value = L":"},
+		{.type = Token::Type::LiteralDecimal, .value = L"123.4"},
+		{.type = Token::Type::SeparatorDot, .value = L"."},
 		}, {});
 	Test("trivial decimal function with mixed name and group", L"\r\nfunc44: (123.4).", {
-			{.type = Token::Type::Identifier, .value = L"func44"},
-			{.type = Token::Type::OperatorColon, .value = L":"},
-			{.type = Token::Type::ParenRoundOpen, .value = L"("},
-			{.type = Token::Type::LiteralDecimal, .value = L"123.4"},
-			{.type = Token::Type::ParenRoundClose, .value = L")"},
-			{.type = Token::Type::SeparatorDot, .value = L"."},
+		{.type = Token::Type::Identifier, .value = L"func44"},
+		{.type = Token::Type::OperatorColon, .value = L":"},
+		{.type = Token::Type::ParenRoundOpen, .value = L"("},
+		{.type = Token::Type::LiteralDecimal, .value = L"123.4"},
+		{.type = Token::Type::ParenRoundClose, .value = L")"},
+		{.type = Token::Type::SeparatorDot, .value = L"."},
 		}, {});
 
 	Test("mixed character identifier", L"ident123.", {
-			{.type = Token::Type::Identifier, .value = L"ident123"},
-			{.type = Token::Type::SeparatorDot, .value = L"."},
+		{.type = Token::Type::Identifier, .value = L"ident123"},
+		{.type = Token::Type::SeparatorDot, .value = L"."},
 		}, {});
 	Test("commented out identifier", L"<< ident123. >>", {}, {});
 	Test("commented out identifier and whitespace", L"<<\r\nident123.\r\n>>", {}, {});
 	Test("commented and non-commented identifier", L"<< ident123. >> ident456.", {
-			{.type = Token::Type::Identifier, .value = L"ident456"},
-			{.type = Token::Type::SeparatorDot, .value = L"."},
+		{.type = Token::Type::Identifier, .value = L"ident456"},
+		{.type = Token::Type::SeparatorDot, .value = L"."},
 		}, {});
 	Test("nested comments", L"<<<< 123 << 456 >>>>.>> ident456.", {
-			{.type = Token::Type::Identifier, .value = L"ident456"},
-			{.type = Token::Type::SeparatorDot, .value = L"."},
+		{.type = Token::Type::Identifier, .value = L"ident456"},
+		{.type = Token::Type::SeparatorDot, .value = L"."},
 		}, {});
 	Test("multiple comments", L"<<<<123>>ident234<<<<123<<456>>>:>>.", {
-			{.type = Token::Type::Identifier, .value = L"ident234"},
-			{.type = Token::Type::SeparatorDot, .value = L"."},
+		{.type = Token::Type::Identifier, .value = L"ident234"},
+		{.type = Token::Type::SeparatorDot, .value = L"."},
 		}, {});
 	Test("non-closed comment", L"<<<<123>>ident234<<<<123<<456>>>:>.", {
-			{.type = Token::Type::Identifier, .value = L"ident234"},
+		{.type = Token::Type::Identifier, .value = L"ident234"},
 		}, { {.code = ILexer::Error::Code::CommentOpen, .line = 1} });
 	Test("comparison operator", L"1 < 2", {
-			{.type = Token::Type::LiteralInteger, .value = L"1"},
-			{.type = Token::Type::OperatorComparison, .value = L"<"},
-			{.type = Token::Type::LiteralInteger, .value = L"2"},
+		{.type = Token::Type::LiteralInteger, .value = L"1"},
+		{.type = Token::Type::OperatorComparison, .value = L"<"},
+		{.type = Token::Type::LiteralInteger, .value = L"2"},
 		}, {});
 }
 
