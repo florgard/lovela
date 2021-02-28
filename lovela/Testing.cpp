@@ -20,12 +20,12 @@ void Testing::TestToken()
 	assert((!Token{ Token::Type::Identifier }.empty()));
 
 	static constexpr std::array<std::pair<int, double>, 2> values{ { {1, 1.1}, {2, 2.2} } };
-	static constexpr auto map = StaticMap<int, double, values.size()>{{values}};
-	static_assert(map.at(1) == 1.1);
-	static_assert(map.at(2) == 2.2);
+	static constexpr auto map1 = StaticMap<int, double, values.size()>{{values}};
+	static_assert(map1.at(1) == 1.1);
+	static_assert(map1.at(2) == 2.2);
 	try {
 		// Must throw
-		if (map.at(3) == 3.3) {}
+		if (map1.at(3) == 3.3) {}
 		assert(false);
 	}
 	catch (...) {}
@@ -169,7 +169,10 @@ void Testing::TestParser()
 	std::wistringstream input(L"func: 123.");
 	Lexer lexer(input);
 	Parser parser(lexer.Lex());
-	parser.Parse();
+	auto node = parser.Parse();
+	assert(node->type == Node::Type::Root);
+	assert(node->children.size() == 1);
+	assert(node->children.front()->type == Node::Type::Function);
 }
 
 void Testing::TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
