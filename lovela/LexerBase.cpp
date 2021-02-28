@@ -44,7 +44,7 @@ Token LexerBase::GetToken(const std::wstring_view& lexeme) noexcept
 	if (trimmed.length() == 1)
 	{
 		auto token = GetToken(trimmed[0]);
-		if (token)
+		if (!token.empty())
 		{
 			return token;
 		}
