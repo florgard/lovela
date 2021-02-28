@@ -1,10 +1,11 @@
 #include <iostream>
 #include <sstream>
 #include <cassert>
+#include "magic_enum.hpp"
 #include "Testing.h"
 #include "Parser.h"
 #include "Lexer.h"
-#include "magic_enum.hpp"
+#include "StaticMap.h"
 
 void Testing::TestToken()
 {
@@ -17,6 +18,17 @@ void Testing::TestToken()
 	assert((Token{}.empty()));
 	assert((Token{ {}, L"a" }.empty()));
 	assert((!Token{ Token::Type::Identifier }.empty()));
+
+	static constexpr std::array<std::pair<int, double>, 2> values{ { {1, 1.1}, {2, 2.2} } };
+	static constexpr auto map = StaticMap<int, double, values.size()>{{values}};
+	static_assert(map.at(1) == 1.1);
+	static_assert(map.at(2) == 2.2);
+	try {
+		// Must throw
+		if (map.at(3) == 3.3) {}
+		assert(false);
+	}
+	catch (...) {}
 }
 
 void Testing::TestLexer()

@@ -14,5 +14,6 @@
     <ClInclude Include="ILexer.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="LexerBase.h" />
+    <ClInclude Include="StaticMap.h" />
   </ItemGroup>
 </Project>

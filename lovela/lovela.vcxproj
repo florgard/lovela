@@ -164,6 +164,7 @@
     <ClInclude Include="Lexer.h" />
     <ClInclude Include="LexerBase.h" />
     <ClInclude Include="Parser.h" />
+    <ClInclude Include="StaticMap.h" />
     <ClInclude Include="Testing.h" />
     <ClInclude Include="Token.h" />
   </ItemGroup>
