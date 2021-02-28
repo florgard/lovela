@@ -9,9 +9,14 @@
 void Testing::TestToken()
 {
 	assert((Token{} == Token{}));
+	assert((Token{ Token::Type::Identifier } != Token{}));
+	assert((Token{ {}, L"a" } != Token{}));
 	assert((Token{ Token::Type::Identifier, L"a" } == Token{ Token::Type::Identifier, L"a" }));
 	assert((Token{ Token::Type::Identifier, L"a" } != Token{ Token::Type::Identifier, L"b" }));
 	assert((Token{ Token::Type::Identifier, L"a" } != Token{ Token::Type::LiteralString, L"a" }));
+	assert((Token{}.empty()));
+	assert((Token{ {}, L"a" }.empty()));
+	assert((!Token{ Token::Type::Identifier }.empty()));
 }
 
 void Testing::TestLexer()
