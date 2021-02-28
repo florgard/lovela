@@ -6,6 +6,7 @@
 #include "Parser.h"
 #include "Lexer.h"
 #include "StaticMap.h"
+#include "Utility.h"
 
 void Testing::TestToken()
 {
@@ -194,10 +195,8 @@ void Testing::TestLexer(const char* name, std::wstring_view code, const std::vec
 		if (actual != expected)
 		{
 			success = false;
-			std::cerr << "Test \"" << name << "\" error: Token " << i + 1 << " is " << magic_enum::enum_name(actual.type) << " \"";
-			std::wcerr << actual.value;
-			std::cerr << "\", expected " << magic_enum::enum_name(expected.type) << " \"";
-			std::wcerr << expected.value << "\".\n";
+			std::wcerr << "Test \"" << name << "\" error: Token " << i + 1 << " is " << ToWString(magic_enum::enum_name(actual.type)) << " \"" << actual.value
+				<< "\", expected " << ToWString(magic_enum::enum_name(expected.type)) << " \"" << expected.value << "\".\n";
 		}
 	}
 
@@ -213,16 +212,15 @@ void Testing::TestLexer(const char* name, std::wstring_view code, const std::vec
 		if (actual.code != expected.code)
 		{
 			success = false;
-			std::cerr << "Test \"" << name << "\" error: Error " << i + 1 << " code is " << magic_enum::enum_name(actual.code) << ", expected " << magic_enum::enum_name(expected.code) << ".\n";
-			std::cerr << '(' << actual.line << ':' << actual.column << ") error " << magic_enum::enum_name(actual.code) << ": ";
-			std::wcerr << actual.message << '\n';
+			std::wcerr << "Test \"" << name << "\" error: Error " << i + 1 << " code is " << ToWString(magic_enum::enum_name(actual.code))
+				<< ", expected " << ToWString(magic_enum::enum_name(expected.code)) << ".\n"
+				<< '(' << actual.line << ':' << actual.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n';
 		}
 		else if (expected.line && actual.line != expected.line)
 		{
 			success = false;
-			std::cerr << "Test \"" << name << "\" error: Error " << i + 1 << " line number is " << actual.line << ", expected " << expected.line << ".\n";
-			std::cerr << '(' << actual.line << ':' << actual.column << ") error " << magic_enum::enum_name(actual.code) << ": ";
-			std::wcerr << actual.message << '\n';
+			std::wcerr << "Test \"" << name << "\" error: Error " << i + 1 << " line number is " << actual.line << ", expected " << expected.line << ".\n"
+				<< '(' << actual.line << ':' << actual.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n';
 		}
 	}
 
