@@ -10,12 +10,12 @@ protected:
 	int currentColumn{};
 
 public:
-	const std::vector<Error>& GetErrors() noexcept override
+	[[nodiscard]] const std::vector<Error>& GetErrors() noexcept override
 	{
 		return errors;
 	}
 
-	static constexpr std::wstring_view Trim(const std::wstring_view& input) noexcept
+	[[nodiscard]] static constexpr std::wstring_view Trim(const std::wstring_view& input) noexcept
 	{
 		constexpr wchar_t whitespace[]{ L" \t\r\n\f\v" };
 
@@ -29,7 +29,7 @@ public:
 		return input.substr(start, end - start + 1);
 	}
 
-	static constexpr Token::Type GetTokenType(wchar_t lexeme) noexcept
+	[[nodiscard]] static constexpr Token::Type GetTokenType(wchar_t lexeme) noexcept
 	{
 		constexpr std::array<std::pair<wchar_t, Token::Type>, 13> characters{ {
 			{'(', Token::Type::ParenRoundOpen },
@@ -49,7 +49,7 @@ public:
 		return (iter != characters.end()) ? iter->second : Token::Type::Empty;
 	}
 
-	static constexpr std::wstring_view GetStringField(wchar_t code) noexcept
+	[[nodiscard]] static constexpr std::wstring_view GetStringField(wchar_t code) noexcept
 	{
 		switch (code)
 		{
@@ -61,8 +61,8 @@ public:
 	}
 
 protected:
-	Token GetToken(wchar_t lexeme) noexcept;
-	Token GetToken(const std::wstring_view& lexeme) noexcept;
+	[[nodiscard]] Token GetToken(wchar_t lexeme) noexcept;
+	[[nodiscard]] Token GetToken(const std::wstring_view& lexeme) noexcept;
 
 	void AddError(Error::Code code, const std::wstring& message)
 	{

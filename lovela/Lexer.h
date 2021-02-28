@@ -3,9 +3,11 @@
 
 class Lexer : public LexerBase
 {
-	std::wistream& charStream;
-
 public:
 	Lexer(std::wistream& charStream) noexcept;
-	TokenGenerator Lex() noexcept override;
+
+	[[nodiscard]] TokenGenerator Lex() noexcept override;
+
+private:
+	std::wistream& charStream;
 };

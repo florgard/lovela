@@ -26,9 +26,9 @@ public:
 		int column{};
 		std::wstring message;
 
-		constexpr bool operator<=>(const Error& rhs) const noexcept = default;
+		[[nodiscard]] auto operator<=>(const Error& rhs) const noexcept = default;
 	};
 
-	virtual TokenGenerator Lex() noexcept = 0;
-	virtual const std::vector<Error>& GetErrors() noexcept = 0;
+	[[nodiscard]] virtual TokenGenerator Lex() noexcept = 0;
+	[[nodiscard]] virtual const std::vector<Error>& GetErrors() noexcept = 0;
 };
