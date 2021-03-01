@@ -8,8 +8,18 @@
 #include "StaticMap.h"
 #include "Utility.h"
 
+struct MSVCBug
+{
+	enum class E { A, B, C, } e{};
+	auto operator<=>(const MSVCBug& rhs) const noexcept = default;
+	operator bool() const noexcept { return e != E::A; }
+};
+
 void Testing::TestToken()
 {
+	// When this breaks Token::operator bool() can be added again.
+	assert(!(MSVCBug{ MSVCBug::E::B } != MSVCBug{ MSVCBug::E::C }));
+
 	assert((Token{} == Token{}));
 	assert((Token{ Token::Type::Identifier } != Token{}));
 	assert((Token{ {}, L"a" } != Token{}));
