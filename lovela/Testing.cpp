@@ -180,7 +180,21 @@ void Testing::TestLexer()
 
 void Testing::TestParser()
 {
-	TestParser("trivial function declaration", L"func", Node{ .type{Node::Type::Root}, .children{ Node{.type{Node::Type::Function} }} }, {});
+	TestParser("trivial function declaration", L"func", { .type{Node::Type::Root}, .children{
+		{.type = Node::Type::Function, .name = L"func", .objectType{.any = true}}
+		} }, {});
+	TestParser("function with any object type", L"[] func", { .type{Node::Type::Root}, .children{
+		{.type = Node::Type::Function, .name = L"func", .objectType{.any = true}}
+		} }, {});
+	TestParser("function with given object type", L"[type] func", { .type{Node::Type::Root}, .children{
+		{.type = Node::Type::Function, .name = L"func", .objectType{.name = L"type"}}
+		} }, {});
+	TestParser("function with empty object type", L"[()] func", { .type{Node::Type::Root}, .children{
+		{.type = Node::Type::Function, .name = L"func", .objectType{.empty = true}}
+		} }, {});
+	TestParser("anonymous function", L"[]()", { .type{Node::Type::Root}, .children{
+		{.type = Node::Type::Function, .objectType{.any = true}}
+		} }, {});
 }
 
 void Testing::TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
@@ -251,13 +265,13 @@ void Testing::TestParser(const char* name, std::wstring_view code, const Node& e
 
 bool Testing::TestAST(int& index, const char* name, const Node& tree, const Node& expectedTree)
 {
-	if (tree.type != expectedTree.type)
+	if (tree != expectedTree)
 	{
 		const auto& actual = tree;
 		const auto& expected = expectedTree;
 
-		std::wcerr << "Test \"" << name << "\" error: Token " << index + 1 << " is " << ToWString(magic_enum::enum_name(actual.type))
-			<< ", expected " << ToWString(magic_enum::enum_name(expected.type)) << ".\n";
+		std::wcerr << "Test \"" << name << "\" error: Some property of token " << index + 1 << " of type " << ToWString(magic_enum::enum_name(actual.type))
+			<< " differs from the expected token of type " << ToWString(magic_enum::enum_name(expected.type)) << ".\n";
 		return false;
 	}
 

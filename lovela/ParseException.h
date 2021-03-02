@@ -16,3 +16,8 @@ struct UnexpectedTokenException : public ParseException
 	UnexpectedTokenException(const Token& token);
 	UnexpectedTokenException(const Token& token, Token::Type expected);
 };
+
+struct InvalidCurrentTokenException : public ParseException
+{
+	InvalidCurrentTokenException(const Token& token);
+};

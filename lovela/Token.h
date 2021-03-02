@@ -25,8 +25,8 @@ struct Token
 		OperatorComparison,
 		OperatorArithmetic,
 		OperatorBitwise,
-		OperatorBind,
-		OperatorExport,
+		OperatorArrowRight,
+		OperatorArrowLeft,
 	} type{};
 
 	std::wstring value;

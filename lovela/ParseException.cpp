@@ -28,3 +28,10 @@ UnexpectedTokenException::UnexpectedTokenException(const Token& token, Token::Ty
 	s << "Unexpected token " << ToWString(magic_enum::enum_name(token.type)) << ", expected " << ToWString(magic_enum::enum_name(expected));
 	message = s.str();
 }
+
+InvalidCurrentTokenException::InvalidCurrentTokenException(const Token& token) : ParseException(token)
+{
+	std::wostringstream s;
+	s << "Invalid current token " << ToWString(magic_enum::enum_name(token.type));
+	message = s.str();
+}
