@@ -149,6 +149,16 @@ void Testing::TestLexer()
 		{.type = Token::Type::ParenRoundClose, .value = L")"},
 		{.type = Token::Type::SeparatorDot, .value = L"."},
 		}, {});
+	TestLexer("imported function", L"-> func", {
+		{.type = Token::Type::OperatorArrow, .value = L"->"},
+		{.type = Token::Type::Identifier, .value = L"func"},
+		}, {});
+	TestLexer("exported function", L"<- []func", {
+		{.type = Token::Type::OperatorArrow, .value = L"<-"},
+		{.type = Token::Type::ParenSquareOpen, .value = L"["},
+		{.type = Token::Type::ParenSquareClose, .value = L"]"},
+		{.type = Token::Type::Identifier, .value = L"func"},
+		}, {});
 
 	TestLexer("mixed character identifier", L"ident123.", {
 		{.type = Token::Type::Identifier, .value = L"ident123"},
@@ -211,6 +221,12 @@ void Testing::TestParser()
 			Parameter{.name = L"name", .type{.name = L"type"}},
 			Parameter{.type{.name = L"unnamed"}}
 		} },
+		} }, {});
+	TestParser("imported function", L"-> func", Node{ .type{Node::Type::Root}, .children{
+		Node{.type = Node::Type::Function, .name = L"func", .objectType{.any = true}, .imported = true}
+		} }, {});
+	TestParser("exported function", L"<- [] func", Node{ .type{Node::Type::Root}, .children{
+		Node{.type = Node::Type::Function, .name = L"func", .objectType{.any = true}, .exported = true}
 		} }, {});
 }
 

@@ -1,3 +1,4 @@
+#include <vector>
 #include <sstream>
 #include "magic_enum.hpp"
 #include "Utility.h"
@@ -26,6 +27,23 @@ UnexpectedTokenException::UnexpectedTokenException(const Token& token, Token::Ty
 {
 	std::wostringstream s;
 	s << "Unexpected token " << ToWString(magic_enum::enum_name(token.type)) << ", expected " << ToWString(magic_enum::enum_name(expected));
+	message = s.str();
+}
+
+UnexpectedTokenException::UnexpectedTokenException(const Token& token, const std::vector<Token::Type>& expected) : ParseException(token)
+{
+	std::wostringstream s;
+	s << "Unexpected token " << ToWString(magic_enum::enum_name(token.type)) << ", expected ";
+	bool first = true;
+	for (const auto& type : expected)
+	{
+		if (!first)
+		{
+			s << ", ";
+		}
+		first = false;
+		s << ToWString(magic_enum::enum_name(type));
+	}
 	message = s.str();
 }
 

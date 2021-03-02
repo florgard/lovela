@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cassert>
 #include "ParseException.h"
 #include "Parser.h"
@@ -25,13 +26,10 @@ Node Parser::Parse() noexcept
 	{
 		try
 		{
-			if (Accept(Token::Type::ParenSquareOpen)
-				|| Accept(Token::Type::Identifier))
+			if (Accept({ Token::Type::ParenSquareOpen, Token::Type::Identifier, Token::Type::OperatorArrow }))
 			{
 				node.children.emplace_back(ParseFunctionDeclaration());
 			}
-			// TODO: OperatorArrowRight -> Import
-			// TODO: OperatorArrorLeft -> Export
 			else
 			{
 				throw UnexpectedTokenException(*tokenIterator);
@@ -59,13 +57,18 @@ Node Parser::Parse() noexcept
 
 void Parser::Expect(Token::Type type)
 {
-	if (tokenIterator == tokenGenerator.end() || tokenIterator->type != type)
+	if (!Accept(type))
 	{
 		throw UnexpectedTokenException(*tokenIterator, type);
 	}
+}
 
-	currentToken = *tokenIterator;
-	tokenIterator++;
+void Parser::Expect(const std::vector<Token::Type>& types)
+{
+	if (!Accept(types))
+	{
+		throw UnexpectedTokenException(*tokenIterator, types);
+	}
 }
 
 bool Parser::Accept(Token::Type type)
@@ -78,6 +81,19 @@ bool Parser::Accept(Token::Type type)
 	currentToken = *tokenIterator;
 	tokenIterator++;
 	return true;
+}
+
+bool Parser::Accept(const std::vector<Token::Type>& types)
+{
+	for (const auto& type : types)
+	{
+		if (Accept(type))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 TypeSpec Parser::ParseTypeSpec()
@@ -182,6 +198,13 @@ ParameterList Parser::ParseParameterList()
 Node Parser::ParseFunctionDeclaration()
 {
 	auto node = Node{ .type{Node::Type::Function} };
+
+	if (currentToken.type == Token::Type::OperatorArrow)
+	{
+		node.exported = currentToken.value == L"<-";
+		node.imported = currentToken.value == L"->";
+		Expect({ Token::Type::ParenSquareOpen, Token::Type::Identifier });
+	}
 
 	if (currentToken.type == Token::Type::ParenSquareOpen)
 	{

@@ -32,6 +32,7 @@ Token LexerBase::GetToken(const std::wstring_view& lexeme) noexcept
 		{ std::wregex{ LR"(<|>|<>|<=|>=|=)" }, Token::Type::OperatorComparison },
 		{ std::wregex{ LR"(\+|-|\*|/|/*)" }, Token::Type::OperatorArithmetic },
 		{ std::wregex{ LR"(\*\*|\+\+|--)" }, Token::Type::OperatorBitwise },
+		{ std::wregex{ LR"(<-|->)" }, Token::Type::OperatorArrow },
 	};
 
 	auto trimmed = Trim(lexeme);

@@ -70,7 +70,9 @@ public:
 
 private:
 	void Expect(Token::Type type);
+	void Expect(const std::vector<Token::Type>& types);
 	[[nodiscard]] bool Accept(Token::Type type);
+	[[nodiscard]] bool Accept(const std::vector<Token::Type>& types);
 
 	[[nodiscard]] TypeSpec ParseTypeSpec();
 	[[nodiscard]] ParameterList ParseParameterList();
