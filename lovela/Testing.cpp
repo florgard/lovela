@@ -2,11 +2,11 @@
 #include <sstream>
 #include <cassert>
 #include "magic_enum.hpp"
-#include "Testing.h"
 #include "Parser.h"
 #include "Lexer.h"
 #include "StaticMap.h"
 #include "Utility.h"
+#include "Testing.h"
 
 struct MSVCBug
 {
@@ -126,6 +126,9 @@ void Testing::TestLexer()
 		{.type = Token::Type::LiteralString, .value = L"" },
 		}, {});
 
+	TestLexer("trivial function declaration", L"func", {
+		{.type = Token::Type::Identifier, .value = L"func"},
+		}, {});
 	TestLexer("trivial integer function", L"func: 123.", {
 		{.type = Token::Type::Identifier, .value = L"func"},
 		{.type = Token::Type::OperatorColon, .value = L":"},
@@ -177,13 +180,7 @@ void Testing::TestLexer()
 
 void Testing::TestParser()
 {
-	std::wistringstream input(L"func: 123.");
-	Lexer lexer(input);
-	Parser parser(lexer.Lex());
-	auto node = parser.Parse();
-	assert(node->type == Node::Type::Root);
-	assert(node->children.size() == 1);
-	assert(node->children.front()->type == Node::Type::Function);
+	TestParser("trivial function declaration", L"func", Node{ .type{Node::Type::Root}, .children{ Node{.type{Node::Type::Function} }} }, {});
 }
 
 void Testing::TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
@@ -235,4 +232,49 @@ void Testing::TestLexer(const char* name, std::wstring_view code, const std::vec
 	}
 
 	assert(success);
+}
+
+void Testing::TestParser(const char* name, std::wstring_view code, const Node& expectedTree, const std::vector<ILexer::Error>& expectedErrors)
+{
+	expectedErrors; // TODO
+
+	std::wistringstream input(std::wstring(code.data(), code.size()));
+	Lexer lexer(input);
+	Parser parser(lexer.Lex());
+	auto tree = parser.Parse();
+
+	int index = 0;
+	bool success = TestAST(index, name, tree, expectedTree);
+
+	assert(success);
+}
+
+bool Testing::TestAST(int& index, const char* name, const Node& tree, const Node& expectedTree)
+{
+	if (tree.type != expectedTree.type)
+	{
+		const auto& actual = tree;
+		const auto& expected = expectedTree;
+
+		std::wcerr << "Test \"" << name << "\" error: Token " << index + 1 << " is " << ToWString(magic_enum::enum_name(actual.type))
+			<< ", expected " << ToWString(magic_enum::enum_name(expected.type)) << ".\n";
+		return false;
+	}
+
+	index++;
+
+	auto actualCount = tree.children.size();
+	auto expectedCount = expectedTree.children.size();
+	auto count = std::max(actualCount, expectedCount);
+	for (int i = 0; i < count; i++)
+	{
+		const auto& actual = i < actualCount ? tree.children[i] : Node{};
+		const auto& expected = i < expectedCount ? expectedTree.children[i] : Node{};
+		if (!TestAST(index, name, actual, expected))
+		{
+			return false;
+		}
+	}
+
+	return true;
 }

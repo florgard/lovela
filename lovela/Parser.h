@@ -1,20 +1,19 @@
 #pragma once
 #include <vector>
-#include <memory>
 #include "ILexer.h"
 
 struct Node
 {
 	enum class Type
 	{
+		Empty,
 		Root,
 		List,
 		Function,
-	} type;
+	} type{};
 
-	std::vector<std::unique_ptr<Node>> children;
-
-	Node(Type type) noexcept;
+	std::vector<Node> children;
+	std::wstring name;
 };
 
 class Parser
@@ -34,13 +33,13 @@ public:
 
 	Parser(TokenGenerator&& tokenGenerator) noexcept;
 
-	[[nodiscard]] std::unique_ptr<Node> Parse() noexcept;
+	[[nodiscard]] Node Parse() noexcept;
 
 private:
 	void Expect(Token::Type type);
 	[[nodiscard]] bool Accept(Token::Type type);
 
-	[[nodiscard]] std::unique_ptr<Node> ParseFunction();
+	[[nodiscard]] Node ParseFunction();
 
 	TokenGenerator tokenGenerator;
 	TokenGenerator::iterator tokenIterator;

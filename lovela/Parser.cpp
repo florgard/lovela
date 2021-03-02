@@ -5,22 +5,6 @@
 #include "Utility.h"
 #include "Parser.h"
 
-Node::Node(Type type) noexcept : type(type)
-{
-}
-
-struct RootNode : Node
-{
-	RootNode() noexcept : Node(Node::Type::Root) {}
-};
-
-struct FunctionNode : public Node
-{
-	std::wstring name;
-
-	FunctionNode() noexcept : Node(Node::Type::Function) {}
-};
-
 struct ParseException
 {
 	std::wstring message;
@@ -67,20 +51,18 @@ Parser::Parser(TokenGenerator&& tokenGenerator) noexcept : tokenGenerator(std::m
 {
 }
 
-std::unique_ptr<Node> Parser::Parse() noexcept
+Node Parser::Parse() noexcept
 {
-	auto node = std::make_unique<RootNode>();
+	auto node = Node{ .type{Node::Type::Root} };
 
-	auto& i = tokenIterator;
-	auto& g = tokenGenerator;
-
-	for (i = g.begin(); i != g.end(); i++)
+	auto& i = tokenIterator = tokenGenerator.begin();
+	while (tokenIterator != tokenGenerator.end())
 	{
 		try
 		{
 			if (Accept(Token::Type::Identifier))
 			{
-				node->children.emplace_back(ParseFunction());
+				node.children.emplace_back(ParseFunction());
 			}
 			else
 			{
@@ -90,6 +72,9 @@ std::unique_ptr<Node> Parser::Parse() noexcept
 		catch (const ParseException& e)
 		{
 			errors.emplace_back(Error{ .message = e.message });
+
+			// Skip the faulty token.
+			tokenIterator++;
 		}
 	}
 
@@ -119,9 +104,9 @@ bool Parser::Accept(Token::Type type)
 	return true;
 }
 
-std::unique_ptr<Node> Parser::ParseFunction()
+Node Parser::ParseFunction()
 {
-	auto node = std::make_unique<FunctionNode>();
+	auto node = Node{ .type{Node::Type::Function} };
 
 	// TODO
 
