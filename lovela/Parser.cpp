@@ -1,51 +1,5 @@
-#include <iostream>
-#include <sstream>
-#include <stdexcept>
-#include "magic_enum.hpp"
-#include "Utility.h"
+#include "ParseException.h"
 #include "Parser.h"
-
-struct ParseException
-{
-	std::wstring message;
-	const Token& token;
-
-	ParseException(const Token& token);
-	ParseException(const Token& token, std::string_view message);
-	ParseException(const Token& token, std::wstring_view message);
-};
-
-ParseException::ParseException(const Token& token) : token(token)
-{
-}
-
-ParseException::ParseException(const Token& token, std::string_view message) : token(token), message(ToWString(message))
-{
-}
-
-ParseException::ParseException(const Token& token, std::wstring_view message) : token(token), message(message)
-{
-}
-
-struct UnexpectedTokenException : public ParseException
-{
-	UnexpectedTokenException(const Token& token);
-	UnexpectedTokenException(const Token& token, Token::Type expected);
-};
-
-UnexpectedTokenException::UnexpectedTokenException(const Token& token) : ParseException(token)
-{
-	std::wostringstream s;
-	s << "Unexpected token " << ToWString(magic_enum::enum_name(token.type));
-	message = s.str();
-}
-
-UnexpectedTokenException::UnexpectedTokenException(const Token& token, Token::Type expected) : ParseException(token)
-{
-	std::wostringstream s;
-	s << "Unexpected token " << ToWString(magic_enum::enum_name(token.type)) << ", expected " << ToWString(magic_enum::enum_name(expected));
-	message = s.str();
-}
 
 Parser::Parser(TokenGenerator&& tokenGenerator) noexcept : tokenGenerator(std::move(tokenGenerator))
 {
