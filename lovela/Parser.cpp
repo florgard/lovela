@@ -7,7 +7,7 @@ bool Node::operator==(const Node& rhs) const noexcept
 	// Compare everything but the children
 	return rhs.type == type
 		&& rhs.name == name
-		&& rhs.functionType == functionType
+		&& rhs.dataType == dataType
 		&& rhs.objectType == objectType
 		&& rhs.parameters == parameters;
 }
@@ -28,7 +28,7 @@ Node Parser::Parse() noexcept
 			if (Accept(Token::Type::ParenSquareOpen)
 				|| Accept(Token::Type::Identifier))
 			{
-				node.children.emplace_back(ParseFunction());
+				node.children.emplace_back(ParseFunctionDeclaration());
 			}
 			// TODO: OperatorArrowRight -> Import
 			// TODO: OperatorArrorLeft -> Export
@@ -179,7 +179,7 @@ ParameterList Parser::ParseParameterList()
 	return parameters;
 }
 
-Node Parser::ParseFunction()
+Node Parser::ParseFunctionDeclaration()
 {
 	auto node = Node{ .type{Node::Type::Function} };
 
@@ -211,7 +211,7 @@ Node Parser::ParseFunction()
 
 	if (Accept(Token::Type::ParenSquareOpen))
 	{
-		node.functionType = ParseTypeSpec();
+		node.dataType = ParseTypeSpec();
 	}
 
 	return node;

@@ -203,10 +203,10 @@ void Testing::TestParser()
 		} },
 		} }, {});
 	TestParser("function with type", L"func [type]", Node{ .type{Node::Type::Root}, .children{
-		Node{.type = Node::Type::Function, .name = L"func", .objectType{.any = true}, .functionType{.name = L"type"}}
+		Node{.type = Node::Type::Function, .name = L"func", .dataType{.name = L"type"}, .objectType{.any = true}}
 		} }, {});
 	TestParser("complete function declaration", L"[objectType] func (untyped, name [type], [unnamed]) [functionType]", Node{ .type{Node::Type::Root}, .children{
-		Node{.type = Node::Type::Function, .name = L"func", .objectType{.name = L"objectType"}, .functionType{.name = L"functionType"}, .parameters{
+		Node{.type = Node::Type::Function, .name = L"func", .dataType{.name = L"functionType"}, .objectType{.name = L"objectType"}, .parameters{
 			Parameter{.name = L"untyped", .type{.any = true}},
 			Parameter{.name = L"name", .type{.name = L"type"}},
 			Parameter{.type{.name = L"unnamed"}}

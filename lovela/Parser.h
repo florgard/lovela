@@ -32,9 +32,13 @@ struct Node
 	} type{};
 
 	std::wstring name;
+	TypeSpec dataType;
+
+	// Function declaration
 	TypeSpec objectType;
-	TypeSpec functionType;
 	ParameterList parameters;
+	bool imported{};
+	bool exported{};
 
 	std::vector<Node> children;
 
@@ -70,7 +74,7 @@ private:
 
 	[[nodiscard]] TypeSpec ParseTypeSpec();
 	[[nodiscard]] ParameterList ParseParameterList();
-	[[nodiscard]] Node ParseFunction();
+	[[nodiscard]] Node ParseFunctionDeclaration();
 
 	TokenGenerator tokenGenerator;
 	TokenGenerator::iterator tokenIterator;
