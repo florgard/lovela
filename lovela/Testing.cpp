@@ -190,7 +190,7 @@ void Testing::TestParser()
 		Node{.type = Node::Type::Function, .name = L"func", .objectType{.name = L"type"}}
 		} }, {});
 	TestParser("function with empty object type", L"[()] func", Node{ .type{Node::Type::Root}, .children{
-		Node{.type = Node::Type::Function, .name = L"func", .objectType{.empty = true}}
+		Node{.type = Node::Type::Function, .name = L"func", .objectType{.none = true}}
 		} }, {});
 	TestParser("anonymous function", L"[]()", Node{ .type{Node::Type::Root}, .children{
 		Node{.type = Node::Type::Function, .objectType{.any = true}}

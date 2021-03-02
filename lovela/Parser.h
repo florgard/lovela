@@ -6,7 +6,7 @@ struct TypeSpec
 {
 	std::wstring name;
 	bool any{};
-	bool empty{};
+	bool none{};
 
 	[[nodiscard]] auto operator<=>(const TypeSpec& rhs) const noexcept = default;
 };

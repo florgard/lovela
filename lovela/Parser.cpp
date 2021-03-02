@@ -103,7 +103,7 @@ TypeSpec Parser::ParseTypeSpec()
 	// [()]
 	else if (Accept(Token::Type::ParenRoundOpen))
 	{
-		typeSpec.empty = true;
+		typeSpec.none = true;
 		Expect(Token::Type::ParenRoundClose);
 		Expect(Token::Type::ParenSquareClose);
 	}
