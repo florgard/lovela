@@ -180,20 +180,27 @@ void Testing::TestLexer()
 
 void Testing::TestParser()
 {
-	TestParser("trivial function declaration", L"func", { .type{Node::Type::Root}, .children{
-		{.type = Node::Type::Function, .name = L"func", .objectType{.any = true}}
+	TestParser("trivial function declaration", L"func", Node{ .type{Node::Type::Root}, .children{
+		Node{.type = Node::Type::Function, .name = L"func", .objectType{.any = true}}
 		} }, {});
-	TestParser("function with any object type", L"[] func", { .type{Node::Type::Root}, .children{
-		{.type = Node::Type::Function, .name = L"func", .objectType{.any = true}}
+	TestParser("function with any object type", L"[] func", Node{ .type{Node::Type::Root}, .children{
+		Node{.type = Node::Type::Function, .name = L"func", .objectType{.any = true}}
 		} }, {});
-	TestParser("function with given object type", L"[type] func", { .type{Node::Type::Root}, .children{
-		{.type = Node::Type::Function, .name = L"func", .objectType{.name = L"type"}}
+	TestParser("function with given object type", L"[type] func", Node{ .type{Node::Type::Root}, .children{
+		Node{.type = Node::Type::Function, .name = L"func", .objectType{.name = L"type"}}
 		} }, {});
-	TestParser("function with empty object type", L"[()] func", { .type{Node::Type::Root}, .children{
-		{.type = Node::Type::Function, .name = L"func", .objectType{.empty = true}}
+	TestParser("function with empty object type", L"[()] func", Node{ .type{Node::Type::Root}, .children{
+		Node{.type = Node::Type::Function, .name = L"func", .objectType{.empty = true}}
 		} }, {});
-	TestParser("anonymous function", L"[]()", { .type{Node::Type::Root}, .children{
-		{.type = Node::Type::Function, .objectType{.any = true}}
+	TestParser("anonymous function", L"[]()", Node{ .type{Node::Type::Root}, .children{
+		Node{.type = Node::Type::Function, .objectType{.any = true}}
+		} }, {});
+	TestParser("function with parameters", L"func(untyped, name [type], [unnamed])", Node{ .type{Node::Type::Root}, .children{
+		Node{.type = Node::Type::Function, .name = L"func", .objectType{.any = true}, .parameters{
+			Parameter{.name = L"untyped", .type{.any = true}},
+			Parameter{.name = L"name", .type{.name = L"type"}},
+			Parameter{.type{.name = L"unnamed"}}
+		} },
 		} }, {});
 }
 

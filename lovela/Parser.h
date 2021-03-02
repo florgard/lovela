@@ -32,14 +32,14 @@ struct Node
 	} type{};
 
 	std::wstring name;
-	TypeSpec functionType;
 	TypeSpec objectType;
+	TypeSpec functionType;
 	ParameterList parameters;
 
 	std::vector<Node> children;
 
-	bool operator==(const Node& rhs) const noexcept;
-	bool operator!=(const Node& rhs) const noexcept
+	[[nodiscard]] bool operator==(const Node& rhs) const noexcept;
+	[[nodiscard]] bool operator!=(const Node& rhs) const noexcept
 	{
 		return !operator==(rhs);
 	}
