@@ -202,6 +202,16 @@ void Testing::TestParser()
 			Parameter{.type{.name = L"unnamed"}}
 		} },
 		} }, {});
+	TestParser("function with type", L"func [type]", Node{ .type{Node::Type::Root}, .children{
+		Node{.type = Node::Type::Function, .name = L"func", .objectType{.any = true}, .functionType{.name = L"type"}}
+		} }, {});
+	TestParser("complete function declaration", L"[objectType] func (untyped, name [type], [unnamed]) [functionType]", Node{ .type{Node::Type::Root}, .children{
+		Node{.type = Node::Type::Function, .name = L"func", .objectType{.name = L"objectType"}, .functionType{.name = L"functionType"}, .parameters{
+			Parameter{.name = L"untyped", .type{.any = true}},
+			Parameter{.name = L"name", .type{.name = L"type"}},
+			Parameter{.type{.name = L"unnamed"}}
+		} },
+		} }, {});
 }
 
 void Testing::TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)

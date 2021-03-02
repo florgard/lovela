@@ -209,7 +209,10 @@ Node Parser::ParseFunction()
 		node.parameters = ParseParameterList();
 	}
 
-	// TODO: function type
+	if (Accept(Token::Type::ParenSquareOpen))
+	{
+		node.functionType = ParseTypeSpec();
+	}
 
 	return node;
 }
