@@ -7,6 +7,8 @@
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="LexerBase.cpp" />
     <ClCompile Include="ParseException.cpp" />
+    <ClCompile Include="Node.cpp" />
+    <ClCompile Include="ParserBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lexer.h" />
@@ -18,5 +20,8 @@
     <ClInclude Include="StaticMap.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="ParseException.h" />
+    <ClInclude Include="IParser.h" />
+    <ClInclude Include="Node.h" />
+    <ClInclude Include="ParserBase.h" />
   </ItemGroup>
 </Project>

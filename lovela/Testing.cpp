@@ -281,7 +281,7 @@ void Testing::TestLexer(const char* name, std::wstring_view code, const std::vec
 	assert(success);
 }
 
-void Testing::TestParser(const char* name, std::wstring_view code, const Node& expectedTree, const std::vector<ILexer::Error>& expectedErrors)
+void Testing::TestParser(const char* name, std::wstring_view code, const Node& expectedTree, const std::vector<IParser::Error>& expectedErrors)
 {
 	expectedErrors; // TODO
 

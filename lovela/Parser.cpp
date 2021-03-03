@@ -1,19 +1,8 @@
-#include <algorithm>
 #include <cassert>
 #include "ParseException.h"
 #include "Parser.h"
 
-bool Node::operator==(const Node& rhs) const noexcept
-{
-	// Compare everything but the children
-	return rhs.type == type
-		&& rhs.name == name
-		&& rhs.dataType == dataType
-		&& rhs.objectType == objectType
-		&& rhs.parameters == parameters;
-}
-
-Parser::Parser(TokenGenerator&& tokenGenerator) noexcept : tokenGenerator(std::move(tokenGenerator))
+Parser::Parser(TokenGenerator&& tokenGenerator) noexcept : ParserBase(std::move(tokenGenerator))
 {
 }
 
@@ -53,47 +42,6 @@ Node Parser::Parse() noexcept
 	}
 
 	return node;
-}
-
-void Parser::Expect(Token::Type type)
-{
-	if (!Accept(type))
-	{
-		throw UnexpectedTokenException(*tokenIterator, type);
-	}
-}
-
-void Parser::Expect(const std::vector<Token::Type>& types)
-{
-	if (!Accept(types))
-	{
-		throw UnexpectedTokenException(*tokenIterator, types);
-	}
-}
-
-bool Parser::Accept(Token::Type type)
-{
-	if (tokenIterator == tokenGenerator.end() || tokenIterator->type != type)
-	{
-		return false;
-	}
-
-	currentToken = *tokenIterator;
-	tokenIterator++;
-	return true;
-}
-
-bool Parser::Accept(const std::vector<Token::Type>& types)
-{
-	for (const auto& type : types)
-	{
-		if (Accept(type))
-		{
-			return true;
-		}
-	}
-
-	return false;
 }
 
 TypeSpec Parser::ParseTypeSpec()

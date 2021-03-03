@@ -156,16 +156,21 @@
     <ClCompile Include="Lexer.cpp" />
     <ClCompile Include="LexerBase.cpp" />
     <ClCompile Include="lovela.cpp" />
+    <ClCompile Include="Node.cpp" />
     <ClCompile Include="ParseException.cpp" />
     <ClCompile Include="Parser.cpp" />
+    <ClCompile Include="ParserBase.cpp" />
     <ClCompile Include="Testing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ILexer.h" />
+    <ClInclude Include="IParser.h" />
     <ClInclude Include="Lexer.h" />
     <ClInclude Include="LexerBase.h" />
+    <ClInclude Include="Node.h" />
     <ClInclude Include="ParseException.h" />
     <ClInclude Include="Parser.h" />
+    <ClInclude Include="ParserBase.h" />
     <ClInclude Include="StaticMap.h" />
     <ClInclude Include="Testing.h" />
     <ClInclude Include="Token.h" />
