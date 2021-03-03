@@ -6,6 +6,9 @@ bool Node::operator==(const Node& rhs) const noexcept
 	return rhs.type == type
 		&& rhs.name == name
 		&& rhs.dataType == dataType
+		&& rhs.nameSpace == nameSpace
 		&& rhs.objectType == objectType
-		&& rhs.parameters == parameters;
+		&& rhs.parameters == parameters
+		&& rhs.imported == imported
+		&& rhs.exported == exported;
 }
