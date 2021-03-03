@@ -36,6 +36,7 @@ struct Node
 	TypeSpec dataType;
 
 	// Function declaration
+	std::vector<std::wstring> nameSpace;
 	TypeSpec objectType;
 	ParameterList parameters;
 	bool imported{};
