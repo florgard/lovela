@@ -1,8 +1,4 @@
 #pragma once
-#include <array>
-#include <string_view>
-#include <algorithm>
-#include <stdexcept>
 
 // Clone of Jason Turner's constexpr map: https://www.youtube.com/watch?v=INn3xa4pMfg
 // Usage:

@@ -1,11 +1,6 @@
-#include <iostream>
-#include <sstream>
-#include <cassert>
-#include "magic_enum.hpp"
+#include "pch.h"
 #include "Parser.h"
 #include "Lexer.h"
-#include "StaticMap.h"
-#include "Utility.h"
 #include "Testing.h"
 
 struct MSVCBug
@@ -292,7 +287,7 @@ void Testing::TestParser(const char* name, std::wstring_view code, const Node& e
 
 	int index = 0;
 	bool success = TestAST(index, name, tree, expectedTree);
-
+	success;
 	assert(success);
 }
 

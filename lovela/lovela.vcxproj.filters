@@ -9,6 +9,7 @@
     <ClCompile Include="ParseException.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="ParserBase.cpp" />
+    <ClCompile Include="pch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lexer.h" />
@@ -23,5 +24,6 @@
     <ClInclude Include="IParser.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="ParserBase.h" />
+    <ClInclude Include="pch.h" />
   </ItemGroup>
 </Project>

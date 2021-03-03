@@ -1,5 +1,4 @@
 #pragma once
-#include <array>
 #include "ILexer.h"
 
 class LexerBase : public ILexer

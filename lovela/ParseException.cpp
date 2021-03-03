@@ -1,7 +1,4 @@
-#include <vector>
-#include <sstream>
-#include "magic_enum.hpp"
-#include "Utility.h"
+#include "pch.h"
 #include "ParseException.h"
 
 ParseException::ParseException(const Token& token) : token(token)

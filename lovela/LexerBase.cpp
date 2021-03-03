@@ -1,6 +1,5 @@
+#include "pch.h"
 #include "Lexer.h"
-#include <string_view>
-#include <regex>
 
 using namespace std::literals::string_view_literals;
 

@@ -1,4 +1,4 @@
-#include <algorithm>
+#include "pch.h"
 #include "Lexer.h"
 #include "ParseException.h"
 #include "ParserBase.h"

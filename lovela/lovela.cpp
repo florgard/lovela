@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Lexer.h"
 #include "Parser.h"
 #include "Testing.h"

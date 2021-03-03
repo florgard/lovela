@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Node.h"
 
 bool Node::operator==(const Node& rhs) const noexcept

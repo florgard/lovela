@@ -1,6 +1,5 @@
+#include "pch.h"
 #include "Lexer.h"
-#include <cwctype>
-#include <sstream>
 
 Lexer::Lexer(std::wistream& charStream) noexcept : charStream(charStream)
 {

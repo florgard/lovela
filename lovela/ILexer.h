@@ -1,7 +1,4 @@
 #pragma once
-#include <string>
-#include <vector>
-#include <experimental/generator>
 #include "Token.h"
 
 using TokenGenerator = std::experimental::generator<Token>;
