@@ -7,6 +7,11 @@ class ParserBase : public IParser
 public:
 	ParserBase(TokenGenerator&& tokenGenerator) noexcept;
 
+	[[nodiscard]] const std::vector<Error>& GetErrors() noexcept override
+	{
+		return errors;
+	}
+
 protected:
 	void Expect(Token::Type type);
 	void Expect(const std::vector<Token::Type>& types);

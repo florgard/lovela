@@ -3,21 +3,12 @@
 
 class LexerBase : public ILexer
 {
-protected:
-	std::vector<Error> errors;
-	int currentLine{};
-	int currentColumn{};
-
 public:
 	[[nodiscard]] const std::vector<Error>& GetErrors() noexcept override
 	{
 		return errors;
 	}
 
-private:
-	static constexpr wchar_t whitespace[7]{ L" \t\r\n\f\v" };
-
-public:
 	[[nodiscard]] static constexpr std::wstring_view Trim(const std::wstring_view& input) noexcept
 	{
 		const auto start = input.find_first_not_of(whitespace);
@@ -41,4 +32,11 @@ protected:
 	{
 		errors.emplace_back(Error{ .code = code, .line = currentLine, .column = currentColumn, .message = message });
 	}
+
+	std::vector<Error> errors;
+	int currentLine{};
+	int currentColumn{};
+
+private:
+	static constexpr wchar_t whitespace[7]{ L" \t\r\n\f\v" };
 };

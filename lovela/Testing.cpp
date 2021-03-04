@@ -264,7 +264,9 @@ void Testing::TestParser()
 		Node{.type = Node::Type::Function, .name = L"namespace2", .objectType{.any = true}, .parameters{
 			Parameter{.name = L"operand", .type{.any = true}},
 		} },
-		} }, {});
+		} }, {
+			IParser::Error{ .code = IParser::Error::Code::ParseError },
+		});
 }
 
 void Testing::TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
@@ -303,14 +305,14 @@ void Testing::TestLexer(const char* name, std::wstring_view code, const std::vec
 		if (actual.code != expected.code)
 		{
 			success = false;
-			std::wcerr << "Test \"" << name << "\" error: Error " << i + 1 << " code is " << ToWString(magic_enum::enum_name(actual.code))
+			std::wcerr << "Lexer test \"" << name << "\" error: Error " << i + 1 << " code is " << ToWString(magic_enum::enum_name(actual.code))
 				<< ", expected " << ToWString(magic_enum::enum_name(expected.code)) << ".\n"
 				<< '(' << actual.line << ':' << actual.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n';
 		}
 		else if (expected.line && actual.line != expected.line)
 		{
 			success = false;
-			std::wcerr << "Test \"" << name << "\" error: Error " << i + 1 << " line number is " << actual.line << ", expected " << expected.line << ".\n"
+			std::wcerr << "Lexer test \"" << name << "\" error: Error " << i + 1 << " line number is " << actual.line << ", expected " << expected.line << ".\n"
 				<< '(' << actual.line << ':' << actual.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n';
 		}
 	}
@@ -329,7 +331,31 @@ void Testing::TestParser(const char* name, std::wstring_view code, const Node& e
 
 	int index = 0;
 	bool success = TestAST(index, name, tree, expectedTree);
-	success;
+
+	auto& errors = parser.GetErrors();
+	const auto actualCount = errors.size();
+	const auto expectedCount = expectedErrors.size();
+	const auto count = std::max(actualCount, expectedCount);
+
+	for (int i = 0; i < count; i++)
+	{
+		const auto actual = i < actualCount ? errors[i] : IParser::Error{};
+		const auto expected = i < expectedCount ? expectedErrors[i] : IParser::Error{};
+		if (actual.code != expected.code)
+		{
+			success = false;
+			std::wcerr << "Parser test \"" << name << "\" error: Error " << i + 1 << " code is " << ToWString(magic_enum::enum_name(actual.code))
+				<< ", expected " << ToWString(magic_enum::enum_name(expected.code)) << ".\n"
+				<< '(' << actual.line << ':' << actual.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n';
+		}
+		else if (expected.line && actual.line != expected.line)
+		{
+			success = false;
+			std::wcerr << "Parser test \"" << name << "\" error: Error " << i + 1 << " line number is " << actual.line << ", expected " << expected.line << ".\n"
+				<< '(' << actual.line << ':' << actual.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n';
+		}
+	}
+
 	assert(success);
 }
 
