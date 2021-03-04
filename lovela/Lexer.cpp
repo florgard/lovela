@@ -170,7 +170,7 @@ TokenGenerator Lexer::Lex() noexcept
 				state.commentLevel++;
 
 				auto token = GetToken(lexeme);
-				if (!token.empty())
+				if (token)
 				{
 					co_yield AddToken(token);
 				}
@@ -205,7 +205,7 @@ TokenGenerator Lexer::Lex() noexcept
 		if (c == '\'')
 		{
 			auto token = GetToken(lexeme);
-			if (!token.empty())
+			if (token)
 			{
 				co_yield AddToken(token);
 			}
@@ -222,7 +222,7 @@ TokenGenerator Lexer::Lex() noexcept
 		else if (std::iswspace(c))
 		{
 			auto token = GetToken(lexeme);
-			if (!token.empty())
+			if (token)
 			{
 				co_yield AddToken(token);
 			}
@@ -232,7 +232,7 @@ TokenGenerator Lexer::Lex() noexcept
 		else if (delimiters.find(c) != delimiters.npos)
 		{
 			auto token = GetToken(lexeme);
-			if (!token.empty())
+			if (token)
 			{
 				co_yield AddToken(token);
 			}
@@ -240,7 +240,7 @@ TokenGenerator Lexer::Lex() noexcept
 			state = State{};
 
 			token = GetToken(c);
-			if (!token.empty())
+			if (token)
 			{
 				co_yield AddToken(token);
 			}
@@ -274,7 +274,7 @@ TokenGenerator Lexer::Lex() noexcept
 	else
 	{
 		auto token = GetToken(lexeme);
-		if (!token.empty())
+		if (token)
 		{
 			co_yield AddToken(token);
 		}
