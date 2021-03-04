@@ -22,4 +22,10 @@ struct StaticMap
             throw std::range_error("Not Found");
         }
     }
+
+    [[nodiscard]] constexpr Value at_or(const Key& key, Value defaultValue) const
+    {
+        const auto itr = std::find_if(data.begin(), data.end(), [&key](const auto& v) { return v.first == key; });
+        return (itr != data.end()) ? itr->second : defaultValue;
+    }
 };

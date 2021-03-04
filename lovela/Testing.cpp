@@ -12,6 +12,10 @@ struct MSVCBug
 
 void Testing::TestToken()
 {
+	assert(LexerBase::GetTokenType('(') == Token::Type::ParenRoundOpen);
+	assert(LexerBase::GetTokenType('.') == Token::Type::SeparatorDot);
+	assert(LexerBase::GetTokenType(' ') == Token::Type::Empty);
+
 	// When this breaks Token::operator bool() can be added again.
 	assert(!(MSVCBug{ MSVCBug::E::B } != MSVCBug{ MSVCBug::E::C }));
 
