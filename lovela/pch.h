@@ -3,6 +3,7 @@
 #include <string_view>
 #include <array>
 #include <vector>
+#include <deque>
 #include <algorithm>
 #include <compare>
 #include <memory>

@@ -5,6 +5,14 @@ Lexer::Lexer(std::wistream& charStream) noexcept : charStream(charStream)
 {
 }
 
+Token Lexer::AddToken(Token token) const
+{
+	token.line = currentLine;
+	token.column = currentColumn;
+	token.code = std::wstring(currentCode.begin(), currentCode.end());
+	return token;
+}
+
 TokenGenerator Lexer::Lex() noexcept
 {
 	static constexpr std::wstring_view delimiters{ L"()[]{}.,:;!?|" };
@@ -32,6 +40,12 @@ TokenGenerator Lexer::Lex() noexcept
 
 	while (c)
 	{
+		currentCode.push_back(c);
+		while (currentCode.size() > 10)
+		{
+			currentCode.pop_front();
+		}
+
 		next = 0;
 		stream >> next;
 	
@@ -48,11 +62,11 @@ TokenGenerator Lexer::Lex() noexcept
 				if (std::iswdigit(state.stringFieldCode))
 				{
 					// Indexed string interpolation. Add the string literal up to this point as a token.
-					co_yield{ .type = Token::Type::LiteralString, .value = lexeme };
+					co_yield AddToken({ .type = Token::Type::LiteralString, .value = lexeme });
 					lexeme.clear();
 
 					// Add a string literal interpolation token with the given index.
-					co_yield{ .type = Token::Type::LiteralStringInterpolation, .value = std::wstring(1, state.stringFieldCode) };
+					co_yield AddToken({ .type = Token::Type::LiteralStringInterpolation, .value = std::wstring(1, state.stringFieldCode) });
 				}
 				else
 				{
@@ -81,7 +95,7 @@ TokenGenerator Lexer::Lex() noexcept
 				}
 				else
 				{
-					co_yield{ .type = Token::Type::LiteralString, .value = lexeme };
+					co_yield AddToken({ .type = Token::Type::LiteralString, .value = lexeme });
 					lexeme.clear();
 
 					state.stringLiteral = false;
@@ -99,7 +113,7 @@ TokenGenerator Lexer::Lex() noexcept
 				else if (next == '}')
 				{
 					// Unindexed string interpolation. Add the string literal up to this point as a token.
-					co_yield{ .type = Token::Type::LiteralString, .value = lexeme };
+					co_yield AddToken({ .type = Token::Type::LiteralString, .value = lexeme });
 					lexeme.clear();
 
 					// Add a string literal interpolation token with the next free index.
@@ -109,7 +123,7 @@ TokenGenerator Lexer::Lex() noexcept
 					}
 					else
 					{
-						co_yield{ .type = Token::Type::LiteralStringInterpolation, .value = std::wstring(1, state.nextStringInterpolation) };
+						co_yield AddToken({ .type = Token::Type::LiteralStringInterpolation, .value = std::wstring(1, state.nextStringInterpolation) });
 						state.nextStringInterpolation++;
 					}
 
@@ -157,7 +171,7 @@ TokenGenerator Lexer::Lex() noexcept
 				auto token = GetToken(lexeme);
 				if (!token.empty())
 				{
-					co_yield token;
+					co_yield AddToken(token);
 				}
 				lexeme.clear();
 				goto readNext;
@@ -192,7 +206,7 @@ TokenGenerator Lexer::Lex() noexcept
 			auto token = GetToken(lexeme);
 			if (!token.empty())
 			{
-				co_yield token;
+				co_yield AddToken(token);
 			}
 			lexeme.clear();
 			state = State{};
@@ -209,7 +223,7 @@ TokenGenerator Lexer::Lex() noexcept
 			auto token = GetToken(lexeme);
 			if (!token.empty())
 			{
-				co_yield token;
+				co_yield AddToken(token);
 			}
 			lexeme.clear();
 			state = State{};
@@ -219,7 +233,7 @@ TokenGenerator Lexer::Lex() noexcept
 			auto token = GetToken(lexeme);
 			if (!token.empty())
 			{
-				co_yield token;
+				co_yield AddToken(token);
 			}
 			lexeme.clear();
 			state = State{};
@@ -227,7 +241,7 @@ TokenGenerator Lexer::Lex() noexcept
 			token = GetToken(c);
 			if (!token.empty())
 			{
-				co_yield token;
+				co_yield AddToken(token);
 			}
 			goto readNext;
 		}
@@ -261,7 +275,7 @@ TokenGenerator Lexer::Lex() noexcept
 		auto token = GetToken(lexeme);
 		if (!token.empty())
 		{
-			co_yield token;
+			co_yield AddToken(token);
 		}
 		lexeme.clear();
 	}

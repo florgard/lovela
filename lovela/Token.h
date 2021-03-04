@@ -30,6 +30,10 @@ struct Token
 
 	std::wstring value;
 
+	int line{};
+	int column{};
+	std::wstring code;
+
 	[[nodiscard]] auto operator<=>(const Token& rhs) const noexcept = default;
 
 	// TODO: Replace empty() with operator bool() when the bug in MSVC is fixed (the token tests must pass).

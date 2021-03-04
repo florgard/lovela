@@ -9,5 +9,8 @@ public:
 	[[nodiscard]] TokenGenerator Lex() noexcept override;
 
 private:
+	Token AddToken(Token token) const;
+
 	std::wistream& charStream;
+	std::deque<wchar_t> currentCode;
 };
