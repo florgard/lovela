@@ -192,6 +192,13 @@ void Testing::TestLexer()
 		{.type = Token::Type::OperatorComparison, .value = L"<"},
 		{.type = Token::Type::LiteralInteger, .value = L"2"},
 		}, {});
+
+	TestLexer("comparison declaration", L"<(operand)", {
+		{.type = Token::Type::OperatorComparison, .value = L"<"},
+		{.type = Token::Type::ParenRoundOpen, .value = L"("},
+		{.type = Token::Type::Identifier, .value = L"operand"},
+		{.type = Token::Type::ParenRoundClose, .value = L")"},
+		}, {});
 }
 
 void Testing::TestParser()
@@ -241,6 +248,23 @@ void Testing::TestParser()
 	TestParser("function with 2 namespaces", L"namespace1|namespaceN|func", Node{ .type{Node::Type::Root}, .children{
 		Node{.type = Node::Type::Function, .name = L"func", .nameSpace{ L"namespace1", L"namespaceN" }, .objectType{.any = true} }
 	} }, {});
+
+	TestParser("binary operator", L"<(operand)", Node{ .type{Node::Type::Root}, .children{
+		Node{.type = Node::Type::Function, .name = L"<", .objectType{.any = true}, .parameters{
+			Parameter{.name = L"operand", .type{.any = true}},
+		} },
+		} }, {});
+	TestParser("binary operator with namespace", L"namespace|< (operand)", Node{ .type{Node::Type::Root}, .children{
+		Node{.type = Node::Type::Function, .name = L"<", .nameSpace{ L"namespace" }, .objectType{.any = true}, .parameters{
+			Parameter{.name = L"operand", .type{.any = true}},
+		} },
+		} }, {});
+	TestParser("invalid binary operator as namespace", L"namespace1|<|namespace2 (operand)", Node{ .type{Node::Type::Root}, .children{
+		Node{.type = Node::Type::Function, .name = L"<", .nameSpace{ L"namespace1" }, .objectType{.any = true} },
+		Node{.type = Node::Type::Function, .name = L"namespace2", .objectType{.any = true}, .parameters{
+			Parameter{.name = L"operand", .type{.any = true}},
+		} },
+		} }, {});
 }
 
 void Testing::TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)

@@ -7,6 +7,9 @@ static const std::vector<Token::Type> beginFunctionDeclarationTokens
 	Token::Type::OperatorArrow,
 	Token::Type::ParenSquareOpen,
 	Token::Type::Identifier,
+	Token::Type::OperatorArithmetic,
+	Token::Type::OperatorBitwise,
+	Token::Type::OperatorComparison,
 };
 
 static const std::vector<Token::Type> literalTokens
@@ -190,19 +193,39 @@ Node Parser::ParseFunctionDeclaration()
 	}
 	// identifier
 	// namespace|identifier
+	// namespace|binaryOperator
 	else if (currentToken.type == Token::Type::Identifier)
 	{
 		auto name = currentToken.value;
 
 		// namespace1|namespaceN|identifier
+		// namespace1|namespaceN|binaryOperator
 		while (Accept(Token::Type::SeparatorVerticalLine))
 		{
 			node.nameSpace.emplace_back(name);
-			Expect(Token::Type::Identifier);
-			name = currentToken.value;
+
+			// binaryOperator
+			if (Accept(binaryOperatorTokens))
+			{
+				name = currentToken.value;
+				break;
+			}
+			// identifier
+			// namespaceN|identifier
+			else
+			{
+				Expect(Token::Type::Identifier);
+				name = currentToken.value;
+			}
 		}
 
 		node.name = name;
+		node.objectType.any = true;
+	}
+	// binaryOperator
+	else if (contains(binaryOperatorTokens, currentToken.type))
+	{
+		node.name = currentToken.value;
 		node.objectType.any = true;
 	}
 	else
