@@ -42,7 +42,7 @@ public:
 			{'!', Token::Type::SeparatorExclamation },
 			{'?', Token::Type::SeparatorQuestion },
 			{'|', Token::Type::SeparatorVerticalLine },
-			{':', Token::Type::OperatorColon },
+			{':', Token::Type::SeparatorColon },
 		} };
 
 		auto iter = std::find_if(characters.begin(), characters.end(), [&](const auto& pair) { return pair.first == lexeme; });

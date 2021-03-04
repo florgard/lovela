@@ -126,19 +126,19 @@ void Testing::TestLexer()
 		}, {});
 	TestLexer("trivial integer function", L"func: 123.", {
 		{.type = Token::Type::Identifier, .value = L"func"},
-		{.type = Token::Type::OperatorColon, .value = L":"},
+		{.type = Token::Type::SeparatorColon, .value = L":"},
 		{.type = Token::Type::LiteralInteger, .value = L"123"},
 		{.type = Token::Type::SeparatorDot, .value = L"."},
 		}, {});
 	TestLexer("trivial decimal function with whitespace", L"func : 123.4.", {
 		{.type = Token::Type::Identifier, .value = L"func"},
-		{.type = Token::Type::OperatorColon, .value = L":"},
+		{.type = Token::Type::SeparatorColon, .value = L":"},
 		{.type = Token::Type::LiteralDecimal, .value = L"123.4"},
 		{.type = Token::Type::SeparatorDot, .value = L"."},
 		}, {});
 	TestLexer("trivial decimal function with mixed name and group", L"\r\nfunc44: (123.4).", {
 		{.type = Token::Type::Identifier, .value = L"func44"},
-		{.type = Token::Type::OperatorColon, .value = L":"},
+		{.type = Token::Type::SeparatorColon, .value = L":"},
 		{.type = Token::Type::ParenRoundOpen, .value = L"("},
 		{.type = Token::Type::LiteralDecimal, .value = L"123.4"},
 		{.type = Token::Type::ParenRoundClose, .value = L")"},
