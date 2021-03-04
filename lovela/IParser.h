@@ -9,6 +9,7 @@ public:
 		enum class Code
 		{
 			ParseError,
+			TestError
 		} code{};
 
 		std::wstring message;

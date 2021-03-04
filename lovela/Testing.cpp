@@ -265,7 +265,7 @@ void Testing::TestParser()
 			Parameter{.name = L"operand", .type{.any = true}},
 		} },
 		} }, {
-			IParser::Error{ .code = IParser::Error::Code::ParseError },
+			IParser::Error{ .code = IParser::Error::Code::TestError },
 		});
 }
 
@@ -307,13 +307,15 @@ void Testing::TestLexer(const char* name, std::wstring_view code, const std::vec
 			success = false;
 			std::wcerr << "Lexer test \"" << name << "\" error: Error " << i + 1 << " code is " << ToWString(magic_enum::enum_name(actual.code))
 				<< ", expected " << ToWString(magic_enum::enum_name(expected.code)) << ".\n"
-				<< '(' << actual.token.line << ':' << actual.token.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n';
+				<< '(' << actual.token.line << ':' << actual.token.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n'
+				<< "\"..." << actual.token.code << "\" <- At this place" << '\n';
 		}
 		else if (expected.token.line && actual.token.line != expected.token.line)
 		{
 			success = false;
 			std::wcerr << "Lexer test \"" << name << "\" error: Error " << i + 1 << " line number is " << actual.token.line << ", expected " << expected.token.line << ".\n"
-				<< '(' << actual.token.line << ':' << actual.token.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n';
+				<< '(' << actual.token.line << ':' << actual.token.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n'
+				<< "\"..." << actual.token.code << "\" <- At this place" << '\n';
 		}
 	}
 
@@ -346,13 +348,15 @@ void Testing::TestParser(const char* name, std::wstring_view code, const Node& e
 			success = false;
 			std::wcerr << "Parser test \"" << name << "\" error: Error " << i + 1 << " code is " << ToWString(magic_enum::enum_name(actual.code))
 				<< ", expected " << ToWString(magic_enum::enum_name(expected.code)) << ".\n"
-				<< '(' << actual.token.line << ':' << actual.token.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n';
+				<< '(' << actual.token.line << ':' << actual.token.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n'
+				<< "\"..." << actual.token.code << "\" <- At this place" << '\n';
 		}
 		else if (expected.token.line && actual.token.line != expected.token.line)
 		{
 			success = false;
 			std::wcerr << "Parser test \"" << name << "\" error: Error " << i + 1 << " line number is " << actual.token.line << ", expected " << expected.token.line << ".\n"
-				<< '(' << actual.token.line << ':' << actual.token.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n';
+				<< '(' << actual.token.line << ':' << actual.token.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n'
+				<< "\"..." << actual.token.code << "\" <- At this place" << '\n';
 		}
 	}
 
