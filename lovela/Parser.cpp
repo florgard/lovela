@@ -168,11 +168,12 @@ Node Parser::ParseFunctionDeclaration()
 		}
 	}
 	// identifier
-	// namespace1|namespaceN|identifier
+	// namespace|identifier
 	else if (currentToken.type == Token::Type::Identifier)
 	{
 		auto name = currentToken.value;
 
+		// namespace1|namespaceN|identifier
 		while (Accept(Token::Type::SeparatorVerticalLine))
 		{
 			node.nameSpace.emplace_back(name);
