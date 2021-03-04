@@ -2,6 +2,27 @@
 #include "ParseException.h"
 #include "Parser.h"
 
+static const std::vector<Token::Type> beginFunctionDeclarationTokens
+{
+	Token::Type::OperatorArrow,
+	Token::Type::ParenSquareOpen,
+	Token::Type::Identifier,
+};
+
+static const std::vector<Token::Type> literalTokens
+{
+	Token::Type::LiteralInteger,
+	Token::Type::LiteralDecimal,
+	Token::Type::LiteralString,
+};
+
+static const std::vector<Token::Type> binaryOperatorTokens
+{
+	Token::Type::OperatorArithmetic,
+	Token::Type::OperatorBitwise,
+	Token::Type::OperatorComparison,
+};
+
 Parser::Parser(TokenGenerator&& tokenGenerator) noexcept : ParserBase(std::move(tokenGenerator))
 {
 }
@@ -15,7 +36,7 @@ Node Parser::Parse() noexcept
 	{
 		try
 		{
-			if (Accept({ Token::Type::ParenSquareOpen, Token::Type::Identifier, Token::Type::OperatorArrow }))
+			if (Accept(beginFunctionDeclarationTokens))
 			{
 				node.children.emplace_back(ParseFunctionDeclaration());
 			}
