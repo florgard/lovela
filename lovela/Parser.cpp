@@ -50,7 +50,7 @@ Node Parser::Parse() noexcept
 		}
 		catch (const InvalidCurrentTokenException& e)
 		{
-			errors.emplace_back(Error{ .message = e.message });
+			errors.emplace_back(Error{ .message = e.message, .token = e.token });
 
 			// Internal logic error: The caller and parsing function doesn't agree on the type of token to handle.
 			assert(false);
@@ -58,7 +58,7 @@ Node Parser::Parse() noexcept
 		}
 		catch (const ParseException& e)
 		{
-			errors.emplace_back(Error{ .message = e.message });
+			errors.emplace_back(Error{ .message = e.message, .token = e.token });
 
 			// Skip the faulty token.
 			tokenIterator++;

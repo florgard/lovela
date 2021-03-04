@@ -27,11 +27,7 @@ public:
 protected:
 	[[nodiscard]] Token GetToken(wchar_t lexeme) noexcept;
 	[[nodiscard]] Token GetToken(const std::wstring_view& lexeme) noexcept;
-
-	void AddError(Error::Code code, const std::wstring& message)
-	{
-		errors.emplace_back(Error{ .code = code, .line = currentLine, .column = currentColumn, .message = message });
-	}
+	void AddError(Error::Code code, const std::wstring& message);
 
 	std::vector<Error> errors;
 	int currentLine{};

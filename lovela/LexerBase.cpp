@@ -91,3 +91,8 @@ Token LexerBase::GetToken(const std::wstring_view& lexeme) noexcept
 
 	return {};
 }
+
+void LexerBase::AddError(Error::Code code, const std::wstring& message)
+{
+	errors.emplace_back(Error{ .code = code, .message = message, .token{.line = currentLine, .column = currentColumn} });
+}

@@ -34,7 +34,11 @@ struct Token
 	int column{};
 	std::wstring code;
 
-	[[nodiscard]] auto operator<=>(const Token& rhs) const noexcept = default;
+	[[nodiscard]] bool operator==(const Token& rhs) const noexcept;
+	[[nodiscard]] bool operator!=(const Token& rhs) const noexcept
+	{
+		return !operator==(rhs);
+	}
 
 	// TODO: Replace empty() with operator bool() when the bug in MSVC is fixed (the token tests must pass).
 	// The bug is the same or similar as the following, but is present in VS 16.8.6.

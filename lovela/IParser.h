@@ -11,9 +11,8 @@ public:
 			ParseError,
 		} code{};
 
-		int line{};
-		int column{};
 		std::wstring message;
+		Token token;
 
 		constexpr bool operator<=>(const Error& rhs) const noexcept = default;
 	};

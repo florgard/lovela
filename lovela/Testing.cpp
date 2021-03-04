@@ -81,10 +81,10 @@ void Testing::TestLexer()
 		}, {});
 	TestLexer("comment in string literal", L"'<< abc >>'", { {.type = Token::Type::LiteralString, .value = L"<< abc >>" } }, {});
 	TestLexer("non-closed string literal", L"'", {}, { {.code = ILexer::Error::Code::StringLiteralOpen } });
-	TestLexer("non-closed string literal on line 1", L"'abc", {}, { {.code = ILexer::Error::Code::StringLiteralOpen, .line = 1 } });
-	TestLexer("non-closed string literal on line 2", L"\r\n'abc", {}, { {.code = ILexer::Error::Code::StringLiteralOpen, .line = 2 } });
-	TestLexer("non-closed string literal on line 2", L"\n'abc", {}, { {.code = ILexer::Error::Code::StringLiteralOpen, .line = 2 } });
-	TestLexer("non-closed string literal on line 1", L"\r'abc", {}, { {.code = ILexer::Error::Code::StringLiteralOpen, .line = 1 } });
+	TestLexer("non-closed string literal on line 1", L"'abc", {}, { {.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 1} } });
+	TestLexer("non-closed string literal on line 2", L"\r\n'abc", {}, { {.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 2} } });
+	TestLexer("non-closed string literal on line 2", L"\n'abc", {}, { {.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 2} } });
+	TestLexer("non-closed string literal on line 1", L"\r'abc", {}, { {.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 1} } });
 	TestLexer("whitespace outside and within string literal", L"\t'ab\r\n\tc'\r\n", { {.type = Token::Type::LiteralString, .value = L"ab\r\n\tc" } }, {});
 
 	TestLexer("escaped curly bracket", L"'{{'", { {.type = Token::Type::LiteralString, .value = L"{" } }, {});
@@ -186,7 +186,7 @@ void Testing::TestLexer()
 		}, {});
 	TestLexer("non-closed comment", L"<<<<123>>ident234<<<<123<<456>>>:>.", {
 		{.type = Token::Type::Identifier, .value = L"ident234"},
-		}, { {.code = ILexer::Error::Code::CommentOpen, .line = 1} });
+		}, { {.code = ILexer::Error::Code::CommentOpen, .token{.line = 1}} });
 	TestLexer("comparison operator", L"1 < 2", {
 		{.type = Token::Type::LiteralInteger, .value = L"1"},
 		{.type = Token::Type::OperatorComparison, .value = L"<"},
@@ -307,13 +307,13 @@ void Testing::TestLexer(const char* name, std::wstring_view code, const std::vec
 			success = false;
 			std::wcerr << "Lexer test \"" << name << "\" error: Error " << i + 1 << " code is " << ToWString(magic_enum::enum_name(actual.code))
 				<< ", expected " << ToWString(magic_enum::enum_name(expected.code)) << ".\n"
-				<< '(' << actual.line << ':' << actual.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n';
+				<< '(' << actual.token.line << ':' << actual.token.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n';
 		}
-		else if (expected.line && actual.line != expected.line)
+		else if (expected.token.line && actual.token.line != expected.token.line)
 		{
 			success = false;
-			std::wcerr << "Lexer test \"" << name << "\" error: Error " << i + 1 << " line number is " << actual.line << ", expected " << expected.line << ".\n"
-				<< '(' << actual.line << ':' << actual.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n';
+			std::wcerr << "Lexer test \"" << name << "\" error: Error " << i + 1 << " line number is " << actual.token.line << ", expected " << expected.token.line << ".\n"
+				<< '(' << actual.token.line << ':' << actual.token.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n';
 		}
 	}
 
@@ -346,13 +346,13 @@ void Testing::TestParser(const char* name, std::wstring_view code, const Node& e
 			success = false;
 			std::wcerr << "Parser test \"" << name << "\" error: Error " << i + 1 << " code is " << ToWString(magic_enum::enum_name(actual.code))
 				<< ", expected " << ToWString(magic_enum::enum_name(expected.code)) << ".\n"
-				<< '(' << actual.line << ':' << actual.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n';
+				<< '(' << actual.token.line << ':' << actual.token.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n';
 		}
-		else if (expected.line && actual.line != expected.line)
+		else if (expected.token.line && actual.token.line != expected.token.line)
 		{
 			success = false;
-			std::wcerr << "Parser test \"" << name << "\" error: Error " << i + 1 << " line number is " << actual.line << ", expected " << expected.line << ".\n"
-				<< '(' << actual.line << ':' << actual.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n';
+			std::wcerr << "Parser test \"" << name << "\" error: Error " << i + 1 << " line number is " << actual.token.line << ", expected " << expected.token.line << ".\n"
+				<< '(' << actual.token.line << ':' << actual.token.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n';
 		}
 	}
 

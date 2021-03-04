@@ -10,6 +10,7 @@
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="ParserBase.cpp" />
     <ClCompile Include="pch.cpp" />
+    <ClCompile Include="Token.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lexer.h" />

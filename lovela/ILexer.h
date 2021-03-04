@@ -19,9 +19,8 @@ public:
 			StringInterpolationOverflow,
 		} code{};
 
-		int line{};
-		int column{};
 		std::wstring message;
+		Token token;
 
 		[[nodiscard]] auto operator<=>(const Error& rhs) const noexcept = default;
 	};
