@@ -40,8 +40,9 @@ TokenGenerator Lexer::Lex() noexcept
 
 	while (c)
 	{
+		static constexpr size_t codeSampleCharacters = 20;
 		currentCode.push_back(c);
-		while (currentCode.size() > 10)
+		while (currentCode.size() > codeSampleCharacters)
 		{
 			currentCode.pop_front();
 		}

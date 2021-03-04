@@ -265,7 +265,7 @@ void Testing::TestParser()
 			Parameter{.name = L"operand", .type{.any = true}},
 		} },
 		} }, {
-			IParser::Error{ .code = IParser::Error::Code::TestError },
+			IParser::Error{ .code = IParser::Error::Code::ParseError },
 		});
 }
 
@@ -305,17 +305,12 @@ void Testing::TestLexer(const char* name, std::wstring_view code, const std::vec
 		if (actual.code != expected.code)
 		{
 			success = false;
-			std::wcerr << "Lexer test \"" << name << "\" error: Error " << i + 1 << " code is " << ToWString(magic_enum::enum_name(actual.code))
-				<< ", expected " << ToWString(magic_enum::enum_name(expected.code)) << ".\n"
-				<< '(' << actual.token.line << ':' << actual.token.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n'
-				<< "\"..." << actual.token.code << "\" <- At this place" << '\n';
+			std::wcerr << GetIncorrectErrorCodeMessage("Lexer", name, i, actual.code, expected.code) << GetErrorMessage(actual);
 		}
 		else if (expected.token.line && actual.token.line != expected.token.line)
 		{
 			success = false;
-			std::wcerr << "Lexer test \"" << name << "\" error: Error " << i + 1 << " line number is " << actual.token.line << ", expected " << expected.token.line << ".\n"
-				<< '(' << actual.token.line << ':' << actual.token.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n'
-				<< "\"..." << actual.token.code << "\" <- At this place" << '\n';
+			std::wcerr << GetIncorrectErrorLineMessage("Lexer", name, i, actual.token.line, expected.token.line) << GetErrorMessage(actual);
 		}
 	}
 
@@ -324,8 +319,6 @@ void Testing::TestLexer(const char* name, std::wstring_view code, const std::vec
 
 void Testing::TestParser(const char* name, std::wstring_view code, const Node& expectedTree, const std::vector<IParser::Error>& expectedErrors)
 {
-	expectedErrors; // TODO
-
 	std::wistringstream input(std::wstring(code.data(), code.size()));
 	Lexer lexer(input);
 	Parser parser(lexer.Lex());
@@ -346,17 +339,12 @@ void Testing::TestParser(const char* name, std::wstring_view code, const Node& e
 		if (actual.code != expected.code)
 		{
 			success = false;
-			std::wcerr << "Parser test \"" << name << "\" error: Error " << i + 1 << " code is " << ToWString(magic_enum::enum_name(actual.code))
-				<< ", expected " << ToWString(magic_enum::enum_name(expected.code)) << ".\n"
-				<< '(' << actual.token.line << ':' << actual.token.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n'
-				<< "\"..." << actual.token.code << "\" <- At this place" << '\n';
+			std::wcerr << GetIncorrectErrorCodeMessage("Parser", name, i, actual.code, expected.code) << GetErrorMessage(actual);
 		}
 		else if (expected.token.line && actual.token.line != expected.token.line)
 		{
 			success = false;
-			std::wcerr << "Parser test \"" << name << "\" error: Error " << i + 1 << " line number is " << actual.token.line << ", expected " << expected.token.line << ".\n"
-				<< '(' << actual.token.line << ':' << actual.token.column << ") error " << ToWString(magic_enum::enum_name(actual.code)) << ": " << actual.message << '\n'
-				<< "\"..." << actual.token.code << "\" <- At this place" << '\n';
+			std::wcerr << GetIncorrectErrorLineMessage("Parser", name, i, actual.token.line, expected.token.line) << GetErrorMessage(actual);
 		}
 	}
 
@@ -370,8 +358,8 @@ bool Testing::TestAST(int& index, const char* name, const Node& tree, const Node
 		const auto& actual = tree;
 		const auto& expected = expectedTree;
 
-		std::wcerr << "Test \"" << name << "\" error: Some property of token " << index + 1 << " of type " << ToWString(magic_enum::enum_name(actual.type))
-			<< " differs from the expected token of type " << ToWString(magic_enum::enum_name(expected.type)) << ".\n";
+		std::wcerr << "Test \"" << name << "\" error: Some property of node " << index + 1 << " of type " << ToWString(magic_enum::enum_name(actual.type))
+			<< " differs from the expected node of type " << ToWString(magic_enum::enum_name(expected.type)) << ".\n";
 		return false;
 	}
 
