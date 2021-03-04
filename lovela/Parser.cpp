@@ -147,6 +147,8 @@ Node Parser::ParseFunctionDeclaration()
 {
 	auto node = Node{ .type{Node::Type::Function} };
 
+	// <-
+	// ->
 	if (currentToken.type == Token::Type::OperatorArrow)
 	{
 		node.exported = currentToken.value == L"<-";
@@ -154,6 +156,7 @@ Node Parser::ParseFunctionDeclaration()
 		Expect({ Token::Type::ParenSquareOpen, Token::Type::Identifier });
 	}
 
+	// [objectType]
 	if (currentToken.type == Token::Type::ParenSquareOpen)
 	{
 		node.objectType = ParseTypeSpec();
@@ -164,9 +167,20 @@ Node Parser::ParseFunctionDeclaration()
 			node.name = currentToken.value;
 		}
 	}
+	// identifier
+	// namespace1|namespaceN|identifier
 	else if (currentToken.type == Token::Type::Identifier)
 	{
-		node.name = currentToken.value;
+		auto name = currentToken.value;
+
+		while (Accept(Token::Type::SeparatorVerticalLine))
+		{
+			node.nameSpace.emplace_back(name);
+			Expect(Token::Type::Identifier);
+			name = currentToken.value;
+		}
+
+		node.name = name;
 		node.objectType.any = true;
 	}
 	else
@@ -180,6 +194,7 @@ Node Parser::ParseFunctionDeclaration()
 		node.parameters = ParseParameterList();
 	}
 
+	// [objectType] identifier (parameterList) [dataType]
 	if (Accept(Token::Type::ParenSquareOpen))
 	{
 		node.dataType = ParseTypeSpec();

@@ -41,6 +41,7 @@ public:
 			{',', Token::Type::SeparatorComma },
 			{'!', Token::Type::SeparatorExclamation },
 			{'?', Token::Type::SeparatorQuestion },
+			{'|', Token::Type::SeparatorVerticalLine },
 			{':', Token::Type::OperatorColon },
 		} };
 

@@ -20,6 +20,7 @@ struct Token
 		SeparatorComma,
 		SeparatorExclamation,
 		SeparatorQuestion,
+		SeparatorVerticalLine,
 		OperatorColon,
 		OperatorComparison,
 		OperatorArithmetic,

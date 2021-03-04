@@ -154,6 +154,11 @@ void Testing::TestLexer()
 		{.type = Token::Type::ParenSquareClose, .value = L"]"},
 		{.type = Token::Type::Identifier, .value = L"func"},
 		}, {});
+	TestLexer("function with namespace", L"namespace|func", {
+		{.type = Token::Type::Identifier, .value = L"namespace"},
+		{.type = Token::Type::SeparatorVerticalLine, .value = L"|"},
+		{.type = Token::Type::Identifier, .value = L"func"},
+		}, {});
 
 	TestLexer("mixed character identifier", L"ident123.", {
 		{.type = Token::Type::Identifier, .value = L"ident123"},
@@ -223,6 +228,13 @@ void Testing::TestParser()
 	TestParser("exported function", L"<- [] func", Node{ .type{Node::Type::Root}, .children{
 		Node{.type = Node::Type::Function, .name = L"func", .objectType{.any = true}, .exported = true}
 		} }, {});
+
+	TestParser("function with 1 namespace", L"namespace|func", Node{ .type{Node::Type::Root}, .children{
+		Node{.type = Node::Type::Function, .name = L"func", .nameSpace{ L"namespace" }, .objectType{.any = true} }
+		} }, {});
+	TestParser("function with 2 namespaces", L"namespace1|namespaceN|func", Node{ .type{Node::Type::Root}, .children{
+		Node{.type = Node::Type::Function, .name = L"func", .nameSpace{ L"namespace1", L"namespaceN" }, .objectType{.any = true} }
+	} }, {});
 }
 
 void Testing::TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)

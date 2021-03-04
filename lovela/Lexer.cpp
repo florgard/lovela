@@ -7,7 +7,7 @@ Lexer::Lexer(std::wistream& charStream) noexcept : charStream(charStream)
 
 TokenGenerator Lexer::Lex() noexcept
 {
-	static constexpr std::wstring_view delimiters{ L"()[]{}.,:;!?" };
+	static constexpr std::wstring_view delimiters{ L"()[]{}.,:;!?|" };
 
 	std::wstring lexeme;
 	currentLine = 1;
