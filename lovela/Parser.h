@@ -13,4 +13,5 @@ private:
 	[[nodiscard]] TypeSpec ParseTypeSpec();
 	[[nodiscard]] ParameterList ParseParameterList();
 	[[nodiscard]] Node ParseFunctionDeclaration();
+	[[nodiscard]] Node ParseStatement();
 };

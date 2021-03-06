@@ -17,6 +17,7 @@ protected:
 	void Expect(const std::vector<Token::Type>& types);
 	[[nodiscard]] bool Accept(Token::Type type);
 	[[nodiscard]] bool Accept(const std::vector<Token::Type>& types);
+	void Next();
 
 	TokenGenerator tokenGenerator;
 	TokenGenerator::iterator tokenIterator;

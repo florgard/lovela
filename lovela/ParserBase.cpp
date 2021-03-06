@@ -30,8 +30,7 @@ bool ParserBase::Accept(Token::Type type)
 		return false;
 	}
 
-	currentToken = *tokenIterator;
-	tokenIterator++;
+	Next();
 	return true;
 }
 
@@ -46,4 +45,10 @@ bool ParserBase::Accept(const std::vector<Token::Type>& types)
 	}
 
 	return false;
+}
+
+void ParserBase::Next()
+{
+	currentToken = *tokenIterator;
+	tokenIterator++;
 }

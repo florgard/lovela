@@ -61,7 +61,7 @@ Node Parser::Parse() noexcept
 			errors.emplace_back(Error{ .message = e.message, .token = e.token });
 
 			// Skip the faulty token.
-			tokenIterator++;
+			Next();
 		}
 	}
 
@@ -245,5 +245,18 @@ Node Parser::ParseFunctionDeclaration()
 		node.dataType = ParseTypeSpec();
 	}
 
+	// [objectType] identifier (parameterList) [dataType]:
+	if (Accept(Token::Type::SeparatorColon))
+	{
+		Next();
+		node.children.emplace_back(ParseStatement());
+	}
+
 	return node;
+}
+
+Node Parser::ParseStatement()
+{
+	// TODO
+	return {};
 }
