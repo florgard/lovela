@@ -25,7 +25,12 @@ void ParserBase::Expect(const std::vector<Token::Type>& types)
 
 bool ParserBase::Accept(Token::Type type)
 {
-	if (tokenIterator == tokenGenerator.end() || tokenIterator->type != type)
+	if (tokenIterator == tokenGenerator.end())
+	{
+		currentToken = Token{ .type = Token::Type::End };
+		return false;
+	}
+	else if (tokenIterator->type != type)
 	{
 		return false;
 	}
@@ -51,4 +56,25 @@ void ParserBase::Next()
 {
 	currentToken = *tokenIterator;
 	tokenIterator++;
+}
+
+void ParserBase::Assert(Token::Type type)
+{
+	if (currentToken.type != type)
+	{
+		throw InvalidCurrentTokenException(currentToken);
+	}
+}
+
+void ParserBase::Assert(const std::vector<Token::Type>& types)
+{
+	for (const auto& type : types)
+	{
+		if (currentToken.type == type)
+		{
+			return;
+		}
+	}
+
+	throw InvalidCurrentTokenException(currentToken);
 }

@@ -5,6 +5,7 @@ struct Token
 	enum class Type
 	{
 		Empty,
+		End,
 		Identifier,
 		LiteralString,
 		LiteralStringInterpolation,

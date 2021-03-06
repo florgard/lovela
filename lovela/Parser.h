@@ -14,4 +14,7 @@ private:
 	[[nodiscard]] ParameterList ParseParameterList();
 	[[nodiscard]] Node ParseFunctionDeclaration();
 	[[nodiscard]] Node ParseStatement();
+	[[nodiscard]] Node ParseStatements();
+	[[nodiscard]] Node ParseExpression();
+	[[nodiscard]] Node ParseGroup();
 };

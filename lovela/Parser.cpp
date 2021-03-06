@@ -2,6 +2,10 @@
 #include "ParseException.h"
 #include "Parser.h"
 
+static const std::vector<Token::Type> noAcceptedTokens
+{
+};
+
 static const std::vector<Token::Type> beginFunctionDeclarationTokens
 {
 	Token::Type::OperatorArrow,
@@ -24,6 +28,14 @@ static const std::vector<Token::Type> binaryOperatorTokens
 	Token::Type::OperatorArithmetic,
 	Token::Type::OperatorBitwise,
 	Token::Type::OperatorComparison,
+};
+
+static const std::vector<Token::Type> statementTerminatorTokens
+{
+	Token::Type::End,
+	Token::Type::SeparatorDot,
+	Token::Type::SeparatorComma,
+	Token::Type::ParenRoundClose,
 };
 
 Parser::Parser(TokenGenerator&& tokenGenerator) noexcept : ParserBase(std::move(tokenGenerator))
@@ -72,10 +84,7 @@ TypeSpec Parser::ParseTypeSpec()
 {
 	TypeSpec typeSpec;
 
-	if (currentToken.type != Token::Type::ParenSquareOpen)
-	{
-		throw InvalidCurrentTokenException(currentToken);
-	}
+	Assert(Token::Type::ParenSquareOpen);
 
 	// []
 	if (Accept(Token::Type::ParenSquareClose))
@@ -107,10 +116,7 @@ ParameterList Parser::ParseParameterList()
 {
 	ParameterList parameters;
 
-	if (currentToken.type != Token::Type::ParenRoundOpen)
-	{
-		throw InvalidCurrentTokenException(currentToken);
-	}
+	Assert(Token::Type::ParenRoundOpen);
 
 	// ()
 	if (Accept(Token::Type::ParenRoundClose))
@@ -230,7 +236,7 @@ Node Parser::ParseFunctionDeclaration()
 	}
 	else
 	{
-		throw InvalidCurrentTokenException(currentToken);
+		Assert(noAcceptedTokens);
 	}
 
 	// [objectType] identifier (parameterList)
@@ -255,8 +261,54 @@ Node Parser::ParseFunctionDeclaration()
 	return node;
 }
 
-Node Parser::ParseStatement()
+Node Parser::ParseStatement(/*objectType?*/)
 {
-	// TODO
-	return {};
+	Node node{ .type = Node::Type::Statement };
+
+	node.children.emplace_back(ParseExpression());
+
+	return node;
+}
+
+Node Parser::ParseStatements(/*objectType?*/)
+{
+	auto node = ParseStatement();
+
+	if (!contains(statementTerminatorTokens, currentToken.type))
+	{
+		node.children.emplace_back(ParseStatements());
+	}
+
+	return node;
+}
+
+Node Parser::ParseExpression()
+{
+	Node node{ .type = Node::Type::Expression };
+
+	if (Accept(Token::Type::ParenRoundOpen))
+	{
+		node.children.emplace_back(ParseGroup());
+	}
+	// Identifier
+	// Colon
+
+	return node;
+}
+
+Node Parser::ParseGroup()
+{
+	Assert(Token::Type::ParenRoundOpen);
+
+	Node node{ .type = Node::Type::Group };
+
+	do
+	{
+		node.children.emplace_back(ParseStatements());
+
+	} while (Accept(Token::Type::SeparatorComma));
+
+	Expect(Token::Type::ParenRoundClose);
+
+	return node;
 }

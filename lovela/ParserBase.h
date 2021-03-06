@@ -13,6 +13,8 @@ public:
 	}
 
 protected:
+	void Assert(Token::Type type);
+	void Assert(const std::vector<Token::Type>& types);
 	void Expect(Token::Type type);
 	void Expect(const std::vector<Token::Type>& types);
 	[[nodiscard]] bool Accept(Token::Type type);

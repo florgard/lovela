@@ -25,11 +25,15 @@ struct Node
 	{
 		Empty,
 		Root,
-		List,
 		Function,
+		Statement,
+		Expression,
+		Group,
+		List,
 	} type{};
 
 	std::wstring name;
+	std::wstring value;
 	TypeSpec dataType;
 
 	// Function declaration
