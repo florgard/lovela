@@ -274,6 +274,18 @@ void Testing::TestParser()
 		const Node r{ .type = Node::Type::Root, .children{f} };
 		TestParser("function with trivial body", L"func: body.", r, {});
 	}
+
+	{
+		const Node e2{ .type = Node::Type::Expression };
+		const Node s2{ .type = Node::Type::Statement, .children{e2} };
+		const Node g{ .type = Node::Type::Group, .children{s2} };
+		const Node e1{ .type = Node::Type::Expression, .children{g} };
+		const Node s1{ .type = Node::Type::Statement, .children{e1} };
+		const Node f{ .type = Node::Type::Function, .name = L"func", .objectType{.any = true}, .children{s1} };
+		const Node r{ .type = Node::Type::Root, .children{f} };
+		TestParser("function with trivial body", L"func: (body).", r, {});
+	}
+
 }
 
 void Testing::TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
