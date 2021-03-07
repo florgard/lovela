@@ -290,6 +290,6 @@ void Testing::RunParserTests()
 		const Node s1{ .type = Node::Type::Statement, .children{e1} };
 		const Node f{ .type = Node::Type::Function, .name = L"func", .objectType{.any = true}, .children{s1} };
 		const Node r{ .type = Node::Type::Root, .children{f} };
-		TestParser("function with trivial body", L"func: (body).", r, {});
+		TestParser("function with body within group", L"func: (body).", r, {});
 	}
 }
