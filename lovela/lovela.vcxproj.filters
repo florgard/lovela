@@ -11,6 +11,7 @@
     <ClCompile Include="ParserBase.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Token.cpp" />
+    <ClCompile Include="TestingBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lexer.h" />
@@ -26,5 +27,6 @@
     <ClInclude Include="Node.h" />
     <ClInclude Include="ParserBase.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="TestingBase.h" />
   </ItemGroup>
 </Project>

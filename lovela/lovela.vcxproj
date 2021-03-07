@@ -169,6 +169,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Testing.cpp" />
+    <ClCompile Include="TestingBase.cpp" />
     <ClCompile Include="Token.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -183,6 +184,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="StaticMap.h" />
     <ClInclude Include="Testing.h" />
+    <ClInclude Include="TestingBase.h" />
     <ClInclude Include="Token.h" />
     <ClInclude Include="Utility.h" />
   </ItemGroup>

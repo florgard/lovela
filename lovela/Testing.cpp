@@ -1,9 +1,16 @@
 #include "pch.h"
-#include "Parser.h"
 #include "Lexer.h"
+#include "Parser.h"
 #include "Testing.h"
 
-void Testing::TestToken()
+void Testing::RunTests()
+{
+	RunTypeTests();
+	RunLexerTests();
+	RunParserTests();
+}
+
+void Testing::RunTypeTests()
 {
 	assert(LexerBase::GetTokenType('(') == Token::Type::ParenRoundOpen);
 	assert(LexerBase::GetTokenType('.') == Token::Type::SeparatorDot);
@@ -33,7 +40,7 @@ void Testing::TestToken()
 	catch (...) {}
 }
 
-void Testing::TestLexer()
+void Testing::RunLexerTests()
 {
 	TestLexer("empty expression", L"", {}, {});
 	TestLexer("single character", L".", { {.type = Token::Type::SeparatorDot, .value = L"." } }, {});
@@ -191,7 +198,7 @@ void Testing::TestLexer()
 		}, {});
 }
 
-void Testing::TestParser()
+void Testing::RunParserTests()
 {
 	TestParser("trivial function declaration", L"func", Node{ .type{Node::Type::Root}, .children{
 		Node{.type = Node::Type::Function, .name = L"func", .objectType{.any = true}}
@@ -285,117 +292,4 @@ void Testing::TestParser()
 		const Node r{ .type = Node::Type::Root, .children{f} };
 		TestParser("function with trivial body", L"func: (body).", r, {});
 	}
-
-}
-
-void Testing::TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
-{
-	std::wistringstream input(std::wstring(code.data(), code.size()));
-	Lexer lexer(input);
-	auto tokenGenerator = lexer.Lex();
-	auto tokens = std::vector<Token>(tokenGenerator.begin(), tokenGenerator.end());
-
-	bool success = true;
-
-	auto actualCount = tokens.size();
-	auto expectedCount = expectedTokens.size();
-	auto count = std::max(actualCount, expectedCount);
-	for (int i = 0; i < count; i++)
-	{
-		const auto actual = i < actualCount ? tokens[i] : Token{};
-		const auto expected = i < expectedCount ? expectedTokens[i] : Token{};
-		if (actual != expected)
-		{
-			success = false;
-			std::wcerr << "Test \"" << name << "\" error: Token " << i + 1 << " is " << ToWString(magic_enum::enum_name(actual.type)) << " \"" << actual.value
-				<< "\", expected " << ToWString(magic_enum::enum_name(expected.type)) << " \"" << expected.value << "\".\n";
-		}
-	}
-
-	auto& errors = lexer.GetErrors();
-
-	actualCount = errors.size();
-	expectedCount = expectedErrors.size();
-	count = std::max(actualCount, expectedCount);
-	for (int i = 0; i < count; i++)
-	{
-		const auto actual = i < actualCount ? errors[i] : ILexer::Error{};
-		const auto expected = i < expectedCount ? expectedErrors[i] : ILexer::Error{};
-		if (actual.code != expected.code)
-		{
-			success = false;
-			std::wcerr << GetIncorrectErrorCodeMessage("Lexer", name, i, actual.code, expected.code) << GetErrorMessage(actual);
-		}
-		else if (expected.token.line && actual.token.line != expected.token.line)
-		{
-			success = false;
-			std::wcerr << GetIncorrectErrorLineMessage("Lexer", name, i, actual.token.line, expected.token.line) << GetErrorMessage(actual);
-		}
-	}
-
-	assert(success);
-}
-
-void Testing::TestParser(const char* name, std::wstring_view code, const Node& expectedTree, const std::vector<IParser::Error>& expectedErrors)
-{
-	std::wistringstream input(std::wstring(code.data(), code.size()));
-	Lexer lexer(input);
-	Parser parser(lexer.Lex());
-	auto tree = parser.Parse();
-
-	int index = 0;
-	bool success = TestAST(index, name, tree, expectedTree);
-
-	auto& errors = parser.GetErrors();
-	const auto actualCount = errors.size();
-	const auto expectedCount = expectedErrors.size();
-	const auto count = std::max(actualCount, expectedCount);
-
-	for (int i = 0; i < count; i++)
-	{
-		const auto actual = i < actualCount ? errors[i] : IParser::Error{};
-		const auto expected = i < expectedCount ? expectedErrors[i] : IParser::Error{};
-		if (actual.code != expected.code)
-		{
-			success = false;
-			std::wcerr << GetIncorrectErrorCodeMessage("Parser", name, i, actual.code, expected.code) << GetErrorMessage(actual);
-		}
-		else if (expected.token.line && actual.token.line != expected.token.line)
-		{
-			success = false;
-			std::wcerr << GetIncorrectErrorLineMessage("Parser", name, i, actual.token.line, expected.token.line) << GetErrorMessage(actual);
-		}
-	}
-
-	assert(success);
-}
-
-bool Testing::TestAST(int& index, const char* name, const Node& tree, const Node& expectedTree)
-{
-	if (tree != expectedTree)
-	{
-		const auto& actual = tree;
-		const auto& expected = expectedTree;
-
-		std::wcerr << "Test \"" << name << "\" error: Some property of node " << index + 1 << " of type " << ToWString(magic_enum::enum_name(actual.type))
-			<< " differs from the expected node of type " << ToWString(magic_enum::enum_name(expected.type)) << ".\n";
-		return false;
-	}
-
-	index++;
-
-	auto actualCount = tree.children.size();
-	auto expectedCount = expectedTree.children.size();
-	auto count = std::max(actualCount, expectedCount);
-	for (int i = 0; i < count; i++)
-	{
-		const auto& actual = i < actualCount ? tree.children[i] : Node{};
-		const auto& expected = i < expectedCount ? expectedTree.children[i] : Node{};
-		if (!TestAST(index, name, actual, expected))
-		{
-			return false;
-		}
-	}
-
-	return true;
 }
