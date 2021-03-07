@@ -208,27 +208,29 @@ void Testing::TestParser()
 	TestParser("anonymous function", L"[]()", Node{ .type{Node::Type::Root}, .children{
 		Node{.type = Node::Type::Function, .objectType{.any = true}}
 		} }, {});
-#if 0
-	TestParser("function with parameters", L"func(untyped, name [type], [unnamed])", Node{ .type{Node::Type::Root}, .children{
-		Node{.type = Node::Type::Function, .name = L"func", .objectType{.any = true}, .parameters{
-			Parameter{.name = L"untyped", .type{.any = true}},
-			Parameter{.name = L"name", .type{.name = L"type"}},
-			Parameter{.type{.name = L"unnamed"}}
-		} },
-		} }, {});
-#endif
+
+	{
+		const Node f{ .type = Node::Type::Function, .name = L"func", .objectType{.any = true}, .parameters{
+				Parameter{.name = L"untyped", .type{.any = true}},
+				Parameter{.name = L"name", .type{.name = L"type"}},
+				Parameter{.type{.name = L"unnamed"}}
+			} };
+		TestParser("function with parameters", L"func(untyped, name [type], [unnamed])", Node{ .type{Node::Type::Root}, .children{f} }, {});
+	}
+
 	TestParser("function with type", L"func [type]", Node{ .type{Node::Type::Root}, .children{
 		Node{.type = Node::Type::Function, .name = L"func", .dataType{.name = L"type"}, .objectType{.any = true}}
 		} }, {});
-#if 0
-	TestParser("complete function declaration", L"[objectType] func (untyped, name [type], [unnamed]) [functionType]", Node{ .type{Node::Type::Root}, .children{
-		Node{.type = Node::Type::Function, .name = L"func", .dataType{.name = L"functionType"}, .objectType{.name = L"objectType"}, .parameters{
-			Parameter{.name = L"untyped", .type{.any = true}},
-			Parameter{.name = L"name", .type{.name = L"type"}},
-			Parameter{.type{.name = L"unnamed"}}
-		} },
-		} }, {});
-#endif
+
+	{
+		const Node f{ .type = Node::Type::Function, .name = L"func", .dataType{.name = L"functionType"}, .objectType{.name = L"objectType"}, .parameters{
+				Parameter{.name = L"untyped", .type{.any = true}},
+				Parameter{.name = L"name", .type{.name = L"type"}},
+				Parameter{.type{.name = L"unnamed"}}
+			} };
+		TestParser("complete function declaration", L"[objectType] func (untyped, name [type], [unnamed]) [functionType]", Node{ .type{Node::Type::Root}, .children{f} }, {});
+	}
+
 	TestParser("imported function", L"-> func", Node{ .type{Node::Type::Root}, .children{
 		Node{.type = Node::Type::Function, .name = L"func", .objectType{.any = true}, .imported = true}
 		} }, {});
@@ -236,33 +238,42 @@ void Testing::TestParser()
 		Node{.type = Node::Type::Function, .name = L"func", .objectType{.any = true}, .exported = true}
 		} }, {});
 
-#if 0
-	TestParser("function with 1 namespace", L"namespace|func", Node{ .type{Node::Type::Root}, .children{
-		Node{.type = Node::Type::Function, .name = L"func", .nameSpace{ L"namespace" }, .objectType{.any = true} }
-		} }, {});
-	TestParser("function with 2 namespaces", L"namespace1|namespaceN|func", Node{ .type{Node::Type::Root}, .children{
-		Node{.type = Node::Type::Function, .name = L"func", .nameSpace{ L"namespace1", L"namespaceN" }, .objectType{.any = true} }
-	} }, {});
+	{
+		const Node f{ .type = Node::Type::Function, .name = L"func", .nameSpace{ L"namespace" }, .objectType{.any = true} };
+		TestParser("function with 1 namespace", L"namespace|func", Node{ .type{Node::Type::Root}, .children{f} }, {});
+	}
+	{
+		const Node f{ .type = Node::Type::Function, .name = L"func", .nameSpace{ L"namespace1", L"namespaceN" }, .objectType{.any = true} };
+		TestParser("function with 2 namespaces", L"namespace1|namespaceN|func", Node{ .type{Node::Type::Root}, .children{f} }, {});
+	}
+	{
+		const Node f{ .type = Node::Type::Function, .name = L"<", .objectType{.any = true}, .parameters{
+				Parameter{.name = L"operand", .type{.any = true}},
+			} };
+		TestParser("binary operator", L"<(operand)", Node{ .type{Node::Type::Root}, .children{f} }, {});
+	}
+	{
+		const Node f{ .type = Node::Type::Function, .name = L"<", .nameSpace{ L"namespace" }, .objectType{.any = true}, .parameters{
+				Parameter{.name = L"operand", .type{.any = true}},
+			} };
+		TestParser("binary operator with namespace", L"namespace|< (operand)", Node{ .type{Node::Type::Root}, .children{f} }, {});
+	}
+	{
+		const Node f{ .type = Node::Type::Function, .name = L"<", .nameSpace{ L"namespace1" }, .objectType{.any = true} };
+		const Node n{ .type = Node::Type::Function, .name = L"namespace2", .objectType{.any = true}, .parameters{
+				Parameter{.name = L"operand", .type{.any = true}},
+			} };
+		TestParser("invalid binary operator as namespace", L"namespace1|<|namespace2 (operand)", Node{ .type{Node::Type::Root}, .children{f, n, } },
+			{ IParser::Error{.code = IParser::Error::Code::ParseError } });
+	}
 
-	TestParser("binary operator", L"<(operand)", Node{ .type{Node::Type::Root}, .children{
-		Node{.type = Node::Type::Function, .name = L"<", .objectType{.any = true}, .parameters{
-			Parameter{.name = L"operand", .type{.any = true}},
-		} },
-		} }, {});
-	TestParser("binary operator with namespace", L"namespace|< (operand)", Node{ .type{Node::Type::Root}, .children{
-		Node{.type = Node::Type::Function, .name = L"<", .nameSpace{ L"namespace" }, .objectType{.any = true}, .parameters{
-			Parameter{.name = L"operand", .type{.any = true}},
-		} },
-		} }, {});
-	TestParser("invalid binary operator as namespace", L"namespace1|<|namespace2 (operand)", Node{ .type{Node::Type::Root}, .children{
-		Node{.type = Node::Type::Function, .name = L"<", .nameSpace{ L"namespace1" }, .objectType{.any = true} },
-		Node{.type = Node::Type::Function, .name = L"namespace2", .objectType{.any = true}, .parameters{
-			Parameter{.name = L"operand", .type{.any = true}},
-		} },
-		} }, {
-			IParser::Error{.code = IParser::Error::Code::ParseError },
-		});
-#endif
+	{
+		const Node e{ .type = Node::Type::Expression };
+		const Node s{ .type = Node::Type::Statement, .children{e} };
+		const Node f{ .type = Node::Type::Function, .name = L"func", .objectType{.any = true}, .children{s} };
+		const Node r{ .type = Node::Type::Root, .children{f} };
+		TestParser("function with trivial body", L"func: body.", r, {});
+	}
 }
 
 void Testing::TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
