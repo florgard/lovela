@@ -27,6 +27,8 @@ void TestingBase::TestLexer(const char* name, std::wstring_view code, const std:
 		}
 	}
 
+	assert(success);
+
 	auto& errors = lexer.GetErrors();
 
 	actualCount = errors.size();
@@ -60,6 +62,8 @@ void TestingBase::TestParser(const char* name, std::wstring_view code, const Nod
 
 	int index = 0;
 	bool success = TestAST(index, name, tree, expectedTree);
+
+	assert(success);
 
 	auto& errors = parser.GetErrors();
 	const auto actualCount = errors.size();
