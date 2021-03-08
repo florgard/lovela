@@ -91,7 +91,7 @@ Node Parser::Parse() noexcept
 		}
 		catch (const InvalidCurrentTokenException& e)
 		{
-			errors.emplace_back(Error{ .message = e.message, .token = e.token });
+			errors.emplace_back(Error{ .code = IParser::Error::Code::ParseError, .message = e.message, .token = e.token });
 
 			// Internal logic error: The caller and parsing function doesn't agree on the type of token to handle.
 			assert(false);
@@ -99,9 +99,9 @@ Node Parser::Parse() noexcept
 		}
 		catch (const ParseException& e)
 		{
-			errors.emplace_back(Error{ .message = e.message, .token = e.token });
+			errors.emplace_back(Error{ .code = IParser::Error::Code::ParseError, .message = e.message, .token = e.token });
 
-			// Skip the faulty token.
+			// Skip faulty token.
 			Next();
 		}
 	}
@@ -208,7 +208,7 @@ Node Parser::ParseFunctionDeclaration()
 
 	// <-
 	// ->
-	if (currentToken.type == Token::Type::OperatorArrow)
+	if (IsToken(Token::Type::OperatorArrow))
 	{
 		node.exported = currentToken.value == L"<-";
 		node.imported = currentToken.value == L"->";
@@ -216,7 +216,7 @@ Node Parser::ParseFunctionDeclaration()
 	}
 
 	// [objectType]
-	if (currentToken.type == Token::Type::ParenSquareOpen)
+	if (IsToken(Token::Type::ParenSquareOpen))
 	{
 		node.objectType = ParseTypeSpec();
 
@@ -229,7 +229,7 @@ Node Parser::ParseFunctionDeclaration()
 	// identifier
 	// namespace|identifier
 	// namespace|binaryOperator
-	else if (currentToken.type == Token::Type::Identifier)
+	else if (IsToken(Token::Type::Identifier))
 	{
 		auto name = currentToken.value;
 
@@ -258,7 +258,7 @@ Node Parser::ParseFunctionDeclaration()
 		node.objectType.any = true;
 	}
 	// binaryOperator
-	else if (contains(binaryOperatorTokens, currentToken.type))
+	else if (IsToken(binaryOperatorTokens))
 	{
 		node.name = currentToken.value;
 		node.objectType.any = true;
@@ -302,7 +302,7 @@ Node Parser::ParseStatements(/*objectType?*/)
 {
 	auto node = ParseStatement();
 
-	if (!contains(statementTerminatorTokens, currentToken.type))
+	if (!IsToken(statementTerminatorTokens))
 	{
 		node.children.emplace_back(ParseStatements());
 	}
@@ -402,11 +402,11 @@ Node Parser::ParseOperand()
 {
 	Node node;
 
-	if (currentToken.type == Token::Type::ParenRoundOpen)
+	if (IsToken(Token::Type::ParenRoundOpen))
 	{
 		node = ParseGroup();
 	}
-	else if (contains(literalTokens, currentToken.type))
+	else if (IsToken(literalTokens))
 	{
 		node = Node{ .type = Node::Type::Literal, .token = currentToken };
 	}
@@ -422,9 +422,9 @@ Node Parser::ParseFunctionCall()
 {
 	Assert(Token::Type::Identifier);
 
-	Node node{ .type = Node::Type::FunctionCall };
+	Node node{ .type = Node::Type::FunctionCall, .name = currentToken.value };
 
-	// TODO: nameSpace, name, parameters
+	// TODO: nameSpace, parameters
 
 	return node;
 }
@@ -433,9 +433,5 @@ Node Parser::ParseBinaryOperation()
 {
 	Assert(binaryOperatorTokens);
 
-	Node node{ .type = Node::Type::BinaryOperation, .token = currentToken };
-
-	// TODO
-
-	return node;
+	return { .type = Node::Type::BinaryOperation, .name = currentToken.value, .token = currentToken };
 }

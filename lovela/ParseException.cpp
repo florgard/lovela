@@ -16,21 +16,21 @@ ParseException::ParseException(const Token& token, std::wstring_view message) : 
 UnexpectedTokenException::UnexpectedTokenException(const Token& token) : ParseException(token)
 {
 	std::wostringstream s;
-	s << "Unexpected token " << ToWString(magic_enum::enum_name(token.type));
+	s << "Unexpected token " << ToWString(token.type);
 	message = s.str();
 }
 
 UnexpectedTokenException::UnexpectedTokenException(const Token& token, Token::Type expected) : ParseException(token)
 {
 	std::wostringstream s;
-	s << "Unexpected token " << ToWString(magic_enum::enum_name(token.type)) << ", expected " << ToWString(magic_enum::enum_name(expected));
+	s << "Unexpected token " << ToWString(token.type) << ", expected " << ToWString(expected);
 	message = s.str();
 }
 
 UnexpectedTokenException::UnexpectedTokenException(const Token& token, const std::vector<Token::Type>& expected) : ParseException(token)
 {
 	std::wostringstream s;
-	s << "Unexpected token " << ToWString(magic_enum::enum_name(token.type)) << ", expected ";
+	s << "Unexpected token " << ToWString(token.type) << ", expected ";
 	bool first = true;
 	for (const auto& type : expected)
 	{
@@ -39,7 +39,7 @@ UnexpectedTokenException::UnexpectedTokenException(const Token& token, const std
 			s << ", ";
 		}
 		first = false;
-		s << ToWString(magic_enum::enum_name(type));
+		s << ToWString(type);
 	}
 	message = s.str();
 }
@@ -47,6 +47,6 @@ UnexpectedTokenException::UnexpectedTokenException(const Token& token, const std
 InvalidCurrentTokenException::InvalidCurrentTokenException(const Token& token) : ParseException(token)
 {
 	std::wostringstream s;
-	s << "Invalid current token " << ToWString(magic_enum::enum_name(token.type));
+	s << "Invalid current token " << ToWString(token.type);
 	message = s.str();
 }

@@ -275,7 +275,7 @@ void Testing::RunParserTests()
 	}
 
 	{
-		const Node fc{ .type = Node::Type::FunctionCall };
+		const Node fc{ .type = Node::Type::FunctionCall, .name = L"body" };
 		const Node e{ .type = Node::Type::Expression, .children{fc} };
 		const Node s{ .type = Node::Type::Statement, .children{e} };
 		const Node fd{ .type = Node::Type::Function, .name = L"func", .objectType{.any = true}, .children{s} };
@@ -284,7 +284,7 @@ void Testing::RunParserTests()
 	}
 
 	{
-		const Node fc{ .type = Node::Type::FunctionCall };
+		const Node fc{ .type = Node::Type::FunctionCall, .name = L"body" };
 		const Node e2{ .type = Node::Type::Expression, .children{fc} };
 		const Node s2{ .type = Node::Type::Statement, .children{e2} };
 		const Node g{ .type = Node::Type::Group, .children{s2} };

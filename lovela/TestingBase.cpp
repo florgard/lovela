@@ -22,8 +22,8 @@ void TestingBase::TestLexer(const char* name, std::wstring_view code, const std:
 		if (actual != expected)
 		{
 			success = false;
-			std::wcerr << "Test \"" << name << "\" error: Token " << i + 1 << " is " << ToWString(magic_enum::enum_name(actual.type)) << " \"" << actual.value
-				<< "\", expected " << ToWString(magic_enum::enum_name(expected.type)) << " \"" << expected.value << "\".\n";
+			std::wcerr << "Test \"" << name << "\" error: Token " << i + 1 << " is " << ToWString(actual.type) << " \"" << actual.value
+				<< "\", expected " << ToWString(expected.type) << " \"" << expected.value << "\".\n";
 		}
 	}
 
@@ -103,8 +103,8 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const 
 		const auto& actual = tree;
 		const auto& expected = expectedTree;
 
-		std::wcerr << "Test \"" << name << "\" error: Some property of node " << index + 1 << " of type " << ToWString(magic_enum::enum_name(actual.type))
-			<< " differs from the expected node of type " << ToWString(magic_enum::enum_name(expected.type)) << ".\n";
+		std::wcerr << "Test \"" << name << "\" error: Some property of node " << index + 1 << " of type " << ToWString(actual.type)
+			<< " differs from the expected node of type " << ToWString(expected.type) << ".\n";
 		return false;
 	}
 
@@ -128,7 +128,7 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const 
 
 void TestingBase::PrintTree(const Node& tree, std::wstring indent)
 {
-	std::wcerr << indent << "(" << ToWString(magic_enum::enum_name(tree.type)) << " " << tree.name << '\n';
+	std::wcerr << indent << "(" << ToWString(tree.type) << " " << tree.name << '\n';
 	for (auto& node : tree.children)
 	{
 		PrintTree(node, indent + L"  ");

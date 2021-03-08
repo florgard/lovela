@@ -5,6 +5,7 @@
 #include <vector>
 #include <deque>
 #include <algorithm>
+#include <type_traits>
 #include <compare>
 #include <memory>
 #include <iostream>

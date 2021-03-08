@@ -16,8 +16,8 @@ private:
 	static std::wstring GetIncorrectErrorCodeMessage(const char* phase, const char* name, int index, Code actual, Code expected)
 	{
 		std::wostringstream s;
-		s << phase << " test \"" << name << "\" error: Error " << index + 1 << " code is " << ToWString(magic_enum::enum_name(actual))
-			<< ", expected " << ToWString(magic_enum::enum_name(expected)) << ".\n";
+		s << phase << " test \"" << name << "\" error: Error " << index + 1 << " code is " << ToWString(actual)
+			<< ", expected " << ToWString(expected) << ".\n";
 		return s.str();
 	}
 
@@ -32,7 +32,7 @@ private:
 	static std::wstring GetErrorMessage(const ErrorType& error)
 	{
 		std::wostringstream s;
-		s << ToWString(magic_enum::enum_name(error.code)) << ": " << error.message << '\n'
+		s << ToWString(error.code) << ": " << error.message << '\n'
 			<< '(' << error.token.line << ':' << error.token.column << ") \"..." << error.token.code << "\" <-- At this place" << '\n';
 		return s.str();
 	}
