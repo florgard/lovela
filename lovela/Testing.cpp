@@ -275,21 +275,23 @@ void Testing::RunParserTests()
 	}
 
 	{
-		const Node e{ .type = Node::Type::Expression };
+		const Node fc{ .type = Node::Type::FunctionCall };
+		const Node e{ .type = Node::Type::Expression, .children{fc} };
 		const Node s{ .type = Node::Type::Statement, .children{e} };
-		const Node f{ .type = Node::Type::Function, .name = L"func", .objectType{.any = true}, .children{s} };
-		const Node r{ .type = Node::Type::Root, .children{f} };
+		const Node fd{ .type = Node::Type::Function, .name = L"func", .objectType{.any = true}, .children{s} };
+		const Node r{ .type = Node::Type::Root, .children{fd} };
 		TestParser("function with trivial body", L"func: body.", r, {});
 	}
 
 	{
-		const Node e2{ .type = Node::Type::Expression };
+		const Node fc{ .type = Node::Type::FunctionCall };
+		const Node e2{ .type = Node::Type::Expression, .children{fc} };
 		const Node s2{ .type = Node::Type::Statement, .children{e2} };
 		const Node g{ .type = Node::Type::Group, .children{s2} };
 		const Node e1{ .type = Node::Type::Expression, .children{g} };
 		const Node s1{ .type = Node::Type::Statement, .children{e1} };
-		const Node f{ .type = Node::Type::Function, .name = L"func", .objectType{.any = true}, .children{s1} };
-		const Node r{ .type = Node::Type::Root, .children{f} };
+		const Node fd{ .type = Node::Type::Function, .name = L"func", .objectType{.any = true}, .children{s1} };
+		const Node r{ .type = Node::Type::Root, .children{fd} };
 		TestParser("function with body within group", L"func: (body).", r, {});
 	}
 }

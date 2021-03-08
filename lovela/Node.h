@@ -1,4 +1,5 @@
 #pragma once
+#include "Token.h"
 
 struct TypeSpec
 {
@@ -30,11 +31,15 @@ struct Node
 		Expression,
 		Group,
 		List,
+		FunctionCall,
+		BinaryOperation,
+		Literal,
 	} type{};
 
 	std::wstring name;
 	std::wstring value;
 	TypeSpec dataType;
+	Token token;
 
 	// Function declaration
 	std::vector<std::wstring> nameSpace;
@@ -50,4 +55,6 @@ struct Node
 	{
 		return !operator==(rhs);
 	}
+
+	[[nodiscard]] operator bool() const noexcept { return type != Type::Empty; }
 };

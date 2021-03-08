@@ -17,4 +17,7 @@ private:
 	[[nodiscard]] Node ParseStatements();
 	[[nodiscard]] Node ParseExpression();
 	[[nodiscard]] Node ParseGroup();
+	[[nodiscard]] Node ParseOperand();
+	[[nodiscard]] Node ParseFunctionCall();
+	[[nodiscard]] Node ParseBinaryOperation();
 };

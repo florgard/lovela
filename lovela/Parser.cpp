@@ -8,9 +8,9 @@ static const std::vector<Token::Type> noAcceptedTokens
 
 static const std::vector<Token::Type> beginFunctionDeclarationTokens
 {
-	Token::Type::OperatorArrow,
 	Token::Type::ParenSquareOpen,
 	Token::Type::Identifier,
+	Token::Type::OperatorArrow,
 	Token::Type::OperatorArithmetic,
 	Token::Type::OperatorBitwise,
 	Token::Type::OperatorComparison,
@@ -23,8 +23,25 @@ static const std::vector<Token::Type> literalTokens
 	Token::Type::LiteralString,
 };
 
+static const std::vector<Token::Type> operandTokens
+{
+	Token::Type::ParenRoundOpen,
+	Token::Type::LiteralInteger,
+	Token::Type::LiteralDecimal,
+	Token::Type::LiteralString,
+};
+
 static const std::vector<Token::Type> binaryOperatorTokens
 {
+	Token::Type::OperatorArithmetic,
+	Token::Type::OperatorBitwise,
+	Token::Type::OperatorComparison,
+};
+
+static const std::vector<Token::Type> operatorTokens
+{
+	Token::Type::Identifier,
+	Token::Type::OperatorArrow,
 	Token::Type::OperatorArithmetic,
 	Token::Type::OperatorBitwise,
 	Token::Type::OperatorComparison,
@@ -36,6 +53,18 @@ static const std::vector<Token::Type> statementTerminatorTokens
 	Token::Type::SeparatorDot,
 	Token::Type::SeparatorComma,
 	Token::Type::ParenRoundClose,
+};
+
+static const std::vector<Node::Type> operandNodes
+{
+	Node::Type::Group,
+	Node::Type::Literal,
+};
+
+static const std::vector<Node::Type> operatorNodes
+{
+	Node::Type::FunctionCall,
+	Node::Type::BinaryOperation,
 };
 
 Parser::Parser(TokenGenerator&& tokenGenerator) noexcept : ParserBase(std::move(tokenGenerator))
@@ -254,7 +283,6 @@ Node Parser::ParseFunctionDeclaration()
 	// [objectType] identifier (parameterList) [dataType]:
 	if (Accept(Token::Type::SeparatorColon))
 	{
-		Next();
 		node.children.emplace_back(ParseStatement());
 	}
 
@@ -284,16 +312,73 @@ Node Parser::ParseStatements(/*objectType?*/)
 
 Node Parser::ParseExpression()
 {
-	Node node{ .type = Node::Type::Expression };
+	std::vector<Node> nodes;
 
-	if (Accept(Token::Type::ParenRoundOpen))
+	for (;;)
 	{
-		node.children.emplace_back(ParseGroup());
+		if (Accept(operandTokens))
+		{
+			nodes.emplace_back(ParseOperand());
+		}
+		else if (Accept(Token::Type::Identifier))
+		{
+			nodes.emplace_back(ParseFunctionCall());
+		}
+		else if (Accept(binaryOperatorTokens))
+		{
+			nodes.emplace_back(ParseBinaryOperation());
+		}
+		// TODO: Selector, bind
+		else if (Peek(statementTerminatorTokens))
+		{
+			break;
+		}
+		else
+		{
+			throw UnexpectedTokenException(*tokenIterator);
+		}
 	}
-	// Identifier
-	// Colon
 
-	return node;
+	Node expression{ .type = Node::Type::Expression };
+	auto* parent = &expression;
+	Node right;
+
+	for (auto iter = nodes.rbegin(); iter != nodes.rend(); iter++)
+	{
+		if (contains(operandNodes, iter->type))
+		{
+			if (right.type != Node::Type::Empty)
+			{
+				throw UnexpectedTokenException(iter->token);
+			}
+
+			right = *iter;
+		}
+		else if (contains(operatorNodes, iter->type))
+		{
+			auto& current = parent->children.emplace_back(*iter);
+
+			if (right)
+			{
+				parent->children.emplace_back(right);
+			}
+
+			parent = &current;
+			assert(!right);
+		}
+		else
+		{
+			throw ParseException(iter->token, "The expression node stack contains a node that is neither an operand nor an operator.");
+		}
+	}
+
+	// Left-most operand
+	if (right)
+	{
+		parent->children.emplace_back(right);
+	}
+
+	return expression;
 }
 
 Node Parser::ParseGroup()
@@ -309,6 +394,48 @@ Node Parser::ParseGroup()
 	} while (Accept(Token::Type::SeparatorComma));
 
 	Expect(Token::Type::ParenRoundClose);
+
+	return node;
+}
+
+Node Parser::ParseOperand()
+{
+	Node node;
+
+	if (currentToken.type == Token::Type::ParenRoundOpen)
+	{
+		node = ParseGroup();
+	}
+	else if (contains(literalTokens, currentToken.type))
+	{
+		node = Node{ .type = Node::Type::Literal, .token = currentToken };
+	}
+	else
+	{
+		Assert(noAcceptedTokens);
+	}
+
+	return node;
+}
+
+Node Parser::ParseFunctionCall()
+{
+	Assert(Token::Type::Identifier);
+
+	Node node{ .type = Node::Type::FunctionCall };
+
+	// TODO: nameSpace, name, parameters
+
+	return node;
+}
+
+Node Parser::ParseBinaryOperation()
+{
+	Assert(binaryOperatorTokens);
+
+	Node node{ .type = Node::Type::BinaryOperation, .token = currentToken };
+
+	// TODO
 
 	return node;
 }
