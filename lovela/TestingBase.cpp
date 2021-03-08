@@ -63,7 +63,14 @@ void TestingBase::TestParser(const char* name, std::wstring_view code, const Nod
 	int index = 0;
 	bool success = TestAST(index, name, tree, expectedTree);
 
-	assert(success);
+	if (!success)
+	{
+		std::wcerr << "AST mismatch.\nActual:\n";
+		PrintTree(tree);
+		std::wcerr << "Expected:\n";
+		PrintTree(expectedTree);
+		assert(success);
+	}
 
 	auto& errors = parser.GetErrors();
 	const auto actualCount = errors.size();
@@ -117,4 +124,14 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const 
 	}
 
 	return true;
+}
+
+void TestingBase::PrintTree(const Node& tree, std::wstring indent)
+{
+	std::wcerr << indent << "(" << ToWString(magic_enum::enum_name(tree.type)) << " " << tree.name << '\n';
+	for (auto& node : tree.children)
+	{
+		PrintTree(node, indent + L"  ");
+	}
+	std::wcerr << indent << "),\n";
 }

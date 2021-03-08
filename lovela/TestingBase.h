@@ -10,6 +10,7 @@ protected:
 
 private:
 	bool TestAST(int& index, const char* name, const Node& tree, const Node& expectedTree);
+	void PrintTree(const Node& tree, std::wstring indent = {});
 
 	template <typename Code>
 	static std::wstring GetIncorrectErrorCodeMessage(const char* phase, const char* name, int index, Code actual, Code expected)
