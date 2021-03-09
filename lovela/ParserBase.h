@@ -15,6 +15,9 @@ public:
 	void Assert();
 	void Assert(Token::Type type);
 	void Assert(const std::vector<Token::Type>& types);
+	void Skip();
+	void Skip(Token::Type type);
+	void Skip(const std::vector<Token::Type>& types); 
 	[[nodiscard]] bool IsToken(Token::Type type);
 	[[nodiscard]] bool IsToken(const std::vector<Token::Type>& types);
 
@@ -24,9 +27,6 @@ public:
 	[[nodiscard]] bool Accept(const std::vector<Token::Type>& types);
 	[[nodiscard]] bool Peek(Token::Type type);
 	[[nodiscard]] bool Peek(const std::vector<Token::Type>& types);
-	void Skip();
-	void Skip(Token::Type type);
-	void Skip(const std::vector<Token::Type>& types);
 
 protected:
 	TokenGenerator tokenGenerator;

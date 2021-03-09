@@ -126,6 +126,6 @@ bool ParserBase::IsToken(Token::Type type)
 // Returns true if the token is of one of the given types, false otherwise.
 bool ParserBase::IsToken(const std::vector<Token::Type>& types)
 {
-	auto iter = std::find_if(types.begin(), types.end(), [&](Token::Type type) { return currentToken.type == type; });
+	auto iter = std::find_if(types.begin(), types.end(), [&](Token::Type type) { return IsToken(type); });
 	return iter != types.end();
 }
