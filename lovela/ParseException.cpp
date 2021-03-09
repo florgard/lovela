@@ -27,7 +27,7 @@ UnexpectedTokenException::UnexpectedTokenException(const Token& token, Token::Ty
 	message = s.str();
 }
 
-UnexpectedTokenException::UnexpectedTokenException(const Token& token, const std::vector<Token::Type>& expected) : ParseException(token)
+UnexpectedTokenException::UnexpectedTokenException(const Token& token, const std::set<Token::Type>& expected) : ParseException(token)
 {
 	std::wostringstream s;
 	s << "Unexpected token " << ToWString(token.type) << ", expected ";

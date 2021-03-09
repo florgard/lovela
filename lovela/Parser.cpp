@@ -2,7 +2,7 @@
 #include "ParseException.h"
 #include "Parser.h"
 
-static const std::vector<Token::Type> beginFunctionDeclarationTokens
+static const std::set<Token::Type> beginFunctionDeclarationTokens
 {
 	Token::Type::ParenSquareOpen,
 	Token::Type::Identifier,
@@ -12,14 +12,14 @@ static const std::vector<Token::Type> beginFunctionDeclarationTokens
 	Token::Type::OperatorComparison,
 };
 
-static const std::vector<Token::Type> literalTokens
+static const std::set<Token::Type> literalTokens
 {
 	Token::Type::LiteralInteger,
 	Token::Type::LiteralDecimal,
 	Token::Type::LiteralString,
 };
 
-static const std::vector<Token::Type> operandTokens
+static const std::set<Token::Type> operandTokens
 {
 	Token::Type::ParenRoundOpen,
 	Token::Type::LiteralInteger,
@@ -27,14 +27,14 @@ static const std::vector<Token::Type> operandTokens
 	Token::Type::LiteralString,
 };
 
-static const std::vector<Token::Type> binaryOperatorTokens
+static const std::set<Token::Type> binaryOperatorTokens
 {
 	Token::Type::OperatorArithmetic,
 	Token::Type::OperatorBitwise,
 	Token::Type::OperatorComparison,
 };
 
-static const std::vector<Token::Type> operatorTokens
+static const std::set<Token::Type> operatorTokens
 {
 	Token::Type::Identifier,
 	Token::Type::OperatorArrow,
@@ -43,7 +43,7 @@ static const std::vector<Token::Type> operatorTokens
 	Token::Type::OperatorComparison,
 };
 
-static const std::vector<Token::Type> statementTerminatorTokens
+static const std::set<Token::Type> statementTerminatorTokens
 {
 	Token::Type::End,
 	Token::Type::SeparatorDot,
@@ -51,15 +51,15 @@ static const std::vector<Token::Type> statementTerminatorTokens
 	Token::Type::ParenRoundClose,
 };
 
-static const std::vector<Token::Type>& expressionTerminatorTokens = statementTerminatorTokens;
+static const std::set<Token::Type>& expressionTerminatorTokens = statementTerminatorTokens;
 
-static const std::vector<Node::Type> operandNodes
+static const std::set<Node::Type> operandNodes
 {
 	Node::Type::Group,
 	Node::Type::Literal,
 };
 
-static const std::vector<Node::Type> operatorNodes
+static const std::set<Node::Type> operatorNodes
 {
 	Node::Type::FunctionCall,
 	Node::Type::BinaryOperation,
@@ -356,7 +356,7 @@ Node Parser::ParseExpression(std::shared_ptr<Context> context)
 
 	for (auto iter = nodes.rbegin(); iter != nodes.rend(); iter++)
 	{
-		if (contains(operandNodes, iter->type))
+		if (operandNodes.contains(iter->type))
 		{
 			if (right.type != Node::Type::Empty)
 			{
@@ -365,7 +365,7 @@ Node Parser::ParseExpression(std::shared_ptr<Context> context)
 
 			right = *iter;
 		}
-		else if (contains(operatorNodes, iter->type))
+		else if (operatorNodes.contains(iter->type))
 		{
 			auto& current = parent->children.emplace_back(*iter);
 

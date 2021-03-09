@@ -15,7 +15,7 @@ struct UnexpectedTokenException : public ParseException
 {
 	UnexpectedTokenException(const Token& token);
 	UnexpectedTokenException(const Token& token, Token::Type expected);
-	UnexpectedTokenException(const Token& token, const std::vector<Token::Type>& expected);
+	UnexpectedTokenException(const Token& token, const std::set<Token::Type>& expected);
 };
 
 struct InvalidCurrentTokenException : public ParseException

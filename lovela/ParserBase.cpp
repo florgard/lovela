@@ -19,7 +19,7 @@ void ParserBase::Expect(Token::Type type)
 
 // Sets the current token to the next token that is expected to be of one of the given types.
 // Throws if the next token isn't of one of the given types or if there's no next token.
-void ParserBase::Expect(const std::vector<Token::Type>& types)
+void ParserBase::Expect(const std::set<Token::Type>& types)
 {
 	if (!Accept(types))
 	{
@@ -43,7 +43,7 @@ bool ParserBase::Accept(Token::Type type)
 
 // Sets the current token to the next token if it's of one of the given types.
 // Returns true if the token was set, false otherwise.
-bool ParserBase::Accept(const std::vector<Token::Type>& types)
+bool ParserBase::Accept(const std::set<Token::Type>& types)
 {
 	auto iter = std::find_if(types.begin(), types.end(), [&](Token::Type type) { return Accept(type); });
 	return iter != types.end();
@@ -66,7 +66,7 @@ void ParserBase::Skip(Token::Type type)
 }
 
 // Skips the current token and sets the next token as current token, if the next token is of one of the given types.
-void ParserBase::Skip(const std::vector<Token::Type>& types)
+void ParserBase::Skip(const std::set<Token::Type>& types)
 {
 	if (Peek(types))
 	{
@@ -92,7 +92,7 @@ void ParserBase::Assert(Token::Type type)
 
 // Asserts that the current token is of one of the given types.
 // Throws InvalidCurrentTokenException if the token isn't of one of the given types.
-void ParserBase::Assert(const std::vector<Token::Type>& types)
+void ParserBase::Assert(const std::set<Token::Type>& types)
 {
 	if (!IsToken(types))
 	{
@@ -109,10 +109,9 @@ bool ParserBase::Peek(Token::Type type)
 
 // Checks whether the next token is of one of the given types.
 // Returns true if the token is of one of the given types, false otherwise.
-bool ParserBase::Peek(const std::vector<Token::Type>& types)
+bool ParserBase::Peek(const std::set<Token::Type>& types)
 {
-	auto iter = std::find_if(types.begin(), types.end(), [&](Token::Type type) { return Peek(type); });
-	return iter != types.end();
+	return tokenIterator != tokenGenerator.end() && types.contains(tokenIterator->type);
 }
 
 // Checks whether the current token is of the given type.
@@ -124,8 +123,7 @@ bool ParserBase::IsToken(Token::Type type)
 
 // Checks whether the current token is of one of the given types.
 // Returns true if the token is of one of the given types, false otherwise.
-bool ParserBase::IsToken(const std::vector<Token::Type>& types)
+bool ParserBase::IsToken(const std::set<Token::Type>& types)
 {
-	auto iter = std::find_if(types.begin(), types.end(), [&](Token::Type type) { return IsToken(type); });
-	return iter != types.end();
+	return types.contains(currentToken.type);
 }
