@@ -9,10 +9,12 @@ public:
 
 	[[nodiscard]] Node Parse() noexcept override;
 
+	static void TraverseDepthFirstPreorder(Node& tree, std::function<void(Node& node)> visitor) noexcept;
+	static void TraverseDepthFirstPostorder(Node& tree, std::function<void(Node& node)> visitor) noexcept;
+
 private:
-	class Context
+	struct Context
 	{
-	public:
 		std::shared_ptr<Context> parent;
 		std::set<std::wstring> symbols;
 	};

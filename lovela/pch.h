@@ -10,6 +10,7 @@
 #include <type_traits>
 #include <compare>
 #include <memory>
+#include <functional>
 #include <iostream>
 #include <sstream>
 #include <regex>

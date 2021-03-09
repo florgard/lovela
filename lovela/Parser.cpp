@@ -69,6 +69,26 @@ Parser::Parser(TokenGenerator&& tokenGenerator) noexcept : ParserBase(std::move(
 {
 }
 
+void Parser::TraverseDepthFirstPreorder(Node& tree, std::function<void(Node& node)> visitor) noexcept
+{
+	visitor(tree);
+
+	for (auto& child : tree.children)
+	{
+		TraverseDepthFirstPreorder(child, visitor);
+	}
+}
+
+void Parser::TraverseDepthFirstPostorder(Node& tree, std::function<void(Node& node)> visitor) noexcept
+{
+	for (auto& child : tree.children)
+	{
+		TraverseDepthFirstPostorder(child, visitor);
+	}
+
+	visitor(tree);
+}
+
 Node Parser::Parse() noexcept
 {
 	auto context = std::make_shared<Context>();
