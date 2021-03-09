@@ -51,6 +51,8 @@ static const std::vector<Token::Type> statementTerminatorTokens
 	Token::Type::ParenRoundClose,
 };
 
+static const std::vector<Token::Type>& expressionTerminatorTokens = statementTerminatorTokens;
+
 static const std::vector<Node::Type> operandNodes
 {
 	Node::Type::Group,
@@ -338,7 +340,7 @@ Node Parser::ParseExpression(std::shared_ptr<Context> context)
 			nodes.emplace_back(ParseBinaryOperation(context));
 		}
 		// TODO: Selector, bind
-		else if (Peek(statementTerminatorTokens))
+		else if (Peek(expressionTerminatorTokens))
 		{
 			break;
 		}
