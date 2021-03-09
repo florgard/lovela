@@ -73,6 +73,9 @@ Parser::Parser(TokenGenerator&& tokenGenerator) noexcept : ParserBase(std::move(
 
 Node Parser::Parse() noexcept
 {
+	auto context = std::make_shared<Context>();
+	// TODO: add built-in functions?
+
 	auto node = Node{ .type{Node::Type::Root} };
 
 	tokenIterator = tokenGenerator.begin();
@@ -82,7 +85,7 @@ Node Parser::Parse() noexcept
 		{
 			if (Accept(beginFunctionDeclarationTokens))
 			{
-				node.children.emplace_back(ParseFunctionDeclaration());
+				node.children.emplace_back(ParseFunctionDeclaration(context));
 			}
 			else
 			{
@@ -202,8 +205,11 @@ ParameterList Parser::ParseParameterList()
 	return parameters;
 }
 
-Node Parser::ParseFunctionDeclaration()
+Node Parser::ParseFunctionDeclaration(std::shared_ptr<Context> context)
 {
+	auto innerContext = std::make_shared<Context>();
+	innerContext->parent = context;
+
 	auto node = Node{ .type{Node::Type::Function} };
 
 	// <-
@@ -232,12 +238,14 @@ Node Parser::ParseFunctionDeclaration()
 	else if (IsToken(Token::Type::Identifier))
 	{
 		auto name = currentToken.value;
+		std::wostringstream qualifiedName;
 
 		// namespace1|namespaceN|identifier
 		// namespace1|namespaceN|binaryOperator
 		while (Accept(Token::Type::SeparatorVerticalLine))
 		{
 			node.nameSpace.emplace_back(name);
+			qualifiedName << name << '|';
 
 			// binaryOperator
 			if (Accept(binaryOperatorTokens))
@@ -256,6 +264,9 @@ Node Parser::ParseFunctionDeclaration()
 
 		node.name = name;
 		node.objectType.any = true;
+
+		qualifiedName << name;
+		context->symbols.insert(qualifiedName.str());
 	}
 	// binaryOperator
 	else if (IsToken(binaryOperatorTokens))
@@ -283,34 +294,34 @@ Node Parser::ParseFunctionDeclaration()
 	// [objectType] identifier (parameterList) [dataType]:
 	if (Accept(Token::Type::SeparatorColon))
 	{
-		node.children.emplace_back(ParseStatement());
+		node.children.emplace_back(ParseStatement(innerContext));
 	}
 
 	return node;
 }
 
-Node Parser::ParseStatement(/*objectType?*/)
+Node Parser::ParseStatement(std::shared_ptr<Context> context)
 {
 	Node node{ .type = Node::Type::Statement };
 
-	node.children.emplace_back(ParseExpression());
+	node.children.emplace_back(ParseExpression(context));
 
 	return node;
 }
 
-Node Parser::ParseStatements(/*objectType?*/)
+Node Parser::ParseStatements(std::shared_ptr<Context> context)
 {
-	auto node = ParseStatement();
+	auto node = ParseStatement(context);
 
 	if (!IsToken(statementTerminatorTokens))
 	{
-		node.children.emplace_back(ParseStatements());
+		node.children.emplace_back(ParseStatements(context));
 	}
 
 	return node;
 }
 
-Node Parser::ParseExpression()
+Node Parser::ParseExpression(std::shared_ptr<Context> context)
 {
 	std::vector<Node> nodes;
 
@@ -318,15 +329,15 @@ Node Parser::ParseExpression()
 	{
 		if (Accept(operandTokens))
 		{
-			nodes.emplace_back(ParseOperand());
+			nodes.emplace_back(ParseOperand(context));
 		}
 		else if (Accept(Token::Type::Identifier))
 		{
-			nodes.emplace_back(ParseFunctionCall());
+			nodes.emplace_back(ParseFunctionCall(context));
 		}
 		else if (Accept(binaryOperatorTokens))
 		{
-			nodes.emplace_back(ParseBinaryOperation());
+			nodes.emplace_back(ParseBinaryOperation(context));
 		}
 		// TODO: Selector, bind
 		else if (Peek(statementTerminatorTokens))
@@ -381,7 +392,7 @@ Node Parser::ParseExpression()
 	return expression;
 }
 
-Node Parser::ParseGroup()
+Node Parser::ParseGroup(std::shared_ptr<Context> context)
 {
 	Assert(Token::Type::ParenRoundOpen);
 
@@ -389,7 +400,7 @@ Node Parser::ParseGroup()
 
 	do
 	{
-		node.children.emplace_back(ParseStatements());
+		node.children.emplace_back(ParseStatements(context));
 
 	} while (Accept(Token::Type::SeparatorComma));
 
@@ -398,13 +409,13 @@ Node Parser::ParseGroup()
 	return node;
 }
 
-Node Parser::ParseOperand()
+Node Parser::ParseOperand(std::shared_ptr<Context> context)
 {
 	Node node;
 
 	if (IsToken(Token::Type::ParenRoundOpen))
 	{
-		node = ParseGroup();
+		node = ParseGroup(context);
 	}
 	else if (IsToken(literalTokens))
 	{
@@ -418,7 +429,7 @@ Node Parser::ParseOperand()
 	return node;
 }
 
-Node Parser::ParseFunctionCall()
+Node Parser::ParseFunctionCall(std::shared_ptr<Context> context)
 {
 	Assert(Token::Type::Identifier);
 
@@ -429,7 +440,7 @@ Node Parser::ParseFunctionCall()
 	return node;
 }
 
-Node Parser::ParseBinaryOperation()
+Node Parser::ParseBinaryOperation(std::shared_ptr<Context> context)
 {
 	Assert(binaryOperatorTokens);
 
