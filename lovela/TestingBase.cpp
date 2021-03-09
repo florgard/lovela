@@ -66,9 +66,11 @@ void TestingBase::TestParser(const char* name, std::wstring_view code, const Nod
 	if (!success)
 	{
 		std::wcerr << "AST mismatch.\nActual:\n";
-		PrintTree(tree);
+		index = 0;
+		PrintTree(index, tree);
 		std::wcerr << "Expected:\n";
-		PrintTree(expectedTree);
+		index = 0;
+		PrintTree(index, expectedTree);
 		assert(success);
 	}
 
@@ -126,12 +128,15 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const 
 	return true;
 }
 
-void TestingBase::PrintTree(const Node& tree, std::wstring indent)
+void TestingBase::PrintTree(int& index, const Node& tree, std::wstring indent)
 {
-	std::wcerr << indent << "(" << ToWString(tree.type) << " " << tree.name << '\n';
+	std::wcerr << indent << '(' << index + 1 << ' ' << ToWString(tree.type) << " " << tree.name << '\n';
+	index++;
+
 	for (auto& node : tree.children)
 	{
-		PrintTree(node, indent + L"  ");
+		PrintTree(index, node, indent + L"  ");
 	}
+
 	std::wcerr << indent << "),\n";
 }
