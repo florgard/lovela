@@ -37,7 +37,7 @@ bool ParserBase::Accept(Token::Type type)
 		return false;
 	}
 
-	Next();
+	Skip();
 	return true;
 }
 
@@ -49,15 +49,39 @@ bool ParserBase::Accept(const std::vector<Token::Type>& types)
 	return iter != types.end();
 }
 
-// Sets the current token to the next token.
-void ParserBase::Next()
+// Skips the current token and sets the next token as current token.
+void ParserBase::Skip()
 {
 	currentToken = *tokenIterator;
 	tokenIterator++;
 }
 
+// Skips the current token and sets the next token as current token, if the next token is of the given type.
+void ParserBase::Skip(Token::Type type)
+{
+	if (Peek(type))
+	{
+		Skip();
+	}
+}
+
+// Skips the current token and sets the next token as current token, if the next token is of one of the given types.
+void ParserBase::Skip(const std::vector<Token::Type>& types)
+{
+	if (Peek(types))
+	{
+		Skip();
+	}
+}
+
+// Throws InvalidCurrentTokenException.
+void ParserBase::Assert()
+{
+	throw InvalidCurrentTokenException(currentToken);
+}
+
 // Asserts that the current token is of the given type.
-// Throws if the token isn't of the given type.
+// Throws InvalidCurrentTokenException if the token isn't of the given type.
 void ParserBase::Assert(Token::Type type)
 {
 	if (!IsToken(type))
@@ -67,7 +91,7 @@ void ParserBase::Assert(Token::Type type)
 }
 
 // Asserts that the current token is of one of the given types.
-// Throws if the token isn't of one of the given types.
+// Throws InvalidCurrentTokenException if the token isn't of one of the given types.
 void ParserBase::Assert(const std::vector<Token::Type>& types)
 {
 	if (!IsToken(types))

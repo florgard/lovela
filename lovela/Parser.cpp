@@ -2,10 +2,6 @@
 #include "ParseException.h"
 #include "Parser.h"
 
-static const std::vector<Token::Type> noAcceptedTokens
-{
-};
-
 static const std::vector<Token::Type> beginFunctionDeclarationTokens
 {
 	Token::Type::ParenSquareOpen,
@@ -105,7 +101,7 @@ Node Parser::Parse() noexcept
 			errors.emplace_back(Error{ .code = IParser::Error::Code::ParseError, .message = e.message, .token = e.token });
 
 			// Skip faulty token.
-			Next();
+			Skip();
 		}
 	}
 
@@ -276,7 +272,7 @@ Node Parser::ParseFunctionDeclaration(std::shared_ptr<Context> context)
 	}
 	else
 	{
-		Assert(noAcceptedTokens);
+		Assert();
 	}
 
 	// [objectType] identifier (parameterList)
@@ -305,6 +301,8 @@ Node Parser::ParseStatement(std::shared_ptr<Context> context)
 	Node node{ .type = Node::Type::Statement };
 
 	node.children.emplace_back(ParseExpression(context));
+
+	Skip(Token::Type::SeparatorDot);
 
 	return node;
 }
@@ -423,7 +421,7 @@ Node Parser::ParseOperand(std::shared_ptr<Context> context)
 	}
 	else
 	{
-		Assert(noAcceptedTokens);
+		Assert();
 	}
 
 	return node;
