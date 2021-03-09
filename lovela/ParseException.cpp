@@ -5,7 +5,7 @@ ParseException::ParseException(const Token& token) : token(token)
 {
 }
 
-ParseException::ParseException(const Token& token, std::string_view message) : token(token), message(ToWString(message))
+ParseException::ParseException(const Token& token, std::string_view message) : token(token), message(to_wstring(message))
 {
 }
 
@@ -16,21 +16,21 @@ ParseException::ParseException(const Token& token, std::wstring_view message) : 
 UnexpectedTokenException::UnexpectedTokenException(const Token& token) : ParseException(token)
 {
 	std::wostringstream s;
-	s << "Unexpected token " << ToWString(token.type);
+	s << "Unexpected token " << to_wstring(token.type);
 	message = s.str();
 }
 
 UnexpectedTokenException::UnexpectedTokenException(const Token& token, Token::Type expected) : ParseException(token)
 {
 	std::wostringstream s;
-	s << "Unexpected token " << ToWString(token.type) << ", expected " << ToWString(expected);
+	s << "Unexpected token " << to_wstring(token.type) << ", expected " << to_wstring(expected);
 	message = s.str();
 }
 
 UnexpectedTokenException::UnexpectedTokenException(const Token& token, const std::set<Token::Type>& expected) : ParseException(token)
 {
 	std::wostringstream s;
-	s << "Unexpected token " << ToWString(token.type) << ", expected ";
+	s << "Unexpected token " << to_wstring(token.type) << ", expected ";
 	bool first = true;
 	for (const auto& type : expected)
 	{
@@ -39,7 +39,7 @@ UnexpectedTokenException::UnexpectedTokenException(const Token& token, const std
 			s << ", ";
 		}
 		first = false;
-		s << ToWString(type);
+		s << to_wstring(type);
 	}
 	message = s.str();
 }
@@ -47,6 +47,6 @@ UnexpectedTokenException::UnexpectedTokenException(const Token& token, const std
 InvalidCurrentTokenException::InvalidCurrentTokenException(const Token& token) : ParseException(token)
 {
 	std::wostringstream s;
-	s << "Invalid current token " << ToWString(token.type);
+	s << "Invalid current token " << to_wstring(token.type);
 	message = s.str();
 }

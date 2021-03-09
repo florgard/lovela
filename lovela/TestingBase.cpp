@@ -22,8 +22,8 @@ void TestingBase::TestLexer(const char* name, std::wstring_view code, const std:
 		if (actual != expected)
 		{
 			success = false;
-			std::wcerr << "Test \"" << name << "\" error: Token " << i + 1 << " is " << ToWString(actual.type) << " \"" << actual.value
-				<< "\", expected " << ToWString(expected.type) << " \"" << expected.value << "\".\n";
+			std::wcerr << "Test \"" << name << "\" error: Token " << i + 1 << " is " << to_wstring(actual.type) << " \"" << actual.value
+				<< "\", expected " << to_wstring(expected.type) << " \"" << expected.value << "\".\n";
 		}
 	}
 
@@ -105,8 +105,8 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const 
 		const auto& actual = tree;
 		const auto& expected = expectedTree;
 
-		std::wcerr << "Test \"" << name << "\" error: Some property of node " << index + 1 << " of type " << ToWString(actual.type)
-			<< " differs from the expected node of type " << ToWString(expected.type) << ".\n";
+		std::wcerr << "Test \"" << name << "\" error: Some property of node " << index + 1 << " of type " << to_wstring(actual.type)
+			<< " differs from the expected node of type " << to_wstring(expected.type) << ".\n";
 		return false;
 	}
 
@@ -130,7 +130,7 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const 
 
 void TestingBase::PrintTree(int& index, const Node& tree, std::wstring indent)
 {
-	std::wcerr << indent << '(' << index + 1 << ' ' << ToWString(tree.type) << " " << tree.name << '\n';
+	std::wcerr << indent << '(' << index + 1 << ' ' << to_wstring(tree.type) << " " << tree.name << '\n';
 	index++;
 
 	for (auto& node : tree.children)
