@@ -53,7 +53,7 @@ void TestingBase::TestLexer(const char* name, std::wstring_view code, const std:
 	assert(success);
 }
 
-void TestingBase::TestParser(const char* name, std::wstring_view code, const Node& expectedTree, const std::vector<IParser::Error>& expectedErrors)
+Node TestingBase::TestParser(const char* name, std::wstring_view code, const Node& expectedTree, const std::vector<IParser::Error>& expectedErrors)
 {
 	std::wistringstream input(std::wstring(code.data(), code.size()));
 	Lexer lexer(input);
@@ -96,6 +96,8 @@ void TestingBase::TestParser(const char* name, std::wstring_view code, const Nod
 	}
 
 	assert(success);
+
+	return tree;
 }
 
 bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const Node& expectedTree)

@@ -308,6 +308,10 @@ Node Parser::ParseFunctionDeclaration(std::shared_ptr<Context> context)
 	{
 		node.dataType = ParseTypeSpec();
 	}
+	else
+	{
+		node.dataType.any = true;
+	}
 
 	// [objectType] identifier (parameterList) [dataType]:
 	if (Accept(Token::Type::SeparatorColon))
