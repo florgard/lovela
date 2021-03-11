@@ -6,6 +6,11 @@ std::map<Node::Type, std::function<void(CodeGenerator*, Node&)>> CodeGenerator::
 	{Node::Type::Function, &CodeGenerator::FunctionDeclaration}
 };
 
+std::map<Node::Type, std::function<void(CodeGenerator*, Node&)>> CodeGenerator::internalVisitors
+{
+	{Node::Type::Statement, &CodeGenerator::Statement}
+};
+
 CodeGenerator::CodeGenerator(std::wostream& stream) : stream(stream)
 {
 }
@@ -17,9 +22,14 @@ void CodeGenerator::Generate(Node& node)
 	{
 		iter->second(this, node);
 	}
-	else
+}
+
+void CodeGenerator::Visit(Node& node)
+{
+	auto iter = internalVisitors.find(node.type);
+	if (iter != internalVisitors.end())
 	{
-		std::wcerr << "No code generation for node type " << to_wstring(node.type) << '\n';
+		iter->second(this, node);
 	}
 }
 
@@ -70,5 +80,21 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 		stream << ">\n";
 	}
 
-	stream << returnType << ' ' << node.name << '(' << (!objectType.empty() ? objectType + L' ' + Decorate(L"object") : L"") << ")\n{\n\treturn {};\n}\n";
+	stream << returnType << ' ' << node.name << '(' << (!objectType.empty() ? objectType + L' ' + Decorate(L"object") : L"") << ')';
+
+	if (node.children.empty())
+	{
+		stream << ";\n";
+	}
+	else
+	{
+		stream << '\n';
+		Visit(node.children.front());
+	}
+}
+
+void CodeGenerator::Statement(Node& node)
+{
+	node;
+	stream << "{\n\treturn {};\n}\n";
 }
