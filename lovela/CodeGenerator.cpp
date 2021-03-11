@@ -35,13 +35,13 @@ void CodeGenerator::Visit(Node& node)
 
 void CodeGenerator::FunctionDeclaration(Node& node)
 {
-	std::wstring returnType;
-	std::wstring objectType;
 	std::vector<std::wstring> templateParameters;
+	std::vector<std::wstring> parameters;
+	std::wstring returnType;
 
 	if (node.dataType.any)
 	{
-		returnType = Decorate(L"DataType");
+		returnType = Decorate(L"return_t");
 		templateParameters.push_back(returnType);
 	}
 	else if (node.dataType.none)
@@ -55,22 +55,40 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 
 	if (node.objectType.any)
 	{
-		objectType = Decorate(L"ObjectType");
-		templateParameters.push_back(objectType);
+		auto name = Decorate("object");
+		auto type = name + L"_t";
+		parameters.emplace_back(type + L' ' + name);
+		templateParameters.push_back(type);
 	}
-	else if (node.objectType.none)
+	else if (!node.objectType.none)
 	{
+		auto name = Decorate("object");
+		auto type = node.objectType.name;
+		parameters.emplace_back(type + L' ' + name);
 	}
-	else
+
+	int index = 0;
+	for (auto& param : node.parameters)
 	{
-		objectType = node.objectType.name;
+		std::wostringstream paramName;
+		paramName << "param" << (index++ + 1);
+		auto name = param.name;
+		auto type = param.type.name;
+
+		if (param.type.any)
+		{
+			type = Decorate(paramName.str()) + L"_t";
+			templateParameters.push_back(type);
+		}
+
+		parameters.emplace_back(type + L' ' + name);
 	}
 
 	if (!templateParameters.empty())
 	{
 		stream << "template <";
 
-		int index = 0;
+		index = 0;
 		for (auto& param : templateParameters)
 		{
 			stream << (index++ ? ", " : "");
@@ -80,7 +98,16 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 		stream << ">\n";
 	}
 
-	stream << returnType << ' ' << node.name << '(' << (!objectType.empty() ? objectType + L' ' + Decorate(L"object") : L"") << ')';
+	stream << returnType << ' ' << node.name << '(';
+
+	index = 0;
+	for (auto& param : parameters)
+	{
+		stream << (index++ ? ", " : "");
+		stream << param;
+	}
+
+	stream << ')';
 
 	if (node.children.empty())
 	{

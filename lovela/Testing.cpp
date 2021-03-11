@@ -293,7 +293,20 @@ void Testing::RunParserTests()
 		const Node s1{ .type = Node::Type::Statement, .children{e1} };
 		const Node fd{ .type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .children{s1} };
 		const Node r{ .type = Node::Type::Root, .children{fd} };
-		auto tree = TestParser("function with body within group", L"func: (body).", r, {});
+		TestParser("function with body within group", L"func: (body).", r, {});
+	}
+
+	{
+		const Node fc{ .type = Node::Type::FunctionCall, .name = L"doWork" };
+		const Node e{ .type = Node::Type::Expression, .children{fc} };
+		const Node s{ .type = Node::Type::Statement, .children{e} };
+		const Node fd{ .type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .parameters{
+				Parameter{.name = L"untyped", .type{.any = true}},
+				Parameter{.name = L"name", .type{.name = L"type"}},
+				Parameter{.type{.name = L"unnamed"}}
+			}, .children{s} };
+		const Node r{ .type{Node::Type::Root}, .children{fd} };
+		auto tree = TestParser("function with parameters and body", L"func(untyped, name [type], [unnamed]): doWork.", r, {});
 		CodeGenerator gen(std::wcout);
 		Parser::TraverseDepthFirstPostorder(tree, [&](Node& node) { gen.Generate(node); });
 	}
