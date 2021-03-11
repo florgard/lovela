@@ -310,4 +310,19 @@ void Testing::RunParserTests()
 		CodeGenerator gen(std::wcout);
 		Parser::TraverseDepthFirstPostorder(tree, [&](Node& node) { gen.Generate(node); });
 	}
+
+	{
+		const Node fc{ .type = Node::Type::FunctionCall, .name = L"doWork" };
+		const Node e{ .type = Node::Type::Expression, .children{fc} };
+		const Node s{ .type = Node::Type::Statement, .children{e} };
+		const Node fd{ .type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.none = true}, .parameters{
+				Parameter{.name = L"untyped", .type{.any = true}},
+				Parameter{.name = L"name", .type{.name = L"type"}},
+				Parameter{.type{.name = L"unnamed"}}
+			}, .children{s} };
+		const Node r{ .type{Node::Type::Root}, .children{fd} };
+		auto tree = TestParser("function without object but with parameters and body", L"[()] func(untyped, name [type], [unnamed]): doWork.", r, {});
+		CodeGenerator gen(std::wcout);
+		Parser::TraverseDepthFirstPostorder(tree, [&](Node& node) { gen.Generate(node); });
+	}
 }

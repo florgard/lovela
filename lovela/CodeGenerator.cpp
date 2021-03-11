@@ -33,38 +33,55 @@ void CodeGenerator::Visit(Node& node)
 	}
 }
 
+void CodeGenerator::BeginScope()
+{
+	stream << GetIndent() << "{\n";
+	indent++;
+}
+
+void CodeGenerator::EndScope()
+{
+	indent--;
+	stream << GetIndent() << "}\n";
+}
+
 void CodeGenerator::FunctionDeclaration(Node& node)
 {
 	std::vector<std::wstring> templateParameters;
 	std::vector<std::wstring> parameters;
 	std::wstring returnType;
+	std::wstring voidType = Decorate("void");
+	std::wstring objectName = Decorate("object");
+	std::wstring initialization;
 
 	if (node.dataType.any)
 	{
 		returnType = Decorate(L"return_t");
 		templateParameters.push_back(returnType);
 	}
-	else if (node.dataType.none)
+	else if (!node.dataType.none)
 	{
-		returnType = L"void";
+		returnType = node.dataType.name;
 	}
 	else
 	{
-		returnType = node.dataType.name;
+		returnType = voidType;
 	}
 
 	if (node.objectType.any)
 	{
-		auto name = Decorate("object");
-		auto type = name + L"_t";
-		parameters.emplace_back(type + L' ' + name);
+		auto type = objectName + L"_t";
+		parameters.emplace_back(type + L' ' + objectName);
 		templateParameters.push_back(type);
 	}
 	else if (!node.objectType.none)
 	{
-		auto name = Decorate("object");
 		auto type = node.objectType.name;
-		parameters.emplace_back(type + L' ' + name);
+		parameters.emplace_back(type + L' ' + objectName);
+	}
+	else
+	{
+		initialization += voidType + L' ' + objectName + L";\n";
 	}
 
 	int index = 0;
@@ -86,7 +103,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 
 	if (!templateParameters.empty())
 	{
-		stream << "template <";
+		stream << GetIndent() << "template <";
 
 		index = 0;
 		for (auto& param : templateParameters)
@@ -98,7 +115,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 		stream << ">\n";
 	}
 
-	stream << returnType << ' ' << node.name << '(';
+	stream << GetIndent() << returnType << ' ' << node.name << '(';
 
 	index = 0;
 	for (auto& param : parameters)
@@ -116,12 +133,15 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 	else
 	{
 		stream << '\n';
+		BeginScope();
+		stream << GetIndent() << initialization;
 		Visit(node.children.front());
+		EndScope();
 	}
 }
 
 void CodeGenerator::Statement(Node& node)
 {
 	node;
-	stream << "{\n\treturn {};\n}\n";
+	stream << GetIndent() << "return {};\n";
 }
