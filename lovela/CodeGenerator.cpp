@@ -52,7 +52,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 	std::wstring returnType;
 	std::wstring voidType = Decorate("void");
 	std::wstring objectName = Decorate("object");
-	std::wstring initialization;
+	std::vector<std::wstring> initialization;
 
 	if (node.dataType.any)
 	{
@@ -81,7 +81,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 	}
 	else
 	{
-		initialization += voidType + L' ' + objectName + L";\n";
+		initialization.emplace_back(voidType + L' ' + objectName);
 	}
 
 	int index = 0;
@@ -134,7 +134,10 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 	{
 		stream << '\n';
 		BeginScope();
-		stream << GetIndent() << initialization;
+		for (auto& line : initialization)
+		{
+			stream << GetIndent() << line << ";\n";
+		}
 		Visit(node.children.front());
 		EndScope();
 	}
