@@ -413,6 +413,11 @@ Node Parser::ParseExpression(std::shared_ptr<Context> context)
 	// Left-most operand
 	if (right)
 	{
+		if (!parent->children.empty())
+		{
+			throw ParseException(parent->token, "The parent expression node already has a left hand side operand.");
+		}
+
 		parent->children.emplace_back(right);
 	}
 
