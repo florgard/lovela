@@ -7,10 +7,10 @@ class TestingBase
 protected:
 	void TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors);
 	std::unique_ptr<Node> TestParser(const char* name, std::wstring_view code, const Node& expectedTree, const std::vector<IParser::Error>& expectedErrors);
+	void PrintTree(int& index, const Node& tree, std::wstring indent = {});
 
 private:
 	bool TestAST(int& index, const char* name, const Node& tree, const Node& expectedTree);
-	void PrintTree(int& index, const Node& tree, std::wstring indent = {});
 
 	template <typename Code>
 	static std::wstring GetIncorrectErrorCodeMessage(const char* phase, const char* name, int index, Code actual, Code expected)
