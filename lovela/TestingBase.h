@@ -6,7 +6,7 @@ class TestingBase
 {
 protected:
 	void TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors);
-	std::unique_ptr<Node> TestParser(const char* name, std::wstring_view code, std::unique_ptr<Node> expectedTree, const std::vector<IParser::Error>& expectedErrors);
+	std::unique_ptr<Node> TestParser(const char* name, std::wstring_view code, const Node& expectedTree, const std::vector<IParser::Error>& expectedErrors);
 
 private:
 	bool TestAST(int& index, const char* name, const Node& tree, const Node& expectedTree);

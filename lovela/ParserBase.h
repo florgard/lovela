@@ -25,6 +25,7 @@ public:
 	void Expect(const std::set<Token::Type>& types);
 	[[nodiscard]] bool Accept(Token::Type type);
 	[[nodiscard]] bool Accept(const std::set<Token::Type>& types);
+	[[nodiscard]] bool Peek();
 	[[nodiscard]] bool Peek(Token::Type type);
 	[[nodiscard]] bool Peek(const std::set<Token::Type>& types);
 

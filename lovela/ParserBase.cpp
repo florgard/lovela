@@ -31,14 +31,13 @@ void ParserBase::Expect(const std::set<Token::Type>& types)
 // Returns true if the token was set, false otherwise.
 bool ParserBase::Accept(Token::Type type)
 {
-	if (!Peek(type))
+	if (Peek(type))
 	{
-		currentToken = Token{ .type = Token::Type::End };
-		return false;
+		Skip();
+		return true;
 	}
 
-	Skip();
-	return true;
+	return false;
 }
 
 // Sets the current token to the next token if it's of one of the given types.
@@ -100,18 +99,37 @@ void ParserBase::Assert(const std::set<Token::Type>& types)
 	}
 }
 
+// Checks whether there's a next token.
+// Returns true if there's a token, false otherwise.
+bool ParserBase::Peek()
+{
+	return tokenIterator != tokenGenerator.end();
+}
+
 // Checks whether the next token is of the given type.
 // Returns true if the token is of the given type, false otherwise.
 bool ParserBase::Peek(Token::Type type)
 {
-	return tokenIterator != tokenGenerator.end() && tokenIterator->type == type;
+	if (!Peek())
+	{
+		return false;
+	}
+
+	const auto nextType = tokenIterator->type;
+	return type == nextType;
 }
 
 // Checks whether the next token is of one of the given types.
 // Returns true if the token is of one of the given types, false otherwise.
 bool ParserBase::Peek(const std::set<Token::Type>& types)
 {
-	return tokenIterator != tokenGenerator.end() && types.contains(tokenIterator->type);
+	if (!Peek())
+	{
+		return false;
+	}
+
+	const auto nextType = tokenIterator->type;
+	return types.contains(nextType);
 }
 
 // Checks whether the current token is of the given type.

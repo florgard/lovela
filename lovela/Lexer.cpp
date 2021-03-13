@@ -279,5 +279,7 @@ TokenGenerator Lexer::Lex() noexcept
 			co_yield AddToken(token);
 		}
 		lexeme.clear();
+
+		co_yield AddToken({ .type = Token::Type::End });
 	}
 }

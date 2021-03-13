@@ -25,7 +25,6 @@ struct Node
 	enum class Type
 	{
 		Empty,
-		Root,
 		FunctionDeclaration,
 		Expression,
 		Tuple,

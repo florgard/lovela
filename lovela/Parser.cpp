@@ -101,8 +101,8 @@ std::unique_ptr<Node> Parser::Parse() noexcept
 	auto context = std::make_shared<Context>();
 	// TODO: add built-in functions?
 
-	auto node = Node::make_unique({ .type = Node::Type::Root });
-	auto currentNode = node.get();
+	// Use a list of top-level nodes to be able to continue parsing after an error.
+	std::deque<std::unique_ptr<Node>> nodes;
 
 	tokenIterator = tokenGenerator.begin();
 	while (tokenIterator != tokenGenerator.end())
@@ -111,25 +111,30 @@ std::unique_ptr<Node> Parser::Parse() noexcept
 		{
 			if (Accept(beginFunctionDeclarationTokens))
 			{
-				if (currentNode->left)
+				nodes.emplace_back(ParseFunctionDeclaration(context));
+			}
+			else if (Accept(Token::Type::End))
+			{
+				if (Peek())
 				{
-					currentNode->right = Node::make_unique({ .type = Node::Type::Root });
-					currentNode = currentNode->right.get();
+					throw UnexpectedTokenException(*tokenIterator);
 				}
-				currentNode->left = ParseFunctionDeclaration(context);
+			}
+			else if (Peek())
+			{
+				throw UnexpectedTokenException(*tokenIterator);
 			}
 			else
 			{
-				throw UnexpectedTokenException(*tokenIterator);
+				throw ParseException({}, "Unexpected end of token stream.");
 			}
 		}
 		catch (const InvalidCurrentTokenException& e)
 		{
 			errors.emplace_back(Error{ .code = IParser::Error::Code::ParseError, .message = e.message, .token = e.token });
 
-			// Internal logic error: The caller and parsing function doesn't agree on the type of token to handle.
-			assert(false);
-			return node;
+			// Skip faulty token.
+			Skip();
 		}
 		catch (const ParseException& e)
 		{
@@ -138,6 +143,23 @@ std::unique_ptr<Node> Parser::Parse() noexcept
 			// Skip faulty token.
 			Skip();
 		}
+	}
+
+	if (nodes.empty())
+	{
+		return {};
+	}
+
+	// Link the nodes together
+
+	std::unique_ptr<Node> node = std::move(nodes.front());
+	nodes.pop_front();
+	auto parent = node.get();
+
+	for (auto& child : nodes)
+	{
+		parent->right = std::move(child);
+		parent = parent->right.get();
 	}
 
 	return node;
@@ -339,7 +361,7 @@ std::unique_ptr<Node> Parser::ParseCompoundExpression(std::shared_ptr<Context> c
 {
 	auto node = ParseExpression(context);
 
-	if (!IsToken(expressionTerminatorTokens))
+	if (!Peek(expressionTerminatorTokens))
 	{
 		node->left = ParseCompoundExpression(context);
 	}
@@ -366,7 +388,7 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 			nodes.emplace_back(ParseBinaryOperation(context));
 		}
 		// TODO: Selector, bind
-		else if (Peek(expressionTerminatorTokens))
+		else if (Accept(Token::Type::SeparatorDot) || Peek(expressionTerminatorTokens))
 		{
 			break;
 		}
@@ -375,8 +397,6 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 			throw UnexpectedTokenException(*tokenIterator);
 		}
 	}
-
-	Skip(Token::Type::SeparatorDot);
 
 	if (nodes.empty())
 	{
