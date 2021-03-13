@@ -362,7 +362,22 @@ Node Parser::ParseExpression(std::shared_ptr<Context> context)
 		}
 	}
 
+	Skip(Token::Type::SeparatorDot);
+
+	if (nodes.empty())
+	{
+		return {};
+	}
+
 	Node expression{ .type = Node::Type::Expression };
+
+	if (nodes.back().type == Node::Type::Expression)
+	{
+		// Use a possible top-most expression node as the return node
+		expression = nodes.back();
+		nodes.pop_back();
+	}
+
 	auto* parent = &expression;
 	Node right;
 
@@ -400,8 +415,6 @@ Node Parser::ParseExpression(std::shared_ptr<Context> context)
 	{
 		parent->children.emplace_back(right);
 	}
-
-	Skip(Token::Type::SeparatorDot);
 
 	return expression;
 }
