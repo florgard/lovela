@@ -28,10 +28,9 @@ struct Node
 		FunctionDeclaration,
 		Expression,
 		Tuple,
-		List,
+		Literal,
 		FunctionCall,
 		BinaryOperation,
-		Literal,
 	} type{};
 
 	std::wstring name;
