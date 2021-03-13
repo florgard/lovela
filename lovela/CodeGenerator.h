@@ -12,7 +12,7 @@ private:
 	void Visit(Node& node);
 
 	void FunctionDeclaration(Node& node);
-	void Statement(Node& node);
+	void Expression(Node& node);
 
 	void BeginScope();
 	void EndScope();

@@ -27,7 +27,6 @@ struct Node
 		Empty,
 		Root,
 		Function,
-		Statement,
 		Expression,
 		Group,
 		List,

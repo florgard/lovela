@@ -316,30 +316,19 @@ Node Parser::ParseFunctionDeclaration(std::shared_ptr<Context> context)
 	// [objectType] identifier (parameterList) [dataType]:
 	if (Accept(Token::Type::SeparatorColon))
 	{
-		node.children.emplace_back(ParseStatement(innerContext));
+		node.children.emplace_back(ParseExpression(innerContext));
 	}
 
 	return node;
 }
 
-Node Parser::ParseStatement(std::shared_ptr<Context> context)
+Node Parser::ParseCompoundExpression(std::shared_ptr<Context> context)
 {
-	Node node{ .type = Node::Type::Statement };
-
-	node.children.emplace_back(ParseExpression(context));
-
-	Skip(Token::Type::SeparatorDot);
-
-	return node;
-}
-
-Node Parser::ParseStatements(std::shared_ptr<Context> context)
-{
-	auto node = ParseStatement(context);
+	auto node = ParseExpression(context);
 
 	if (!IsToken(statementTerminatorTokens))
 	{
-		node.children.emplace_back(ParseStatements(context));
+		node.children.emplace_back(ParseCompoundExpression(context));
 	}
 
 	return node;
@@ -413,6 +402,8 @@ Node Parser::ParseExpression(std::shared_ptr<Context> context)
 		parent->children.emplace_back(right);
 	}
 
+	Skip(Token::Type::SeparatorDot);
+
 	return expression;
 }
 
@@ -424,7 +415,7 @@ Node Parser::ParseGroup(std::shared_ptr<Context> context)
 
 	do
 	{
-		node.children.emplace_back(ParseStatements(context));
+		node.children.emplace_back(ParseCompoundExpression(context));
 
 	} while (Accept(Token::Type::SeparatorComma));
 

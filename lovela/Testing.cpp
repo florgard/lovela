@@ -278,8 +278,7 @@ void Testing::RunParserTests()
 	{
 		const Node fc{ .type = Node::Type::FunctionCall, .name = L"body" };
 		const Node e{ .type = Node::Type::Expression, .children{fc} };
-		const Node s{ .type = Node::Type::Statement, .children{e} };
-		const Node fd{ .type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .children{s} };
+		const Node fd{ .type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .children{e} };
 		const Node r{ .type = Node::Type::Root, .children{fd} };
 		TestParser("function with trivial body", L"func: body.", r, {});
 	}
@@ -287,11 +286,9 @@ void Testing::RunParserTests()
 	{
 		const Node fc{ .type = Node::Type::FunctionCall, .name = L"body" };
 		const Node e2{ .type = Node::Type::Expression, .children{fc} };
-		const Node s2{ .type = Node::Type::Statement, .children{e2} };
-		const Node g{ .type = Node::Type::Group, .children{s2} };
+		const Node g{ .type = Node::Type::Group, .children{e2} };
 		const Node e1{ .type = Node::Type::Expression, .children{g} };
-		const Node s1{ .type = Node::Type::Statement, .children{e1} };
-		const Node fd{ .type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .children{s1} };
+		const Node fd{ .type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .children{e1} };
 		const Node r{ .type = Node::Type::Root, .children{fd} };
 		TestParser("function with body within group", L"func: (body).", r, {});
 	}
@@ -299,12 +296,11 @@ void Testing::RunParserTests()
 	{
 		const Node fc{ .type = Node::Type::FunctionCall, .name = L"doWork" };
 		const Node e{ .type = Node::Type::Expression, .children{fc} };
-		const Node s{ .type = Node::Type::Statement, .children{e} };
 		const Node fd{ .type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .parameters{
 				Parameter{.name = L"untyped", .type{.any = true}},
 				Parameter{.name = L"name", .type{.name = L"type"}},
 				Parameter{.type{.name = L"unnamed"}}
-			}, .children{s} };
+			}, .children{e} };
 		const Node r{ .type{Node::Type::Root}, .children{fd} };
 		auto tree = TestParser("function with parameters and body", L"func(untyped, name [type], [unnamed]): doWork.", r, {});
 		CodeGenerator gen(std::wcout);
@@ -314,12 +310,11 @@ void Testing::RunParserTests()
 	{
 		const Node fc{ .type = Node::Type::FunctionCall, .name = L"doWork" };
 		const Node e{ .type = Node::Type::Expression, .children{fc} };
-		const Node s{ .type = Node::Type::Statement, .children{e} };
 		const Node fd{ .type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.none = true}, .parameters{
 				Parameter{.name = L"untyped", .type{.any = true}},
 				Parameter{.name = L"name", .type{.name = L"type"}},
 				Parameter{.type{.name = L"unnamed"}}
-			}, .children{s} };
+			}, .children{e} };
 		const Node r{ .type{Node::Type::Root}, .children{fd} };
 		auto tree = TestParser("function without object but with parameters and body", L"[()] func(untyped, name [type], [unnamed]): doWork.", r, {});
 		CodeGenerator gen(std::wcout);

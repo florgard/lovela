@@ -8,7 +8,7 @@ std::map<Node::Type, std::function<void(CodeGenerator*, Node&)>> CodeGenerator::
 
 std::map<Node::Type, std::function<void(CodeGenerator*, Node&)>> CodeGenerator::internalVisitors
 {
-	{Node::Type::Statement, &CodeGenerator::Statement}
+	{Node::Type::Expression, &CodeGenerator::Expression}
 };
 
 CodeGenerator::CodeGenerator(std::wostream& stream) : stream(stream)
@@ -143,7 +143,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 	}
 }
 
-void CodeGenerator::Statement(Node& node)
+void CodeGenerator::Expression(Node& node)
 {
 	node;
 	stream << GetIndent() << "return {};\n";
