@@ -43,15 +43,13 @@ static const std::set<Token::Type> operatorTokens
 	Token::Type::OperatorComparison,
 };
 
-static const std::set<Token::Type> statementTerminatorTokens
+static const std::set<Token::Type> expressionTerminatorTokens
 {
 	Token::Type::End,
 	Token::Type::SeparatorDot,
 	Token::Type::SeparatorComma,
 	Token::Type::ParenRoundClose,
 };
-
-static const std::set<Token::Type>& expressionTerminatorTokens = statementTerminatorTokens;
 
 static const std::set<Node::Type> operandNodes
 {
@@ -326,7 +324,7 @@ Node Parser::ParseCompoundExpression(std::shared_ptr<Context> context)
 {
 	auto node = ParseExpression(context);
 
-	if (!IsToken(statementTerminatorTokens))
+	if (!IsToken(expressionTerminatorTokens))
 	{
 		node.children.emplace_back(ParseCompoundExpression(context));
 	}
