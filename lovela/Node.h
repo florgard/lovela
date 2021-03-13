@@ -59,29 +59,4 @@ struct Node
 
 	static std::unique_ptr<Node> make_unique(Node& node) noexcept { return move_to_unique(node); }
 	static std::unique_ptr<Node> make_unique(Node&& node) noexcept { return move_to_unique(node); }
-
-	static std::vector<std::unique_ptr<Node>> make_vector(Node&& node1) noexcept
-	{
-		std::vector<std::unique_ptr<Node>> v;
-		v.emplace_back(move_to_unique(node1));
-		return v;
-	}
-
-	static std::vector<std::unique_ptr<Node>> make_vector(Node&& node1, Node&& node2) noexcept
-	{
-		std::vector<std::unique_ptr<Node>> v;
-		v.emplace_back(move_to_unique(node1));
-		v.emplace_back(move_to_unique(node2));
-		return v;
-	}
-
-	static std::vector<std::unique_ptr<Node>> make_vector(Node& node1) noexcept
-	{
-		return make_vector(std::move(node1));
-	}
-
-	static std::vector<std::unique_ptr<Node>> make_vector(Node& node1, Node& node2) noexcept
-	{
-		return make_vector(std::move(node1), std::move(node2));
-	}
 };
