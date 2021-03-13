@@ -429,15 +429,7 @@ Node Parser::ParseGroup(std::shared_ptr<Context> context)
 {
 	Assert(Token::Type::ParenRoundOpen);
 
-	auto node = ParseCompoundExpression(context);
-
-	if (Accept(Token::Type::SeparatorComma))
-	{
-		Node tuple{ .type = Node::Type::Tuple };
-		tuple.children.emplace_back(node);
-		tuple.children.emplace_back(ParseTuple(context));
-		node = tuple;
-	}
+	auto node = ParseTuple(context);
 
 	Expect(Token::Type::ParenRoundClose);
 
