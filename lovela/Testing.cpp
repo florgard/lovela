@@ -241,6 +241,11 @@ void Testing::RunParserTests()
 	TestParser("anonymous function", L"[]()",
 		Node{.type = Node::Type::FunctionDeclaration, .dataType{.any = true}, .objectType{.any = true}}
 		, {});
+	TestParser("2 function declarations", L"func1\r\nfunc2",
+		Node{ .type = Node::Type::FunctionDeclaration, .name = L"func1", .dataType{.any = true}, .objectType{.any = true}, .right =
+			Node::make_unique({ .type = Node::Type::FunctionDeclaration, .name = L"func2", .dataType{.any = true}, .objectType{.any = true} })
+		}
+	, {});
 
 	{
 		auto f = Node{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .parameters{
