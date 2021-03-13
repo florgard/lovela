@@ -10,7 +10,7 @@ public:
 	{
 		enum class Code
 		{
-			UnknownError,
+			NoError,
 			SyntaxError,
 			CommentOpen,
 			StringLiteralOpen,

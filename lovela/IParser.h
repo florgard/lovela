@@ -8,7 +8,7 @@ public:
 	{
 		enum class Code
 		{
-			UnknownError,
+			NoError,
 			ParseError,
 		} code{};
 
