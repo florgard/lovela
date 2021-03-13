@@ -138,7 +138,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 		{
 			stream << GetIndent() << line << ";\n";
 		}
-		Visit(node.children.front());
+		Visit(*node.children.front());
 		EndScope();
 	}
 }

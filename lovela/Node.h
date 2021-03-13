@@ -47,7 +47,9 @@ struct Node
 	bool imported{};
 	bool exported{};
 
-	std::vector<Node> children;
+	//std::unique_ptr<Node> left;
+	//std::unique_ptr<Node> right;
+	std::vector<std::unique_ptr<Node>> children;
 
 	[[nodiscard]] bool operator==(const Node& rhs) const noexcept;
 	[[nodiscard]] bool operator!=(const Node& rhs) const noexcept
@@ -56,4 +58,32 @@ struct Node
 	}
 
 	[[nodiscard]] operator bool() const noexcept { return type != Type::Empty; }
+
+	static std::unique_ptr<Node> make_unique(Node& node) noexcept { return move_to_unique(node); }
+	static std::unique_ptr<Node> make_unique(Node&& node) noexcept { return move_to_unique(node); }
+
+	static std::vector<std::unique_ptr<Node>> make_vector(Node&& node1) noexcept
+	{
+		std::vector<std::unique_ptr<Node>> v;
+		v.emplace_back(move_to_unique(node1));
+		return v;
+	}
+
+	static std::vector<std::unique_ptr<Node>> make_vector(Node&& node1, Node&& node2) noexcept
+	{
+		std::vector<std::unique_ptr<Node>> v;
+		v.emplace_back(move_to_unique(node1));
+		v.emplace_back(move_to_unique(node2));
+		return v;
+	}
+
+	static std::vector<std::unique_ptr<Node>> make_vector(Node& node1) noexcept
+	{
+		return make_vector(std::move(node1));
+	}
+
+	static std::vector<std::unique_ptr<Node>> make_vector(Node& node1, Node& node2) noexcept
+	{
+		return make_vector(std::move(node1), std::move(node2));
+	}
 };

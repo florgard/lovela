@@ -53,7 +53,7 @@ void TestingBase::TestLexer(const char* name, std::wstring_view code, const std:
 	assert(success);
 }
 
-Node TestingBase::TestParser(const char* name, std::wstring_view code, const Node& expectedTree, const std::vector<IParser::Error>& expectedErrors)
+std::unique_ptr<Node> TestingBase::TestParser(const char* name, std::wstring_view code, std::unique_ptr<Node> expectedTree, const std::vector<IParser::Error>& expectedErrors)
 {
 	std::wistringstream input(std::wstring(code.data(), code.size()));
 	Lexer lexer(input);
@@ -61,16 +61,16 @@ Node TestingBase::TestParser(const char* name, std::wstring_view code, const Nod
 	auto tree = parser.Parse();
 
 	int index = 0;
-	bool success = TestAST(index, name, tree, expectedTree);
+	bool success = TestAST(index, name, *tree, *expectedTree);
 
 	if (!success)
 	{
 		std::wcerr << "AST mismatch.\nActual:\n";
 		index = 0;
-		PrintTree(index, tree);
+		PrintTree(index, *tree);
 		std::wcerr << "Expected:\n";
 		index = 0;
-		PrintTree(index, expectedTree);
+		PrintTree(index, *expectedTree);
 		assert(success);
 	}
 
@@ -119,9 +119,10 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const 
 	auto count = std::max(actualCount, expectedCount);
 	for (int i = 0; i < count; i++)
 	{
-		const auto& actual = i < actualCount ? tree.children[i] : Node{};
-		const auto& expected = i < expectedCount ? expectedTree.children[i] : Node{};
-		if (!TestAST(index, name, actual, expected))
+		static std::unique_ptr<Node> empty;
+		const auto& actual = i < actualCount ? tree.children[i] : empty;
+		const auto& expected = i < expectedCount ? expectedTree.children[i] : empty;
+		if (!TestAST(index, name, *actual, *expected))
 		{
 			return false;
 		}
@@ -137,7 +138,7 @@ void TestingBase::PrintTree(int& index, const Node& tree, std::wstring indent)
 
 	for (auto& node : tree.children)
 	{
-		PrintTree(index, node, indent + L"  ");
+		PrintTree(index, *node, indent + L"  ");
 	}
 
 	std::wcerr << indent << "),\n";

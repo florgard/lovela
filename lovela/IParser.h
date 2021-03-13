@@ -18,6 +18,6 @@ public:
 		constexpr bool operator<=>(const Error& rhs) const noexcept = default;
 	};
 
-	[[nodiscard]] virtual Node Parse() noexcept = 0;
+	[[nodiscard]] virtual std::unique_ptr<Node> Parse() noexcept = 0;
 	[[nodiscard]] virtual const std::vector<Error>& GetErrors() noexcept = 0;
 };
