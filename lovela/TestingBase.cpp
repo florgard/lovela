@@ -65,10 +65,10 @@ std::unique_ptr<Node> TestingBase::TestParser(const char* name, std::wstring_vie
 
 	if (!success)
 	{
-		std::wcerr << "AST mismatch.\nActual:\n";
+		std::wcerr << "AST mismatch in test \"" << name << "\".\n\nActual:\n";
 		index = 0;
 		PrintTree(index, *tree);
-		std::wcerr << "Expected:\n";
+		std::wcerr << "\nExpected:\n";
 		index = 0;
 		PrintTree(index, expectedTree);
 		assert(success);

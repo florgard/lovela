@@ -363,7 +363,7 @@ std::unique_ptr<Node> Parser::ParseCompoundExpression(std::shared_ptr<Context> c
 
 	if (!Peek(expressionTerminatorTokens))
 	{
-		node->left = ParseCompoundExpression(context);
+		node->right = ParseCompoundExpression(context);
 	}
 
 	return node;
@@ -422,7 +422,7 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 
 		if (operandNodes.contains(node->type))
 		{
-			if (right->type != Node::Type::Empty)
+			if (right)
 			{
 				throw UnexpectedTokenException(node->token);
 			}
