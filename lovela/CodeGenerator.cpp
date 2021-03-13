@@ -126,7 +126,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 
 	stream << ')';
 
-	if (node.children.empty())
+	if (!node.left)
 	{
 		stream << ";\n";
 	}
@@ -138,7 +138,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 		{
 			stream << GetIndent() << line << ";\n";
 		}
-		Visit(*node.children.front());
+		Visit(*node.left);
 		EndScope();
 	}
 }

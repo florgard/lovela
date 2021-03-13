@@ -201,19 +201,19 @@ void Testing::RunLexerTests()
 
 void Testing::RunParserTests()
 {
-	TestParser("trivial function declaration", L"func", Node::make_unique({ .type = Node::Type::Root, .children = Node::make_vector(
+	TestParser("trivial function declaration", L"func", Node::make_unique({ .type = Node::Type::Root, .left = Node::make_unique(
 		Node{.type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}}
 		) }), {});
-	TestParser("function with any object type", L"[] func", Node::make_unique({ .type = Node::Type::Root, .children = Node::make_vector(
+	TestParser("function with any object type", L"[] func", Node::make_unique({ .type = Node::Type::Root, .left = Node::make_unique(
 		Node{.type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}}
 		) }), {});
-	TestParser("function with given object type", L"[type] func", Node::make_unique({ .type = Node::Type::Root, .children = Node::make_vector(
+	TestParser("function with given object type", L"[type] func", Node::make_unique({ .type = Node::Type::Root, .left = Node::make_unique(
 		Node{.type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.name = L"type"}}
 		) }), {});
-	TestParser("function with empty object type", L"[()] func", Node::make_unique({ .type = Node::Type::Root, .children = Node::make_vector(
+	TestParser("function with empty object type", L"[()] func", Node::make_unique({ .type = Node::Type::Root, .left = Node::make_unique(
 		Node{.type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.none = true}}
 		) }), {});
-	TestParser("anonymous function", L"[]()", Node::make_unique({ .type = Node::Type::Root, .children = Node::make_vector(
+	TestParser("anonymous function", L"[]()", Node::make_unique({ .type = Node::Type::Root, .left = Node::make_unique(
 		Node{.type = Node::Type::FunctionDeclaration, .dataType{.any = true}, .objectType{.any = true}}
 		) }), {});
 
@@ -223,10 +223,10 @@ void Testing::RunParserTests()
 				Parameter{.name = L"name", .type{.name = L"type"}},
 				Parameter{.type{.name = L"unnamed"}}
 			} };
-		TestParser("function with parameters", L"func(untyped, name [type], [unnamed])", Node::make_unique({ .type = Node::Type::Root, .children = Node::make_vector(f) }), {});
+		TestParser("function with parameters", L"func(untyped, name [type], [unnamed])", Node::make_unique({ .type = Node::Type::Root, .left = Node::make_unique(f) }), {});
 	}
 
-	TestParser("function with type", L"func [type]", Node::make_unique({ .type = Node::Type::Root, .children = Node::make_vector(
+	TestParser("function with type", L"func [type]", Node::make_unique({ .type = Node::Type::Root, .left = Node::make_unique(
 		Node{.type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.name = L"type"}, .objectType{.any = true}}
 		) }), {});
 
@@ -236,70 +236,71 @@ void Testing::RunParserTests()
 				Parameter{.name = L"name", .type{.name = L"type"}},
 				Parameter{.type{.name = L"unnamed"}}
 			} };
-		TestParser("complete function declaration", L"[objectType] func (untyped, name [type], [unnamed]) [functionType]", Node::make_unique({ .type = Node::Type::Root, .children = Node::make_vector(f) }), {});
+		TestParser("complete function declaration", L"[objectType] func (untyped, name [type], [unnamed]) [functionType]", Node::make_unique({ .type = Node::Type::Root, .left = Node::make_unique(f) }), {});
 	}
 
-	TestParser("imported function", L"-> func", Node::make_unique({ .type = Node::Type::Root, .children = Node::make_vector(
+	TestParser("imported function", L"-> func", Node::make_unique({ .type = Node::Type::Root, .left = Node::make_unique(
 		Node{.type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .imported = true}
 		) }), {});
-	TestParser("exported function", L"<- [] func", Node::make_unique({ .type = Node::Type::Root, .children = Node::make_vector(
+	TestParser("exported function", L"<- [] func", Node::make_unique({ .type = Node::Type::Root, .left = Node::make_unique(
 		Node{.type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .exported = true}
 		) }), {});
 
 	{
 		auto f = Node{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .nameSpace{ L"namespace" }, .objectType{.any = true} };
-		TestParser("function with 1 namespace", L"namespace|func", Node::make_unique({ .type = Node::Type::Root, .children = Node::make_vector(f) }), {});
+		TestParser("function with 1 namespace", L"namespace|func", Node::make_unique({ .type = Node::Type::Root, .left = Node::make_unique(f) }), {});
 	}
 	{
 		auto f = Node{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .nameSpace{ L"namespace1", L"namespaceN" }, .objectType{.any = true} };
-		TestParser("function with 2 namespaces", L"namespace1|namespaceN|func", Node::make_unique({ .type = Node::Type::Root, .children = Node::make_vector(f) }), {});
+		TestParser("function with 2 namespaces", L"namespace1|namespaceN|func", Node::make_unique({ .type = Node::Type::Root, .left = Node::make_unique(f) }), {});
 	}
 	{
 		auto f = Node{ .type = Node::Type::FunctionDeclaration, .name = L"<", .dataType{.any = true}, .objectType{.any = true}, .parameters{
 				Parameter{.name = L"operand", .type{.any = true}},
 			} };
-		TestParser("binary operator", L"<(operand)", Node::make_unique({ .type = Node::Type::Root, .children = Node::make_vector(f) }), {});
+		TestParser("binary operator", L"<(operand)", Node::make_unique({ .type = Node::Type::Root, .left = Node::make_unique(f) }), {});
 	}
 	{
 		auto f = Node{ .type = Node::Type::FunctionDeclaration, .name = L"<", .dataType{.any = true}, .nameSpace{ L"namespace" }, .objectType{.any = true}, .parameters{
 				Parameter{.name = L"operand", .type{.any = true}},
 			} };
-		TestParser("binary operator with namespace", L"namespace|< (operand)", Node::make_unique({ .type = Node::Type::Root, .children = Node::make_vector(f) }), {});
+		TestParser("binary operator with namespace", L"namespace|< (operand)", Node::make_unique({ .type = Node::Type::Root, .left = Node::make_unique(f) }), {});
 	}
 	{
 		auto f = Node{ .type = Node::Type::FunctionDeclaration, .name = L"<", .dataType{.any = true}, .nameSpace{ L"namespace1" }, .objectType{.any = true} };
 		auto n = Node{ .type = Node::Type::FunctionDeclaration, .name = L"namespace2", .dataType{.any = true}, .objectType{.any = true}, .parameters{
 				Parameter{.name = L"operand", .type{.any = true}},
 			} };
-		TestParser("invalid binary operator as namespace", L"namespace1|<|namespace2 (operand)", Node::make_unique({ .type = Node::Type::Root, .children = Node::make_vector(f, n) }),
+		auto r = Node{ .type = Node::Type::Root, .left = Node::make_unique(n) };
+		TestParser("invalid binary operator as namespace", L"namespace1|<|namespace2 (operand)", Node::make_unique({ .type = Node::Type::Root, .left = Node::make_unique(f), .right = Node::make_unique(r) }),
 			{ IParser::Error{.code = IParser::Error::Code::ParseError } });
 	}
 
 	{
 		auto fc = Node{ .type = Node::Type::FunctionCall, .name = L"body" };
-		auto e = Node{ .type = Node::Type::Expression, .children = Node::make_vector(fc) };
-		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .children = Node::make_vector(e) };
-		auto r = Node{ .type = Node::Type::Root, .children = Node::make_vector(fd) };
+		auto e = Node{ .type = Node::Type::Expression, .left = Node::make_unique(fc) };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .left = Node::make_unique(e) };
+		auto r = Node{ .type = Node::Type::Root, .left = Node::make_unique(fd) };
 		TestParser("function with trivial body", L"func: body.", move_to_unique(r), {});
 	}
 
 	{
 		auto fc = Node{ .type = Node::Type::FunctionCall, .name = L"body" };
-		auto e = Node{ .type = Node::Type::Expression, .children = Node::make_vector(fc) };
-		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .children = Node::make_vector(e) };
-		auto r = Node{ .type = Node::Type::Root, .children = Node::make_vector(fd) };
+		auto e = Node{ .type = Node::Type::Expression, .left = Node::make_unique(fc) };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .left = Node::make_unique(e) };
+		auto r = Node{ .type = Node::Type::Root, .left = Node::make_unique(fd) };
 		TestParser("function with body within group", L"func: (body).", move_to_unique(r), {});
 	}
 
 	{
 		auto fc = Node{ .type = Node::Type::FunctionCall, .name = L"doWork" };
-		auto e = Node{ .type = Node::Type::Expression, .children = Node::make_vector(fc) };
+		auto e = Node{ .type = Node::Type::Expression, .left = Node::make_unique(fc) };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .parameters{
 				Parameter{.name = L"untyped", .type{.any = true}},
 				Parameter{.name = L"name", .type{.name = L"type"}},
 				Parameter{.type{.name = L"unnamed"}}
-			}, .children = Node::make_vector(e) };
-		auto r = Node{ .type = Node::Type::Root, .children = Node::make_vector(fd) };
+			}, .left = Node::make_unique(e) };
+		auto r = Node{ .type = Node::Type::Root, .left = Node::make_unique(fd) };
 		auto tree = TestParser("function with parameters and body", L"func(untyped, name [type], [unnamed]): doWork.", move_to_unique(r), {});
 		CodeGenerator gen(std::wcout);
 		Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { gen.Generate(node); });
@@ -307,13 +308,13 @@ void Testing::RunParserTests()
 
 	{
 		auto fc = Node{ .type = Node::Type::FunctionCall, .name = L"doWork" };
-		auto e = Node{ .type = Node::Type::Expression, .children = Node::make_vector(fc) };
+		auto e = Node{ .type = Node::Type::Expression, .left = Node::make_unique(fc) };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.none = true}, .parameters{
 				Parameter{.name = L"untyped", .type{.any = true}},
 				Parameter{.name = L"name", .type{.name = L"type"}},
 				Parameter{.type{.name = L"unnamed"}}
-			}, .children = Node::make_vector(e) };
-		auto r = Node{ .type = Node::Type::Root, .children = Node::make_vector(fd) };
+			}, .left = Node::make_unique(e) };
+		auto r = Node{ .type = Node::Type::Root, .left = Node::make_unique(fd) };
 		auto tree = TestParser("function without object but with parameters and body", L"[()] func(untyped, name [type], [unnamed]): doWork.", move_to_unique(r), {});
 		CodeGenerator gen(std::wcout);
 		Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { gen.Generate(node); });

@@ -104,28 +104,27 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const 
 {
 	if (tree != expectedTree)
 	{
-		const auto& actual = tree;
-		const auto& expected = expectedTree;
-
-		std::wcerr << "Test \"" << name << "\" error: Some property of node " << index + 1 << " of type " << to_wstring(actual.type)
-			<< " differs from the expected node of type " << to_wstring(expected.type) << ".\n";
+		std::wcerr << "Test \"" << name << "\" error: Some property of node " << index + 1 << " of type " << to_wstring(tree.type)
+			<< " differs from the expected node of type " << to_wstring(expectedTree.type) << ".\n";
 		return false;
 	}
 
 	index++;
 
-	auto actualCount = tree.children.size();
-	auto expectedCount = expectedTree.children.size();
-	auto count = std::max(actualCount, expectedCount);
-	for (int i = 0; i < count; i++)
+	// Fail if one pointer is set but not the other
+	if (!!tree.left != !!expectedTree.left || !!tree.right != !!expectedTree.right)
 	{
-		static std::unique_ptr<Node> empty;
-		const auto& actual = i < actualCount ? tree.children[i] : empty;
-		const auto& expected = i < expectedCount ? expectedTree.children[i] : empty;
-		if (!TestAST(index, name, *actual, *expected))
-		{
-			return false;
-		}
+		return false;
+	}
+
+	if (tree.left && !TestAST(index, name, *tree.left, *expectedTree.left))
+	{
+		return false;
+	}
+
+	if (tree.right && !TestAST(index, name, *tree.right, *expectedTree.right))
+	{
+		return false;
 	}
 
 	return true;
@@ -136,9 +135,13 @@ void TestingBase::PrintTree(int& index, const Node& tree, std::wstring indent)
 	std::wcerr << indent << '(' << index + 1 << ' ' << to_wstring(tree.type) << " " << tree.name << '\n';
 	index++;
 
-	for (auto& node : tree.children)
+	if (tree.left)
 	{
-		PrintTree(index, *node, indent + L"  ");
+		PrintTree(index, *tree.left, indent + L"  ");
+	}
+	if (tree.right)
+	{
+		PrintTree(index, *tree.right, indent + L"  ");
 	}
 
 	std::wcerr << indent << "),\n";

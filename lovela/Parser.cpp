@@ -72,17 +72,25 @@ void Parser::TraverseDepthFirstPreorder(Node& tree, std::function<void(Node& nod
 {
 	visitor(tree);
 
-	for (auto& child : tree.children)
+	if (tree.left)
 	{
-		TraverseDepthFirstPreorder(*child, visitor);
+		TraverseDepthFirstPreorder(*tree.left, visitor);
+	}
+	if (tree.right)
+	{
+		TraverseDepthFirstPreorder(*tree.right, visitor);
 	}
 }
 
 void Parser::TraverseDepthFirstPostorder(Node& tree, std::function<void(Node& node)> visitor) noexcept
 {
-	for (auto& child : tree.children)
+	if (tree.left)
 	{
-		TraverseDepthFirstPostorder(*child, visitor);
+		TraverseDepthFirstPostorder(*tree.left, visitor);
+	}
+	if (tree.right)
+	{
+		TraverseDepthFirstPostorder(*tree.right, visitor);
 	}
 
 	visitor(tree);
@@ -94,6 +102,7 @@ std::unique_ptr<Node> Parser::Parse() noexcept
 	// TODO: add built-in functions?
 
 	auto node = Node::make_unique({ .type = Node::Type::Root });
+	auto currentNode = node.get();
 
 	tokenIterator = tokenGenerator.begin();
 	while (tokenIterator != tokenGenerator.end())
@@ -102,7 +111,12 @@ std::unique_ptr<Node> Parser::Parse() noexcept
 		{
 			if (Accept(beginFunctionDeclarationTokens))
 			{
-				node->children.emplace_back(ParseFunctionDeclaration(context));
+				if (currentNode->left)
+				{
+					currentNode->right = Node::make_unique({ .type = Node::Type::Root });
+					currentNode = currentNode->right.get();
+				}
+				currentNode->left = ParseFunctionDeclaration(context);
 			}
 			else
 			{
@@ -315,7 +329,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 	// [objectType] identifier (parameterList) [dataType]:
 	if (Accept(Token::Type::SeparatorColon))
 	{
-		node->children.emplace_back(ParseExpression(innerContext));
+		node->left = ParseExpression(innerContext);
 	}
 
 	return node;
@@ -327,7 +341,7 @@ std::unique_ptr<Node> Parser::ParseCompoundExpression(std::shared_ptr<Context> c
 
 	if (!IsToken(expressionTerminatorTokens))
 	{
-		node->children.emplace_back(ParseCompoundExpression(context));
+		node->left = ParseCompoundExpression(context);
 	}
 
 	return node;
@@ -378,7 +392,7 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		nodes.pop_back();
 	}
 
-	Node& parent = *expression;
+	Node* parent = expression.get();
 	std::unique_ptr<Node> right;
 
 	while (!nodes.empty())
@@ -397,14 +411,14 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		}
 		else if (operatorNodes.contains(node->type))
 		{
-			auto& current = parent.children.emplace_back(std::move(node));
+			auto& current = parent->left = std::move(node);
 
 			if (right)
 			{
-				parent.children.emplace_back(std::move(right));
+				parent->right = std::move(right);
 			}
 
-			parent = *current;
+			parent = current.get();
 			assert(!right);
 		}
 		else
@@ -416,12 +430,12 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 	// Left-most operand
 	if (right)
 	{
-		if (!parent.children.empty())
+		if (parent->left)
 		{
-			throw ParseException(parent.token, "The parent expression node already has a left hand side operand.");
+			throw ParseException(parent->token, "The parent expression node already has a left hand side operand.");
 		}
 
-		parent.children.emplace_back(std::move(right));
+		parent->left = std::move(right);
 	}
 
 	return expression;
@@ -447,8 +461,8 @@ std::unique_ptr<Node> Parser::ParseTuple(std::shared_ptr<Context> context)
 	if (Accept(Token::Type::SeparatorComma))
 	{
 		auto tuple = Node::make_unique({ .type = Node::Type::Tuple });
-		tuple->children.emplace_back(std::move(node));
-		tuple->children.emplace_back(ParseTuple(context));
+		tuple->left = std::move(node);
+		tuple->right = ParseTuple(context);
 		node = std::move(tuple);
 	}
 

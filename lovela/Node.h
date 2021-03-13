@@ -47,9 +47,8 @@ struct Node
 	bool imported{};
 	bool exported{};
 
-	//std::unique_ptr<Node> left;
-	//std::unique_ptr<Node> right;
-	std::vector<std::unique_ptr<Node>> children;
+	std::unique_ptr<Node> left;
+	std::unique_ptr<Node> right;
 
 	[[nodiscard]] bool operator==(const Node& rhs) const noexcept;
 	[[nodiscard]] bool operator!=(const Node& rhs) const noexcept
