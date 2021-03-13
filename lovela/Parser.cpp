@@ -227,7 +227,7 @@ Node Parser::ParseFunctionDeclaration(std::shared_ptr<Context> context)
 	auto innerContext = std::make_shared<Context>();
 	innerContext->parent = context;
 
-	auto node = Node{ .type{Node::Type::Function} };
+	auto node = Node{ .type{Node::Type::FunctionDeclaration} };
 
 	// <-
 	// ->

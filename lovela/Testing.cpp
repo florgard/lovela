@@ -202,23 +202,23 @@ void Testing::RunLexerTests()
 void Testing::RunParserTests()
 {
 	TestParser("trivial function declaration", L"func", Node{ .type{Node::Type::Root}, .children{
-		Node{.type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.any = true}}
+		Node{.type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}}
 		} }, {});
 	TestParser("function with any object type", L"[] func", Node{ .type{Node::Type::Root}, .children{
-		Node{.type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.any = true}}
+		Node{.type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}}
 		} }, {});
 	TestParser("function with given object type", L"[type] func", Node{ .type{Node::Type::Root}, .children{
-		Node{.type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.name = L"type"}}
+		Node{.type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.name = L"type"}}
 		} }, {});
 	TestParser("function with empty object type", L"[()] func", Node{ .type{Node::Type::Root}, .children{
-		Node{.type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.none = true}}
+		Node{.type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.none = true}}
 		} }, {});
 	TestParser("anonymous function", L"[]()", Node{ .type{Node::Type::Root}, .children{
-		Node{.type = Node::Type::Function, .dataType{.any = true}, .objectType{.any = true}}
+		Node{.type = Node::Type::FunctionDeclaration, .dataType{.any = true}, .objectType{.any = true}}
 		} }, {});
 
 	{
-		const Node f{ .type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .parameters{
+		const Node f{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .parameters{
 				Parameter{.name = L"untyped", .type{.any = true}},
 				Parameter{.name = L"name", .type{.name = L"type"}},
 				Parameter{.type{.name = L"unnamed"}}
@@ -227,11 +227,11 @@ void Testing::RunParserTests()
 	}
 
 	TestParser("function with type", L"func [type]", Node{ .type{Node::Type::Root}, .children{
-		Node{.type = Node::Type::Function, .name = L"func", .dataType{.name = L"type"}, .objectType{.any = true}}
+		Node{.type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.name = L"type"}, .objectType{.any = true}}
 		} }, {});
 
 	{
-		const Node f{ .type = Node::Type::Function, .name = L"func", .dataType{.name = L"functionType"}, .objectType{.name = L"objectType"}, .parameters{
+		const Node f{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.name = L"functionType"}, .objectType{.name = L"objectType"}, .parameters{
 				Parameter{.name = L"untyped", .type{.any = true}},
 				Parameter{.name = L"name", .type{.name = L"type"}},
 				Parameter{.type{.name = L"unnamed"}}
@@ -240,35 +240,35 @@ void Testing::RunParserTests()
 	}
 
 	TestParser("imported function", L"-> func", Node{ .type{Node::Type::Root}, .children{
-		Node{.type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .imported = true}
+		Node{.type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .imported = true}
 		} }, {});
 	TestParser("exported function", L"<- [] func", Node{ .type{Node::Type::Root}, .children{
-		Node{.type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .exported = true}
+		Node{.type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .exported = true}
 		} }, {});
 
 	{
-		const Node f{ .type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .nameSpace{ L"namespace" }, .objectType{.any = true} };
+		const Node f{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .nameSpace{ L"namespace" }, .objectType{.any = true} };
 		TestParser("function with 1 namespace", L"namespace|func", Node{ .type{Node::Type::Root}, .children{f} }, {});
 	}
 	{
-		const Node f{ .type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .nameSpace{ L"namespace1", L"namespaceN" }, .objectType{.any = true} };
+		const Node f{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .nameSpace{ L"namespace1", L"namespaceN" }, .objectType{.any = true} };
 		TestParser("function with 2 namespaces", L"namespace1|namespaceN|func", Node{ .type{Node::Type::Root}, .children{f} }, {});
 	}
 	{
-		const Node f{ .type = Node::Type::Function, .name = L"<", .dataType{.any = true}, .objectType{.any = true}, .parameters{
+		const Node f{ .type = Node::Type::FunctionDeclaration, .name = L"<", .dataType{.any = true}, .objectType{.any = true}, .parameters{
 				Parameter{.name = L"operand", .type{.any = true}},
 			} };
 		TestParser("binary operator", L"<(operand)", Node{ .type{Node::Type::Root}, .children{f} }, {});
 	}
 	{
-		const Node f{ .type = Node::Type::Function, .name = L"<", .dataType{.any = true}, .nameSpace{ L"namespace" }, .objectType{.any = true}, .parameters{
+		const Node f{ .type = Node::Type::FunctionDeclaration, .name = L"<", .dataType{.any = true}, .nameSpace{ L"namespace" }, .objectType{.any = true}, .parameters{
 				Parameter{.name = L"operand", .type{.any = true}},
 			} };
 		TestParser("binary operator with namespace", L"namespace|< (operand)", Node{ .type{Node::Type::Root}, .children{f} }, {});
 	}
 	{
-		const Node f{ .type = Node::Type::Function, .name = L"<", .dataType{.any = true}, .nameSpace{ L"namespace1" }, .objectType{.any = true} };
-		const Node n{ .type = Node::Type::Function, .name = L"namespace2", .dataType{.any = true}, .objectType{.any = true}, .parameters{
+		const Node f{ .type = Node::Type::FunctionDeclaration, .name = L"<", .dataType{.any = true}, .nameSpace{ L"namespace1" }, .objectType{.any = true} };
+		const Node n{ .type = Node::Type::FunctionDeclaration, .name = L"namespace2", .dataType{.any = true}, .objectType{.any = true}, .parameters{
 				Parameter{.name = L"operand", .type{.any = true}},
 			} };
 		TestParser("invalid binary operator as namespace", L"namespace1|<|namespace2 (operand)", Node{ .type{Node::Type::Root}, .children{f, n, } },
@@ -278,7 +278,7 @@ void Testing::RunParserTests()
 	{
 		const Node fc{ .type = Node::Type::FunctionCall, .name = L"body" };
 		const Node e{ .type = Node::Type::Expression, .children{fc} };
-		const Node fd{ .type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .children{e} };
+		const Node fd{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .children{e} };
 		const Node r{ .type = Node::Type::Root, .children{fd} };
 		TestParser("function with trivial body", L"func: body.", r, {});
 	}
@@ -287,7 +287,7 @@ void Testing::RunParserTests()
 		const Node fc{ .type = Node::Type::FunctionCall, .name = L"body" };
 		const Node e{ .type = Node::Type::Expression, .children{fc} };
 		const Node g{ .type = Node::Type::Expression, .children{e} };
-		const Node fd{ .type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .children{g} };
+		const Node fd{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .children{g} };
 		const Node r{ .type = Node::Type::Root, .children{fd} };
 		TestParser("function with body within group", L"func: (body).", r, {});
 	}
@@ -295,7 +295,7 @@ void Testing::RunParserTests()
 	{
 		const Node fc{ .type = Node::Type::FunctionCall, .name = L"doWork" };
 		const Node e{ .type = Node::Type::Expression, .children{fc} };
-		const Node fd{ .type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .parameters{
+		const Node fd{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .parameters{
 				Parameter{.name = L"untyped", .type{.any = true}},
 				Parameter{.name = L"name", .type{.name = L"type"}},
 				Parameter{.type{.name = L"unnamed"}}
@@ -309,7 +309,7 @@ void Testing::RunParserTests()
 	{
 		const Node fc{ .type = Node::Type::FunctionCall, .name = L"doWork" };
 		const Node e{ .type = Node::Type::Expression, .children{fc} };
-		const Node fd{ .type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.none = true}, .parameters{
+		const Node fd{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.none = true}, .parameters{
 				Parameter{.name = L"untyped", .type{.any = true}},
 				Parameter{.name = L"name", .type{.name = L"type"}},
 				Parameter{.type{.name = L"unnamed"}}

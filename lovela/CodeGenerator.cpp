@@ -3,7 +3,7 @@
 
 std::map<Node::Type, std::function<void(CodeGenerator*, Node&)>> CodeGenerator::visitors
 {
-	{Node::Type::Function, &CodeGenerator::FunctionDeclaration}
+	{Node::Type::FunctionDeclaration, &CodeGenerator::FunctionDeclaration}
 };
 
 std::map<Node::Type, std::function<void(CodeGenerator*, Node&)>> CodeGenerator::internalVisitors

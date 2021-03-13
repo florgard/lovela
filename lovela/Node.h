@@ -26,7 +26,7 @@ struct Node
 	{
 		Empty,
 		Root,
-		Function,
+		FunctionDeclaration,
 		Expression,
 		Tuple,
 		List,
