@@ -412,7 +412,7 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		nodes.pop_back();
 	}
 
-	Node* parent = expression.get();
+	auto parent = expression.get();
 	std::unique_ptr<Node> right;
 
 	while (!nodes.empty())
@@ -431,15 +431,13 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		}
 		else if (operatorNodes.contains(node->type))
 		{
-			auto& current = parent->left = std::move(node);
-
 			if (right)
 			{
 				parent->right = std::move(right);
 			}
 
-			parent = current.get();
-			assert(!right);
+			parent->left = std::move(node);
+			parent = parent->left.get();
 		}
 		else
 		{
