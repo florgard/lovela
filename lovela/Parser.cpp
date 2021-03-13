@@ -53,7 +53,8 @@ static const std::set<Token::Type> expressionTerminatorTokens
 
 static const std::set<Node::Type> operandNodes
 {
-	Node::Type::Group,
+	Node::Type::Expression,
+	Node::Type::Tuple,
 	Node::Type::Literal,
 };
 
@@ -405,19 +406,38 @@ Node Parser::ParseExpression(std::shared_ptr<Context> context)
 	return expression;
 }
 
+// Returns Expression or Tuple
 Node Parser::ParseGroup(std::shared_ptr<Context> context)
 {
 	Assert(Token::Type::ParenRoundOpen);
 
-	Node node{ .type = Node::Type::Group };
+	auto node = ParseCompoundExpression(context);
 
-	do
+	if (Accept(Token::Type::SeparatorComma))
 	{
-		node.children.emplace_back(ParseCompoundExpression(context));
-
-	} while (Accept(Token::Type::SeparatorComma));
+		Node tuple{ .type = Node::Type::Tuple };
+		tuple.children.emplace_back(node);
+		tuple.children.emplace_back(ParseTuple(context));
+		node = tuple;
+	}
 
 	Expect(Token::Type::ParenRoundClose);
+
+	return node;
+}
+
+// Returns Expression or Tuple
+Node Parser::ParseTuple(std::shared_ptr<Context> context)
+{
+	auto node = ParseCompoundExpression(context);
+
+	if (Accept(Token::Type::SeparatorComma))
+	{
+		Node tuple{ .type = Node::Type::Tuple };
+		tuple.children.emplace_back(node);
+		tuple.children.emplace_back(ParseTuple(context));
+		node = tuple;
+	}
 
 	return node;
 }

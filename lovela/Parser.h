@@ -26,6 +26,7 @@ private:
 	[[nodiscard]] Node ParseCompoundExpression(std::shared_ptr<Context> context);
 	[[nodiscard]] Node ParseExpression(std::shared_ptr<Context> context);
 	[[nodiscard]] Node ParseGroup(std::shared_ptr<Context> context);
+	[[nodiscard]] Node ParseTuple(std::shared_ptr<Context> context);
 	[[nodiscard]] Node ParseOperand(std::shared_ptr<Context> context);
 	[[nodiscard]] Node ParseFunctionCall(std::shared_ptr<Context> context);
 	[[nodiscard]] Node ParseBinaryOperation(std::shared_ptr<Context> context);

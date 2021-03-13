@@ -28,7 +28,7 @@ struct Node
 		Root,
 		Function,
 		Expression,
-		Group,
+		Tuple,
 		List,
 		FunctionCall,
 		BinaryOperation,

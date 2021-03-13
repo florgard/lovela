@@ -285,10 +285,9 @@ void Testing::RunParserTests()
 
 	{
 		const Node fc{ .type = Node::Type::FunctionCall, .name = L"body" };
-		const Node e2{ .type = Node::Type::Expression, .children{fc} };
-		const Node g{ .type = Node::Type::Group, .children{e2} };
-		const Node e1{ .type = Node::Type::Expression, .children{g} };
-		const Node fd{ .type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .children{e1} };
+		const Node e{ .type = Node::Type::Expression, .children{fc} };
+		const Node g{ .type = Node::Type::Expression, .children{e} };
+		const Node fd{ .type = Node::Type::Function, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .children{g} };
 		const Node r{ .type = Node::Type::Root, .children{fd} };
 		TestParser("function with body within group", L"func: (body).", r, {});
 	}
