@@ -387,13 +387,18 @@ void Testing::RunCodeGeneratorTests()
 
 	auto code = LR"(
 function1
-function2: function1.
+function2: function1 + 1.
 )"sv;
 
 	std::wistringstream input(std::wstring(code.data(), code.size()));
 	Lexer lexer(input);
 	Parser parser(lexer.Lex());
 	auto tree = parser.Parse();
+
+	int index = 0;
+	PrintTree(index, *tree);
+	std::wcout << '\n';
+
 	CodeGenerator gen(std::wcout);
 	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { gen.Generate(node); });
 }

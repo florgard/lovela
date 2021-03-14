@@ -8,7 +8,9 @@ std::map<Node::Type, std::function<void(CodeGenerator*, Node&)>> CodeGenerator::
 
 std::map<Node::Type, std::function<void(CodeGenerator*, Node&)>> CodeGenerator::internalVisitors
 {
-	{Node::Type::Expression, &CodeGenerator::Expression}
+	{Node::Type::Expression, &CodeGenerator::Expression},
+	{Node::Type::FunctionCall, &CodeGenerator::FunctionCall},
+	{Node::Type::BinaryOperation, &CodeGenerator::BinaryOperation},
 };
 
 CodeGenerator::CodeGenerator(std::wostream& stream) : stream(stream)
@@ -133,25 +135,59 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 
 	if (!node.left)
 	{
-		stream << ";\n";
+		stream << ';';
 	}
 	else
 	{
 		stream << '\n';
+
 		BeginScope();
+
 		for (auto& line : initialization)
 		{
 			stream << GetIndent() << line << ";\n";
 		}
+
 		Visit(*node.left);
+
+		// TODO: Return expression result or default object.
+		// TODO: Check result and return type compability.
+		stream << GetIndent() << "return " << objectName << ";\n";
+
 		EndScope();
 	}
 
-	stream << '\n';
+	stream << '\n' << '\n';
 }
 
 void CodeGenerator::Expression(Node& node)
 {
-	node;
-	stream << GetIndent() << "return {};\n";
+	stream << GetIndent();
+
+	if (node.left)
+	{
+		Visit(*node.left);
+	}
+
+	stream << ";\n";
+
+	if (node.right)
+	{
+		Visit(*node.right);
+	}
+}
+
+void CodeGenerator::FunctionCall(Node& node)
+{
+	stream << node.name << " (";
+	// TODO: Parameters
+	stream << ") ";
+}
+
+void CodeGenerator::BinaryOperation(Node& node)
+{
+	Visit(*node.left);
+	stream << node.name << " (";
+	//Visit(*node.right);
+	stream << ") ";
 }

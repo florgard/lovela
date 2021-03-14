@@ -13,6 +13,8 @@ private:
 
 	void FunctionDeclaration(Node& node);
 	void Expression(Node& node);
+	void FunctionCall(Node& node);
+	void BinaryOperation(Node& node);
 
 	void BeginScope();
 	void EndScope();
