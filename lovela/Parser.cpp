@@ -495,7 +495,7 @@ std::unique_ptr<Node> Parser::ParseOperand(std::shared_ptr<Context> context)
 	}
 	else if (IsToken(literalTokens))
 	{
-		node = Node::make_unique({ .type = Node::Type::Literal, .token = currentToken });
+		node = Node::make_unique({ .type = Node::Type::Literal, .name = currentToken.value, .token = currentToken });
 	}
 	else
 	{
@@ -509,7 +509,7 @@ std::unique_ptr<Node> Parser::ParseFunctionCall(std::shared_ptr<Context> context
 {
 	Assert(Token::Type::Identifier);
 
-	auto node = Node::make_unique({ .type = Node::Type::FunctionCall, .name = currentToken.value });
+	auto node = Node::make_unique({ .type = Node::Type::FunctionCall, .name = currentToken.value, .token = currentToken });
 
 	// TODO: nameSpace, parameters
 

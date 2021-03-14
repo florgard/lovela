@@ -34,7 +34,6 @@ struct Node
 	} type{};
 
 	std::wstring name;
-	std::wstring value;
 	TypeSpec dataType;
 	Token token;
 

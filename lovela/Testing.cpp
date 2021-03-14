@@ -376,7 +376,7 @@ void Testing::RunParserTests()
 	}
 
 	{
-		auto l = Node{ .type = Node::Type::Literal, .value = L"1" };
+		auto l = Node{ .type = Node::Type::Literal, .name = L"1" };
 		auto fc = Node{ .type = Node::Type::FunctionCall, .name = L"call" };
 		auto bo = Node{ .type = Node::Type::BinaryOperation, .name = L"+", .left = Node::make_unique(fc), .right = Node::make_unique(l) };
 		auto e = Node{ .type = Node::Type::Expression, .left = Node::make_unique(bo) };
