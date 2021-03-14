@@ -2,6 +2,7 @@
 #include "Lexer.h"
 #include "Parser.h"
 #include "TestingBase.h"
+#include "CodeGenerator.h"
 
 void TestingBase::TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
 {
@@ -22,7 +23,7 @@ void TestingBase::TestLexer(const char* name, std::wstring_view code, const std:
 		if (actual != expected)
 		{
 			success = false;
-			std::wcerr << "Test \"" << name << "\" error: Token " << i + 1 << " is " << to_wstring(actual.type) << " \"" << actual.value
+			std::wcerr << "Lexer test \"" << name << "\" error: Token " << i + 1 << " is " << to_wstring(actual.type) << " \"" << actual.value
 				<< "\", expected " << to_wstring(expected.type) << " \"" << expected.value << "\".\n";
 		}
 	}
@@ -65,12 +66,10 @@ std::unique_ptr<Node> TestingBase::TestParser(const char* name, std::wstring_vie
 
 	if (!success)
 	{
-		std::wcerr << "AST mismatch in test \"" << name << "\".\n\nActual:\n";
-		index = 0;
-		PrintTree(index, *tree);
+		std::wcerr << "AST mismatch in parser test \"" << name << "\".\n\nActual:\n";
+		PrintTree(*tree);
 		std::wcerr << "\nExpected:\n";
-		index = 0;
-		PrintTree(index, expectedTree);
+		PrintTree(expectedTree);
 		assert(success);
 	}
 
@@ -104,7 +103,7 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const 
 {
 	if (tree != expectedTree)
 	{
-		std::wcerr << "Test \"" << name << "\" error: Some property of node " << index + 1 << " of type " << to_wstring(tree.type)
+		std::wcerr << "Parser test \"" << name << "\" error: Some property of node " << index + 1 << " of type " << to_wstring(tree.type)
 			<< " differs from the expected node of type " << to_wstring(expectedTree.type) << ".\n";
 		return false;
 	}
@@ -145,4 +144,35 @@ void TestingBase::PrintTree(int& index, const Node& tree, std::wstring indent)
 	}
 
 	std::wcerr << indent << "),\n";
+}
+
+void TestingBase::TestCodeGenerator(const char* name, std::wstring_view code, std::wstring_view cppCode)
+{
+	std::wistringstream input(std::wstring(code.data(), code.size()));
+	Lexer lexer(input);
+	Parser parser(lexer.Lex());
+	auto tree = parser.Parse();
+
+	std::wostringstream output;
+	CodeGenerator gen(output);
+	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { gen.Generate(node); });
+
+	auto generatedCode = output.str();
+	const bool success = generatedCode == cppCode;
+
+	if (!success)
+	{
+		generatedCode = std::regex_replace(generatedCode, std::wregex{ L"\n" }, L"\\n\n");
+		generatedCode = std::regex_replace(generatedCode, std::wregex{ L"\t" }, L"\\t\t");
+		auto expectedCode = to_wstring(cppCode);
+		expectedCode = std::regex_replace(expectedCode, std::wregex{ L"\n" }, L"\\n\n");
+		expectedCode = std::regex_replace(expectedCode, std::wregex{ L"\t" }, L"\\t\t");
+
+		std::wcerr << "Code generator test \"" << name << "\" error: The generated code differs from the expected code.\nGenerated:\n" << generatedCode
+			<< "Expected:\n" << expectedCode << "\n\nAST:\n";
+
+		PrintTree(*tree);
+
+		assert(success);
+	}
 }

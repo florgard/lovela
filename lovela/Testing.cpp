@@ -387,6 +387,8 @@ void Testing::RunParserTests()
 
 void Testing::RunCodeGeneratorTests()
 {
+	TestCodeGenerator("trivial function", L"func", L"template <typename la_return_t, typename la_object_t>\nla_return_t func(la_object_t la_object);\n\n");
+
 	std::wstring code = LR"(
 pi: 3.14.
 transform
@@ -399,8 +401,7 @@ function2: pi transform + 1.
 	Parser parser(lexer.Lex());
 	auto tree = parser.Parse();
 
-	int index = 0;
-	PrintTree(index, *tree);
+	PrintTree(*tree);
 	std::wcout << '\n';
 
 	CodeGenerator gen(std::wcout);

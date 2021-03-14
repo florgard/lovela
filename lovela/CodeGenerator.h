@@ -21,8 +21,8 @@ private:
 	void EndScope();
 	const std::wstring& GetIndent() const { return indent; }
 
-	template <typename T>
-	static std::wstring Decorate(const T& name) { return std::wstring(L"la_") + std::wstring(std::begin(name), std::end(name)); }
+	static std::wstring Decorate(const std::string_view& name) { return L"la_" + to_wstring(name); }
+	static std::wstring Decorate(const std::wstring_view& name) { return L"la_" + to_wstring(name); }
 
 	std::wostream& stream;
 	std::wstring indent;

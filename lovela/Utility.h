@@ -5,6 +5,11 @@
 	return std::wstring(value.begin(), value.end());
 }
 
+[[nodiscard]] inline std::wstring to_wstring(std::wstring_view value)
+{
+	return std::wstring(value.begin(), value.end());
+}
+
 template <typename Enum, typename std::enable_if<std::is_enum_v<Enum>>::type* = nullptr>
 [[nodiscard]] std::wstring to_wstring(Enum value)
 {

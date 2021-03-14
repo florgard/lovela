@@ -57,39 +57,35 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 {
 	std::vector<std::wstring> templateParameters;
 	std::vector<std::wstring> parameters;
-	std::wstring returnType;
-	std::wstring voidType = Decorate("void");
-	std::wstring objectName = Decorate("object");
+	TypeSpec returnType = node.dataType;
+	TypeSpec voidType{ .name = Decorate("void") };
+	Parameter object{ .name = Decorate("object"), .type = node.objectType };
 	std::vector<std::wstring> initialization;
 
-	if (node.dataType.any)
+	if (returnType.any)
 	{
-		returnType = Decorate(L"return_t");
-		templateParameters.push_back(returnType);
+		returnType.name = Decorate(L"return_t");
+		templateParameters.push_back(returnType.name);
 	}
-	else if (!node.dataType.none)
-	{
-		returnType = node.dataType.name;
-	}
-	else
+	else if (node.dataType.none)
 	{
 		returnType = voidType;
 	}
 
-	if (node.objectType.any)
+	if (object.type.any)
 	{
-		auto type = objectName + L"_t";
-		parameters.emplace_back(type + L' ' + objectName);
+		auto type = object.name + L"_t";
+		parameters.emplace_back(type + L' ' + object.name);
 		templateParameters.push_back(type);
 	}
-	else if (!node.objectType.none)
+	else if (!object.type.none)
 	{
-		auto type = node.objectType.name;
-		parameters.emplace_back(type + L' ' + objectName);
+		auto type = object.type.name;
+		parameters.emplace_back(type + L' ' + object.name);
 	}
 	else
 	{
-		initialization.emplace_back(voidType + L' ' + objectName);
+		initialization.emplace_back(voidType.name + L' ' + object.name);
 	}
 
 	int index = 0;
@@ -123,7 +119,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 		stream << ">\n";
 	}
 
-	stream << GetIndent() << returnType << ' ' << node.name << '(';
+	stream << GetIndent() << returnType.name << ' ' << node.name << '(';
 
 	index = 0;
 	for (auto& param : parameters)
@@ -153,7 +149,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 
 		// TODO: Return expression result or default object.
 		// TODO: Check result and return type compability.
-		stream << GetIndent() << "return " << objectName << ";\n";
+		stream << GetIndent() << "return " << object.name << ";\n";
 
 		EndScope();
 	}
