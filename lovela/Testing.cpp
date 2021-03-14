@@ -9,6 +9,7 @@ void Testing::RunTests()
 	RunTypeTests();
 	RunLexerTests();
 	RunParserTests();
+	RunCodeGeneratorTests();
 }
 
 void Testing::RunTypeTests()
@@ -366,9 +367,7 @@ void Testing::RunParserTests()
 				Parameter{.name = L"name", .type{.name = L"type"}},
 				Parameter{.type{.name = L"unnamed"}}
 			}, .left = Node::make_unique(e) };
-		auto tree = TestParser("function with parameters and body", L"func(untyped, name [type], [unnamed]): doWork.", fd);
-		CodeGenerator gen(std::wcout);
-		Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { gen.Generate(node); });
+		TestParser("function with parameters and body", L"func(untyped, name [type], [unnamed]): doWork.", fd);
 	}
 
 	{
@@ -378,8 +377,23 @@ void Testing::RunParserTests()
 				Parameter{.name = L"name", .type{.name = L"type"}},
 				Parameter{.type{.name = L"unnamed"}}
 			}, .left = Node::make_unique(e) };
-		auto tree = TestParser("function without object but with parameters and body", L"[()] func(untyped, name [type], [unnamed]): doWork.", fd);
-		CodeGenerator gen(std::wcout);
-		Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { gen.Generate(node); });
+		TestParser("function without object but with parameters and body", L"[()] func(untyped, name [type], [unnamed]): doWork.", fd);
 	}
+}
+
+void Testing::RunCodeGeneratorTests()
+{
+	using namespace std::literals::string_view_literals;
+
+	auto code = LR"(
+function1
+function2: function1.
+)"sv;
+
+	std::wistringstream input(std::wstring(code.data(), code.size()));
+	Lexer lexer(input);
+	Parser parser(lexer.Lex());
+	auto tree = parser.Parse();
+	CodeGenerator gen(std::wcout);
+	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { gen.Generate(node); });
 }
