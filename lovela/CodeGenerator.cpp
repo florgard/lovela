@@ -36,12 +36,17 @@ void CodeGenerator::Visit(Node& node)
 void CodeGenerator::BeginScope()
 {
 	stream << GetIndent() << "{\n";
-	indent++;
+	indent += '\t';
 }
 
 void CodeGenerator::EndScope()
 {
-	indent--;
+	if (indent.empty())
+	{
+		throw std::exception("Scope begin and end mismatch.");
+	}
+
+	indent.resize(indent.length() - 1);
 	stream << GetIndent() << "}\n";
 }
 
