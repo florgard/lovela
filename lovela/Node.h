@@ -27,6 +27,8 @@ struct FunctionDeclaration
 	TypeSpec dataType;
 	TypeSpec objectType;
 	ParameterList parameters;
+	bool imported{};
+	bool exported{};
 };
 
 struct Node
@@ -53,6 +55,9 @@ struct Node
 	bool imported{};
 	bool exported{};
 
+	// Function call
+	std::shared_ptr<FunctionDeclaration> callee;
+
 	std::unique_ptr<Node> left;
 	std::unique_ptr<Node> right;
 
@@ -66,4 +71,6 @@ struct Node
 
 	static std::unique_ptr<Node> make_unique(Node& node) noexcept { return move_to_unique(node); }
 	static std::unique_ptr<Node> make_unique(Node&& node) noexcept { return move_to_unique(node); }
+
+	FunctionDeclaration ToFunctionDeclaration() const;
 };
