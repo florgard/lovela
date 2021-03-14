@@ -240,8 +240,8 @@ void Testing::RunParserTests()
 		Node{.type = Node::Type::FunctionDeclaration, .dataType{.any = true}, .objectType{.any = true}}
 		);
 	TestParser("2 function declarations", L"func1\r\nfunc2",
-		Node{ .type = Node::Type::FunctionDeclaration, .name = L"func1", .dataType{.any = true}, .objectType{.any = true}, .right =
-			Node::make_unique({ .type = Node::Type::FunctionDeclaration, .name = L"func2", .dataType{.any = true}, .objectType{.any = true} })
+		Node{ .type = Node::Type::FunctionDeclaration, .name = L"func2", .dataType{.any = true}, .objectType{.any = true}, .right =
+			Node::make_unique({ .type = Node::Type::FunctionDeclaration, .name = L"func1", .dataType{.any = true}, .objectType{.any = true} })
 		});
 	TestParser("function with empty body", L"func:.",
 		Node{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .left =
@@ -298,10 +298,10 @@ void Testing::RunParserTests()
 		TestParser("binary operator with namespace", L"namespace|< (operand)", f);
 	}
 	{
-		auto f2 = Node{ .type = Node::Type::FunctionDeclaration, .name = L"namespace2", .dataType{.any = true}, .objectType{.any = true}, .parameters{
+		auto f2 = Node{ .type = Node::Type::FunctionDeclaration, .name = L"<", .dataType{.any = true}, .nameSpace{ L"namespace1" }, .objectType{.any = true} };
+		auto f1 = Node{ .type = Node::Type::FunctionDeclaration, .name = L"namespace2", .dataType{.any = true}, .objectType{.any = true}, .parameters{
 				Parameter{.name = L"operand", .type{.any = true}},
-			} };
-		auto f1 = Node{ .type = Node::Type::FunctionDeclaration, .name = L"<", .dataType{.any = true}, .nameSpace{ L"namespace1" }, .objectType{.any = true}, .right = Node::make_unique(f2) };
+			}, .right = Node::make_unique(f2) };
 		TestParser("invalid binary operator as namespace", L"namespace1|<|namespace2 (operand)", f1, { IParser::Error{.code = IParser::Error::Code::ParseError } });
 	}
 

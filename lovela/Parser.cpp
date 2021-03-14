@@ -102,7 +102,7 @@ std::unique_ptr<Node> Parser::Parse() noexcept
 	// TODO: add built-in functions?
 
 	// Use a list of top-level nodes to be able to continue parsing after an error.
-	std::deque<std::unique_ptr<Node>> nodes;
+	std::vector<std::unique_ptr<Node>> nodes;
 
 	tokenIterator = tokenGenerator.begin();
 	while (tokenIterator != tokenGenerator.end())
@@ -152,14 +152,15 @@ std::unique_ptr<Node> Parser::Parse() noexcept
 
 	// Link the nodes together
 
-	std::unique_ptr<Node> node = std::move(nodes.front());
-	nodes.pop_front();
+	std::unique_ptr<Node> node = std::move(nodes.back());
+	nodes.pop_back();
 	auto parent = node.get();
 
-	for (auto& child : nodes)
+	while (!nodes.empty())
 	{
-		parent->right = std::move(child);
-		parent = parent->right.get();
+		node->right = std::move(nodes.back());
+		nodes.pop_back();
+		parent = node->right.get();
 	}
 
 	return node;
