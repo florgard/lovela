@@ -131,7 +131,7 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const 
 
 void TestingBase::PrintTree(int& index, const Node& tree, std::wstring indent)
 {
-	std::wcerr << indent << '(' << index + 1 << ' ' << to_wstring(tree.type) << " " << tree.name << '\n';
+	std::wcerr << indent << '(' << index + 1 << ' ' << to_wstring(tree.type) << " " << tree.value << '\n';
 	index++;
 
 	if (tree.left)

@@ -283,7 +283,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 		// [objectType] identifier
 		if (Accept(Token::Type::Identifier))
 		{
-			node->name = currentToken.value;
+			node->value = currentToken.value;
 		}
 	}
 	// identifier
@@ -316,7 +316,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 			}
 		}
 
-		node->name = name;
+		node->value = name;
 		node->objectType.any = true;
 
 		qualifiedName << name;
@@ -325,7 +325,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 	// binaryOperator
 	else if (IsToken(binaryOperatorTokens))
 	{
-		node->name = currentToken.value;
+		node->value = currentToken.value;
 		node->objectType.any = true;
 	}
 	else
@@ -495,7 +495,7 @@ std::unique_ptr<Node> Parser::ParseOperand(std::shared_ptr<Context> context)
 	}
 	else if (IsToken(literalTokens))
 	{
-		node = Node::make_unique({ .type = Node::Type::Literal, .name = currentToken.value, .token = currentToken });
+		node = Node::make_unique({ .type = Node::Type::Literal, .value = currentToken.value, .token = currentToken });
 	}
 	else
 	{
@@ -509,7 +509,7 @@ std::unique_ptr<Node> Parser::ParseFunctionCall(std::shared_ptr<Context> context
 {
 	Assert(Token::Type::Identifier);
 
-	auto node = Node::make_unique({ .type = Node::Type::FunctionCall, .name = currentToken.value, .token = currentToken });
+	auto node = Node::make_unique({ .type = Node::Type::FunctionCall, .value = currentToken.value, .token = currentToken });
 
 	// TODO: nameSpace, parameters
 
@@ -520,5 +520,5 @@ std::unique_ptr<Node> Parser::ParseBinaryOperation(std::shared_ptr<Context> cont
 {
 	Assert(binaryOperatorTokens);
 
-	return Node::make_unique({ .type = Node::Type::BinaryOperation, .name = currentToken.value, .token = currentToken });
+	return Node::make_unique({ .type = Node::Type::BinaryOperation, .value = currentToken.value, .token = currentToken });
 }

@@ -119,7 +119,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 		stream << ">\n";
 	}
 
-	stream << GetIndent() << returnType.name << ' ' << node.name << '(';
+	stream << GetIndent() << returnType.name << ' ' << node.value << '(';
 
 	index = 0;
 	for (auto& param : parameters)
@@ -176,7 +176,7 @@ void CodeGenerator::Expression(Node& node)
 
 void CodeGenerator::FunctionCall(Node& node)
 {
-	stream << node.name << '(';
+	stream << node.value << '(';
 	// TODO: Objet and parameters
 	stream << ") ";
 }
@@ -184,11 +184,11 @@ void CodeGenerator::FunctionCall(Node& node)
 void CodeGenerator::BinaryOperation(Node& node)
 {
 	Visit(*node.left);
-	stream << node.name << ' ';
+	stream << node.value << ' ';
 	Visit(*node.right);
 }
 
 void CodeGenerator::Literal(Node& node)
 {
-	stream << node.name << ' ';
+	stream << node.value << ' ';
 }
