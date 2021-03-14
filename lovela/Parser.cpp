@@ -398,12 +398,12 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		}
 	}
 
+	auto expression = Node::make_unique({ .type = Node::Type::Expression });
+
 	if (nodes.empty())
 	{
-		return {};
+		return expression;
 	}
-
-	auto expression = Node::make_unique({ .type = Node::Type::Expression });
 
 	if (nodes.back()->type == Node::Type::Expression)
 	{

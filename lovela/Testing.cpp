@@ -245,7 +245,12 @@ void Testing::RunParserTests()
 		Node{ .type = Node::Type::FunctionDeclaration, .name = L"func1", .dataType{.any = true}, .objectType{.any = true}, .right =
 			Node::make_unique({ .type = Node::Type::FunctionDeclaration, .name = L"func2", .dataType{.any = true}, .objectType{.any = true} })
 		}
-	, {});
+		, {});
+	TestParser("function with empty body", L"func:.",
+		Node{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .left =
+			Node::make_unique({.type = Node::Type::Expression})
+		}
+		, {});
 
 	{
 		auto f = Node{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .parameters{
