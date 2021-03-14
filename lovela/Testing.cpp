@@ -315,11 +315,6 @@ void Testing::RunParserTests()
 		auto e = Node{ .type = Node::Type::Expression, .left = Node::make_unique({.type = Node::Type::FunctionCall, .name = L"body" }) };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .left = Node::make_unique(e) };
 		TestParser("function with group", L"func: (body).", fd);
-	}
-
-	{
-		auto e = Node{ .type = Node::Type::Expression, .left = Node::make_unique({.type = Node::Type::FunctionCall, .name = L"body" }) };
-		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .left = Node::make_unique(e) };
 		TestParser("function with group 2", L"func: (body.).", fd);
 	}
 
@@ -378,6 +373,15 @@ void Testing::RunParserTests()
 				Parameter{.type{.name = L"unnamed"}}
 			}, .left = Node::make_unique(e) };
 		TestParser("function without object but with parameters and body", L"[()] func(untyped, name [type], [unnamed]): doWork.", fd);
+	}
+
+	{
+		auto l = Node{ .type = Node::Type::Literal, .value = L"1" };
+		auto fc = Node{ .type = Node::Type::FunctionCall, .name = L"call" };
+		auto bo = Node{ .type = Node::Type::BinaryOperation, .name = L"+", .left = Node::make_unique(fc), .right = Node::make_unique(l) };
+		auto e = Node{ .type = Node::Type::Expression, .left = Node::make_unique(bo) };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .left = Node::make_unique(e) };
+		TestParser("binary operation with function call", L"func: call + 1.", fd);
 	}
 }
 

@@ -432,10 +432,7 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		}
 		else if (operatorNodes.contains(node->type))
 		{
-			if (right)
-			{
-				parent->right = std::move(right);
-			}
+			node->right = std::move(right);
 
 			parent->left = std::move(node);
 			parent = parent->left.get();
