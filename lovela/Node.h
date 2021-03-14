@@ -20,6 +20,15 @@ struct Parameter
 
 using ParameterList = std::vector<Parameter>;
 
+struct FunctionDeclaration
+{
+	std::wstring name;
+	std::vector<std::wstring> nameSpace;
+	TypeSpec dataType;
+	TypeSpec objectType;
+	ParameterList parameters;
+};
+
 struct Node
 {
 	enum class Type
