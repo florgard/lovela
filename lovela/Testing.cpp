@@ -387,14 +387,14 @@ void Testing::RunParserTests()
 
 void Testing::RunCodeGeneratorTests()
 {
-	using namespace std::literals::string_view_literals;
+	std::wstring code = LR"(
+pi: 3.14.
+transform
+function2: pi transform + 1.
+)";
+	std::wcout << code << '\n';
 
-	auto code = LR"(
-function1
-function2: function1 + 1.
-)"sv;
-
-	std::wistringstream input(std::wstring(code.data(), code.size()));
+	std::wistringstream input(code);
 	Lexer lexer(input);
 	Parser parser(lexer.Lex());
 	auto tree = parser.Parse();

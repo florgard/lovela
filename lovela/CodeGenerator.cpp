@@ -11,6 +11,7 @@ std::map<Node::Type, std::function<void(CodeGenerator*, Node&)>> CodeGenerator::
 	{Node::Type::Expression, &CodeGenerator::Expression},
 	{Node::Type::FunctionCall, &CodeGenerator::FunctionCall},
 	{Node::Type::BinaryOperation, &CodeGenerator::BinaryOperation},
+	{Node::Type::Literal, &CodeGenerator::Literal},
 };
 
 CodeGenerator::CodeGenerator(std::wostream& stream) : stream(stream)
@@ -179,15 +180,19 @@ void CodeGenerator::Expression(Node& node)
 
 void CodeGenerator::FunctionCall(Node& node)
 {
-	stream << node.name << " (";
-	// TODO: Parameters
+	stream << node.name << '(';
+	// TODO: Objet and parameters
 	stream << ") ";
 }
 
 void CodeGenerator::BinaryOperation(Node& node)
 {
 	Visit(*node.left);
-	stream << node.name << " (";
-	//Visit(*node.right);
-	stream << ") ";
+	stream << node.name << ' ';
+	Visit(*node.right);
+}
+
+void CodeGenerator::Literal(Node& node)
+{
+	stream << node.name << ' ';
 }
