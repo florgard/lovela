@@ -62,15 +62,9 @@ struct Node
 	std::unique_ptr<Node> right;
 
 	[[nodiscard]] bool operator==(const Node& rhs) const noexcept;
-	[[nodiscard]] bool operator!=(const Node& rhs) const noexcept
-	{
-		return !operator==(rhs);
-	}
-
+	[[nodiscard]] bool operator!=(const Node& rhs) const noexcept { return !operator==(rhs); }
 	[[nodiscard]] operator bool() const noexcept { return type != Type::Empty; }
-
-	static std::unique_ptr<Node> make_unique(Node& node) noexcept { return move_to_unique(node); }
-	static std::unique_ptr<Node> make_unique(Node&& node) noexcept { return move_to_unique(node); }
-
-	FunctionDeclaration ToFunctionDeclaration() const;
+	[[nodiscard]] static std::unique_ptr<Node> make_unique(Node& node) noexcept { return move_to_unique(node); }
+	[[nodiscard]] static std::unique_ptr<Node> make_unique(Node&& node) noexcept { return move_to_unique(node); }
+	[[nodiscard]] FunctionDeclaration ToFunctionDeclaration() const;
 };
