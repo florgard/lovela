@@ -305,40 +305,33 @@ void Testing::RunParserTests()
 	}
 
 	{
-		auto fc = Node{ .type = Node::Type::FunctionCall, .name = L"body" };
-		auto e = Node{ .type = Node::Type::Expression, .left = Node::make_unique(fc) };
+		auto e = Node{ .type = Node::Type::Expression, .left = Node::make_unique({.type = Node::Type::FunctionCall, .name = L"body" }) };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .left = Node::make_unique(e) };
 		TestParser("function with trivial body", L"func: body.", fd);
 	}
 
 	{
-		auto fc = Node{ .type = Node::Type::FunctionCall, .name = L"body" };
-		auto e = Node{ .type = Node::Type::Expression, .left = Node::make_unique(fc) };
+		auto e = Node{ .type = Node::Type::Expression, .left = Node::make_unique({.type = Node::Type::FunctionCall, .name = L"body" }) };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .left = Node::make_unique(e) };
 		TestParser("function with group", L"func: (body).", fd);
 	}
 
 	{
-		auto fc = Node{ .type = Node::Type::FunctionCall, .name = L"body" };
-		auto e = Node{ .type = Node::Type::Expression, .left = Node::make_unique(fc) };
+		auto e = Node{ .type = Node::Type::Expression, .left = Node::make_unique({.type = Node::Type::FunctionCall, .name = L"body" }) };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .left = Node::make_unique(e) };
 		TestParser("function with group 2", L"func: (body.).", fd);
 	}
 
 	{
-		auto fc2 = Node{ .type = Node::Type::FunctionCall, .name = L"expr2" };
-		auto e2 = Node{ .type = Node::Type::Expression, .left = Node::make_unique(fc2) };
-		auto fc1 = Node{ .type = Node::Type::FunctionCall, .name = L"expr1" };
-		auto e1 = Node{ .type = Node::Type::Expression, .left = Node::make_unique(fc1), .right = Node::make_unique(e2) };
+		auto e2 = Node{ .type = Node::Type::Expression, .left = Node::make_unique({.type = Node::Type::FunctionCall, .name = L"expr2" }) };
+		auto e1 = Node{ .type = Node::Type::Expression, .left = Node::make_unique({.type = Node::Type::FunctionCall, .name = L"expr1" }), .right = Node::make_unique(e2) };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .left = Node::make_unique(e1) };
 		TestParser("function with compound expression", L"func: (expr1. expr2).", fd);
 	}
 
 	{
-		auto fc2 = Node{ .type = Node::Type::FunctionCall, .name = L"expr2" };
-		auto e2 = Node{ .type = Node::Type::Expression, .left = Node::make_unique(fc2) };
-		auto fc1 = Node{ .type = Node::Type::FunctionCall, .name = L"expr1" };
-		auto e1 = Node{ .type = Node::Type::Expression, .left = Node::make_unique(fc1) };
+		auto e2 = Node{ .type = Node::Type::Expression, .left = Node::make_unique({.type = Node::Type::FunctionCall, .name = L"expr2" }) };
+		auto e1 = Node{ .type = Node::Type::Expression, .left = Node::make_unique({.type = Node::Type::FunctionCall, .name = L"expr1" }) };
 		auto t = Node{ .type = Node::Type::Tuple, .left = Node::make_unique(e1), .right = Node::make_unique(e2) };
 		auto e = Node{ .type = Node::Type::Expression, .left = Node::make_unique(t) };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .name = L"func", .dataType{.any = true}, .objectType{.any = true}, .left = Node::make_unique(e) };
