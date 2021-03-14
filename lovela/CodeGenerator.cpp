@@ -146,6 +146,8 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 		Visit(*node.left);
 		EndScope();
 	}
+
+	stream << '\n';
 }
 
 void CodeGenerator::Expression(Node& node)
