@@ -30,6 +30,7 @@ struct Token
 	} type{};
 
 	std::wstring value;
+	std::wstring dataType;
 
 	int line{};
 	int column{};

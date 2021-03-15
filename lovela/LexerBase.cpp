@@ -63,6 +63,11 @@ Token LexerBase::GetToken(const std::wstring_view& lexeme) noexcept
 		{ std::wregex{ LR"(<-|->)" }, Token::Type::OperatorArrow },
 	};
 
+	static const std::map<Token::Type, std::wstring> tokenDataTypes{
+		{Token::Type::LiteralInteger, L"[32]"},
+		{Token::Type::LiteralDecimal, L"[.32]"},
+	};
+
 	auto trimmed = Trim(lexeme);
 
 	if (trimmed.empty())
@@ -83,7 +88,12 @@ Token LexerBase::GetToken(const std::wstring_view& lexeme) noexcept
 	{
 		if (std::regex_match(trimmed.begin(), trimmed.end(), pair.first))
 		{
-			return { .type = pair.second, .value = std::wstring(trimmed.data(), trimmed.size()) };
+			Token token{ .type = pair.second, .value = std::wstring(trimmed.data(), trimmed.size()) };
+			if (tokenDataTypes.contains(pair.second))
+			{
+				token.dataType = tokenDataTypes.at(pair.second);
+			}
+			return token;
 		}
 	}
 

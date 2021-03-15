@@ -13,6 +13,7 @@
     <ClCompile Include="Token.cpp" />
     <ClCompile Include="TestingBase.cpp" />
     <ClCompile Include="CodeGenerator.cpp" />
+    <ClCompile Include="DataType.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lexer.h" />
@@ -30,5 +31,6 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="TestingBase.h" />
     <ClInclude Include="CodeGenerator.h" />
+    <ClInclude Include="DataType.h" />
   </ItemGroup>
 </Project>

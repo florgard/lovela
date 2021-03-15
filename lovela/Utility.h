@@ -33,3 +33,14 @@ template <class T>
 [[nodiscard]] std::unique_ptr<T> move_to_unique(T& t) {
 	return std::make_unique<T>(std::move(t));
 }
+
+// Moves r-value into shared_ptr.
+template <class T>
+[[nodiscard]] std::shared_ptr<T> move_to_shared(T&& t) {
+	return std::make_shared<T>(std::move(t));
+}
+// Moves l-value into shared_ptr.
+template <class T>
+[[nodiscard]] std::shared_ptr<T> move_to_shared(T& t) {
+	return std::make_shared<T>(std::move(t));
+}

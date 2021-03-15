@@ -261,9 +261,6 @@ ParameterList Parser::ParseParameterList()
 
 std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> context)
 {
-	auto innerContext = std::make_shared<Context>();
-	innerContext->parent = context;
-
 	auto node = Node::make_unique({ .type = Node::Type::FunctionDeclaration });
 
 	// <-
@@ -352,6 +349,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 	// [objectType] identifier (parameterList) [dataType]:
 	if (Accept(Token::Type::SeparatorColon))
 	{
+		auto innerContext = Context::make_shared(Context{ .parent = context, .inType = node->objectType });
 		node->left = ParseExpression(innerContext);
 	}
 
@@ -372,21 +370,24 @@ std::unique_ptr<Node> Parser::ParseCompoundExpression(std::shared_ptr<Context> c
 
 std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 {
+	const auto& inType = context->inType;
+	auto innerContext = Context::make_shared(Context{ .parent = context, .inType = inType });
+
 	std::vector<std::unique_ptr<Node>> nodes;
 
 	for (;;)
 	{
 		if (Accept(operandTokens))
 		{
-			nodes.emplace_back(ParseOperand(context));
+			nodes.emplace_back(ParseOperand(innerContext));
 		}
 		else if (Accept(Token::Type::Identifier))
 		{
-			nodes.emplace_back(ParseFunctionCall(context));
+			nodes.emplace_back(ParseFunctionCall(innerContext));
 		}
 		else if (Accept(binaryOperatorTokens))
 		{
-			nodes.emplace_back(ParseBinaryOperation(context));
+			nodes.emplace_back(ParseBinaryOperation(innerContext));
 		}
 		// TODO: Selector, bind
 		else if (Accept(Token::Type::SeparatorDot) || Peek(expressionTerminatorTokens))
@@ -399,7 +400,7 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		}
 	}
 
-	auto expression = Node::make_unique({ .type = Node::Type::Expression });
+	auto expression = Node::make_unique({ .type = Node::Type::Expression, .dataType = inType, .objectType = inType });
 
 	if (nodes.empty())
 	{
@@ -454,6 +455,12 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		parent->left = std::move(right);
 	}
 
+	// The data type of the expression is the data type of the first child node.
+	if (expression->left)
+	{
+		expression->dataType = expression->left->dataType;
+	}
+
 	return expression;
 }
 
@@ -495,7 +502,13 @@ std::unique_ptr<Node> Parser::ParseOperand(std::shared_ptr<Context> context)
 	}
 	else if (IsToken(literalTokens))
 	{
-		node = Node::make_unique({ .type = Node::Type::Literal, .value = currentToken.value, .token = currentToken });
+		node = Node::make_unique(
+			{
+				.type = Node::Type::Literal,
+				.value = currentToken.value,
+				.dataType{.name = currentToken.dataType},
+				.token = currentToken
+			});
 	}
 	else
 	{

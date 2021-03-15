@@ -17,6 +17,10 @@ private:
 	{
 		std::shared_ptr<Context> parent;
 		std::set<std::wstring> symbols;
+		TypeSpec inType{};
+
+		static std::shared_ptr<Context> make_shared(Context& context) noexcept { return move_to_shared<Context>(context); }
+		static std::shared_ptr<Context> make_shared(Context&& context) noexcept { return move_to_shared<Context>(context); }
 	};
 
 	[[nodiscard]] TypeSpec ParseTypeSpec();
