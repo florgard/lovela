@@ -175,7 +175,7 @@ TypeSpec Parser::ParseTypeSpec()
 	// []
 	if (Accept(Token::Type::ParenSquareClose))
 	{
-		typeSpec.any = true;
+		typeSpec.SetAny();
 	}
 	// [identifier]
 	else if (Accept(Token::Type::Identifier))
@@ -186,7 +186,7 @@ TypeSpec Parser::ParseTypeSpec()
 	// [()]
 	else if (Accept(Token::Type::ParenRoundOpen))
 	{
-		typeSpec.none = true;
+		typeSpec.SetNone();
 		Expect(Token::Type::ParenRoundClose);
 		Expect(Token::Type::ParenSquareClose);
 	}
@@ -230,7 +230,7 @@ ParameterList Parser::ParseParameterList()
 		}
 		else
 		{
-			parameter.type.any = true;
+			parameter.type.SetAny();
 		}
 
 		// Name and/or type must be specified
@@ -314,7 +314,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 		}
 
 		node->value = name;
-		node->objectType.any = true;
+		node->objectType.SetAny();
 
 		qualifiedName << name;
 		context->symbols.insert(qualifiedName.str());
@@ -323,7 +323,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 	else if (IsToken(binaryOperatorTokens))
 	{
 		node->value = currentToken.value;
-		node->objectType.any = true;
+		node->objectType.SetAny();
 	}
 	else
 	{
@@ -343,7 +343,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 	}
 	else
 	{
-		node->dataType.any = true;
+		node->dataType.SetAny();
 	}
 
 	// [objectType] identifier (parameterList) [dataType]:

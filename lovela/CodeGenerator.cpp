@@ -62,23 +62,23 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 	Parameter object{ .name = Decorate("object"), .type = node.objectType };
 	std::vector<std::wstring> initialization;
 
-	if (returnType.any)
+	if (returnType.Any())
 	{
 		returnType.name = Decorate(L"return_t");
 		templateParameters.push_back(returnType.name);
 	}
-	else if (node.dataType.none)
+	else if (node.dataType.None())
 	{
 		returnType = voidType;
 	}
 
-	if (object.type.any)
+	if (object.type.Any())
 	{
 		auto type = object.name + L"_t";
 		parameters.emplace_back(type + L' ' + object.name);
 		templateParameters.push_back(type);
 	}
-	else if (!object.type.none)
+	else if (!object.type.None())
 	{
 		auto type = object.type.name;
 		parameters.emplace_back(type + L' ' + object.name);
@@ -96,7 +96,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 		auto name = param.name;
 		auto type = param.type.name;
 
-		if (param.type.any)
+		if (param.type.Any())
 		{
 			type = Decorate(paramName.str()) + L"_t";
 			templateParameters.push_back(type);

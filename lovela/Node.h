@@ -3,9 +3,14 @@
 
 struct TypeSpec
 {
+	static constexpr std::wstring_view noneType{ L"()" };
+
 	std::wstring name;
-	bool any{};
-	bool none{};
+
+	bool Any() const { return name.empty(); }
+	bool None() const { return name == noneType; }
+	void SetAny() { name.clear(); }
+	void SetNone() { name = noneType; }
 
 	[[nodiscard]] auto operator<=>(const TypeSpec& rhs) const noexcept = default;
 };
