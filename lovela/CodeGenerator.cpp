@@ -55,26 +55,26 @@ void CodeGenerator::EndScope()
 
 void CodeGenerator::FunctionDeclaration(Node& node)
 {
-	static const TypeSpec voidType{ .name = L"None" };
+	static const TypeSpec noneType{ .name = L"None" };
 
+	TypeSpec inType = node.inType;
+	TypeSpec outType = node.outType;
 	std::vector<std::wstring> templateParameters;
 	std::vector<std::wstring> parameters;
-	TypeSpec returnType = node.outType;
-	TypeSpec inType = node.inType;
 	std::vector<std::wstring> initialization;
 
-	if (returnType.Any())
+	if (outType.Any())
 	{
-		returnType.name = L"Out";
-		templateParameters.push_back(returnType.name);
+		outType.name = L"Out";
+		templateParameters.push_back(outType.name);
 	}
 	else if (node.outType.None())
 	{
-		returnType = voidType;
+		outType = noneType;
 	}
 	else
 	{
-		returnType.name += L"_t";
+		outType.name += L"_t";
 	}
 
 	if (inType.Any())
@@ -84,7 +84,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 	}
 	else if (inType.None())
 	{
-		initialization.emplace_back(voidType.name);
+		initialization.emplace_back(noneType.name);
 	}
 	else
 	{
@@ -123,7 +123,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 		stream << ">\n";
 	}
 
-	stream << GetIndent() << returnType.name << ' ' << node.value << '(';
+	stream << GetIndent() << outType.name << ' ' << node.value << '(';
 
 	index = 0;
 	for (auto& param : parameters)
