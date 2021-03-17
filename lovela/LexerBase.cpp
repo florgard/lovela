@@ -95,7 +95,7 @@ Token LexerBase::GetToken(const std::wstring_view& lexeme) noexcept
 			Token token{ .type = pair.second, .value = std::wstring(trimmed.data(), trimmed.size()) };
 			if (tokenDataTypes.contains(pair.second))
 			{
-				token.dataType = tokenDataTypes.at(pair.second);
+				token.outType = tokenDataTypes.at(pair.second);
 			}
 			return token;
 		}

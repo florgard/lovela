@@ -57,9 +57,9 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 {
 	std::vector<std::wstring> templateParameters;
 	std::vector<std::wstring> parameters;
-	TypeSpec returnType = node.dataType;
+	TypeSpec returnType = node.outType;
 	TypeSpec voidType{ .name = Decorate("void") };
-	Parameter object{ .name = Decorate("object"), .type = node.objectType };
+	Parameter object{ .name = Decorate("object"), .type = node.inType };
 	std::vector<std::wstring> initialization;
 
 	if (returnType.Any())
@@ -67,7 +67,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 		returnType.name = Decorate(L"return_t");
 		templateParameters.push_back(returnType.name);
 	}
-	else if (node.dataType.None())
+	else if (node.outType.None())
 	{
 		returnType = voidType;
 	}

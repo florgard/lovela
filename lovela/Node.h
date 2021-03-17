@@ -33,8 +33,8 @@ struct FunctionDeclaration
 {
 	std::wstring name;
 	std::vector<std::wstring> nameSpace;
-	TypeSpec dataType;
-	TypeSpec objectType;
+	TypeSpec outType;
+	TypeSpec inType;
 	ParameterList parameters;
 	bool imported{};
 	bool exported{};
@@ -54,12 +54,12 @@ struct Node
 	} type{};
 
 	std::wstring value;
-	TypeSpec dataType;
+	TypeSpec outType;
 	Token token;
 
 	// Function declaration
 	std::vector<std::wstring> nameSpace;
-	TypeSpec objectType;
+	TypeSpec inType;
 	ParameterList parameters;
 	bool imported{};
 	bool exported{};

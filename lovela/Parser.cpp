@@ -272,12 +272,12 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 		Expect({ Token::Type::ParenSquareOpen, Token::Type::Identifier });
 	}
 
-	// [objectType]
+	// [inType]
 	if (IsToken(Token::Type::ParenSquareOpen))
 	{
-		node->objectType = ParseTypeSpec();
+		node->inType = ParseTypeSpec();
 
-		// [objectType] identifier
+		// [inType] identifier
 		if (Accept(Token::Type::Identifier))
 		{
 			node->value = currentToken.value;
@@ -314,7 +314,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 		}
 
 		node->value = name;
-		node->objectType.SetAny();
+		node->inType.SetAny();
 
 		qualifiedName << name;
 		context->symbols.insert(qualifiedName.str());
@@ -323,33 +323,33 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 	else if (IsToken(binaryOperatorTokens))
 	{
 		node->value = currentToken.value;
-		node->objectType.SetAny();
+		node->inType.SetAny();
 	}
 	else
 	{
 		Assert();
 	}
 
-	// [objectType] identifier (parameterList)
+	// [inType] identifier (parameterList)
 	if (Accept(Token::Type::ParenRoundOpen))
 	{
 		node->parameters = ParseParameterList();
 	}
 
-	// [objectType] identifier (parameterList) [dataType]
+	// [inType] identifier (parameterList) [outType]
 	if (Accept(Token::Type::ParenSquareOpen))
 	{
-		node->dataType = ParseTypeSpec();
+		node->outType = ParseTypeSpec();
 	}
 	else
 	{
-		node->dataType.SetAny();
+		node->outType.SetAny();
 	}
 
-	// [objectType] identifier (parameterList) [dataType]:
+	// [inType] identifier (parameterList) [outType]:
 	if (Accept(Token::Type::SeparatorColon))
 	{
-		auto innerContext = Context::make_shared(Context{ .parent = context, .inType = node->objectType });
+		auto innerContext = Context::make_shared(Context{ .parent = context, .inType = node->inType });
 		node->left = ParseExpression(innerContext);
 	}
 
@@ -400,7 +400,7 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		}
 	}
 
-	auto expression = Node::make_unique({ .type = Node::Type::Expression, .dataType = inType, .objectType = inType });
+	auto expression = Node::make_unique({ .type = Node::Type::Expression, .outType = inType, .inType = inType });
 
 	if (nodes.empty())
 	{
@@ -458,7 +458,7 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 	// The data type of the expression is the data type of the first child node.
 	if (expression->left)
 	{
-		expression->dataType = expression->left->dataType;
+		expression->outType = expression->left->outType;
 	}
 
 	return expression;
@@ -506,7 +506,7 @@ std::unique_ptr<Node> Parser::ParseOperand(std::shared_ptr<Context> context)
 			{
 				.type = Node::Type::Literal,
 				.value = currentToken.value,
-				.dataType{.name = currentToken.dataType},
+				.outType{.name = currentToken.outType},
 				.token = currentToken
 			});
 	}
