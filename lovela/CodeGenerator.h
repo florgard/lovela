@@ -21,8 +21,9 @@ private:
 	void EndScope();
 	const std::wstring& GetIndent() const { return indent; }
 
-	static std::wstring Decorate(const std::string_view& name) { return L"l_" + to_wstring(name); }
-	static std::wstring Decorate(const std::wstring_view& name) { return L"l_" + to_wstring(name); }
+	static std::wstring TypeName(const std::wstring& name) { return L"t_" + name; }
+	static std::wstring ParameterName(const std::wstring& name) { return L"p_" + name; }
+	static std::wstring FunctionName(const std::wstring& name) { return L"f_" + name; }
 
 	std::wostream& stream;
 	std::wstring indent;

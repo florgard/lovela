@@ -74,7 +74,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 	}
 	else
 	{
-		outType.name = L"t_" + outType.name;
+		outType.name = TypeName(outType.name);
 	}
 
 	if (inType.Any())
@@ -88,7 +88,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 	}
 	else
 	{
-		parameters.emplace_back(L"t_" + inType.name + L" in");
+		parameters.emplace_back(TypeName(inType.name) + L" in");
 	}
 
 	int index = 0;
@@ -97,8 +97,8 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 		index++;
 		std::wostringstream paramIndex;
 		paramIndex << index;
-		const auto name = L"p_" + param.name;
-		auto type = L"t_" + param.type.name;
+		const auto name = ParameterName(param.name);
+		auto type = TypeName(param.type.name);
 
 		if (param.type.Any())
 		{
@@ -123,7 +123,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 		stream << ">\n";
 	}
 
-	stream << GetIndent() << outType.name << " f_" << node.value << '(';
+	stream << GetIndent() << outType.name << ' ' << FunctionName(node.value) << '(';
 
 	index = 0;
 	for (auto& param : parameters)
@@ -134,11 +134,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 
 	stream << ')';
 
-	if (!node.left)
-	{
-		stream << ';';
-	}
-	else
+	if (node.left)
 	{
 		stream << '\n';
 
@@ -157,8 +153,12 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 
 		EndScope();
 	}
+	else
+	{
+		stream << ';';
+	}
 
-	stream << '\n' << '\n';
+	stream << "\n\n";
 }
 
 void CodeGenerator::Expression(Node& node)
