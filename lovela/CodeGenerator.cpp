@@ -85,7 +85,7 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 	}
 	else if (inType.None())
 	{
-		initialization.emplace_back(noneType.name);
+		initialization.emplace_back(noneType.name + L" in; in;");
 	}
 	else
 	{
@@ -143,7 +143,7 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 
 		for (auto& line : initialization)
 		{
-			stream << GetIndent() << line << ";\n";
+			stream << GetIndent() << line << '\n';
 		}
 
 		Visit(*node.left, context);
