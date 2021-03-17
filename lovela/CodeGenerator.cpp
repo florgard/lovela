@@ -1,12 +1,12 @@
 #include "pch.h"
 #include "CodeGenerator.h"
 
-std::map<Node::Type, std::function<void(CodeGenerator*, Node&)>> CodeGenerator::visitors
+std::map<Node::Type, CodeGenerator::Visitor> CodeGenerator::visitors
 {
 	{Node::Type::FunctionDeclaration, &CodeGenerator::FunctionDeclaration}
 };
 
-std::map<Node::Type, std::function<void(CodeGenerator*, Node&)>> CodeGenerator::internalVisitors
+std::map<Node::Type, CodeGenerator::Visitor> CodeGenerator::internalVisitors
 {
 	{Node::Type::Expression, &CodeGenerator::Expression},
 	{Node::Type::FunctionCall, &CodeGenerator::FunctionCall},
@@ -23,16 +23,17 @@ void CodeGenerator::Generate(Node& node)
 	auto iter = visitors.find(node.type);
 	if (iter != visitors.end())
 	{
-		iter->second(this, node);
+		Context context;
+		iter->second(this, node, context);
 	}
 }
 
-void CodeGenerator::Visit(Node& node)
+void CodeGenerator::Visit(Node& node, Context& context)
 {
 	auto iter = internalVisitors.find(node.type);
 	if (iter != internalVisitors.end())
 	{
-		iter->second(this, node);
+		iter->second(this, node, context);
 	}
 }
 
@@ -53,7 +54,7 @@ void CodeGenerator::EndScope()
 	stream << GetIndent() << "}\n";
 }
 
-void CodeGenerator::FunctionDeclaration(Node& node)
+void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 {
 	static const TypeSpec noneType{ .name = L"None" };
 
@@ -145,11 +146,9 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 			stream << GetIndent() << line << ";\n";
 		}
 
-		Visit(*node.left);
+		Visit(*node.left, context);
 
-		// TODO: Return expression result or default in.
-		// TODO: Check result and return type compability.
-		stream << GetIndent() << "return in;\n";
+		stream << GetIndent() << "return out" << context.localVariableIndex << ";\n";
 
 		EndScope();
 	}
@@ -161,38 +160,38 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 	stream << "\n\n";
 }
 
-void CodeGenerator::Expression(Node& node)
+void CodeGenerator::Expression(Node& node, Context& context)
 {
-	stream << GetIndent();
-
 	if (node.left)
 	{
-		Visit(*node.left);
+		stream << GetIndent() << "auto out" << ++context.localVariableIndex << " = ";
+		Visit(*node.left, context);
+		stream << ";\n";
 	}
-
-	stream << ";\n";
 
 	if (node.right)
 	{
-		Visit(*node.right);
+		stream << GetIndent() << "auto out" << ++context.localVariableIndex << " = ";
+		Visit(*node.right, context);
+		stream << ";\n";
 	}
 }
 
-void CodeGenerator::FunctionCall(Node& node)
+void CodeGenerator::FunctionCall(Node& node, Context&)
 {
 	stream << node.value << '(';
 	// TODO: Object and parameters
 	stream << ") ";
 }
 
-void CodeGenerator::BinaryOperation(Node& node)
+void CodeGenerator::BinaryOperation(Node& node, Context& context)
 {
-	Visit(*node.left);
+	Visit(*node.left, context);
 	stream << node.value << ' ';
-	Visit(*node.right);
+	Visit(*node.right, context);
 }
 
-void CodeGenerator::Literal(Node& node)
+void CodeGenerator::Literal(Node& node, Context&)
 {
 	stream << node.value << ' ';
 }

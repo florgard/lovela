@@ -9,13 +9,18 @@ public:
 	void Generate(Node& node);
 
 private:
-	void Visit(Node& node);
+	struct Context
+	{
+		int localVariableIndex{};
+	};
 
-	void FunctionDeclaration(Node& node);
-	void Expression(Node& node);
-	void FunctionCall(Node& node);
-	void BinaryOperation(Node& node);
-	void Literal(Node& node);
+	void Visit(Node& node, Context& context);
+
+	void FunctionDeclaration(Node& node, Context& context);
+	void Expression(Node& node, Context& context);
+	void FunctionCall(Node& node, Context& context);
+	void BinaryOperation(Node& node, Context& context);
+	void Literal(Node& node, Context& context);
 
 	void BeginScope();
 	void EndScope();
@@ -27,6 +32,7 @@ private:
 
 	std::wostream& stream;
 	std::wstring indent;
-	static std::map<Node::Type, std::function<void(CodeGenerator*, Node&)>> visitors;
-	static std::map<Node::Type, std::function<void(CodeGenerator*, Node&)>> internalVisitors;
+	using Visitor = std::function<void(CodeGenerator*, Node&, CodeGenerator::Context&)>;
+	static std::map<Node::Type, Visitor> visitors;
+	static std::map<Node::Type, Visitor> internalVisitors;
 };
