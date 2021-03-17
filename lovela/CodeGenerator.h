@@ -25,7 +25,7 @@ private:
 
 	void BeginScope();
 	void EndScope();
-	const std::wstring& GetIndent() const { return indent; }
+	const std::wstring& Indent() const { return indent; }
 
 	static std::wstring TypeName(const std::wstring& name) { return L"t_" + name; }
 	static std::wstring ParameterName(const std::wstring& name) { return L"p_" + name; }

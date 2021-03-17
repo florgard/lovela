@@ -39,7 +39,7 @@ void CodeGenerator::Visit(Node& node, Context& context)
 
 void CodeGenerator::BeginScope()
 {
-	stream << GetIndent() << "{\n";
+	stream << Indent() << "{\n";
 	indent += '\t';
 }
 
@@ -51,7 +51,7 @@ void CodeGenerator::EndScope()
 	}
 
 	indent.resize(indent.length() - 1);
-	stream << GetIndent() << "}\n";
+	stream << Indent() << "}\n";
 }
 
 void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
@@ -112,7 +112,7 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 
 	if (!templateParameters.empty())
 	{
-		stream << GetIndent() << "template <";
+		stream << Indent() << "template <";
 
 		index = 0;
 		for (auto& param : templateParameters)
@@ -124,7 +124,7 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 		stream << ">\n";
 	}
 
-	stream << GetIndent() << outType.name << ' ' << FunctionName(node.value) << '(';
+	stream << Indent() << outType.name << ' ' << FunctionName(node.value) << '(';
 
 	index = 0;
 	for (auto& param : parameters)
@@ -143,14 +143,15 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 
 		for (auto& line : initialization)
 		{
-			stream << GetIndent() << line << ";\n";
+			stream << Indent() << line << ";\n";
 		}
+
 		// Make an indexed reference to the input object and avoid a warning if it's unreferenced.
-		stream << GetIndent() << "auto& in" << ++context.inIndex << " = in; in" << context.inIndex << ";\n";
+		stream << Indent() << "auto& in" << ++context.inIndex << " = in; in" << context.inIndex << ";\n";
 
 		Visit(*node.left, context);
 
-		stream << GetIndent() << "return out" << context.outIndex << ";\n";
+		stream << Indent() << "return out" << context.outIndex << ";\n";
 
 		EndScope();
 	}
@@ -166,14 +167,14 @@ void CodeGenerator::Expression(Node& node, Context& context)
 {
 	if (node.left)
 	{
-		stream << GetIndent() << "auto out" << ++context.outIndex << " = ";
+		stream << Indent() << "auto out" << ++context.outIndex << " = ";
 		Visit(*node.left, context);
 		stream << ";\n";
 	}
 
 	if (node.right)
 	{
-		stream << GetIndent() << "auto out" << ++context.outIndex << " = ";
+		stream << Indent() << "auto out" << ++context.outIndex << " = ";
 		Visit(*node.right, context);
 		stream << ";\n";
 	}
