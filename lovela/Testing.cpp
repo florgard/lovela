@@ -318,6 +318,13 @@ void Testing::RunParserTests()
 	}
 
 	{
+		auto e2 = Node{ .type = Node::Type::FunctionCall, .value = L"inner" };
+		auto e1 = Node{ .type = Node::Type::Expression, .left = Node::make_unique({.type = Node::Type::FunctionCall, .value = L"outer", .left = Node::make_unique(e2) }) };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = Node::make_unique(e1) };
+		TestParser("function with 2 chained calls", L"func: inner outer.", fd);
+	}
+
+	{
 		auto e = Node{ .type = Node::Type::Expression, .left = Node::make_unique({.type = Node::Type::FunctionCall, .value = L"body" }) };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = Node::make_unique(e) };
 		TestParser("function with group", L"func: (body).", fd);
@@ -403,10 +410,12 @@ void Testing::RunCodeGeneratorTests()
 		L"template <typename Out, typename In, typename Param1> Out f_func(In in, Param1 p_arg);");
 	TestCodeGenerator("function with typed parameter", L"func (arg [type])",
 		L"template <typename Out, typename In> Out f_func(In in, t_type p_arg);");
+	TestCodeGenerator("trivial function", L"func: + 1.",
+		L"template <typename Out, typename In> Out f_func(In in) { auto& var1 = in; var1; auto var2 = var1 + 1 ; return var2; }");
 
 	std::wstring code = LR"(
 [()] pi: 3.14.
-transform: (x * 2. x - 0.28).
+transform: (* 2. - 0.28).
 [](): pi transform + 1.
 )";
 	std::wcout << code << '\n';

@@ -9,6 +9,7 @@ std::map<Node::Type, CodeGenerator::Visitor> CodeGenerator::visitors
 std::map<Node::Type, CodeGenerator::Visitor> CodeGenerator::internalVisitors
 {
 	{Node::Type::Expression, &CodeGenerator::Expression},
+	{Node::Type::ExpressionInput, &CodeGenerator::ExpressionInput},
 	{Node::Type::FunctionCall, &CodeGenerator::FunctionCall},
 	{Node::Type::BinaryOperation, &CodeGenerator::BinaryOperation},
 	{Node::Type::Literal, &CodeGenerator::Literal},
@@ -176,6 +177,11 @@ void CodeGenerator::Expression(Node& node, Context& context)
 	{
 		Visit(*node.right, context);
 	}
+}
+
+void CodeGenerator::ExpressionInput(Node&, Context& context)
+{
+	stream << "var" << (context.variableIndex - 1) << ' ';
 }
 
 void CodeGenerator::FunctionCall(Node& node, Context&)

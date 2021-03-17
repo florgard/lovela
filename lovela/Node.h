@@ -47,6 +47,7 @@ struct Node
 		Empty,
 		FunctionDeclaration,
 		Expression,
+		ExpressionInput,
 		Tuple,
 		Literal,
 		FunctionCall,

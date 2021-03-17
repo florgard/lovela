@@ -18,6 +18,7 @@ private:
 
 	void FunctionDeclaration(Node& node, Context& context);
 	void Expression(Node& node, Context& context);
+	void ExpressionInput(Node& node, Context& context);
 	void FunctionCall(Node& node, Context& context);
 	void BinaryOperation(Node& node, Context& context);
 	void Literal(Node& node, Context& context);

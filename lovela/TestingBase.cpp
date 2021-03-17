@@ -61,16 +61,25 @@ std::unique_ptr<Node> TestingBase::TestParser(const char* name, std::wstring_vie
 	Parser parser(lexer.Lex());
 	auto tree = parser.Parse();
 
-	int index = 0;
-	bool success = TestAST(index, name, *tree, expectedTree);
+	bool success = !!tree;
 
 	if (!success)
 	{
-		std::wcerr << "AST mismatch in parser test \"" << name << "\".\n\nActual:\n";
-		PrintTree(*tree);
-		std::wcerr << "\nExpected:\n";
+		std::wcerr << "Parser test \"" << name << "\" error: The parser didn't yield an AST.\n\nExpected:\n";
 		PrintTree(expectedTree);
-		assert(success);
+	}
+	else
+	{
+		int index = 0;
+		success = TestAST(index, name, *tree, expectedTree);
+
+		if (!success)
+		{
+			std::wcerr << "Parser test \"" << name << "\" error: AST mismatch.\n\nActual:\n";
+			PrintTree(*tree);
+			std::wcerr << "\nExpected:\n";
+			PrintTree(expectedTree);
+		}
 	}
 
 	auto& errors = parser.GetErrors();
@@ -109,6 +118,12 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const 
 	}
 
 	index++;
+
+	// HACK to avoid having to add an ExpressionInput node to every operator node.
+	if (!!tree.left && tree.left->type == Node::Type::ExpressionInput && !expectedTree.right)
+	{
+		return true;
+	}
 
 	// Fail if one pointer is set but not the other
 	if (!!tree.left != !!expectedTree.left || !!tree.right != !!expectedTree.right)

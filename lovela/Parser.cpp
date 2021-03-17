@@ -261,7 +261,7 @@ ParameterList Parser::ParseParameterList()
 
 std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> context)
 {
-	auto node = Node::make_unique({ .type = Node::Type::FunctionDeclaration });
+	auto node = Node::make_unique({ .type = Node::Type::FunctionDeclaration, .token = currentToken });
 
 	// <-
 	// ->
@@ -370,6 +370,8 @@ std::unique_ptr<Node> Parser::ParseCompoundExpression(std::shared_ptr<Context> c
 
 std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 {
+	auto firstToken = *tokenIterator;
+
 	const auto& inType = context->inType;
 	auto innerContext = Context::make_shared(Context{ .parent = context, .inType = inType });
 
@@ -400,7 +402,7 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		}
 	}
 
-	auto expression = Node::make_unique({ .type = Node::Type::Expression, .outType = inType, .inType = inType });
+	auto expression = Node::make_unique({ .type = Node::Type::Expression, .outType = inType, .token = firstToken, .inType = inType });
 
 	if (nodes.empty())
 	{
@@ -444,15 +446,22 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		}
 	}
 
-	// Left-most operand
 	if (right)
 	{
+		// Left-most operand
+		// TODO: Check that default input is implicit and can be discarded?
+
 		if (parent->left)
 		{
 			throw ParseException(parent->token, "The parent expression node already has a left hand side operand.");
 		}
 
 		parent->left = std::move(right);
+	}
+	else if (!parent->left)
+	{
+		// Default expression input
+		parent->left = Node::make_unique(Node{ .type = Node::Type::ExpressionInput, .token = firstToken });
 	}
 
 	// The data type of the expression is the data type of the first child node.
@@ -483,7 +492,7 @@ std::unique_ptr<Node> Parser::ParseTuple(std::shared_ptr<Context> context)
 
 	if (Accept(Token::Type::SeparatorComma))
 	{
-		auto tuple = Node::make_unique({ .type = Node::Type::Tuple });
+		auto tuple = Node::make_unique({ .type = Node::Type::Tuple, .token = currentToken });
 		tuple->left = std::move(node);
 		tuple->right = ParseTuple(context);
 		node = std::move(tuple);

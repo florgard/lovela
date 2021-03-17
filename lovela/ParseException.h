@@ -4,7 +4,7 @@
 struct ParseException
 {
 	std::wstring message;
-	const Token& token;
+	Token token;
 
 	ParseException(const Token& token);
 	ParseException(const Token& token, std::string_view message);
