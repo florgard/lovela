@@ -147,11 +147,11 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 		}
 
 		// Make an indexed reference to the input object and avoid a warning if it's unreferenced.
-		stream << Indent() << "auto& in" << ++context.inIndex << " = in; in" << context.inIndex << ";\n";
+		stream << Indent() << "auto& var" << ++context.variableIndex << " = in; var" << context.variableIndex << ";\n";
 
 		Visit(*node.left, context);
 
-		stream << Indent() << "return out" << context.outIndex << ";\n";
+		stream << Indent() << "return var" << context.variableIndex << ";\n";
 
 		EndScope();
 	}
@@ -167,16 +167,14 @@ void CodeGenerator::Expression(Node& node, Context& context)
 {
 	if (node.left)
 	{
-		stream << Indent() << "auto out" << ++context.outIndex << " = ";
+		stream << Indent() << "auto var" << ++context.variableIndex << " = ";
 		Visit(*node.left, context);
 		stream << ";\n";
 	}
 
 	if (node.right)
 	{
-		stream << Indent() << "auto out" << ++context.outIndex << " = ";
 		Visit(*node.right, context);
-		stream << ";\n";
 	}
 }
 

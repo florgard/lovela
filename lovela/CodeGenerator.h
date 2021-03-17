@@ -11,8 +11,7 @@ public:
 private:
 	struct Context
 	{
-		int inIndex{};
-		int outIndex{};
+		int variableIndex{};
 	};
 
 	void Visit(Node& node, Context& context);
