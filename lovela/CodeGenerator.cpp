@@ -180,7 +180,7 @@ void CodeGenerator::Expression(Node& node, Context& context)
 
 void CodeGenerator::FunctionCall(Node& node, Context&)
 {
-	stream << node.value << '(';
+	stream << FunctionName(node.value) << '(';
 	// TODO: Object and parameters
 	stream << ") ";
 }
