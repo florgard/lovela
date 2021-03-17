@@ -184,10 +184,27 @@ void CodeGenerator::ExpressionInput(Node&, Context& context)
 	stream << "var" << (context.variableIndex - 1) << ' ';
 }
 
-void CodeGenerator::FunctionCall(Node& node, Context&)
+void CodeGenerator::FunctionCall(Node& node, Context& context)
 {
 	stream << FunctionName(node.value) << '(';
-	// TODO: Object and parameters
+
+	const bool hasLeft = !!node.left;
+	if (hasLeft)
+	{
+		Visit(*node.left, context);
+	}
+
+	if (node.right)
+	{
+		if (hasLeft)
+		{
+			stream << ", ";
+		}
+
+		// TODO: parameters
+		Visit(*node.right, context);
+	}
+
 	stream << ") ";
 }
 

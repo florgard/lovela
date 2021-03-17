@@ -461,6 +461,8 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 	else if (!parent->left)
 	{
 		// Default expression input
+		// TODO: Check if the expected in-type is None and the implicit input should be discarded?
+
 		parent->left = Node::make_unique(Node{ .type = Node::Type::ExpressionInput, .token = firstToken });
 	}
 
