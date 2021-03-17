@@ -85,7 +85,7 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 	}
 	else if (inType.None())
 	{
-		initialization.emplace_back(noneType.name + L" in; in;");
+		initialization.emplace_back(noneType.name + L" in");
 	}
 	else
 	{
@@ -143,12 +143,14 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 
 		for (auto& line : initialization)
 		{
-			stream << GetIndent() << line << '\n';
+			stream << GetIndent() << line << ";\n";
 		}
+		// Make an indexed reference to the input object and avoid a warning if it's unreferenced.
+		stream << GetIndent() << "auto& in" << ++context.inIndex << " = in; in" << context.inIndex << ";\n";
 
 		Visit(*node.left, context);
 
-		stream << GetIndent() << "return out" << context.localVariableIndex << ";\n";
+		stream << GetIndent() << "return out" << context.outIndex << ";\n";
 
 		EndScope();
 	}
@@ -164,14 +166,14 @@ void CodeGenerator::Expression(Node& node, Context& context)
 {
 	if (node.left)
 	{
-		stream << GetIndent() << "auto out" << ++context.localVariableIndex << " = ";
+		stream << GetIndent() << "auto out" << ++context.outIndex << " = ";
 		Visit(*node.left, context);
 		stream << ";\n";
 	}
 
 	if (node.right)
 	{
-		stream << GetIndent() << "auto out" << ++context.localVariableIndex << " = ";
+		stream << GetIndent() << "auto out" << ++context.outIndex << " = ";
 		Visit(*node.right, context);
 		stream << ";\n";
 	}

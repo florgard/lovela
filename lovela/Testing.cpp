@@ -399,16 +399,25 @@ void Testing::RunCodeGeneratorTests()
 		L"template <typename Out, typename In> Out f_func(In in, t_type p_arg);");
 
 	std::wstring code = LR"(
-pi: 3.14.
-transform
-function2: pi transform + 1.
+[()] pi: 3.14.
+transform: (x * 2. x - 0.28).
+[](): pi transform + 1.
 )";
 	std::wcout << code << '\n';
 
 	std::wistringstream input(code);
 	Lexer lexer(input);
+	for (auto& error : lexer.GetErrors())
+	{
+		std::wcerr << error.message << '\n';
+	}
+
 	Parser parser(lexer.Lex());
 	auto tree = parser.Parse();
+	for (auto& error : parser.GetErrors())
+	{
+		std::wcerr << error.message << '\n';
+	}
 
 	PrintTree(*tree);
 	std::wcout << '\n';
