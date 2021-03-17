@@ -152,15 +152,15 @@ std::unique_ptr<Node> Parser::Parse() noexcept
 
 	// Link the nodes together
 
-	std::unique_ptr<Node> node = std::move(nodes.back());
+	auto node = std::move(nodes.back());
 	nodes.pop_back();
 	auto parent = node.get();
 
 	while (!nodes.empty())
 	{
-		node->right = std::move(nodes.back());
+		parent->right = std::move(nodes.back());
 		nodes.pop_back();
-		parent = node->right.get();
+		parent = parent->right.get();
 	}
 
 	return node;

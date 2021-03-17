@@ -243,6 +243,12 @@ void Testing::RunParserTests()
 		Node{ .type = Node::Type::FunctionDeclaration, .value = L"func2", .right =
 			Node::make_unique({ .type = Node::Type::FunctionDeclaration, .value = L"func1" })
 		});
+	TestParser("3 function declarations", L"func1\r\nfunc2 func3",
+		Node{ .type = Node::Type::FunctionDeclaration, .value = L"func3", .right =
+			Node::make_unique(Node{ .type = Node::Type::FunctionDeclaration, .value = L"func2", .right =
+				Node::make_unique({.type = Node::Type::FunctionDeclaration, .value = L"func1" })
+			})
+		});
 	TestParser("function with empty body", L"func:.",
 		Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left =
 			Node::make_unique({.type = Node::Type::Expression})
