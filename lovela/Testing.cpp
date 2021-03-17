@@ -388,15 +388,15 @@ void Testing::RunParserTests()
 void Testing::RunCodeGeneratorTests()
 {
 	TestCodeGenerator("trivial function", L"func",
-		L"template <typename Out, typename In> Out func(In in);");
+		L"template <typename Out, typename In> Out func_f(In in);");
 	TestCodeGenerator("function with return type", L"func [type]",
-		L"template <typename In> type_t func(In in);");
+		L"template <typename In> type_t func_f(In in);");
 	TestCodeGenerator("function with object type", L"[type] func",
-		L"template <typename Out> Out func(type_t in);");
+		L"template <typename Out> Out func_f(type_t in);");
 	TestCodeGenerator("function with untyped parameter", L"func (arg)",
-		L"template <typename Out, typename In, typename Param1> Out func(In in, Param1 arg_v);");
+		L"template <typename Out, typename In, typename Param1> Out func_f(In in, Param1 arg_v);");
 	TestCodeGenerator("function with typed parameter", L"func (arg [type])",
-		L"template <typename Out, typename In> Out func(In in, type_t arg_v);");
+		L"template <typename Out, typename In> Out func_f(In in, type_t arg_v);");
 
 	std::wstring code = LR"(
 pi: 3.14.

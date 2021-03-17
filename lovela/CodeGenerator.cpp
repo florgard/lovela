@@ -123,7 +123,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 		stream << ">\n";
 	}
 
-	stream << GetIndent() << outType.name << ' ' << node.value << '(';
+	stream << GetIndent() << outType.name << ' ' << node.value << "_f(";
 
 	index = 0;
 	for (auto& param : parameters)
