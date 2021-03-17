@@ -234,7 +234,7 @@ void Testing::RunParserTests()
 		Node{.type = Node::Type::FunctionDeclaration, .value = L"func", .objectType{.name = L"type"}}
 		);
 	TestParser("function with empty object type", L"[()] func",
-		Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .objectType{.name = to_wstring(TypeSpec::noneType)} }
+		Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .objectType = TypeSpec::NoneType() }
 		);
 	TestParser("anonymous function", L"[]()",
 		Node{.type = Node::Type::FunctionDeclaration}
@@ -366,8 +366,8 @@ void Testing::RunParserTests()
 	}
 
 	{
-		auto e = Node{ .type = Node::Type::Expression, .left = Node::make_unique({.type = Node::Type::FunctionCall, .value = L"doWork" }) };
-		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .objectType{.name = to_wstring(TypeSpec::noneType)}, .parameters{
+		auto e = Node{ .type = Node::Type::Expression, .objectType = TypeSpec::NoneType(), .left = Node::make_unique({.type = Node::Type::FunctionCall, .value = L"doWork" }) };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .objectType = TypeSpec::NoneType(), .parameters{
 				Parameter{.name = L"untyped"},
 				Parameter{.name = L"name", .type{.name = L"type"}},
 				Parameter{.type{.name = L"unnamed"}}
@@ -376,7 +376,7 @@ void Testing::RunParserTests()
 	}
 
 	{
-		auto l = Node{ .type = Node::Type::Literal, .value = L"1" };
+		auto l = Node{ .type = Node::Type::Literal, .value = L"1", .dataType{.name = L"32"} };
 		auto fc = Node{ .type = Node::Type::FunctionCall, .value = L"call" };
 		auto bo = Node{ .type = Node::Type::BinaryOperation, .value = L"+", .left = Node::make_unique(fc), .right = Node::make_unique(l) };
 		auto e = Node{ .type = Node::Type::Expression, .left = Node::make_unique(bo) };

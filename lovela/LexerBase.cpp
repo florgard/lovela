@@ -9,7 +9,8 @@ static_assert(LexerBase::Trim(L"a b c \r\n"sv) == L"a b c"sv);
 
 Token::Type LexerBase::GetTokenType(wchar_t lexeme) noexcept
 {
-	static constexpr std::array<std::pair<wchar_t, Token::Type>, 13> values{ {
+	static constexpr std::array<std::pair<wchar_t, Token::Type>, 13> values
+	{ {
 		{'(', Token::Type::ParenRoundOpen },
 		{')', Token::Type::ParenRoundClose },
 		{'[', Token::Type::ParenSquareOpen },
@@ -30,7 +31,8 @@ Token::Type LexerBase::GetTokenType(wchar_t lexeme) noexcept
 
 std::wstring_view LexerBase::GetStringField(wchar_t code) noexcept
 {
-	static constexpr std::array<std::pair<wchar_t, std::wstring_view>, 3> values{ {
+	static constexpr std::array<std::pair<wchar_t, std::wstring_view>, 3> values
+	{ {
 		{'t', L"\t"},
 		{'n', L"\n"},
 		{'r', L"\r"},
@@ -53,7 +55,8 @@ Token LexerBase::GetToken(wchar_t lexeme) noexcept
 
 Token LexerBase::GetToken(const std::wstring_view& lexeme) noexcept
 {
-	static const std::vector<std::pair<std::wregex, Token::Type>> tokenRegexes{
+	static const std::vector<std::pair<std::wregex, Token::Type>> tokenRegexes
+	{
 		{ std::wregex{ LR"(\d+)" }, Token::Type::LiteralInteger },
 		{ std::wregex{ LR"(\d+\.\d+)" }, Token::Type::LiteralDecimal },
 		{ std::wregex{ LR"(\w+)" }, Token::Type::Identifier },
@@ -63,9 +66,10 @@ Token LexerBase::GetToken(const std::wstring_view& lexeme) noexcept
 		{ std::wregex{ LR"(<-|->)" }, Token::Type::OperatorArrow },
 	};
 
-	static const std::map<Token::Type, std::wstring> tokenDataTypes{
-		{Token::Type::LiteralInteger, L"[32]"},
-		{Token::Type::LiteralDecimal, L"[.32]"},
+	static const std::map<Token::Type, std::wstring> tokenDataTypes
+	{
+		{Token::Type::LiteralInteger, integerTypeName},
+		{Token::Type::LiteralDecimal, decimalTypeName},
 	};
 
 	auto trimmed = Trim(lexeme);

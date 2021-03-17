@@ -1,16 +1,20 @@
 #pragma once
 #include "Token.h"
 
-struct TypeSpec
+class TypeSpec
 {
-	static constexpr std::wstring_view noneType{ L"()" };
+	static constexpr wchar_t noneTypeName[3]{ L"()" };
 
+public:
 	std::wstring name;
 
 	bool Any() const { return name.empty(); }
-	bool None() const { return name == noneType; }
+	bool None() const { return name == noneTypeName; }
 	void SetAny() { name.clear(); }
-	void SetNone() { name = noneType; }
+	void SetNone() { name = noneTypeName; }
+
+	static TypeSpec AnyType() { return {}; };
+	static TypeSpec NoneType() { return { .name = noneTypeName }; };
 
 	[[nodiscard]] auto operator<=>(const TypeSpec& rhs) const noexcept = default;
 };

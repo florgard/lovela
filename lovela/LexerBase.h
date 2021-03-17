@@ -33,6 +33,10 @@ protected:
 	int currentLine{};
 	int currentColumn{};
 
+	static constexpr wchar_t stringTypeName[3]{ L"8#" };
+	static constexpr wchar_t integerTypeName[3]{ L"32" };
+	static constexpr wchar_t decimalTypeName[4]{ L".32" };
+
 private:
 	static constexpr wchar_t whitespace[7]{ L" \t\r\n\f\v" };
 };

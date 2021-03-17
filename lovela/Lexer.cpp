@@ -63,7 +63,7 @@ TokenGenerator Lexer::Lex() noexcept
 				if (std::iswdigit(state.stringFieldCode))
 				{
 					// Indexed string interpolation. Add the string literal up to this point as a token.
-					co_yield AddToken({ .type = Token::Type::LiteralString, .value = lexeme, .dataType = L"[8#]" });
+					co_yield AddToken({ .type = Token::Type::LiteralString, .value = lexeme, .dataType = stringTypeName });
 					lexeme.clear();
 
 					// Add a string literal interpolation token with the given index.
@@ -96,7 +96,7 @@ TokenGenerator Lexer::Lex() noexcept
 				}
 				else
 				{
-					co_yield AddToken({ .type = Token::Type::LiteralString, .value = lexeme, .dataType = L"[8#]" });
+					co_yield AddToken({ .type = Token::Type::LiteralString, .value = lexeme, .dataType = stringTypeName });
 					lexeme.clear();
 
 					state.stringLiteral = false;
@@ -114,7 +114,7 @@ TokenGenerator Lexer::Lex() noexcept
 				else if (next == '}')
 				{
 					// Unindexed string interpolation. Add the string literal up to this point as a token.
-					co_yield AddToken({ .type = Token::Type::LiteralString, .value = lexeme, .dataType = L"[8#]" });
+					co_yield AddToken({ .type = Token::Type::LiteralString, .value = lexeme, .dataType = stringTypeName });
 					lexeme.clear();
 
 					// Add a string literal interpolation token with the next free index.
