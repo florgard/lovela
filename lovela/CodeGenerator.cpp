@@ -55,50 +55,54 @@ void CodeGenerator::EndScope()
 
 void CodeGenerator::FunctionDeclaration(Node& node)
 {
+	static const TypeSpec voidType{ .name = L"None" };
+
 	std::vector<std::wstring> templateParameters;
 	std::vector<std::wstring> parameters;
 	TypeSpec returnType = node.outType;
-	static const TypeSpec voidType{ .name = Decorate("void") };
-	const Parameter in{ .name = Decorate("in"), .type = node.inType };
+	TypeSpec inType = node.inType;
 	std::vector<std::wstring> initialization;
 
 	if (returnType.Any())
 	{
-		returnType.name = Decorate(L"out_t");
+		returnType.name = L"Out";
 		templateParameters.push_back(returnType.name);
 	}
 	else if (node.outType.None())
 	{
 		returnType = voidType;
 	}
-
-	if (in.type.Any())
+	else
 	{
-		auto type = in.name + L"_t";
-		parameters.emplace_back(type + L' ' + in.name);
-		templateParameters.push_back(type);
+		returnType.name += L"_t";
 	}
-	else if (!in.type.None())
+
+	if (inType.Any())
 	{
-		auto type = in.type.name;
-		parameters.emplace_back(type + L' ' + in.name);
+		parameters.emplace_back(L"In in");
+		templateParameters.emplace_back(L"In");
+	}
+	else if (inType.None())
+	{
+		initialization.emplace_back(voidType.name);
 	}
 	else
 	{
-		initialization.emplace_back(voidType.name + L' ' + in.name);
+		parameters.emplace_back(inType.name + L"_t in");
 	}
 
 	int index = 0;
 	for (auto& param : node.parameters)
 	{
-		std::wostringstream paramName;
-		paramName << "param" << (index++ + 1);
-		auto name = param.name;
-		auto type = param.type.name;
+		index++;
+		std::wostringstream paramIndex;
+		paramIndex << index;
+		const auto name = param.name + L"_v";
+		auto type = param.type.name + L"_t";
 
 		if (param.type.Any())
 		{
-			type = Decorate(paramName.str()) + L"_t";
+			type = L"Param" + paramIndex.str();
 			templateParameters.push_back(type);
 		}
 
@@ -149,7 +153,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 
 		// TODO: Return expression result or default in.
 		// TODO: Check result and return type compability.
-		stream << GetIndent() << "return " << in.name << ";\n";
+		stream << GetIndent() << "return in;\n";
 
 		EndScope();
 	}
