@@ -74,7 +74,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 	}
 	else
 	{
-		outType.name += L"_t";
+		outType.name = L"t_" + outType.name;
 	}
 
 	if (inType.Any())
@@ -88,7 +88,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 	}
 	else
 	{
-		parameters.emplace_back(inType.name + L"_t in");
+		parameters.emplace_back(L"t_" + inType.name + L" in");
 	}
 
 	int index = 0;
@@ -97,8 +97,8 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 		index++;
 		std::wostringstream paramIndex;
 		paramIndex << index;
-		const auto name = param.name + L"_v";
-		auto type = param.type.name + L"_t";
+		const auto name = L"p_" + param.name;
+		auto type = L"t_" + param.type.name;
 
 		if (param.type.Any())
 		{
@@ -123,7 +123,7 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 		stream << ">\n";
 	}
 
-	stream << GetIndent() << outType.name << ' ' << node.value << "_f(";
+	stream << GetIndent() << outType.name << " f_" << node.value << '(';
 
 	index = 0;
 	for (auto& param : parameters)
