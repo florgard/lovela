@@ -388,15 +388,15 @@ void Testing::RunParserTests()
 void Testing::RunCodeGeneratorTests()
 {
 	TestCodeGenerator("trivial function", L"func",
-		L"template <typename la_return_t, typename la_object_t>\nla_return_t func(la_object_t la_object);\n\n");
+		L"template <typename la_return_t, typename la_object_t> la_return_t func(la_object_t la_object);");
 	TestCodeGenerator("function with return type", L"func [type]",
-		L"template <typename la_object_t>\ntype func(la_object_t la_object);\n\n");
+		L"template <typename la_object_t> type func(la_object_t la_object);");
 	TestCodeGenerator("function with object typ", L"[type] func",
-		L"template <typename la_return_t>\nla_return_t func(type la_object);\n\n");
+		L"template <typename la_return_t> la_return_t func(type la_object);");
 	TestCodeGenerator("function with untyped parameter", L"func (arg)",
-		L"template <typename la_return_t, typename la_object_t, typename la_param1_t>\nla_return_t func(la_object_t la_object, la_param1_t arg);\n\n");
+		L"template <typename la_return_t, typename la_object_t, typename la_param1_t> la_return_t func(la_object_t la_object, la_param1_t arg);");
 	TestCodeGenerator("function with typed parameter", L"func (arg [type])",
-		L"template <typename la_return_t, typename la_object_t>\nla_return_t func(la_object_t la_object, type arg);\n\n");
+		L"template <typename la_return_t, typename la_object_t> la_return_t func(la_object_t la_object, type arg);");
 
 	std::wstring code = LR"(
 pi: 3.14.

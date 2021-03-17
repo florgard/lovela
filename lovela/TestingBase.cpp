@@ -158,18 +158,20 @@ void TestingBase::TestCodeGenerator(const char* name, std::wstring_view code, st
 	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { gen.Generate(node); });
 
 	auto generatedCode = output.str();
-	const bool success = generatedCode == cppCode;
+	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"^\\s+" }, L"");
+	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"\\s+$" }, L"");
+	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"\\s+" }, L" ");
+	auto expectedCode = to_wstring(cppCode);
+	expectedCode = std::regex_replace(expectedCode, std::wregex{ L"^\\s+" }, L"");
+	expectedCode = std::regex_replace(expectedCode, std::wregex{ L"\\s+$" }, L"");
+	expectedCode = std::regex_replace(expectedCode, std::wregex{ L"\\s+" }, L" ");
+
+	const bool success = generatedCode == expectedCode;
 
 	if (!success)
 	{
-		generatedCode = std::regex_replace(generatedCode, std::wregex{ L"\n" }, L"\\n\n");
-		generatedCode = std::regex_replace(generatedCode, std::wregex{ L"\t" }, L"\\t\t");
-		auto expectedCode = to_wstring(cppCode);
-		expectedCode = std::regex_replace(expectedCode, std::wregex{ L"\n" }, L"\\n\n");
-		expectedCode = std::regex_replace(expectedCode, std::wregex{ L"\t" }, L"\\t\t");
-
 		std::wcerr << "Code generator test \"" << name << "\" error: The generated code differs from the expected code.\nGenerated:\n" << generatedCode
-			<< "Expected:\n" << expectedCode << "\n\nAST:\n";
+			<< "\nExpected:\n" << expectedCode << "\n\nAST:\n";
 
 		PrintTree(*tree);
 
