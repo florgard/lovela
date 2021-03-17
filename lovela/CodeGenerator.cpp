@@ -58,13 +58,13 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 	std::vector<std::wstring> templateParameters;
 	std::vector<std::wstring> parameters;
 	TypeSpec returnType = node.outType;
-	TypeSpec voidType{ .name = Decorate("void") };
-	Parameter object{ .name = Decorate("object"), .type = node.inType };
+	static const TypeSpec voidType{ .name = Decorate("void") };
+	const Parameter in{ .name = Decorate("in"), .type = node.inType };
 	std::vector<std::wstring> initialization;
 
 	if (returnType.Any())
 	{
-		returnType.name = Decorate(L"return_t");
+		returnType.name = Decorate(L"out_t");
 		templateParameters.push_back(returnType.name);
 	}
 	else if (node.outType.None())
@@ -72,20 +72,20 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 		returnType = voidType;
 	}
 
-	if (object.type.Any())
+	if (in.type.Any())
 	{
-		auto type = object.name + L"_t";
-		parameters.emplace_back(type + L' ' + object.name);
+		auto type = in.name + L"_t";
+		parameters.emplace_back(type + L' ' + in.name);
 		templateParameters.push_back(type);
 	}
-	else if (!object.type.None())
+	else if (!in.type.None())
 	{
-		auto type = object.type.name;
-		parameters.emplace_back(type + L' ' + object.name);
+		auto type = in.type.name;
+		parameters.emplace_back(type + L' ' + in.name);
 	}
 	else
 	{
-		initialization.emplace_back(voidType.name + L' ' + object.name);
+		initialization.emplace_back(voidType.name + L' ' + in.name);
 	}
 
 	int index = 0;
@@ -147,9 +147,9 @@ void CodeGenerator::FunctionDeclaration(Node& node)
 
 		Visit(*node.left);
 
-		// TODO: Return expression result or default object.
+		// TODO: Return expression result or default in.
 		// TODO: Check result and return type compability.
-		stream << GetIndent() << "return " << object.name << ";\n";
+		stream << GetIndent() << "return " << in.name << ";\n";
 
 		EndScope();
 	}
@@ -177,7 +177,7 @@ void CodeGenerator::Expression(Node& node)
 void CodeGenerator::FunctionCall(Node& node)
 {
 	stream << node.value << '(';
-	// TODO: Objet and parameters
+	// TODO: Object and parameters
 	stream << ") ";
 }
 
