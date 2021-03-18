@@ -16,6 +16,8 @@ std::map<Node::Type, CodeGenerator::Visitor> CodeGenerator::internalVisitors
 	{Node::Type::VariableReference, &CodeGenerator::VariableReference},
 };
 
+const TypeSpec CodeGenerator::NoneType{ .name = L"None" };
+
 CodeGenerator::CodeGenerator(std::wostream& stream) : stream(stream)
 {
 }
@@ -58,7 +60,11 @@ void CodeGenerator::EndScope()
 
 void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 {
-	static const TypeSpec noneType{ .name = L"None" };
+	if (node.value.empty())
+	{
+		MainFunctionDeclaration(node, context);
+		return;
+	}
 
 	TypeSpec inType = node.inType;
 	TypeSpec outType = node.outType;
@@ -73,7 +79,7 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 	}
 	else if (node.outType.None())
 	{
-		outType = noneType;
+		outType = NoneType;
 	}
 	else
 	{
@@ -87,7 +93,7 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 	}
 	else if (inType.None())
 	{
-		initialization.emplace_back(noneType.name + L" in");
+		initialization.emplace_back(NoneType.name + L" in");
 	}
 	else
 	{
@@ -137,6 +143,31 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 
 	stream << ')';
 
+	FunctionBody(node, context, initialization);
+}
+
+void CodeGenerator::MainFunctionDeclaration(Node& node, Context& context)
+{
+	std::wstring parameter;
+	std::vector<std::wstring> initialization;
+
+	if (!node.parameters.empty())
+	{
+		parameter = TypeName(L"int8aa") + L' ' + ParameterName(node.parameters.front()->name);
+	}
+
+	stream << Indent() << TypeName(L"int32") << ' ' << "usermain" << '(' << parameter << ')';
+
+	FunctionBody(node, context, initialization);
+
+	stream << "int main(int argc, char* argv[])\n"
+		<< "{\n"
+		<< "\treturn usermain(std::wcin, argv);\n"
+		<< "}\n\n";
+}
+
+void CodeGenerator::FunctionBody(Node& node, Context& context, const std::vector<std::wstring>& initialization)
+{
 	if (node.left)
 	{
 		stream << '\n';

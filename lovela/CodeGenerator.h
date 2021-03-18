@@ -17,6 +17,8 @@ private:
 	void Visit(Node& node, Context& context);
 
 	void FunctionDeclaration(Node& node, Context& context);
+	void MainFunctionDeclaration(Node& node, Context& context);
+	void FunctionBody(Node& node, Context& context, const std::vector<std::wstring>& initialization);
 	void Expression(Node& node, Context& context);
 	void ExpressionInput(Node& node, Context& context);
 	void FunctionCall(Node& node, Context& context);
@@ -38,5 +40,6 @@ private:
 	static std::map<Node::Type, Visitor> visitors;
 	static std::map<Node::Type, Visitor> internalVisitors;
 
+	static const TypeSpec NoneType;
 	static constexpr char LocalVar{ 'v' };
 };
