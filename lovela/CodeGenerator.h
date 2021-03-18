@@ -37,4 +37,6 @@ private:
 	using Visitor = std::function<void(CodeGenerator*, Node&, CodeGenerator::Context&)>;
 	static std::map<Node::Type, Visitor> visitors;
 	static std::map<Node::Type, Visitor> internalVisitors;
+
+	static constexpr char LocalVar{ 'v' };
 };

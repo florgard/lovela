@@ -411,7 +411,7 @@ void Testing::RunCodeGeneratorTests()
 	TestCodeGenerator("function with typed parameter", L"func (arg [type])",
 		L"template <typename Out, typename In> Out f_func(In in, t_type p_arg);");
 	TestCodeGenerator("trivial function", L"func: + 1.",
-		L"template <typename Out, typename In> Out f_func(In in) { auto& var1 = in; var1; auto var2 = var1 + 1 ; return var2; }");
+		L"template <typename Out, typename In> Out f_func(In in) { auto& v1 = in; v1; const auto v2 = v1 + 1 ; return v2; }");
 
 	std::wstring code = LR"(
 [()] pi: 3.14.

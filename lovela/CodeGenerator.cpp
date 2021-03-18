@@ -149,11 +149,11 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 		}
 
 		// Make an indexed reference to the input object and avoid a warning if it's unreferenced.
-		stream << Indent() << "auto& var" << ++context.variableIndex << " = in; var" << context.variableIndex << ";\n";
+		stream << Indent() << "auto& " << LocalVar << ++context.variableIndex << " = in; " << LocalVar << context.variableIndex << ";\n";
 
 		Visit(*node.left, context);
 
-		stream << Indent() << "return var" << context.variableIndex << ";\n";
+		stream << Indent() << "return " << LocalVar << context.variableIndex << ";\n";
 
 		EndScope();
 	}
@@ -169,7 +169,7 @@ void CodeGenerator::Expression(Node& node, Context& context)
 {
 	if (node.left)
 	{
-		stream << Indent() << "auto var" << ++context.variableIndex << " = ";
+		stream << Indent() << "const auto " << LocalVar << ++context.variableIndex << " = ";
 		Visit(*node.left, context);
 		stream << ";\n";
 	}
@@ -182,12 +182,13 @@ void CodeGenerator::Expression(Node& node, Context& context)
 
 void CodeGenerator::ExpressionInput(Node&, Context& context)
 {
-	stream << "var" << (context.variableIndex - 1) << ' ';
+	// The input of an expression is the output of the previous expression.
+	stream << LocalVar << (context.variableIndex - 1) << ' ';
 }
 
 void CodeGenerator::FunctionCall(Node& node, Context& context)
 {
-	stream << FunctionName(node.value) << '(';
+	stream << FunctionName(node.value) << "( ";
 
 	const bool hasLeft = !!node.left;
 	if (hasLeft)
