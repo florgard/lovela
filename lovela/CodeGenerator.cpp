@@ -203,7 +203,6 @@ void CodeGenerator::FunctionCall(Node& node, Context& context)
 			stream << ", ";
 		}
 
-		// TODO: parameters
 		Visit(*node.right, context);
 	}
 
