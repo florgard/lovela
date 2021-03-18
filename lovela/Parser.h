@@ -24,9 +24,6 @@ private:
 		[[nodiscard]] bool HasVariableSymbol(const std::wstring& symbol) const;
 		void AddFunctionSymbol(const std::wstring& symbol);
 		void AddVariableSymbol(std::shared_ptr<VariableDeclaration> variable);
-
-		static std::shared_ptr<Context> make_shared(Context& context) noexcept { return move_to_shared<Context>(context); }
-		static std::shared_ptr<Context> make_shared(Context&& context) noexcept { return move_to_shared<Context>(context); }
 	};
 
 	[[nodiscard]] TypeSpec ParseTypeSpec();

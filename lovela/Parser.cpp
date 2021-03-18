@@ -147,7 +147,7 @@ void Parser::TraverseDepthFirstPostorder(Node& tree, std::function<void(Node& no
 
 std::unique_ptr<Node> Parser::Parse() noexcept
 {
-	auto context = std::make_shared<Context>();
+	auto context = make<Context>::shared();
 	// TODO: add built-in functions?
 
 	// Use a list of top-level nodes to be able to continue parsing after an error.
@@ -310,7 +310,7 @@ ParameterList Parser::ParseParameterList()
 
 std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> context)
 {
-	auto node = Node::make_unique({ .type = Node::Type::FunctionDeclaration, .token = currentToken });
+	auto node = make<Node>::unique({ .type = Node::Type::FunctionDeclaration, .token = currentToken });
 
 	// <-
 	// ->
@@ -429,7 +429,7 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 	auto firstToken = *tokenIterator;
 
 	const auto& inType = context->inType;
-	auto innerContext = Context::make_shared(Context{ .parent = context, .inType = inType });
+	auto innerContext = make<Context>::shared({ .parent = context, .inType = inType });
 
 	std::vector<std::unique_ptr<Node>> nodes;
 
@@ -465,7 +465,7 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		}
 	}
 
-	auto expression = Node::make_unique({ .type = Node::Type::Expression, .outType = inType, .token = firstToken, .inType = inType });
+	auto expression = make<Node>::unique({ .type = Node::Type::Expression, .outType = inType, .token = firstToken, .inType = inType });
 
 	if (nodes.empty())
 	{
@@ -526,7 +526,7 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		// Default expression input
 		// TODO: Check if the expected in-type is None and the implicit input should be discarded?
 
-		parent->left = Node::make_unique(Node{ .type = Node::Type::ExpressionInput, .token = firstToken });
+		parent->left = make<Node>::unique(Node{ .type = Node::Type::ExpressionInput, .token = firstToken });
 	}
 
 	// The data type of the expression is the data type of the first child node.
@@ -557,7 +557,7 @@ std::unique_ptr<Node> Parser::ParseTuple(std::shared_ptr<Context> context)
 
 	if (Accept(Token::Type::SeparatorComma))
 	{
-		auto tuple = Node::make_unique({ .type = Node::Type::Tuple, .token = currentToken });
+		auto tuple = make<Node>::unique({ .type = Node::Type::Tuple, .token = currentToken });
 		tuple->left = std::move(node);
 		tuple->right = ParseTuple(context);
 		node = std::move(tuple);
@@ -576,7 +576,7 @@ std::unique_ptr<Node> Parser::ParseOperand(std::shared_ptr<Context> context)
 	}
 	else if (IsToken(literalTokens))
 	{
-		node = Node::make_unique(
+		node = make<Node>::unique(
 			{
 				.type = Node::Type::Literal,
 				.value = currentToken.value,
@@ -596,7 +596,7 @@ std::unique_ptr<Node> Parser::ParseFunctionCall(std::shared_ptr<Context> context
 {
 	Assert(Token::Type::Identifier);
 
-	auto node = Node::make_unique({ .type = Node::Type::FunctionCall, .value = currentToken.value, .token = currentToken });
+	auto node = make<Node>::unique({ .type = Node::Type::FunctionCall, .value = currentToken.value, .token = currentToken });
 
 	// TODO: nameSpace
 
@@ -612,12 +612,12 @@ std::unique_ptr<Node> Parser::ParseBinaryOperation(std::shared_ptr<Context> cont
 {
 	Assert(binaryOperatorTokens);
 
-	return Node::make_unique({ .type = Node::Type::BinaryOperation, .value = currentToken.value, .token = currentToken });
+	return make<Node>::unique({ .type = Node::Type::BinaryOperation, .value = currentToken.value, .token = currentToken });
 }
 
 std::unique_ptr<Node> Parser::ParseVariableReference(std::shared_ptr<Context> context)
 {
 	Assert(Token::Type::Identifier);
 
-	return Node::make_unique({ .type = Node::Type::VariableReference, .value = currentToken.value, .token = currentToken });
+	return make<Node>::unique({ .type = Node::Type::VariableReference, .value = currentToken.value, .token = currentToken });
 }
