@@ -415,6 +415,7 @@ void Testing::RunCodeGeneratorTests()
 
 	std::wstring code = LR"(
 [()] pi: 3.14.
+mul (factor): * factor.
 transform (mul, sub): (* mul. - sub).
 [](): pi transform (2, 0.28) + 1.
 )";
