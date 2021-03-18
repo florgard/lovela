@@ -256,11 +256,11 @@ void Testing::RunParserTests()
 
 	{
 		auto f = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .parameters{
-				make<VariableDeclaration>::shared({.name = L"untyped"}),
+				make<VariableDeclaration>::shared({.name = L"name_only"}),
 				make<VariableDeclaration>::shared({.name = L"name", .type{.name = L"type"}}),
-				make<VariableDeclaration>::shared({.type{.name = L"unnamed"}})
+				make<VariableDeclaration>::shared({.type{.name = L"type_only"}})
 			} };
-		TestParser("function with parameters", L"func(untyped, name [type], [unnamed])", f);
+		TestParser("function with parameters", L"func(name_only, name [type], [type_only])", f);
 	}
 
 	TestParser("function with type", L"func [type]",
@@ -269,11 +269,11 @@ void Testing::RunParserTests()
 
 	{
 		auto f = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .outType{.name = L"functionType"}, .inType{.name = L"inType"}, .parameters{
-				make<VariableDeclaration>::shared({.name = L"untyped"}),
+				make<VariableDeclaration>::shared({.name = L"name_only"}),
 				make<VariableDeclaration>::shared({.name = L"name", .type{.name = L"type"}}),
-				make<VariableDeclaration>::shared({.type{.name = L"unnamed"}})
+				make<VariableDeclaration>::shared({.type{.name = L"type_only"}})
 			} };
-		TestParser("complete function declaration", L"[inType] func (untyped, name [type], [unnamed]) [functionType]", f);
+		TestParser("complete function declaration", L"[inType] func (name_only, name [type], [type_only]) [functionType]", f);
 	}
 
 	TestParser("imported function", L"-> func",
@@ -371,21 +371,21 @@ void Testing::RunParserTests()
 	{
 		auto e = Node{ .type = Node::Type::Expression, .left = make<Node>::unique({.type = Node::Type::FunctionCall, .value = L"doWork" }) };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .parameters{
-				make<VariableDeclaration>::shared({.name = L"untyped"}),
+				make<VariableDeclaration>::shared({.name = L"name_only"}),
 				make<VariableDeclaration>::shared({.name = L"name", .type{.name = L"type"}}),
-				make<VariableDeclaration>::shared({.type{.name = L"unnamed"}})
+				make<VariableDeclaration>::shared({.type{.name = L"type_only"}})
 			}, .left = make<Node>::unique(e) };
-		TestParser("function with parameters and body", L"func(untyped, name [type], [unnamed]): doWork.", fd);
+		TestParser("function with parameters and body", L"func(name_only, name [type], [type_only]): doWork.", fd);
 	}
 
 	{
 		auto e = Node{ .type = Node::Type::Expression, .inType = TypeSpec::NoneType(), .left = make<Node>::unique({.type = Node::Type::FunctionCall, .value = L"doWork" }) };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .inType = TypeSpec::NoneType(), .parameters{
-				make<VariableDeclaration>::shared({.name = L"untyped"}),
+				make<VariableDeclaration>::shared({.name = L"name_only"}),
 				make<VariableDeclaration>::shared({.name = L"name", .type{.name = L"type"}}),
-				make<VariableDeclaration>::shared({.type{.name = L"unnamed"}})
+				make<VariableDeclaration>::shared({.type{.name = L"type_only"}})
 			}, .left = make<Node>::unique(e) };
-		TestParser("function without object but with parameters and body", L"[()] func(untyped, name [type], [unnamed]): doWork.", fd);
+		TestParser("function without object but with parameters and body", L"[()] func(name_only, name [type], [type_only]): doWork.", fd);
 	}
 
 	{
