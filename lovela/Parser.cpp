@@ -56,6 +56,7 @@ static const std::set<Node::Type> operandNodes
 	Node::Type::Expression,
 	Node::Type::Tuple,
 	Node::Type::Literal,
+	Node::Type::VariableReference,
 };
 
 static const std::set<Node::Type> operatorNodes
@@ -63,6 +64,54 @@ static const std::set<Node::Type> operatorNodes
 	Node::Type::FunctionCall,
 	Node::Type::BinaryOperation,
 };
+
+bool Parser::Context::HasFunctionSymbol(const std::wstring& symbol) const
+{
+	if (functionSymbols.contains(symbol))
+	{
+		return true;
+	}
+	else if (parent)
+	{
+		return parent->HasFunctionSymbol(symbol);
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool Parser::Context::HasVariableSymbol(const std::wstring& symbol) const
+{
+	if (variableSymbols.contains(symbol))
+	{
+		return true;
+	}
+	else if (parent)
+	{
+		return parent->HasVariableSymbol(symbol);
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void Parser::Context::AddFunctionSymbol(const std::wstring& symbol)
+{
+	if (!HasFunctionSymbol(symbol))
+	{
+		functionSymbols.emplace(std::make_pair(symbol, std::shared_ptr<FunctionDeclaration>()));
+	}
+}
+
+void Parser::Context::AddVariableSymbol(std::shared_ptr<VariableDeclaration> declaration)
+{
+	if (!HasVariableSymbol(declaration->name))
+	{
+		variableSymbols.emplace(std::make_pair(declaration->name, declaration));
+	}
+}
 
 Parser::Parser(TokenGenerator&& tokenGenerator) noexcept : ParserBase(std::move(tokenGenerator))
 {
@@ -212,25 +261,25 @@ ParameterList Parser::ParseParameterList()
 
 	for (;;)
 	{
-		Parameter parameter;
+		auto parameter = make<VariableDeclaration>::shared();
 		bool defined = false;
 
 		// Optional name
 		if (Accept(Token::Type::Identifier))
 		{
-			parameter.name = currentToken.value;
+			parameter->name = currentToken.value;
 			defined = true;
 		}
 
 		// Optional type
 		if (Accept(Token::Type::ParenSquareOpen))
 		{
-			parameter.type = ParseTypeSpec();
+			parameter->type = ParseTypeSpec();
 			defined = true;
 		}
 		else
 		{
-			parameter.type.SetAny();
+			parameter->type.SetAny();
 		}
 
 		// Name and/or type must be specified
@@ -317,7 +366,8 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 		node->inType.SetAny();
 
 		qualifiedName << name;
-		context->symbols.insert(qualifiedName.str());
+
+		context->AddFunctionSymbol(qualifiedName.str());
 	}
 	// binaryOperator
 	else if (IsToken(binaryOperatorTokens))
@@ -349,7 +399,13 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 	// [inType] identifier (parameterList) [outType]:
 	if (Accept(Token::Type::SeparatorColon))
 	{
-		auto innerContext = Context::make_shared(Context{ .parent = context, .inType = node->inType });
+		auto innerContext = make<Context>::shared({ .parent = context, .inType = node->inType });
+
+		for (const auto& parameter : node->parameters)
+		{
+			innerContext->AddVariableSymbol(parameter);
+		}
+
 		node->left = ParseExpression(innerContext);
 	}
 
@@ -385,7 +441,14 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		}
 		else if (Accept(Token::Type::Identifier))
 		{
-			nodes.emplace_back(ParseFunctionCall(innerContext));
+			if (context->HasVariableSymbol(currentToken.value))
+			{
+				nodes.emplace_back(ParseVariableReference(innerContext));
+			}
+			else
+			{
+				nodes.emplace_back(ParseFunctionCall(innerContext));
+			}
 		}
 		else if (Accept(binaryOperatorTokens))
 		{
@@ -535,7 +598,12 @@ std::unique_ptr<Node> Parser::ParseFunctionCall(std::shared_ptr<Context> context
 
 	auto node = Node::make_unique({ .type = Node::Type::FunctionCall, .value = currentToken.value, .token = currentToken });
 
-	// TODO: nameSpace, parameters
+	// TODO: nameSpace
+
+	if (Accept(Token::Type::ParenRoundOpen))
+	{
+		node->right = ParseGroup(context);
+	}
 
 	return node;
 }
@@ -545,4 +613,11 @@ std::unique_ptr<Node> Parser::ParseBinaryOperation(std::shared_ptr<Context> cont
 	Assert(binaryOperatorTokens);
 
 	return Node::make_unique({ .type = Node::Type::BinaryOperation, .value = currentToken.value, .token = currentToken });
+}
+
+std::unique_ptr<Node> Parser::ParseVariableReference(std::shared_ptr<Context> context)
+{
+	Assert(Token::Type::Identifier);
+
+	return Node::make_unique({ .type = Node::Type::VariableReference, .value = currentToken.value, .token = currentToken });
 }

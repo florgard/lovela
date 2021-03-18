@@ -44,3 +44,14 @@ template <class T>
 [[nodiscard]] std::shared_ptr<T> move_to_shared(T& t) {
 	return std::make_shared<T>(std::move(t));
 }
+
+template <typename T>
+struct make
+{
+	[[nodiscard]] static std::unique_ptr<T> unique() noexcept { return std::make_unique<T>(); }
+	[[nodiscard]] static std::unique_ptr<T> unique(T& src) noexcept { return move_to_unique<T>(src); }
+	[[nodiscard]] static std::unique_ptr<T> unique(T&& src) noexcept { return move_to_unique<T>(src); }
+	[[nodiscard]] static std::shared_ptr<T> shared() noexcept { return std::make_shared<T>(); }
+	[[nodiscard]] static std::shared_ptr<T> shared(T& src) noexcept { return move_to_shared<T>(src); }
+	[[nodiscard]] static std::shared_ptr<T> shared(T&& src) noexcept { return move_to_shared<T>(src); }
+};

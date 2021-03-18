@@ -22,6 +22,7 @@ private:
 	void FunctionCall(Node& node, Context& context);
 	void BinaryOperation(Node& node, Context& context);
 	void Literal(Node& node, Context& context);
+	void VariableReference(Node& node, Context& context);
 
 	void BeginScope();
 	void EndScope();

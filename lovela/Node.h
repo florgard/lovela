@@ -19,15 +19,15 @@ public:
 	[[nodiscard]] auto operator<=>(const TypeSpec& rhs) const noexcept = default;
 };
 
-struct Parameter
+struct VariableDeclaration
 {
 	std::wstring name;
 	TypeSpec type;
 
-	[[nodiscard]] auto operator<=>(const Parameter& rhs) const noexcept = default;
+	[[nodiscard]] auto operator<=>(const VariableDeclaration& rhs) const noexcept = default;
 };
 
-using ParameterList = std::vector<Parameter>;
+using ParameterList = std::vector<std::shared_ptr<VariableDeclaration>>;
 
 struct FunctionDeclaration
 {
@@ -51,6 +51,7 @@ struct Node
 		Tuple,
 		Literal,
 		FunctionCall,
+		VariableReference,
 		BinaryOperation,
 	} type{};
 

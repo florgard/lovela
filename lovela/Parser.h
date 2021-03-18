@@ -16,8 +16,14 @@ private:
 	struct Context
 	{
 		std::shared_ptr<Context> parent;
-		std::set<std::wstring> symbols;
+		std::map<std::wstring, std::shared_ptr<FunctionDeclaration>> functionSymbols;
+		std::map<std::wstring, std::shared_ptr<VariableDeclaration>> variableSymbols;
 		TypeSpec inType{};
+
+		[[nodiscard]] bool HasFunctionSymbol(const std::wstring& symbol) const;
+		[[nodiscard]] bool HasVariableSymbol(const std::wstring& symbol) const;
+		void AddFunctionSymbol(const std::wstring& symbol);
+		void AddVariableSymbol(std::shared_ptr<VariableDeclaration> variable);
 
 		static std::shared_ptr<Context> make_shared(Context& context) noexcept { return move_to_shared<Context>(context); }
 		static std::shared_ptr<Context> make_shared(Context&& context) noexcept { return move_to_shared<Context>(context); }
@@ -34,4 +40,5 @@ private:
 	[[nodiscard]] std::unique_ptr<Node> ParseOperand(std::shared_ptr<Context> context);
 	[[nodiscard]] std::unique_ptr<Node> ParseFunctionCall(std::shared_ptr<Context> context);
 	[[nodiscard]] std::unique_ptr<Node> ParseBinaryOperation(std::shared_ptr<Context> context);
+	[[nodiscard]] std::unique_ptr<Node> ParseVariableReference(std::shared_ptr<Context> context);
 };

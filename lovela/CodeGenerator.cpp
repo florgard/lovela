@@ -13,6 +13,7 @@ std::map<Node::Type, CodeGenerator::Visitor> CodeGenerator::internalVisitors
 	{Node::Type::FunctionCall, &CodeGenerator::FunctionCall},
 	{Node::Type::BinaryOperation, &CodeGenerator::BinaryOperation},
 	{Node::Type::Literal, &CodeGenerator::Literal},
+	{Node::Type::VariableReference, &CodeGenerator::VariableReference},
 };
 
 CodeGenerator::CodeGenerator(std::wostream& stream) : stream(stream)
@@ -94,15 +95,15 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 	}
 
 	int index = 0;
-	for (auto& param : node.parameters)
+	for (auto& parameter : node.parameters)
 	{
 		index++;
 		std::wostringstream paramIndex;
 		paramIndex << index;
-		const auto name = ParameterName(param.name);
-		auto type = TypeName(param.type.name);
+		const auto name = ParameterName(parameter->name);
+		auto type = TypeName(parameter->type.name);
 
-		if (param.type.Any())
+		if (parameter->type.Any())
 		{
 			type = L"Param" + paramIndex.str();
 			templateParameters.push_back(type);
@@ -210,12 +211,33 @@ void CodeGenerator::FunctionCall(Node& node, Context& context)
 
 void CodeGenerator::BinaryOperation(Node& node, Context& context)
 {
-	Visit(*node.left, context);
+	if (node.left)
+	{
+		Visit(*node.left, context);
+	}
+	else
+	{
+		stream << "???";
+	}
+
 	stream << node.value << ' ';
-	Visit(*node.right, context);
+
+	if (node.right)
+	{
+		Visit(*node.right, context);
+	}
+	else
+	{
+		stream << "???";
+	}
 }
 
 void CodeGenerator::Literal(Node& node, Context&)
 {
 	stream << node.value << ' ';
+}
+
+void CodeGenerator::VariableReference(Node& node, Context&)
+{
+	stream << ParameterName(node.value) << ' ';
 }

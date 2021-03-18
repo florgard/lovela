@@ -256,9 +256,9 @@ void Testing::RunParserTests()
 
 	{
 		auto f = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .parameters{
-				Parameter{.name = L"untyped"},
-				Parameter{.name = L"name", .type{.name = L"type"}},
-				Parameter{.type{.name = L"unnamed"}}
+				make<VariableDeclaration>::shared({.name = L"untyped"}),
+				make<VariableDeclaration>::shared({.name = L"name", .type{.name = L"type"}}),
+				make<VariableDeclaration>::shared({.type{.name = L"unnamed"}})
 			} };
 		TestParser("function with parameters", L"func(untyped, name [type], [unnamed])", f);
 	}
@@ -269,9 +269,9 @@ void Testing::RunParserTests()
 
 	{
 		auto f = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .outType{.name = L"functionType"}, .inType{.name = L"inType"}, .parameters{
-				Parameter{.name = L"untyped"},
-				Parameter{.name = L"name", .type{.name = L"type"}},
-				Parameter{.type{.name = L"unnamed"}}
+				make<VariableDeclaration>::shared({.name = L"untyped"}),
+				make<VariableDeclaration>::shared({.name = L"name", .type{.name = L"type"}}),
+				make<VariableDeclaration>::shared({.type{.name = L"unnamed"}})
 			} };
 		TestParser("complete function declaration", L"[inType] func (untyped, name [type], [unnamed]) [functionType]", f);
 	}
@@ -293,20 +293,20 @@ void Testing::RunParserTests()
 	}
 	{
 		auto f = Node{ .type = Node::Type::FunctionDeclaration, .value = L"<", .parameters{
-				Parameter{.name = L"operand"},
+				make<VariableDeclaration>::shared({.name = L"operand"}),
 			} };
 		TestParser("binary operator", L"<(operand)", f);
 	}
 	{
 		auto f = Node{ .type = Node::Type::FunctionDeclaration, .value = L"<", .nameSpace{ L"namespace" }, .parameters{
-				Parameter{.name = L"operand"},
+				make<VariableDeclaration>::shared({.name = L"operand"}),
 			} };
 		TestParser("binary operator with namespace", L"namespace|< (operand)", f);
 	}
 	{
 		auto f2 = Node{ .type = Node::Type::FunctionDeclaration, .value = L"<", .nameSpace{ L"namespace1" } };
 		auto f1 = Node{ .type = Node::Type::FunctionDeclaration, .value = L"namespace2", .parameters{
-				Parameter{.name = L"operand"},
+				make<VariableDeclaration>::shared({.name = L"operand"}),
 			}, .right = Node::make_unique(f2) };
 		TestParser("invalid binary operator as namespace", L"namespace1|<|namespace2 (operand)", f1, { IParser::Error{.code = IParser::Error::Code::ParseError } });
 	}
@@ -371,9 +371,9 @@ void Testing::RunParserTests()
 	{
 		auto e = Node{ .type = Node::Type::Expression, .left = Node::make_unique({.type = Node::Type::FunctionCall, .value = L"doWork" }) };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .parameters{
-				Parameter{.name = L"untyped"},
-				Parameter{.name = L"name", .type{.name = L"type"}},
-				Parameter{.type{.name = L"unnamed"}}
+				make<VariableDeclaration>::shared({.name = L"untyped"}),
+				make<VariableDeclaration>::shared({.name = L"name", .type{.name = L"type"}}),
+				make<VariableDeclaration>::shared({.type{.name = L"unnamed"}})
 			}, .left = Node::make_unique(e) };
 		TestParser("function with parameters and body", L"func(untyped, name [type], [unnamed]): doWork.", fd);
 	}
@@ -381,9 +381,9 @@ void Testing::RunParserTests()
 	{
 		auto e = Node{ .type = Node::Type::Expression, .inType = TypeSpec::NoneType(), .left = Node::make_unique({.type = Node::Type::FunctionCall, .value = L"doWork" }) };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .inType = TypeSpec::NoneType(), .parameters{
-				Parameter{.name = L"untyped"},
-				Parameter{.name = L"name", .type{.name = L"type"}},
-				Parameter{.type{.name = L"unnamed"}}
+				make<VariableDeclaration>::shared({.name = L"untyped"}),
+				make<VariableDeclaration>::shared({.name = L"name", .type{.name = L"type"}}),
+				make<VariableDeclaration>::shared({.type{.name = L"unnamed"}})
 			}, .left = Node::make_unique(e) };
 		TestParser("function without object but with parameters and body", L"[()] func(untyped, name [type], [unnamed]): doWork.", fd);
 	}
@@ -415,8 +415,8 @@ void Testing::RunCodeGeneratorTests()
 
 	std::wstring code = LR"(
 [()] pi: 3.14.
-transform: (* 2. - 0.28).
-[](): pi transform + 1.
+transform (mul, sub): (* mul. - sub).
+[](): pi transform (2, 0.28) + 1.
 )";
 	std::wcout << code << '\n';
 

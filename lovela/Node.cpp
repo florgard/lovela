@@ -9,9 +9,9 @@ bool Node::operator==(const Node& rhs) const noexcept
 		&& rhs.outType == outType
 		&& rhs.nameSpace == nameSpace
 		&& rhs.inType == inType
-		&& rhs.parameters == parameters
 		&& rhs.imported == imported
-		&& rhs.exported == exported;
+		&& rhs.exported == exported
+		&& std::equal(rhs.parameters.begin(), rhs.parameters.end(), parameters.begin(), [](const auto& v1, const auto& v2) { return *v1 == *v2; });
 }
 
 FunctionDeclaration Node::ToFunctionDeclaration() const
