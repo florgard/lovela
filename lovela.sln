@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cpp", "cpp", "{62910474-EC6
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "include", "targets\cpp\include\include.vcxitems", "{534C2B31-8971-4797-93F5-1D4538CA84E4}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tests", "targets\cpp\tests\tests.vcxproj", "{8E5E1692-F3FF-445E-A531-79CADD4C9BE3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -34,6 +36,14 @@ Global
 		{451648C3-767B-4937-A51B-756A99D6D2AA}.Release|x64.Build.0 = Release|x64
 		{451648C3-767B-4937-A51B-756A99D6D2AA}.Release|x86.ActiveCfg = Release|Win32
 		{451648C3-767B-4937-A51B-756A99D6D2AA}.Release|x86.Build.0 = Release|Win32
+		{8E5E1692-F3FF-445E-A531-79CADD4C9BE3}.Debug|x64.ActiveCfg = Debug|x64
+		{8E5E1692-F3FF-445E-A531-79CADD4C9BE3}.Debug|x64.Build.0 = Debug|x64
+		{8E5E1692-F3FF-445E-A531-79CADD4C9BE3}.Debug|x86.ActiveCfg = Debug|Win32
+		{8E5E1692-F3FF-445E-A531-79CADD4C9BE3}.Debug|x86.Build.0 = Debug|Win32
+		{8E5E1692-F3FF-445E-A531-79CADD4C9BE3}.Release|x64.ActiveCfg = Release|x64
+		{8E5E1692-F3FF-445E-A531-79CADD4C9BE3}.Release|x64.Build.0 = Release|x64
+		{8E5E1692-F3FF-445E-A531-79CADD4C9BE3}.Release|x86.ActiveCfg = Release|Win32
+		{8E5E1692-F3FF-445E-A531-79CADD4C9BE3}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -41,6 +51,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{62910474-EC67-4537-8E6D-C1294247E1B8} = {BB9095B5-2311-42F3-9049-2AD6BD705342}
 		{534C2B31-8971-4797-93F5-1D4538CA84E4} = {62910474-EC67-4537-8E6D-C1294247E1B8}
+		{8E5E1692-F3FF-445E-A531-79CADD4C9BE3} = {62910474-EC67-4537-8E6D-C1294247E1B8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4B580BA7-1840-4F32-9CFD-2517A3852B3B}
