@@ -401,17 +401,17 @@ void Testing::RunParserTests()
 void Testing::RunCodeGeneratorTests()
 {
 	TestCodeGenerator("trivial function", L"func",
-		L"template <typename Out, typename In> Out f_func(In in);");
+		L"template <typename Out, typename In> Out f_func(lovela::context& context, In in);");
 	TestCodeGenerator("function with return type", L"func [type]",
-		L"template <typename In> t_type f_func(In in);");
+		L"template <typename In> t_type f_func(lovela::context& context, In in);");
 	TestCodeGenerator("function with object type", L"[type] func",
-		L"template <typename Out> Out f_func(t_type in);");
+		L"template <typename Out> Out f_func(lovela::context& context, t_type in);");
 	TestCodeGenerator("function with untyped parameter", L"func (arg)",
-		L"template <typename Out, typename In, typename Param1> Out f_func(In in, Param1 p_arg);");
+		L"template <typename Out, typename In, typename Param1> Out f_func(lovela::context& context, In in, Param1 p_arg);");
 	TestCodeGenerator("function with typed parameter", L"func (arg [type])",
-		L"template <typename Out, typename In> Out f_func(In in, t_type p_arg);");
+		L"template <typename Out, typename In> Out f_func(lovela::context& context, In in, t_type p_arg);");
 	TestCodeGenerator("trivial function", L"func: + 1.",
-		L"template <typename Out, typename In> Out f_func(In in) { auto& v1 = in; v1; const auto v2 = v1 + 1 ; return v2; }");
+		L"template <typename Out, typename In> Out f_func(lovela::context& context, In in) { context; auto& v1 = in; v1; const auto v2 = v1 + 1 ; return v2; }");
 
 	std::wstring code = LR"(
 [()] pi: 3.14.

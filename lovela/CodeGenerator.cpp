@@ -132,37 +132,36 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 		stream << ">\n";
 	}
 
-	stream << Indent() << outType.name << ' ' << FunctionName(node.value) << '(';
+	stream << Indent() << outType.name << ' ' << FunctionName(node.value) << "(lovela::context& context";
 
-	index = 0;
 	for (auto& param : parameters)
 	{
-		stream << (index++ ? ", " : "");
-		stream << param;
+		stream << ", " << param;
 	}
 
 	stream << ')';
 
 	FunctionBody(node, context, initialization);
+
+	stream << '\n';
 }
 
 void CodeGenerator::MainFunctionDeclaration(Node& node, Context& context)
 {
-	std::wstring parameter;
 	std::vector<std::wstring> initialization;
+	initialization.emplace_back(NoneType.name + L" in");
 
-	if (!node.parameters.empty())
-	{
-		parameter = TypeName(L"int8aa") + L' ' + ParameterName(node.parameters.front()->name);
-	}
-
-	stream << Indent() << TypeName(L"int32") << ' ' << "usermain" << '(' << parameter << ')';
-
+	stream << "namespace lovela\n";
+	BeginScope();
+	stream << Indent() << "int main(lovela::context& context)";
 	FunctionBody(node, context, initialization);
+	EndScope();
+	stream << '\n';
 
 	stream << "int main(int argc, char* argv[])\n"
 		<< "{\n"
-		<< "\treturn usermain(std::wcin, argv);\n"
+		<< "\tlovela::context context{ .parameters{argv + 1, argv + argc} };\n"
+		<< "\treturn lovela::main(context);\n"
 		<< "}\n\n";
 }
 
@@ -173,6 +172,8 @@ void CodeGenerator::FunctionBody(Node& node, Context& context, const std::vector
 		stream << '\n';
 
 		BeginScope();
+
+		stream << Indent() << "context;\n";
 
 		for (auto& line : initialization)
 		{
@@ -190,10 +191,8 @@ void CodeGenerator::FunctionBody(Node& node, Context& context, const std::vector
 	}
 	else
 	{
-		stream << ';';
+		stream << ";\n";
 	}
-
-	stream << "\n\n";
 }
 
 void CodeGenerator::Expression(Node& node, Context& context)

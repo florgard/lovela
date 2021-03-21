@@ -41,4 +41,8 @@ namespace lovela
 		streams streams;
 		error error;
 	};
+
+	struct None
+	{
+	};
 }

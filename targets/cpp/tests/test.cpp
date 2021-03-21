@@ -207,3 +207,28 @@ TEST(ReturnValueTest, WithMidErrorHandlerOnSuccess) {
 	lovela::context context;
 	EXPECT_EQ(f_WithMidErrorHandlerOnSuccess(context, 100), 111.23);
 }
+
+namespace lovela
+{
+	int main(lovela::context& context)
+	{
+		context;
+		None in;
+		auto& v1 = in; v1;
+		const auto v2 = 0;
+		return v2;
+	}
+}
+
+int MainTest(int argc, char* argv[])
+{
+	lovela::context context{ .parameters{argv + 1, argv + argc} };
+	return lovela::main(context);
+}
+
+TEST(MainTest, Trivial) {
+	char arg1[10];
+	strcpy_s(arg1, "program");
+	char* argv[]{ arg1 };
+	EXPECT_EQ(MainTest(1, argv), 0);
+}
