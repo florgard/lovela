@@ -30,76 +30,180 @@ auto f_ErrorHandlerReset(lovela::context& context, const auto& in)
 	return v1;
 }
 
-auto fb_WithErrorHandlerError(lovela::context& context, const auto& in)
+auto fb_WithTailErrorHandlerOnError(lovela::context& context, const auto& in)
 {
 	auto& v1 = in; v1; context;
-	auto v2 = 456;
+	auto v2 = 200;
 	auto v3 = f_RaisesError(context, v2);
 	return v3;
 }
 
-auto f_WithErrorHandlerError(lovela::context& context, const auto& in)
+auto f_WithTailErrorHandlerOnError(lovela::context& context, const auto& in)
 {
-	decltype(fb_WithErrorHandlerError(context, in)) out;
+	auto& i1 = in; i1;
+
+	std::remove_reference_t<decltype(fb_WithTailErrorHandlerOnError(context, i1))> o1;
 
 	try
 	{
-		out = fb_WithErrorHandlerError(context, in);
+		o1 = fb_WithTailErrorHandlerOnError(context, i1);
 	}
 	catch (const lovela::error& error)
 	{
 		context.error = error;
-		out = f_ErrorHandlerReset(context, in);
+		o1 = f_ErrorHandlerReset(context, i1);
 	}
 
-	return out;
+	return o1;
 }
 
-auto fb_WithErrorHandlerNoError(lovela::context& context, const auto& in)
+auto fb_WithTailErrorHandlerOnSuccess(lovela::context& context, const auto& in)
 {
 	auto& v1 = in; v1; context;
-	auto v2 = 456;
+	auto v2 = 200;
 	return v2;
 }
 
-auto f_WithErrorHandlerNoError(lovela::context& context, const auto& in)
+auto f_WithTailErrorHandlerOnSuccess(lovela::context& context, const auto& in)
 {
-	decltype(fb_WithErrorHandlerNoError(context, in)) out;
+	auto& i1 = in; i1;
+
+	std::remove_reference_t<decltype(fb_WithTailErrorHandlerOnSuccess(context, i1))> o1;
 
 	try
 	{
-		out = fb_WithErrorHandlerNoError(context, in);
+		o1 = fb_WithTailErrorHandlerOnSuccess(context, i1);
 	}
 	catch (const lovela::error& error)
 	{
 		context.error = error;
-		out = f_ErrorHandlerReset(context, in);
+		o1 = f_ErrorHandlerReset(context, i1);
 	}
 
-	return out;
+	return o1;
 }
 
-TEST(ReturnValueTest, ReturnInput) {
-	lovela::context context;
-	EXPECT_EQ(f_ReturnInput(context, 123), 123);
+auto fb1_WithMidErrorHandlerOnError(lovela::context& context, const auto& in)
+{
+	auto& v1 = in; v1; context;
+	auto v2 = v1 + 10;
+	auto v3 = f_RaisesError(context, v2);
+	return v3;
+}
+
+auto fb2_WithMidErrorHandlerOnError(lovela::context& context, const auto& in)
+{
+	auto& v1 = in; v1; context;
+	auto v2 = v1 + 1.23;
+	return v2;
+}
+
+auto f_WithMidErrorHandlerOnError(lovela::context& context, const auto& in)
+{
+	auto& i1 = in; i1;
+
+	std::remove_reference_t<decltype(fb1_WithMidErrorHandlerOnError(context, i1))> o1;
+
+	try
+	{
+		o1 = fb1_WithMidErrorHandlerOnError(context, i1);
+	}
+	catch (const lovela::error& error)
+	{
+		context.error = error;
+		o1 = f_ErrorHandlerReset(context, i1);
+	}
+
+	auto& i2 = o1;
+
+	std::remove_reference_t<decltype(fb2_WithMidErrorHandlerOnError(context, i2))> o2;
+
+	try
+	{
+		o2 = fb2_WithMidErrorHandlerOnError(context, i2);
+	}
+	catch (const lovela::error& error)
+	{
+		context.error = error;
+		o2 = f_ErrorHandlerReset(context, i2);
+	}
+
+	return o2;
+}
+
+auto fb1_WithMidErrorHandlerOnSuccess(lovela::context& context, const auto& in)
+{
+	auto& v1 = in; v1; context;
+	auto v2 = v1 + 10;
+	return v2;
+}
+
+auto fb2_WithMidErrorHandlerOnSuccess(lovela::context& context, const auto& in)
+{
+	auto& v1 = in; v1; context;
+	auto v2 = v1 + 1.23;
+	return v2;
+}
+
+auto f_WithMidErrorHandlerOnSuccess(lovela::context& context, const auto& in)
+{
+	auto& i1 = in; i1;
+
+	std::remove_reference_t<decltype(fb1_WithMidErrorHandlerOnSuccess(context, i1))> o1;
+
+	try
+	{
+		o1 = fb1_WithMidErrorHandlerOnSuccess(context, i1);
+	}
+	catch (const lovela::error& error)
+	{
+		context.error = error;
+		o1 = f_ErrorHandlerReset(context, i1);
+	}
+
+	auto& i2 = o1;
+
+	std::remove_reference_t<decltype(fb2_WithMidErrorHandlerOnSuccess(context, i2))> o2;
+
+	try
+	{
+		o2 = fb2_WithMidErrorHandlerOnSuccess(context, i2);
+	}
+	catch (const lovela::error& error)
+	{
+		context.error = error;
+		o2 = f_ErrorHandlerReset(context, i2);
+	}
+
+	return o2;
 }
 
 TEST(ReturnValueTest, ReturnInputIncremented) {
 	lovela::context context;
-	EXPECT_EQ(f_ReturnInputIncremented(context, 123), 124);
+	EXPECT_EQ(f_ReturnInputIncremented(context, 100), 101);
 }
 
 TEST(ReturnValueTest, RaisesError) {
 	lovela::context context;
-	EXPECT_THROW(f_RaisesError(context, 123), lovela::error);
+	EXPECT_THROW(f_RaisesError(context, 100), lovela::error);
 }
 
-TEST(ReturnValueTest, WithErrorHandlerError) {
+TEST(ReturnValueTest, WithTailErrorHandlerOnError) {
 	lovela::context context;
-	EXPECT_EQ(f_WithErrorHandlerError(context, 123), 123);
+	EXPECT_EQ(f_WithTailErrorHandlerOnError(context, 100), 100);
 }
 
-TEST(ReturnValueTest, WithErrorHandlerNoError) {
+TEST(ReturnValueTest, WithTailErrorHandlerOnSuccess) {
 	lovela::context context;
-	EXPECT_EQ(f_WithErrorHandlerNoError(context, 123), 456);
+	EXPECT_EQ(f_WithTailErrorHandlerOnSuccess(context, 100), 200);
+}
+
+TEST(ReturnValueTest, WithMidErrorHandlerOnError) {
+	lovela::context context;
+	EXPECT_EQ(f_WithMidErrorHandlerOnError(context, 100), 101.23);
+}
+
+TEST(ReturnValueTest, WithMidErrorHandlerOnSuccess) {
+	lovela::context context;
+	EXPECT_EQ(f_WithMidErrorHandlerOnSuccess(context, 100), 111.23);
 }
