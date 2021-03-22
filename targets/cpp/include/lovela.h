@@ -75,9 +75,10 @@ namespace lovela
 		std::vector<std::string> parameters;
 
 		template <int select> auto& get() { static_assert(false, "invalid select index"); return *this; };
-		template <> auto& get<1>() { return error; }
-		template <> auto& get<2>() { return streams; }
-		template <> auto& get<3>() { return parameters; }
+		// Index 1 is reserved for function input.
+		template <> auto& get<2>() { return error; }
+		template <> auto& get<3>() { return streams; }
+		template <> auto& get<4>() { return parameters; }
 	};
 
 	struct None
