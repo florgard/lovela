@@ -34,10 +34,10 @@ TEST(LovelaDataStructures, Error) {
 }
 
 TEST(LovelaDataStructures, Context) {
-	lovela::context context{ .parameters{"param"}, .error{"msg"} };	
-	EXPECT_EQ(context.get<1>().front(), "param");
+	lovela::context context{ .error{"msg"}, .parameters{"param"} };
+	EXPECT_EQ(context.get<1>().get<1>(), "msg");
 	EXPECT_EQ(&context.get<2>().get<2>(), &std::wcout);
-	EXPECT_EQ(context.get<3>().get<1>(), "msg");
+	EXPECT_EQ(context.get<3>().front(), "param");
 }
 
 auto f_ReturnInput(lovela::context& context, const auto& in)

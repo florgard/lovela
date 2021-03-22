@@ -70,14 +70,14 @@ namespace lovela
 
 	struct context
 	{
-		std::vector<std::string> parameters;
-		streams streams;
 		error error;
+		streams streams;
+		std::vector<std::string> parameters;
 
 		template <int select> auto& get() { static_assert(false, "invalid select index"); return *this; };
-		template <> auto& get<1>() { return parameters; }
+		template <> auto& get<1>() { return error; }
 		template <> auto& get<2>() { return streams; }
-		template <> auto& get<3>() { return error; }
+		template <> auto& get<3>() { return parameters; }
 	};
 
 	struct None
