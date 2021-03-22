@@ -13,7 +13,7 @@ namespace lovela
 		std::wostream& out = std::wcout;
 		std::wostream& err = std::wcerr;
 
-		template <int select> auto& get() { static_assert(false, "Invalid select index"); return *this; };
+		template <int select> auto& get() { static_assert(false, "invalid select index"); return *this; };
 		template <> auto& get<1>() { return in; }
 		template <> auto& get<2>() { return out; }
 		template <> auto& get<3>() { return err; }
@@ -61,7 +61,7 @@ namespace lovela
 			return error(ex.what(), typeid(T).name(), ex, code);
 		}
 
-		template <int select> auto& get() { static_assert(false, "Invalid select index"); return *this; };
+		template <int select> auto& get() { static_assert(false, "invalid select index"); return *this; };
 		template <> auto& get<1>() { return message; }
 		template <> auto& get<2>() { return type; }
 		template <> auto& get<3>() { return code; }
@@ -74,7 +74,7 @@ namespace lovela
 		streams streams;
 		error error;
 
-		template <int select> auto& get() { static_assert(false, "Invalid select index"); return *this; };
+		template <int select> auto& get() { static_assert(false, "invalid select index"); return *this; };
 		template <> auto& get<1>() { return parameters; }
 		template <> auto& get<2>() { return streams; }
 		template <> auto& get<3>() { return error; }
