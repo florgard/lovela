@@ -33,6 +33,13 @@ TEST(LovelaDataStructures, Error) {
 	EXPECT_STREQ(e4.get<4>().what(), "rte");
 }
 
+TEST(LovelaDataStructures, Context) {
+	lovela::context context{ .parameters{"param"}, .error{"msg"} };	
+	EXPECT_EQ(context.get<1>().front(), "param");
+	EXPECT_EQ(&context.get<2>().get<2>(), &std::wcout);
+	EXPECT_EQ(context.get<3>().get<1>(), "msg");
+}
+
 auto f_ReturnInput(lovela::context& context, const auto& in)
 {
 	auto& v1 = in; v1; context;
