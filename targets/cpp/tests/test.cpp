@@ -1,6 +1,38 @@
 #include "pch.h"
 #include "test.h"
 
+TEST(LovelaDataStructures, Streams) {
+	lovela::streams streams;
+	EXPECT_EQ(&streams.in, &std::wcin);
+	EXPECT_EQ(&streams.out, &std::wcout);
+	EXPECT_EQ(&streams.err, &std::wcerr);
+	EXPECT_EQ(&streams.get<1>(), &std::wcin);
+	EXPECT_EQ(&streams.get<2>(), &std::wcout);
+	EXPECT_EQ(&streams.get<3>(), &std::wcerr);
+}
+
+TEST(LovelaDataStructures, Error) {
+	lovela::error e1("msg");
+	lovela::error e2("msg", 2);
+	lovela::error e3("msg", "type", 3);
+	std::runtime_error rte("rte");
+	lovela::error e4 = lovela::error::make_error(rte, 4);
+
+	EXPECT_EQ(e1.code, 0);
+	EXPECT_EQ(e1.message, "msg");
+	EXPECT_EQ(e2.code, 2);
+	EXPECT_EQ(e3.type, "type");
+	EXPECT_EQ(e3.code, 3);
+	EXPECT_EQ(e4.message, "rte");
+	EXPECT_EQ(e4.type, typeid(std::runtime_error).name());
+	EXPECT_EQ(e4.code, 4);
+	EXPECT_STREQ(e4.inner.what(), "rte");
+	EXPECT_EQ(e4.get<1>(), "rte");
+	EXPECT_EQ(e4.get<2>(), typeid(std::runtime_error).name());
+	EXPECT_EQ(e4.get<3>(), 4);
+	EXPECT_STREQ(e4.get<4>().what(), "rte");
+}
+
 auto f_ReturnInput(lovela::context& context, const auto& in)
 {
 	auto& v1 = in; v1; context;
