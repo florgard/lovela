@@ -266,8 +266,18 @@ int MainTest(int argc, char* argv[])
 }
 
 TEST(MainTest, Trivial) {
-	char arg1[10];
-	strcpy_s(arg1, "program");
-	char* argv[]{ arg1 };
-	EXPECT_EQ(MainTest(1, argv), 0);
+	char arg0[10] = "";
+	char* argv[]{ arg0, nullptr };
+	int argc = sizeof(argv) / sizeof(argv[0]) - 1;
+	EXPECT_EQ(MainTest(argc, argv), 0);
+}
+
+TEST(MainTest, Context) {
+	char arg0[10] = "program";
+	char arg1[10] = "param";
+	char* argv[]{ arg0, arg1, nullptr };
+	int argc = sizeof(argv) / sizeof(argv[0]) - 1;
+	lovela::context context{ .parameters{argv + 1, argv + argc} };
+	EXPECT_EQ(context.select<4>().size(), 1);
+	EXPECT_EQ(context.select<4>()[0], "param");
 }
