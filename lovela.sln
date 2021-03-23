@@ -16,9 +16,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "targets", "targets", "{BB90
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cpp", "cpp", "{62910474-EC67-4537-8E6D-C1294247E1B8}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "include", "targets\cpp\include\include.vcxitems", "{534C2B31-8971-4797-93F5-1D4538CA84E4}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tests", "targets\cpp\tests\tests.vcxproj", "{8E5E1692-F3FF-445E-A531-79CADD4C9BE3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "source", "targets\cpp\source\source.vcxitems", "{534C2B31-8971-4797-93F5-1D4538CA84E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,8 +50,8 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{62910474-EC67-4537-8E6D-C1294247E1B8} = {BB9095B5-2311-42F3-9049-2AD6BD705342}
-		{534C2B31-8971-4797-93F5-1D4538CA84E4} = {62910474-EC67-4537-8E6D-C1294247E1B8}
 		{8E5E1692-F3FF-445E-A531-79CADD4C9BE3} = {62910474-EC67-4537-8E6D-C1294247E1B8}
+		{534C2B31-8971-4797-93F5-1D4538CA84E4} = {62910474-EC67-4537-8E6D-C1294247E1B8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4B580BA7-1840-4F32-9CFD-2517A3852B3B}
