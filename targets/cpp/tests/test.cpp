@@ -42,13 +42,15 @@ TEST(LovelaDataStructures, Context) {
 
 auto f_ReturnInput(lovela::context& context, const auto& in)
 {
-	auto& v1 = in; v1; context;
+	context;
+	auto& v1 = in; v1;
 	return v1;
 }
 
 auto f_ReturnInputIncremented(lovela::context& context, const auto& in)
 {
-	auto& v1 = in; v1; context;
+	context;
+	auto& v1 = in; v1;
 	auto v2 = v1 + 1;
 	return v2;
 }
@@ -57,7 +59,8 @@ auto f_ReturnInputIncremented(lovela::context& context, const auto& in)
 #pragma warning(disable: 4702)
 auto f_RaisesError(lovela::context& context, const auto& in)
 {
-	auto& v1 = in; v1; context;
+	context;
+	auto& v1 = in; v1;
 	throw lovela::error("error");
 	return v1;
 }
@@ -65,13 +68,15 @@ auto f_RaisesError(lovela::context& context, const auto& in)
 
 auto f_ErrorHandlerReset(lovela::context& context, const auto& in)
 {
-	auto& v1 = in; v1; context;
+	context;
+	auto& v1 = in; v1;
 	return v1;
 }
 
 auto fb_WithTailErrorHandlerOnError(lovela::context& context, const auto& in)
 {
-	auto& v1 = in; v1; context;
+	context;
+	auto& v1 = in; v1;
 	auto v2 = 200;
 	auto v3 = f_RaisesError(context, v2);
 	return v3;
@@ -98,7 +103,8 @@ auto f_WithTailErrorHandlerOnError(lovela::context& context, const auto& in)
 
 auto fb_WithTailErrorHandlerOnSuccess(lovela::context& context, const auto& in)
 {
-	auto& v1 = in; v1; context;
+	context;
+	auto& v1 = in; v1;
 	auto v2 = 200;
 	return v2;
 }
@@ -124,7 +130,8 @@ auto f_WithTailErrorHandlerOnSuccess(lovela::context& context, const auto& in)
 
 auto fb1_WithMidErrorHandlerOnError(lovela::context& context, const auto& in)
 {
-	auto& v1 = in; v1; context;
+	context;
+	auto& v1 = in; v1;
 	auto v2 = v1 + 10;
 	auto v3 = f_RaisesError(context, v2);
 	return v3;
@@ -132,7 +139,8 @@ auto fb1_WithMidErrorHandlerOnError(lovela::context& context, const auto& in)
 
 auto fb2_WithMidErrorHandlerOnError(lovela::context& context, const auto& in)
 {
-	auto& v1 = in; v1; context;
+	context;
+	auto& v1 = in; v1;
 	auto v2 = v1 + 1.23;
 	return v2;
 }
@@ -172,14 +180,16 @@ auto f_WithMidErrorHandlerOnError(lovela::context& context, const auto& in)
 
 auto fb1_WithMidErrorHandlerOnSuccess(lovela::context& context, const auto& in)
 {
-	auto& v1 = in; v1; context;
+	context;
+	auto& v1 = in; v1;
 	auto v2 = v1 + 10;
 	return v2;
 }
 
 auto fb2_WithMidErrorHandlerOnSuccess(lovela::context& context, const auto& in)
 {
-	auto& v1 = in; v1; context;
+	context;
+	auto& v1 = in; v1;
 	auto v2 = v1 + 1.23;
 	return v2;
 }
