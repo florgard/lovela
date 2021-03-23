@@ -151,11 +151,8 @@ void CodeGenerator::MainFunctionDeclaration(Node& node, Context& context)
 	std::vector<std::wstring> initialization;
 	initialization.emplace_back(NoneType.name + L" in");
 
-	stream << "namespace lovela\n";
-	BeginScope();
-	stream << Indent() << "int main(lovela::context& context)";
+	stream << Indent() << "void lovela::main(lovela::context& context)";
 	FunctionBody(node, context, initialization);
-	EndScope();
 	stream << '\n';
 
 	stream << "int main(int argc, char* argv[])\n";
