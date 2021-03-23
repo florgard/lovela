@@ -9,12 +9,12 @@
     <ClInclude Include="..\source\lovela.h">
       <Filter>lovela</Filter>
     </ClInclude>
-    <ClInclude Include="program.h" />
+    <ClInclude Include="lovela-program.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\lovela-main.cpp">
       <Filter>lovela</Filter>
     </ClCompile>
-    <ClCompile Include="program.cpp" />
+    <ClCompile Include="lovela-program.cpp" />
   </ItemGroup>
 </Project>

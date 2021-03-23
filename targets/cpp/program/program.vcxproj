@@ -20,11 +20,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\lovela.h" />
-    <ClInclude Include="program.h" />
+    <ClInclude Include="lovela-program.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\lovela-main.cpp" />
-    <ClCompile Include="program.cpp" />
+    <ClCompile Include="lovela-program.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
