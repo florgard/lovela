@@ -14,6 +14,7 @@ private:
 	struct Context
 	{
 		int variableIndex{};
+		bool assignVariable{};
 	};
 
 	void Visit(Node& node, Context& context);
@@ -26,11 +27,14 @@ private:
 	void FunctionCall(Node& node, Context& context);
 	void BinaryOperation(Node& node, Context& context);
 	void Literal(Node& node, Context& context);
+	void Tuple(Node& node, Context& context);
 	void VariableReference(Node& node, Context& context);
 
 	void BeginScope();
 	void EndScope();
 	const std::wstring& Indent() const { return indent; }
+	void BeginAssign(Context& context);
+	void EndAssign(Context& context);
 
 	static std::wstring TypeName(const std::wstring& name) { return L"t_" + name; }
 	static std::wstring ParameterName(const std::wstring& name) { return L"p_" + name; }

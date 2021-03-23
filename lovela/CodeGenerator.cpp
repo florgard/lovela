@@ -13,6 +13,7 @@ std::map<Node::Type, CodeGenerator::Visitor> CodeGenerator::internalVisitors
 	{Node::Type::FunctionCall, &CodeGenerator::FunctionCall},
 	{Node::Type::BinaryOperation, &CodeGenerator::BinaryOperation},
 	{Node::Type::Literal, &CodeGenerator::Literal},
+	{Node::Type::Tuple, &CodeGenerator::Tuple},
 	{Node::Type::VariableReference, &CodeGenerator::VariableReference},
 };
 
@@ -157,7 +158,6 @@ void CodeGenerator::MainFunctionDeclaration(Node& node, Context& context)
 	std::vector<std::wstring> initialization;
 	initialization.emplace_back(NoneType.name + L" in");
 
-	stream << "#include \"lovela-program.h\"\n\n";
 	stream << "void lovela::main(lovela::context& context)";
 	FunctionBody(node, context, initialization);
 	stream << '\n';
@@ -181,6 +181,7 @@ void CodeGenerator::FunctionBody(Node& node, Context& context, const std::vector
 		// Make an indexed reference to the input object and avoid a warning if it's unreferenced.
 		stream << Indent() << "auto& " << LocalVar << ++context.variableIndex << " = in; " << LocalVar << context.variableIndex << ";\n";
 
+		context.assignVariable = true;
 		Visit(*node.left, context);
 
 		if (!node.outType.None())
@@ -200,9 +201,9 @@ void CodeGenerator::Expression(Node& node, Context& context)
 {
 	if (node.left)
 	{
-		stream << Indent() << "const auto " << LocalVar << ++context.variableIndex << " = ";
+		BeginAssign(context);
 		Visit(*node.left, context);
-		stream << ";\n";
+		EndAssign(context);
 	}
 
 	if (node.right)
@@ -219,11 +220,15 @@ void CodeGenerator::ExpressionInput(Node&, Context& context)
 
 void CodeGenerator::FunctionCall(Node& node, Context& context)
 {
-	stream << FunctionName(node.value) << "( ";
+	const bool assignVariable = context.assignVariable;
+	context.assignVariable = false;
 
-	const bool hasLeft = !!node.left;
+	stream << FunctionName(node.value) << "( context";
+
+	bool hasLeft = !!node.left;
 	if (hasLeft)
 	{
+		stream << ", ";
 		Visit(*node.left, context);
 	}
 
@@ -238,10 +243,15 @@ void CodeGenerator::FunctionCall(Node& node, Context& context)
 	}
 
 	stream << ") ";
+
+	context.assignVariable = assignVariable;
 }
 
 void CodeGenerator::BinaryOperation(Node& node, Context& context)
 {
+	const bool assignVariable = context.assignVariable;
+	context.assignVariable = false;
+
 	if (node.left)
 	{
 		Visit(*node.left, context);
@@ -261,14 +271,53 @@ void CodeGenerator::BinaryOperation(Node& node, Context& context)
 	{
 		stream << "???";
 	}
+
+	context.assignVariable = assignVariable;
 }
 
-void CodeGenerator::Literal(Node& node, Context&)
+void CodeGenerator::Literal(Node& node, Context& context)
 {
+	BeginAssign(context);
 	stream << node.value << ' ';
+	EndAssign(context);
+}
+
+void CodeGenerator::Tuple(Node& node, Context& context)
+{
+	const bool hasLeft = !!node.left;
+	if (hasLeft)
+	{
+		Visit(*node.left, context);
+	}
+
+	if (node.right)
+	{
+		if (hasLeft)
+		{
+			stream << ", ";
+		}
+
+		Visit(*node.right, context);
+	}
 }
 
 void CodeGenerator::VariableReference(Node& node, Context&)
 {
 	stream << ParameterName(node.value) << ' ';
+}
+
+void CodeGenerator::BeginAssign(Context& context)
+{
+	if (context.assignVariable)
+	{
+		stream << Indent() << "const auto " << LocalVar << ++context.variableIndex << " = ";
+	}
+}
+
+void CodeGenerator::EndAssign(Context& context)
+{
+	if (context.assignVariable)
+	{
+		stream << ";\n";
+	}
 }
