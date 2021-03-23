@@ -158,11 +158,12 @@ void CodeGenerator::MainFunctionDeclaration(Node& node, Context& context)
 	EndScope();
 	stream << '\n';
 
-	stream << "int main(int argc, char* argv[])\n"
-		<< "{\n"
-		<< "\tlovela::context context{ .parameters{argv + 1, argv + argc} };\n"
-		<< "\treturn lovela::main(context);\n"
-		<< "}\n\n";
+	stream << "int main(int argc, char* argv[])\n";
+	BeginScope();
+	stream << Indent() << "lovela::context context{ .parameters{argv + 1, argv + argc} };\n"
+		<< Indent() << "return lovela::main(context);\n";
+	EndScope();
+	stream << '\n';
 }
 
 void CodeGenerator::FunctionBody(Node& node, Context& context, const std::vector<std::wstring>& initialization)
