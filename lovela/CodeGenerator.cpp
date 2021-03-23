@@ -148,18 +148,18 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 
 void CodeGenerator::MainFunctionDeclaration(Node& node, Context& context)
 {
+	if (!node.outType.None())
+	{
+		errors.emplace_back(L"The main function out type wasn't None. The parser should set that.");
+		node.outType.SetNone();
+	}
+
 	std::vector<std::wstring> initialization;
 	initialization.emplace_back(NoneType.name + L" in");
 
-	stream << Indent() << "void lovela::main(lovela::context& context)";
+	stream << "#include \"lovela-program.h\"\n\n";
+	stream << "void lovela::main(lovela::context& context)";
 	FunctionBody(node, context, initialization);
-	stream << '\n';
-
-	stream << "int main(int argc, char* argv[])\n";
-	BeginScope();
-	stream << Indent() << "lovela::context context{ .parameters{argv + 1, argv + argc} };\n"
-		<< Indent() << "return lovela::main(context);\n";
-	EndScope();
 	stream << '\n';
 }
 
@@ -183,7 +183,10 @@ void CodeGenerator::FunctionBody(Node& node, Context& context, const std::vector
 
 		Visit(*node.left, context);
 
-		stream << Indent() << "return " << LocalVar << context.variableIndex << ";\n";
+		if (!node.outType.None())
+		{
+			stream << Indent() << "return " << LocalVar << context.variableIndex << ";\n";
+		}
 
 		EndScope();
 	}

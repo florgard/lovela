@@ -1,4 +1,4 @@
-#include "program.h"
+#include "lovela-program.h"
 
 void lovela::main(lovela::context& context)
 {

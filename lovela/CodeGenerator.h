@@ -8,6 +8,8 @@ public:
 
 	void Generate(Node& node);
 
+	const std::vector<std::wstring>& GetErrors() { return errors; }
+
 private:
 	struct Context
 	{
@@ -36,6 +38,7 @@ private:
 
 	std::wostream& stream;
 	std::wstring indent;
+	std::vector<std::wstring> errors;
 	using Visitor = std::function<void(CodeGenerator*, Node&, CodeGenerator::Context&)>;
 	static std::map<Node::Type, Visitor> visitors;
 	static std::map<Node::Type, Visitor> internalVisitors;

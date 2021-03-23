@@ -440,4 +440,9 @@ transform (mul, sub): (* mul. - sub).
 
 	CodeGenerator gen(std::wcout);
 	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { gen.Generate(node); });
+
+	for (auto& error : gen.GetErrors())
+	{
+		std::wcerr << error << '\n';
+	}
 }
