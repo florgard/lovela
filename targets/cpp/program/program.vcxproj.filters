@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="lovela">
+      <UniqueIdentifier>{c7319c78-a71f-4bbd-8376-d1532e4b8b79}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\source\lovela.h">
+      <Filter>lovela</Filter>
+    </ClInclude>
+    <ClInclude Include="program.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\source\lovela-main.cpp">
+      <Filter>lovela</Filter>
+    </ClCompile>
+    <ClCompile Include="program.cpp" />
+  </ItemGroup>
+</Project>

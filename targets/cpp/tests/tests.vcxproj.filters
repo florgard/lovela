@@ -7,13 +7,16 @@
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="..\include\lovela.h">
-      <Filter>include</Filter>
+      <Filter>lovela</Filter>
     </ClInclude>
     <ClInclude Include="test.h" />
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="include">
+    <Filter Include="lovela">
       <UniqueIdentifier>{b2f95947-4bbb-45f2-b716-c1e6e1c4a277}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

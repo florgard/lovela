@@ -20,7 +20,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tests", "targets\cpp\tests\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "source", "targets\cpp\source\source.vcxitems", "{534C2B31-8971-4797-93F5-1D4538CA84E4}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "program", "targets\cpp\program\program.vcxproj", "{D58A3804-5E3E-4034-BEC4-6D0D1BD7FA64}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		targets\cpp\source\source.vcxitems*{534c2b31-8971-4797-93f5-1d4538ca84e4}*SharedItemsImports = 9
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
@@ -44,6 +49,14 @@ Global
 		{8E5E1692-F3FF-445E-A531-79CADD4C9BE3}.Release|x64.Build.0 = Release|x64
 		{8E5E1692-F3FF-445E-A531-79CADD4C9BE3}.Release|x86.ActiveCfg = Release|Win32
 		{8E5E1692-F3FF-445E-A531-79CADD4C9BE3}.Release|x86.Build.0 = Release|Win32
+		{D58A3804-5E3E-4034-BEC4-6D0D1BD7FA64}.Debug|x64.ActiveCfg = Debug|x64
+		{D58A3804-5E3E-4034-BEC4-6D0D1BD7FA64}.Debug|x64.Build.0 = Debug|x64
+		{D58A3804-5E3E-4034-BEC4-6D0D1BD7FA64}.Debug|x86.ActiveCfg = Debug|Win32
+		{D58A3804-5E3E-4034-BEC4-6D0D1BD7FA64}.Debug|x86.Build.0 = Debug|Win32
+		{D58A3804-5E3E-4034-BEC4-6D0D1BD7FA64}.Release|x64.ActiveCfg = Release|x64
+		{D58A3804-5E3E-4034-BEC4-6D0D1BD7FA64}.Release|x64.Build.0 = Release|x64
+		{D58A3804-5E3E-4034-BEC4-6D0D1BD7FA64}.Release|x86.ActiveCfg = Release|Win32
+		{D58A3804-5E3E-4034-BEC4-6D0D1BD7FA64}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -52,6 +65,7 @@ Global
 		{62910474-EC67-4537-8E6D-C1294247E1B8} = {BB9095B5-2311-42F3-9049-2AD6BD705342}
 		{8E5E1692-F3FF-445E-A531-79CADD4C9BE3} = {62910474-EC67-4537-8E6D-C1294247E1B8}
 		{534C2B31-8971-4797-93F5-1D4538CA84E4} = {62910474-EC67-4537-8E6D-C1294247E1B8}
+		{D58A3804-5E3E-4034-BEC4-6D0D1BD7FA64} = {62910474-EC67-4537-8E6D-C1294247E1B8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4B580BA7-1840-4F32-9CFD-2517A3852B3B}
