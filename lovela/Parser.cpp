@@ -465,12 +465,16 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		}
 	}
 
-	auto expression = make<Node>::unique({ .type = Node::Type::Expression, .outType = inType, .token = firstToken, .inType = inType });
-
 	if (nodes.empty())
 	{
-		return expression;
+		return make<Node>::unique({ .type = Node::Type::Empty, .token = firstToken });
 	}
+	if (nodes.size() == 1)
+	{
+		return std::move(nodes.front());
+	}
+
+	auto expression = make<Node>::unique({ .type = Node::Type::Expression, .outType = inType, .token = firstToken, .inType = inType });
 
 	if (nodes.back()->type == Node::Type::Expression)
 	{
@@ -498,7 +502,15 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		}
 		else if (operatorNodes.contains(node->type))
 		{
-			node->right = std::move(right);
+			if (right)
+			{
+				if (node->right)
+				{
+					throw ParseException(node->token, "Attempt to replace an existing right node of an operator");
+				}
+
+				node->right = std::move(right);
+			}
 
 			parent->left = std::move(node);
 			parent = parent->left.get();
