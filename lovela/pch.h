@@ -13,6 +13,7 @@
 #include <functional>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <regex>
 #include <cwctype>
 #include <cassert>
