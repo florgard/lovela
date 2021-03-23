@@ -84,4 +84,6 @@ namespace lovela
 	struct None
 	{
 	};
+
+	void main(context& context);
 }
