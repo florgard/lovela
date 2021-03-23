@@ -13,10 +13,10 @@ namespace lovela
 		std::wostream& out = std::wcout;
 		std::wostream& err = std::wcerr;
 
-		template <int select> auto& get() { static_assert(false, "invalid select index"); return *this; };
-		template <> auto& get<1>() { return in; }
-		template <> auto& get<2>() { return out; }
-		template <> auto& get<3>() { return err; }
+		template <int index> auto& select() { static_assert(false, "invalid select index"); return *this; };
+		template <> auto& select<1>() { return in; }
+		template <> auto& select<2>() { return out; }
+		template <> auto& select<3>() { return err; }
 	};
 
 	class error : public std::exception
@@ -61,11 +61,11 @@ namespace lovela
 			return error(ex.what(), typeid(T).name(), ex, code);
 		}
 
-		template <int select> auto& get() { static_assert(false, "invalid select index"); return *this; };
-		template <> auto& get<1>() { return message; }
-		template <> auto& get<2>() { return type; }
-		template <> auto& get<3>() { return code; }
-		template <> auto& get<4>() { return inner; }
+		template <int index> auto& select() { static_assert(false, "invalid select index"); return *this; };
+		template <> auto& select<1>() { return message; }
+		template <> auto& select<2>() { return type; }
+		template <> auto& select<3>() { return code; }
+		template <> auto& select<4>() { return inner; }
 	};
 
 	struct context
@@ -74,11 +74,11 @@ namespace lovela
 		streams streams;
 		std::vector<std::string> parameters;
 
-		template <int select> auto& get() { static_assert(false, "invalid select index"); return *this; };
+		template <int index> auto& select() { static_assert(false, "invalid select index"); return *this; };
 		// Index 1 is reserved for function input.
-		template <> auto& get<2>() { return error; }
-		template <> auto& get<3>() { return streams; }
-		template <> auto& get<4>() { return parameters; }
+		template <> auto& select<2>() { return error; }
+		template <> auto& select<3>() { return streams; }
+		template <> auto& select<4>() { return parameters; }
 	};
 
 	struct None

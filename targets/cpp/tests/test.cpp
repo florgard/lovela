@@ -6,9 +6,9 @@ TEST(LovelaDataStructures, Streams) {
 	EXPECT_EQ(&streams.in, &std::wcin);
 	EXPECT_EQ(&streams.out, &std::wcout);
 	EXPECT_EQ(&streams.err, &std::wcerr);
-	EXPECT_EQ(&streams.get<1>(), &std::wcin);
-	EXPECT_EQ(&streams.get<2>(), &std::wcout);
-	EXPECT_EQ(&streams.get<3>(), &std::wcerr);
+	EXPECT_EQ(&streams.select<1>(), &std::wcin);
+	EXPECT_EQ(&streams.select<2>(), &std::wcout);
+	EXPECT_EQ(&streams.select<3>(), &std::wcerr);
 }
 
 TEST(LovelaDataStructures, Error) {
@@ -27,17 +27,17 @@ TEST(LovelaDataStructures, Error) {
 	EXPECT_EQ(e4.type, typeid(std::runtime_error).name());
 	EXPECT_EQ(e4.code, 4);
 	EXPECT_STREQ(e4.inner.what(), "rte");
-	EXPECT_EQ(e4.get<1>(), "rte");
-	EXPECT_EQ(e4.get<2>(), typeid(std::runtime_error).name());
-	EXPECT_EQ(e4.get<3>(), 4);
-	EXPECT_STREQ(e4.get<4>().what(), "rte");
+	EXPECT_EQ(e4.select<1>(), "rte");
+	EXPECT_EQ(e4.select<2>(), typeid(std::runtime_error).name());
+	EXPECT_EQ(e4.select<3>(), 4);
+	EXPECT_STREQ(e4.select<4>().what(), "rte");
 }
 
 TEST(LovelaDataStructures, Context) {
 	lovela::context context{ .error{"msg"}, .parameters{"param"} };
-	EXPECT_EQ(context.get<2>().get<1>(), "msg");
-	EXPECT_EQ(&context.get<3>().get<2>(), &std::wcout);
-	EXPECT_EQ(context.get<4>().front(), "param");
+	EXPECT_EQ(context.select<2>().select<1>(), "msg");
+	EXPECT_EQ(&context.select<3>().select<2>(), &std::wcout);
+	EXPECT_EQ(context.select<4>().front(), "param");
 }
 
 auto f_ReturnInput(lovela::context& context, const auto& in)
