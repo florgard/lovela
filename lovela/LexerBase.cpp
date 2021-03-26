@@ -23,6 +23,7 @@ Token::Type LexerBase::GetTokenType(wchar_t lexeme) noexcept
 		{'?', Token::Type::SeparatorQuestion },
 		{'|', Token::Type::SeparatorVerticalLine },
 		{':', Token::Type::SeparatorColon },
+		{'#', Token::Type::SeparatorHash },
 	} };
 
 	static constexpr auto map = StaticMap<wchar_t, Token::Type, values.size()>{ {values} };

@@ -171,7 +171,7 @@ bool CodeGenerator::CheckExportType(TypeSpec& type)
 	{
 		type = VoidPtrType;
 	}
-	else if (!ConvertExportType(type.name))
+	else if (!ConvertPrimitiveType(type.name))
 	{
 		errors.emplace_back(L"Error: Exported functions must have primitive in, out and parameter types. Unsupported type: " + type.name);
 		return false;
@@ -180,7 +180,7 @@ bool CodeGenerator::CheckExportType(TypeSpec& type)
 	return true;
 }
 
-bool CodeGenerator::ConvertExportType(std::wstring& name)
+bool CodeGenerator::ConvertPrimitiveType(std::wstring& name)
 {
 	static std::wregex regex(LR"(#(\.|\+)?(\d\d?)(#?)(#?))");
 	std::wsmatch match;
@@ -189,12 +189,24 @@ bool CodeGenerator::ConvertExportType(std::wstring& name)
 		return false;
 	}
 
-	name = match[1].str() == L"." ? L"float" : (match[1].str() == L"+" ? L"uint" : L"int");
-	name += match[2].str() + L"_t";
-	name += match[3].str() == L"#" ? L"*" : L"";
-	name += match[4].str() == L"#" ? L"*" : L"";
+	std::wstring exportName = match[1].str() == L"." ? L"float" : (match[1].str() == L"+" ? L"uint" : L"int");
+	exportName += match[2].str() + L"_t";
+	exportName += match[3].str() == L"#" ? L"*" : L"";
+	exportName += match[4].str() == L"#" ? L"*" : L"";
+	name = exportName;
 
 	return true;
+}
+
+std::wstring CodeGenerator::TypeName(const std::wstring& name)
+{
+	std::wstring typeName = name;
+	if (ConvertPrimitiveType(typeName))
+	{
+		return typeName;
+	}
+
+	return L"t_" + name;
 }
 
 void CodeGenerator::ExportedFunctionDeclaration(Node& node, Context&)

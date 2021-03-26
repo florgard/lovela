@@ -15,7 +15,7 @@ Token Lexer::AddToken(Token token) const
 
 TokenGenerator Lexer::Lex() noexcept
 {
-	static constexpr std::wstring_view delimiters{ L"()[]{}.,:;!?|" };
+	static constexpr std::wstring_view delimiters{ L"()[]{}.,:;!?|#" };
 
 	std::wstring lexeme;
 	currentLine = 1;

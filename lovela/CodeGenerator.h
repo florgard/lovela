@@ -39,12 +39,12 @@ private:
 	void BeginAssign(Context& context);
 	void EndAssign(Context& context);
 
-	static std::wstring TypeName(const std::wstring& name) { return L"t_" + name; }
+	static std::wstring TypeName(const std::wstring& name);
 	static std::wstring ParameterName(const std::wstring& name) { return L"p_" + name; }
 	static std::wstring FunctionName(const std::wstring& name) { return L"f_" + name; }
 
 	bool CheckExportType(TypeSpec& type);
-	static bool ConvertExportType(std::wstring& name);
+	static bool ConvertPrimitiveType(std::wstring& name);
 
 	std::wostream& stream;
 	std::wstring indent;

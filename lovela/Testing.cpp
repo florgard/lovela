@@ -420,7 +420,7 @@ void Testing::RunCodeGeneratorTests()
 //)";
 
 	std::wstring code = LR"(
-<- ex: + 1.
+<- [#32] ex [#32]: + 1.
 )";
 	std::wcout << code << '\n';
 

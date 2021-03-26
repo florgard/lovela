@@ -23,6 +23,7 @@ struct Token
 		SeparatorQuestion,
 		SeparatorVerticalLine,
 		SeparatorColon,
+		SeparatorHash,
 		OperatorComparison,
 		OperatorArithmetic,
 		OperatorBitwise,
