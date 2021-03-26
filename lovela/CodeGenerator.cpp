@@ -18,6 +18,8 @@ std::map<Node::Type, CodeGenerator::Visitor> CodeGenerator::internalVisitors
 };
 
 const TypeSpec CodeGenerator::NoneType{ .name = L"None" };
+const TypeSpec CodeGenerator::VoidType{ .name = L"void" };
+const TypeSpec CodeGenerator::VoidPtrType{ .name = L"void*" };
 
 CodeGenerator::CodeGenerator(std::wostream& stream) : stream(stream)
 {
@@ -66,12 +68,15 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 		MainFunctionDeclaration(node, context);
 		return;
 	}
+	else if (node.exported)
+	{
+		ExportedFunctionDeclaration(node, context);
+	}
 
 	TypeSpec inType = node.inType;
 	TypeSpec outType = node.outType;
 	std::vector<std::wstring> templateParameters;
 	std::vector<std::wstring> parameters;
-	std::vector<std::wstring> initialization;
 
 	if (outType.Any())
 	{
@@ -94,7 +99,7 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 	}
 	else if (inType.None())
 	{
-		initialization.emplace_back(NoneType.name + L" in");
+		parameters.emplace_back(NoneType.name + L" in");
 	}
 	else
 	{
@@ -142,7 +147,7 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 
 	stream << ')';
 
-	FunctionBody(node, context, initialization);
+	FunctionBody(node, context);
 
 	stream << '\n';
 }
@@ -151,19 +156,132 @@ void CodeGenerator::MainFunctionDeclaration(Node& node, Context& context)
 {
 	if (!node.outType.None())
 	{
-		errors.emplace_back(L"The main function out type wasn't None. The parser should set that.");
+		errors.emplace_back(L"Warning: The main function out type wasn't None. The parser should set that.");
 		node.outType.SetNone();
 	}
 
-	std::vector<std::wstring> initialization;
-	initialization.emplace_back(NoneType.name + L" in");
-
-	stream << "void lovela::main(lovela::context& context)";
-	FunctionBody(node, context, initialization);
+	stream << VoidType.name << ' ' << "lovela::main(lovela::context& context, " << NoneType.name << " in)";
+	FunctionBody(node, context);
 	stream << '\n';
 }
 
-void CodeGenerator::FunctionBody(Node& node, Context& context, const std::vector<std::wstring>& initialization)
+bool CodeGenerator::CheckExportType(TypeSpec& type)
+{
+	if (type.Any())
+	{
+		type = VoidPtrType;
+	}
+	else if (!ConvertExportType(type.name))
+	{
+		errors.emplace_back(L"Error: Exported functions must have primitive in, out and parameter types. Unsupported type: " + type.name);
+		return false;
+	}
+
+	return true;
+}
+
+bool CodeGenerator::ConvertExportType(std::wstring& name)
+{
+	static std::wregex regex(LR"(#(\.|\+)?(\d\d?)(#?)(#?))");
+	std::wsmatch match;
+	if (!std::regex_match(name, match, regex))
+	{
+		return false;
+	}
+
+	name = match[1].str() == L"." ? L"float" : (match[1].str() == L"+" ? L"uint" : L"int");
+	name += match[2].str() + L"_t";
+	name += match[3].str() == L"#" ? L"*" : L"";
+	name += match[4].str() == L"#" ? L"*" : L"";
+
+	return true;
+}
+
+void CodeGenerator::ExportedFunctionDeclaration(Node& node, Context&)
+{
+	TypeSpec inType = node.inType;
+	TypeSpec outType = node.outType;
+
+	std::vector<std::pair<std::wstring, std::wstring>> parameters;
+
+	if (inType.None())
+	{
+	}
+	else if (CheckExportType(inType))
+	{
+		parameters.emplace_back(std::make_pair(inType.name, L"in"));
+	}
+	else
+	{
+		return;
+	}
+
+	if (outType.None())
+	{
+		outType = VoidType;
+	}
+	else if (!CheckExportType(outType))
+	{
+		return;
+	}
+
+	int index = 0;
+	for (auto& parameter : node.parameters)
+	{
+		TypeSpec type = parameter->type;
+
+		if (parameter->name.empty())
+		{
+			errors.emplace_back(L"Error: Exported functions must have explicit parameter names.");
+			return;
+		}
+		else if (!CheckExportType(type))
+		{
+			return;
+		}
+
+		parameters.emplace_back(std::make_pair(type.name, parameter->name));
+	}
+
+	stream << Indent() << outType.name << ' ' << node.value << '(';
+
+	index = 0;
+	for (auto& parameter : parameters)
+	{
+		stream << (index++ ? ", " : "") << parameter.first << ' ' << parameter.second;
+	}
+
+	stream << ")\n";
+
+	BeginScope();
+
+	stream << Indent() << "lovela::context context;\n";
+
+	if (inType.None())
+	{
+		stream << Indent() << NoneType.name << " in;\n";
+	}
+
+	stream << Indent() << (node.outType.None() ? "" : "return ") << FunctionName(node.value) << "(context";
+
+	if (inType.None())
+	{
+		stream << ", in";
+	}
+
+	for (auto& parameter : parameters)
+	{
+		stream << ", " << parameter.second;
+	}
+
+	stream << ")\n";
+
+	EndScope();
+
+	stream << '\n';
+}
+
+void CodeGenerator::FunctionBody(Node& node, Context& context)
 {
 	if (node.left)
 	{
@@ -173,18 +291,17 @@ void CodeGenerator::FunctionBody(Node& node, Context& context, const std::vector
 
 		stream << Indent() << "context;\n";
 
-		for (auto& line : initialization)
-		{
-			stream << Indent() << line << ";\n";
-		}
-
 		// Make an indexed reference to the input object and avoid a warning if it's unreferenced.
 		stream << Indent() << "auto& " << LocalVar << ++context.variableIndex << " = in; " << LocalVar << context.variableIndex << ";\n";
 
 		context.assignVariable = true;
 		Visit(*node.left, context);
 
-		if (!node.outType.None())
+		if (node.outType.None())
+		{
+			stream << Indent() << "return {};\n";
+		}
+		else
 		{
 			stream << Indent() << "return " << LocalVar << context.variableIndex << ";\n";
 		}
