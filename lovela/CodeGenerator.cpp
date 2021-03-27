@@ -440,7 +440,6 @@ void CodeGenerator::FunctionBody(Node& node, Context& context)
 		// Make an indexed reference to the input object and avoid a warning if it's unreferenced.
 		stream << Indent() << "auto& " << LocalVar << ++context.variableIndex << " = in; " << LocalVar << context.variableIndex << ";\n";
 
-		context.assignVariable = true;
 		Visit(*node.left, context);
 
 		if (node.outType.None())
@@ -517,7 +516,7 @@ void CodeGenerator::ExpressionInput(Node&, Context& context)
 
 void CodeGenerator::FunctionCall(Node& node, Context& context)
 {
-	const auto reset = BeginAssign(context, false);
+	const auto reset = BeginAssign(context, true);
 
 	stream << FunctionName(node.value) << "(context";
 
@@ -540,7 +539,7 @@ void CodeGenerator::FunctionCall(Node& node, Context& context)
 
 void CodeGenerator::BinaryOperation(Node& node, Context& context)
 {
-	const bool reset = BeginAssign(context, false);
+	const bool reset = BeginAssign(context, true);
 
 	if (node.left)
 	{
@@ -598,24 +597,24 @@ void CodeGenerator::VariableReference(Node& node, Context&)
 
 void CodeGenerator::BeginAssign(Context& context)
 {
-	if (context.assignVariable)
+	if (!context.inner)
 	{
 		stream << Indent() << "const auto " << LocalVar << ++context.variableIndex << " = ";
 	}
 }
 
-bool CodeGenerator::BeginAssign(Context& context, bool set)
+bool CodeGenerator::BeginAssign(Context& context, bool inner)
 {
 	BeginAssign(context);
 
-	const auto reset = context.assignVariable;
-	context.assignVariable = set;
+	const auto reset = context.inner;
+	context.inner = inner;
 	return reset;
 }
 
 void CodeGenerator::EndAssign(Context& context)
 {
-	if (context.assignVariable)
+	if (!context.inner)
 	{
 		stream << "; " << LocalVar << context.variableIndex << ";\n";
 	}
@@ -623,7 +622,7 @@ void CodeGenerator::EndAssign(Context& context)
 
 void CodeGenerator::EndAssign(Context& context, bool reset)
 {
-	context.assignVariable = reset;
+	context.inner = reset;
 
 	EndAssign(context);
 }

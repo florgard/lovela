@@ -22,7 +22,7 @@ private:
 	struct Context
 	{
 		int variableIndex{};
-		bool assignVariable{};
+		bool inner{};
 	};
 
 	void Visit(Node& node, Context& context);
