@@ -412,6 +412,30 @@ void Testing::RunCodeGeneratorTests()
 		L"lovela::None f_ex(lovela::context& context, lovela::None in) { context; auto& v1 = in; v1; return {}; } void ex() { lovela::context context; lovela::None in; f_ex(context, in); }");
 	TestCodeGenerator("exported function any -> any", L"<- ex: + 1.",
 		L"template <typename Out, typename In> Out f_ex(lovela::context& context, In in) { context; auto& v1 = in; v1; const auto v2 = v1 + 1 ; return v2; } void* ex(void* in) { lovela::context context; return f_ex(context, in); }");
+	TestCodeGenerator("main and export", L"<- [#32] ex [#32]: + 1. : 1 ex.",
+LR"code(
+int32_t f_ex(lovela::context& context, int32_t in)
+{
+	context;
+	auto& v1 = in; v1;
+	const auto v2 = v1 + 1 ;
+	return v2;
+}
+
+int32_t ex(int32_t in)
+{
+	lovela::context context;
+	return f_ex(context, in);
+}
+
+lovela::None lovela::main(lovela::context& context, lovela::None in)
+{
+	context;
+	auto& v1 = in; v1;
+	const auto v2 = f_ex( context, 1 ) ;
+	return {};
+}
+)code");
 
 //	std::wstring code = LR"(
 //[()] pi: 3.14.
@@ -421,8 +445,7 @@ void Testing::RunCodeGeneratorTests()
 //)";
 
 	std::wstring code = LR"(
-<- [#32] ex [#32]: + 1.
-: 1 ex.
+<- [#32] ex [#32]: + 1. : 1 ex.
 )";
 	std::wcout << code << '\n';
 
