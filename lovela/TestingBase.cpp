@@ -161,7 +161,7 @@ void TestingBase::PrintTree(int& index, const Node& tree, std::wstring indent)
 	std::wcerr << indent << "),\n";
 }
 
-void TestingBase::TestCodeGenerator(const char* name, std::wstring_view code, std::wstring_view cppCode)
+void TestingBase::TestCodeGenerator(const char* name, std::wstring_view code, std::wstring_view cppCode, int expectedErrors)
 {
 	std::wistringstream input(std::wstring(code.data(), code.size()));
 	Lexer lexer(input);
@@ -191,5 +191,15 @@ void TestingBase::TestCodeGenerator(const char* name, std::wstring_view code, st
 		PrintTree(*tree);
 
 		assert(success);
+	}
+
+	if (gen.GetErrors().size() != expectedErrors)
+	{
+		std::wcerr << "Code generator test \"" << name << "\" error: The error count differs from the expected count.\nError messages:\n";
+
+		for (auto& error : gen.GetErrors())
+		{
+			std::wcerr << error << '\n';
+		}
 	}
 }
