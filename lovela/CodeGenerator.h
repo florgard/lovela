@@ -38,6 +38,7 @@ private:
 
 	void MainFunctionDeclaration(Node& node, Context& context);
 	void ExportedFunctionDeclaration(Node& node, Context& context);
+	void ImportedFunctionDeclaration(Node& node, Context& context);
 	void FunctionBody(Node& node, Context& context);
 
 	void BeginScope();
@@ -49,8 +50,10 @@ private:
 	void EndAssign(Context& context, bool reset);
 
 	static std::wstring TypeName(const std::wstring& name);
-	static std::wstring ParameterName(const std::wstring& name) { return L"p_" + name; }
-	static std::wstring FunctionName(const std::wstring& name) { return L"f_" + name; }
+	static std::wstring TypeName(const std::wstring& name, int index);
+	static std::wstring ParameterName(const std::wstring& name);
+	static std::wstring ParameterName(const std::wstring& name, int index);
+	static std::wstring FunctionName(const std::wstring& name);
 
 	bool CheckExportType(TypeSpec& type);
 	static bool ConvertPrimitiveType(std::wstring& name);

@@ -467,7 +467,7 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 //)";
 
 	std::wstring code = LR"(
-<- [#32] ex [#32]: + 1. : 1 ex.
+-> [#32] im [#32]. : 1 im.
 )";
 	std::wcout << code << '\n';
 

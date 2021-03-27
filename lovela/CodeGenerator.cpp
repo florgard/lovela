@@ -68,6 +68,10 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 		MainFunctionDeclaration(node, context);
 		return;
 	}
+	else if (node.imported)
+	{
+		ImportedFunctionDeclaration(node, context);
+	}
 
 	auto inType = node.inType;
 	auto outType = node.outType;
@@ -106,14 +110,11 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 	for (auto& parameter : node.parameters)
 	{
 		index++;
-		std::wostringstream paramIndex;
-		paramIndex << index;
-		const auto name = ParameterName(parameter->name);
-		auto type = TypeName(parameter->type.name);
+		const auto name = ParameterName(parameter->name, index);
+		const auto type = TypeName(parameter->type.name, index);
 
 		if (parameter->type.Any())
 		{
-			type = L"Param" + paramIndex.str();
 			templateParameters.push_back(type);
 		}
 
@@ -212,6 +213,40 @@ std::wstring CodeGenerator::TypeName(const std::wstring& name)
 	return L"t_" + name;
 }
 
+std::wstring CodeGenerator::TypeName(const std::wstring& name, int index)
+{
+	if (name.empty())
+	{
+		return L"Param" + to_wstring(index);
+	}
+	else
+	{
+		return TypeName(name);
+	}
+}
+
+std::wstring CodeGenerator::ParameterName(const std::wstring& name)
+{
+	return L"p_" + name;
+}
+
+std::wstring CodeGenerator::ParameterName(const std::wstring& name, int index)
+{
+	if (name.empty())
+	{
+		return L"param" + to_wstring(index);
+	}
+	else
+	{
+		return ParameterName(name);
+	}
+}
+
+std::wstring CodeGenerator::FunctionName(const std::wstring& name)
+{
+	return L"f_" + name;
+}
+
 void CodeGenerator::ExportedFunctionDeclaration(Node& node, Context&)
 {
 	auto inType = node.inType;
@@ -249,19 +284,16 @@ void CodeGenerator::ExportedFunctionDeclaration(Node& node, Context&)
 	int index = 0;
 	for (auto& parameter : node.parameters)
 	{
+		index++;
+		const auto name = ParameterName(parameter->name, index);
 		auto type = parameter->type;
 
-		if (parameter->name.empty())
-		{
-			errors.emplace_back(L"Error: Exported functions must have explicit parameter names.");
-			return;
-		}
-		else if (!CheckExportType(type))
+		if (!CheckExportType(type))
 		{
 			return;
 		}
 
-		parameters.emplace_back(std::make_pair(type.name, parameter->name));
+		parameters.emplace_back(std::make_pair(type.name, name));
 	}
 
 	// Make the function signature
@@ -285,7 +317,7 @@ void CodeGenerator::ExportedFunctionDeclaration(Node& node, Context&)
 
 	// Define the exported function wrapper
 
-	stream << Indent() << signature << '\n';
+	stream << signature << '\n';
 
 	BeginScope();
 
@@ -313,6 +345,77 @@ void CodeGenerator::ExportedFunctionDeclaration(Node& node, Context&)
 	stream << ");\n";
 
 	EndScope();
+
+	stream << '\n';
+}
+
+void CodeGenerator::ImportedFunctionDeclaration(Node& node, Context&)
+{
+	auto inType = node.inType;
+	auto outType = node.outType;
+
+	std::vector<std::pair<std::wstring, std::wstring>> parameters;
+
+	// Verify and convert the input type
+
+	if (inType.None())
+	{
+	}
+	else if (CheckExportType(inType))
+	{
+		parameters.emplace_back(std::make_pair(inType.name, L"in"));
+	}
+	else
+	{
+		return;
+	}
+
+	// Verify and convert the output type
+
+	if (outType.None())
+	{
+		outType = VoidType;
+	}
+	else if (!CheckExportType(outType))
+	{
+		return;
+	}
+
+	// Verify and convert the parameter types
+
+	int index = 0;
+	for (auto& parameter : node.parameters)
+	{
+		index++;
+		const auto name = ParameterName(parameter->name, index);
+		auto type = parameter->type;
+
+		if (!CheckExportType(type))
+		{
+			return;
+		}
+
+		parameters.emplace_back(std::make_pair(type.name, name));
+	}
+
+	// Make the function signature
+
+	std::wstringstream ss;
+	ss << outType.name << ' ' << node.value << '(';
+
+	index = 0;
+	for (auto& parameter : parameters)
+	{
+		ss << (index++ ? ", " : "") << parameter.first << ' ' << parameter.second;
+	}
+
+	ss << ')';
+
+	auto signature = ss.str();
+
+	// Declare import
+
+	stream << "extern \"C\" " << signature << ";\n";
 
 	stream << '\n';
 }

@@ -421,6 +421,11 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 
 		node->left = ParseExpression(innerContext);
 	}
+	else if (Accept(Token::Type::SeparatorDot))
+	{
+		// Declaration only:
+		// [#32] identifier [#32].
+	}
 
 	return node;
 }

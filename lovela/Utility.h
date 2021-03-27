@@ -16,6 +16,14 @@ template <typename Enum, typename std::enable_if<std::is_enum_v<Enum>>::type* = 
 	return to_wstring(magic_enum::enum_name(value));
 }
 
+template <typename T, typename std::enable_if<!std::is_enum_v<T>>::type* = nullptr>
+[[nodiscard]] std::wstring to_wstring(T value)
+{
+	std::wostringstream s;
+	s << value;
+	return s.str();
+}
+
 inline std::wstring single_quote(const std::wstring& text)
 {
 	return L'\'' + text + L'\'';
