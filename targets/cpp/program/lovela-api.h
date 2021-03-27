@@ -14,13 +14,17 @@
 #define LOVELA_IMPORT LOVELA_EXTERNAL_LINKAGE
 #endif
 
-#ifndef LOVELA
-#ifdef __cplusplus
-#include <cstdint>
-#else
-#include <stdint.h>
-#endif
-#endif
+typedef char l_i8;
+typedef short l_i16;
+typedef int l_i32;
+typedef long long l_i64;
+typedef unsigned char l_u8;
+typedef unsigned short l_u16;
+typedef unsigned int l_u32;
+typedef unsigned long long l_u64;
+typedef float l_f32;
+typedef double l_f64;
+typedef const char* l_cstr;
 
 #include "lovela-exports.h"
 

@@ -418,7 +418,7 @@ Out f_func(lovela::context& context, In in)
 )code");
 
 	TestCodeGenerator("function call", L"[#8] func [#8]: f(1, 'a', g).", LR"code(
-char f_func(lovela::context& context, char in)
+l_i8 f_func(lovela::context& context, l_i8 in)
 { context; auto& v1 = in; v1; const auto v2 = f_f(context, v1, 1, "a", f_g(context, v1)); v2; return v2; }
 )code");
 
@@ -438,7 +438,7 @@ void* ex(void* in)
 )code");
 
 	TestCodeGenerator("main and export", L"<- [#32] ex [#32]: + 1. : 1 ex.", LR"code(
-int32_t f_ex(lovela::context& context, int32_t in)
+l_i32 f_ex(lovela::context& context, l_i32 in)
 {
 	context;
 	auto& v1 = in; v1;
@@ -446,7 +446,7 @@ int32_t f_ex(lovela::context& context, int32_t in)
 	return v2;
 }
 
-int32_t ex(int32_t in)
+l_i32 ex(l_i32 in)
 {
 	lovela::context context;
 	return f_ex(context, in);
@@ -461,21 +461,21 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 }
 )code");
 
-	TestCodeGenerator("main and import", L"-> [#32] im [#32]. : 1 im.", LR"code(
-LOVELA_IMPORT int32_t im(int32_t in);
+	TestCodeGenerator("main and import", L"-> [#8#] puts [#32]. : 'Hello, Wordl!' puts.", LR"code(
+LOVELA_IMPORT l_i32 puts(l_cstr in);
 
-int32_t f_im(lovela::context& context, int32_t in)
+l_i32 f_puts(lovela::context& context, l_cstr in)
 {
-	context;
-	return im(in);
+        context;
+        return puts(in);
 }
 
 lovela::None lovela::main(lovela::context& context, lovela::None in)
 {
-	context;
-	auto& v1 = in; v1;
-	const auto v2 = f_im(context, 1); v2;
-	return {};
+        context;
+        auto& v1 = in; v1;
+        const auto v2 = f_puts(context, "Hello, Wordl!"); v2;
+        return {};
 }
 )code");
 
@@ -490,9 +490,8 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 	// -> [#32] puts [#8#]. : 'Hello, Wordl!" puts.
 
 	std::wstring code = LR"(
--> [#8#] puts [#32]
-<- [()] greet [()]: 'Hello, Wordl!' puts.
-: greet.
+-> [#8#] puts [#32].
+: 'Hello, Wordl!' puts.
 )";
 	std::wcout << code << '\n';
 

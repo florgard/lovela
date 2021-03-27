@@ -1,33 +1,18 @@
 #include "lovela-program.h"
 
-LOVELA_IMPORT int32_t puts(const char* in);
+LOVELA_IMPORT l_i32 puts(l_cstr in);
 
-int32_t f_puts(lovela::context& context, const char* in)
+l_i32 f_puts(lovela::context& context, l_cstr in)
 {
 	context;
 	return puts(in);
-}
-
-lovela::None f_greet(lovela::context& context, lovela::None in)
-{
-	context;
-	auto& v1 = in; v1;
-	const auto v2 = f_puts(context, "Hello, Wordl!"); v2;
-	return {};
-}
-
-void greet()
-{
-	lovela::context context;
-	lovela::None in;
-	f_greet(context, in);
 }
 
 lovela::None lovela::main(lovela::context& context, lovela::None in)
 {
 	context;
 	auto& v1 = in; v1;
-	const auto v2 = f_greet(context, v1); v2;
+	const auto v2 = f_puts(context, "Hello, Wordl!"); v2;
 	return {};
 }
 
