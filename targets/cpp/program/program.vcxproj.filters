@@ -10,6 +10,7 @@
       <Filter>lovela</Filter>
     </ClInclude>
     <ClInclude Include="lovela-program.h" />
+    <ClInclude Include="lovela-exports.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\lovela-main.cpp">

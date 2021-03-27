@@ -4,6 +4,10 @@
 #include <iostream>
 #include <exception>
 #include <typeinfo>
+#include <cstdint>
+
+using float32_t = float;
+using float64_t = double;
 
 namespace lovela
 {
@@ -85,5 +89,5 @@ namespace lovela
 	{
 	};
 
-	void main(context& context);
+	None main(context& context, None in);
 }

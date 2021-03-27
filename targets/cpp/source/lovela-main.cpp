@@ -17,7 +17,8 @@ int wmain(int argc, wchar_t* argv[])
 	{
 		context.parameters.emplace_back(to_utf8(argv[i]));
 	}
-	lovela::main(context);
+	lovela::None in;
+	lovela::main(context, in);
 	return context.error.code;
 }
 
@@ -26,7 +27,8 @@ int wmain(int argc, wchar_t* argv[])
 int main(int argc, char* argv[])
 {
 	lovela::context context{ .parameters{argv + 1, argv + argc} };
-	lovela::main(context);
+	lovela::None in;
+	lovela::main(context, in);
 	return context.error.code;
 }
 

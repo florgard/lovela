@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\lovela.h" />
+    <ClInclude Include="lovela-exports.h" />
     <ClInclude Include="lovela-program.h" />
   </ItemGroup>
   <ItemGroup>
