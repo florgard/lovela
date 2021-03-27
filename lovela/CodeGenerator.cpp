@@ -511,7 +511,7 @@ void CodeGenerator::Expression(Node& node, Context& context)
 void CodeGenerator::ExpressionInput(Node&, Context& context)
 {
 	// The input of an expression is the output of the previous expression.
-	stream << LocalVar << (context.variableIndex - 1) << ' ';
+	stream << LocalVar << (context.variableIndex - 1);
 }
 
 void CodeGenerator::FunctionCall(Node& node, Context& context)
@@ -539,27 +539,17 @@ void CodeGenerator::FunctionCall(Node& node, Context& context)
 
 void CodeGenerator::BinaryOperation(Node& node, Context& context)
 {
+	if (!node.left || !node.right)
+	{
+		errors.emplace_back(L"Child node missing in binary operation.");
+		return;
+	}
+
 	const bool reset = BeginAssign(context, true);
 
-	if (node.left)
-	{
-		Visit(*node.left, context);
-	}
-	else
-	{
-		errors.emplace_back(L"Left node missing in binary operation.");
-	}
-
-	stream << node.value << ' ';
-
-	if (node.right)
-	{
-		Visit(*node.right, context);
-	}
-	else
-	{
-		errors.emplace_back(L"Right node missing in binary operation.");
-	}
+	Visit(*node.left, context);
+	stream << ' ' << node.value << ' ';
+	Visit(*node.right, context);
 
 	EndAssign(context, reset);
 }

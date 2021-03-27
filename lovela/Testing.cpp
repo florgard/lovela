@@ -419,7 +419,7 @@ Out f_func(lovela::context& context, In in)
 
 	TestCodeGenerator("function call", L"[#8] func [#8]: f(1, 'a', g).", LR"code(
 int8_t f_func(lovela::context& context, int8_t in)
-{ context; auto& v1 = in; v1; const auto v2 = f_f(context, v1 , 1, "a", f_g(context, v1 )); v2; return v2; }
+{ context; auto& v1 = in; v1; const auto v2 = f_f(context, v1, 1, "a", f_g(context, v1)); v2; return v2; }
 )code");
 
 	TestCodeGenerator("exported function none -> none", L"<- [()] ex [()]:.", LR"code(
