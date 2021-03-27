@@ -462,12 +462,10 @@ void Testing::RunCodeGeneratorTests()
 
 	std::wofstream exports(R"(..\targets\cpp\program\lovela-exports.h)");
 	exports << "#ifndef LOVELA_EXPORTS\n#define LOVELA_EXPORTS\n\n";
-
 	for (auto& signature : gen.GetExports())
 	{
 		exports << signature << ";\n";
 	}
-
 	exports << "\n#endif\n";
 	exports.close();
 }
