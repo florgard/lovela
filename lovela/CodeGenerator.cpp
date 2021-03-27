@@ -17,7 +17,7 @@ std::map<Node::Type, CodeGenerator::Visitor> CodeGenerator::internalVisitors
 	{Node::Type::VariableReference, &CodeGenerator::VariableReference},
 };
 
-const TypeSpec CodeGenerator::NoneType{ .name = L"None" };
+const TypeSpec CodeGenerator::NoneType{ .name = L"lovela::None" };
 const TypeSpec CodeGenerator::VoidType{ .name = L"void" };
 const TypeSpec CodeGenerator::VoidPtrType{ .name = L"void*" };
 
@@ -67,10 +67,6 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 	{
 		MainFunctionDeclaration(node, context);
 		return;
-	}
-	else if (node.exported)
-	{
-		ExportedFunctionDeclaration(node, context);
 	}
 
 	TypeSpec inType = node.inType;
@@ -150,6 +146,13 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 	FunctionBody(node, context);
 
 	stream << '\n';
+
+	// Generate the exported function
+
+	if (node.exported)
+	{
+		ExportedFunctionDeclaration(node, context);
+	}
 }
 
 void CodeGenerator::MainFunctionDeclaration(Node& node, Context& context)
@@ -160,7 +163,7 @@ void CodeGenerator::MainFunctionDeclaration(Node& node, Context& context)
 		node.outType.SetNone();
 	}
 
-	stream << VoidType.name << ' ' << "lovela::main(lovela::context& context, " << NoneType.name << " in)";
+	stream << NoneType.name << ' ' << "lovela::main(lovela::context& context, " << NoneType.name << " in)";
 	FunctionBody(node, context);
 	stream << '\n';
 }
@@ -286,7 +289,7 @@ void CodeGenerator::ExportedFunctionDeclaration(Node& node, Context&)
 		stream << ", " << parameter.second;
 	}
 
-	stream << ")\n";
+	stream << ");\n";
 
 	EndScope();
 

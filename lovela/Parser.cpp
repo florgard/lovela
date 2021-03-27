@@ -10,6 +10,7 @@ static const std::set<Token::Type> beginFunctionDeclarationTokens
 	Token::Type::OperatorArithmetic,
 	Token::Type::OperatorBitwise,
 	Token::Type::OperatorComparison,
+	Token::Type::SeparatorColon,
 };
 
 static const std::set<Token::Type> literalTokens
@@ -383,18 +384,23 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 		node->value = currentToken.value;
 		node->inType.SetAny();
 	}
+	// :
+	else if (IsToken(Token::Type::SeparatorColon))
+	{
+		node->inType.SetAny();
+	}
 	else
 	{
 		Assert();
 	}
 
-	// [inType] identifier (parameterList)
+	// identifier (parameterList)
 	if (Accept(Token::Type::ParenRoundOpen))
 	{
 		node->parameters = ParseParameterList();
 	}
 
-	// [inType] identifier (parameterList) [outType]
+	// identifier [outType]
 	if (Accept(Token::Type::ParenSquareOpen))
 	{
 		node->outType = ParseTypeSpec();
@@ -404,8 +410,8 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 		node->outType.SetAny();
 	}
 
-	// [inType] identifier (parameterList) [outType]:
-	if (Accept(Token::Type::SeparatorColon))
+	// identifier:
+	if (IsToken(Token::Type::SeparatorColon) || Accept(Token::Type::SeparatorColon))
 	{
 		auto innerContext = make<Context>::shared({ .parent = context, .inType = node->inType });
 

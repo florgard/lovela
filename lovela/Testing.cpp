@@ -408,9 +408,9 @@ void Testing::RunCodeGeneratorTests()
 	TestCodeGenerator("trivial function", L"func: + 1.",
 		L"template <typename Out, typename In> Out f_func(lovela::context& context, In in) { context; auto& v1 = in; v1; const auto v2 = v1 + 1 ; return v2; }");
 	TestCodeGenerator("exported function none -> none", L"<- [()] ex [()]:.",
-		L"void ex() { lovela::context context; None in; f_ex(context, in) } None f_ex(lovela::context& context, None in) { context; auto& v1 = in; v1; return {}; }");
+		L"lovela::None f_ex(lovela::context& context, lovela::None in) { context; auto& v1 = in; v1; return {}; } void ex() { lovela::context context; lovela::None in; f_ex(context, in); }");
 	TestCodeGenerator("exported function any -> any", L"<- ex: + 1.",
-		L"void* ex(void* in) { lovela::context context; return f_ex(context, in) } template <typename Out, typename In> Out f_ex(lovela::context& context, In in) { context; auto& v1 = in; v1; const auto v2 = v1 + 1 ; return v2; }");
+		L"template <typename Out, typename In> Out f_ex(lovela::context& context, In in) { context; auto& v1 = in; v1; const auto v2 = v1 + 1 ; return v2; } void* ex(void* in) { lovela::context context; return f_ex(context, in); }");
 
 //	std::wstring code = LR"(
 //[()] pi: 3.14.
@@ -421,6 +421,7 @@ void Testing::RunCodeGeneratorTests()
 
 	std::wstring code = LR"(
 <- [#32] ex [#32]: + 1.
+: 1 ex.
 )";
 	std::wcout << code << '\n';
 
