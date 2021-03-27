@@ -459,6 +459,23 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 }
 )code");
 
+	TestCodeGenerator("main and import", L"-> [#32] im [#32]. : 1 im.", LR"code(
+extern "C" int32_t im(int32_t in);
+
+int32_t f_im(lovela::context& context, int32_t in)
+{
+        return im(in);
+}
+
+lovela::None lovela::main(lovela::context& context, lovela::None in)
+{
+        context;
+        auto& v1 = in; v1;
+        const auto v2 = f_im(context, 1); v2;
+        return {};
+}
+)code");
+
 //	std::wstring code = LR"(
 //[()] pi: 3.14.
 //mul (factor): * factor.

@@ -40,6 +40,7 @@ private:
 	void ExportedFunctionDeclaration(Node& node, Context& context);
 	void ImportedFunctionDeclaration(Node& node, Context& context);
 	void FunctionBody(Node& node, Context& context);
+	void ImportedFunctionBody(Node& node, Context& context, const std::vector<std::pair<std::wstring, std::wstring>>& parameters);
 
 	void BeginScope();
 	void EndScope();

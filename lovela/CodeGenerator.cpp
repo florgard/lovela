@@ -76,7 +76,7 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 	auto inType = node.inType;
 	auto outType = node.outType;
 	std::vector<std::wstring> templateParameters;
-	std::vector<std::wstring> parameters;
+	std::vector<std::pair<std::wstring, std::wstring>> parameters;
 
 	if (outType.Any())
 	{
@@ -94,16 +94,16 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 
 	if (inType.Any())
 	{
-		parameters.emplace_back(L"In in");
+		parameters.emplace_back(std::make_pair(L"In", L"in"));
 		templateParameters.emplace_back(L"In");
 	}
 	else if (inType.None())
 	{
-		parameters.emplace_back(NoneType.name + L" in");
+		parameters.emplace_back(std::make_pair(NoneType.name, L"in"));
 	}
 	else
 	{
-		parameters.emplace_back(TypeName(inType.name) + L" in");
+		parameters.emplace_back(std::make_pair(TypeName(inType.name), L"in"));
 	}
 
 	int index = 0;
@@ -118,7 +118,7 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 			templateParameters.push_back(type);
 		}
 
-		parameters.emplace_back(type + L' ' + name);
+		parameters.emplace_back(std::make_pair(type, name));
 	}
 
 	if (!templateParameters.empty())
@@ -137,14 +137,21 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 
 	stream << Indent() << outType.name << ' ' << FunctionName(node.value) << "(lovela::context& context";
 
-	for (auto& param : parameters)
+	for (auto& parameter : parameters)
 	{
-		stream << ", " << param;
+		stream << ", " << parameter.first << ' ' << parameter.second;
 	}
 
 	stream << ')';
 
-	FunctionBody(node, context);
+	if (node.imported)
+	{
+		ImportedFunctionBody(node, context, parameters);
+	}
+	else
+	{
+		FunctionBody(node, context);
+	}
 
 	stream << '\n';
 
@@ -451,6 +458,38 @@ void CodeGenerator::FunctionBody(Node& node, Context& context)
 	{
 		stream << ";\n";
 	}
+}
+
+void CodeGenerator::ImportedFunctionBody(Node& node, Context&, const std::vector<std::pair<std::wstring, std::wstring>>& parameters)
+{
+	stream << '\n';
+
+	BeginScope();
+
+	stream << Indent();
+
+	if (!node.outType.None())
+	{
+		stream << "return ";
+	}
+
+	stream << node.value << '(';
+
+	int index = 0;
+	for (auto& parameter : parameters)
+	{
+		stream << (index++ ? ", " : "");
+		stream << parameter.second;
+	}
+
+	stream << ");\n";
+
+	if (node.outType.None())
+	{
+		stream << "return {};\n";
+	}
+
+	EndScope();
 }
 
 void CodeGenerator::Expression(Node& node, Context& context)
