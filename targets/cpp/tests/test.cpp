@@ -258,17 +258,18 @@ TEST(ReturnValueTest, WithMidErrorHandlerOnSuccess) {
 }
 
 
-void lovela::main(lovela::context& context)
+lovela::None lovela::main(lovela::context& context, lovela::None in)
 {
 	context;
-	None in;
 	auto& v1 = in; v1;
+	return {};
 }
 
 int MainTest(int argc, char* argv[])
 {
 	lovela::context context{ .parameters{argv + 1, argv + argc} };
-	lovela::main(context);
+	lovela::None in;
+	lovela::main(context, in);
 	return context.error.code;
 }
 
