@@ -567,10 +567,11 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 
 std::unique_ptr<Node> Parser::ReduceExpression(std::unique_ptr<Node>&& expression)
 {
-	static const std::set<Node::Type> reducable{
-		Node::Type::Empty,
-		Node::Type::Expression
-	};
+	if (expression->type != Node::Type::Expression)
+	{
+		// Only expression nodes can be reduced.
+		return expression;
+	}
 
 	const bool leftEmpty = !expression->left || expression->left->type == Node::Type::Empty;
 	const bool rightEmpty = !expression->right || expression->right->type == Node::Type::Empty;
@@ -583,11 +584,6 @@ std::unique_ptr<Node> Parser::ReduceExpression(std::unique_ptr<Node>&& expressio
 	else if (!leftEmpty && !rightEmpty)
 	{
 		// Both children defined, can't reduce.
-		return expression;
-	}
-	else if (!reducable.contains(expression->type))
-	{
-		// This node type is not known to be reducable.
 		return expression;
 	}
 
