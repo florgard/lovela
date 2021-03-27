@@ -396,29 +396,49 @@ void Testing::RunCodeGeneratorTests()
 {
 	TestCodeGenerator("trivial function", L"func",
 		L"template <typename Out, typename In> Out f_func(lovela::context& context, In in);");
+
 	TestCodeGenerator("function with return type", L"func [type]",
 		L"template <typename In> t_type f_func(lovela::context& context, In in);");
+
 	TestCodeGenerator("function with object type", L"[type] func",
 		L"template <typename Out> Out f_func(lovela::context& context, t_type in);");
+
 	TestCodeGenerator("function with untyped parameter", L"func (arg)",
 		L"template <typename Out, typename In, typename Param1> Out f_func(lovela::context& context, In in, Param1 p_arg);");
+
 	TestCodeGenerator("function with typed parameter", L"func (arg [type])",
 		L"template <typename Out, typename In> Out f_func(lovela::context& context, In in, t_type p_arg);");
-	TestCodeGenerator("trivial function", L"func: + 1.",
-		L"template <typename Out, typename In> Out f_func(lovela::context& context, In in) { context; auto& v1 = in; v1; const auto v2 = v1 + 1 ; return v2; }");
-	TestCodeGenerator("function call", L"[#8] func [#8]: f(1, 'a', g).",
-		LR"code(int8_t f_func(lovela::context& context, int8_t in) { context; auto& v1 = in; v1; const auto v2 = f_f( context, 1 , "a" , f_g( context) ) ; return v2; })code");
-	TestCodeGenerator("exported function none -> none", L"<- [()] ex [()]:.",
-		L"lovela::None f_ex(lovela::context& context, lovela::None in) { context; auto& v1 = in; v1; return {}; } void ex() { lovela::context context; lovela::None in; f_ex(context, in); }");
-	TestCodeGenerator("exported function any -> any", L"<- ex: + 1.",
-		L"template <typename Out, typename In> Out f_ex(lovela::context& context, In in) { context; auto& v1 = in; v1; const auto v2 = v1 + 1 ; return v2; } void* ex(void* in) { lovela::context context; return f_ex(context, in); }");
-	TestCodeGenerator("main and export", L"<- [#32] ex [#32]: + 1. : 1 ex.",
-LR"code(
+
+	TestCodeGenerator("trivial function", L"func: + 1.", LR"code(
+template <typename Out, typename In>
+Out f_func(lovela::context& context, In in) { context; auto& v1 = in; v1; const auto v2 = v1 + 1; return v2; }
+)code");
+
+	TestCodeGenerator("function call", L"[#8] func [#8]: f(1, 'a', g).", LR"code(
+int8_t f_func(lovela::context& context, int8_t in)
+{ context; auto& v1 = in; v1; const auto v2 = f_f(context, 1, "a", f_g(context)); return v2; }
+)code");
+
+	TestCodeGenerator("exported function none -> none", L"<- [()] ex [()]:.", LR"code(
+lovela::None f_ex(lovela::context& context, lovela::None in)
+{ context; auto& v1 = in; v1; return {}; }
+void ex()
+{ lovela::context context; lovela::None in; f_ex(context, in); }
+)code");
+
+	TestCodeGenerator("exported function any -> any", L"<- ex: + 1.", LR"code(
+template <typename Out, typename In> Out f_ex(lovela::context& context, In in)
+{ context; auto& v1 = in; v1; const auto v2 = v1 + 1; return v2; }
+void* ex(void* in)
+{ lovela::context context; return f_ex(context, in); }
+)code");
+
+	TestCodeGenerator("main and export", L"<- [#32] ex [#32]: + 1. : 1 ex.", LR"code(
 int32_t f_ex(lovela::context& context, int32_t in)
 {
 	context;
 	auto& v1 = in; v1;
-	const auto v2 = v1 + 1 ;
+	const auto v2 = v1 + 1;
 	return v2;
 }
 
@@ -432,7 +452,7 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 {
 	context;
 	auto& v1 = in; v1;
-	const auto v2 = f_ex( context, 1 ) ;
+	const auto v2 = f_ex(context, 1);
 	return {};
 }
 )code");

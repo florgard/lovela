@@ -375,7 +375,7 @@ void CodeGenerator::FunctionCall(Node& node, Context& context)
 {
 	const auto reset = BeginAssign(context, false);
 
-	stream << FunctionName(node.value) << "( context";
+	stream << FunctionName(node.value) << "(context";
 
 	if (node.left)
 	{
@@ -389,7 +389,7 @@ void CodeGenerator::FunctionCall(Node& node, Context& context)
 		Visit(*node.right, context);
 	}
 
-	stream << ") ";
+	stream << ')';
 
 	EndAssign(context, reset);
 }
@@ -424,7 +424,7 @@ void CodeGenerator::BinaryOperation(Node& node, Context& context)
 void CodeGenerator::Literal(Node& node, Context& context)
 {
 	BeginAssign(context);
-	stream << (node.token.type == Token::Type::LiteralString ? double_quote(node.value) : node.value) << ' ';
+	stream << (node.token.type == Token::Type::LiteralString ? double_quote(node.value) : node.value);
 	EndAssign(context);
 }
 
@@ -449,7 +449,7 @@ void CodeGenerator::Tuple(Node& node, Context& context)
 
 void CodeGenerator::VariableReference(Node& node, Context&)
 {
-	stream << ParameterName(node.value) << ' ';
+	stream << ParameterName(node.value);
 }
 
 void CodeGenerator::BeginAssign(Context& context)
