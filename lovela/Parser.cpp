@@ -576,7 +576,7 @@ std::unique_ptr<Node> Parser::ReduceExpression(std::unique_ptr<Node>&& expressio
 	const bool leftEmpty = !expression->left || expression->left->type == Node::Type::Empty;
 	const bool rightEmpty = !expression->right || expression->right->type == Node::Type::Empty;
 
-	if (!leftEmpty == !rightEmpty)
+	if (leftEmpty == rightEmpty)
 	{
 		// Can't reduce when either no or both children are defined.
 		return expression;
