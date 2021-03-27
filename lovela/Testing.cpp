@@ -312,7 +312,8 @@ void Testing::RunParserTests()
 	}
 
 	{
-		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = make<Node>::unique({.type = Node::Type::FunctionCall, .value = L"body" }) };
+		auto fc = Node{ .type = Node::Type::FunctionCall, .value = L"body", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = make<Node>::unique(fc) };
 		TestParser("function with trivial body", L"func: body.", fd);
 	}
 
@@ -324,47 +325,48 @@ void Testing::RunParserTests()
 	}
 
 	{
-		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = make<Node>::unique({.type = Node::Type::FunctionCall, .value = L"body" }) };
+		auto fc = Node{ .type = Node::Type::FunctionCall, .value = L"body", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = make<Node>::unique(fc) };
 		TestParser("function with group", L"func: (body).", fd);
 		TestParser("function with group 2", L"func: (body.).", fd);
 	}
 
 	{
-		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = L"expr2" };
-		auto fc1  = Node{ .type = Node::Type::FunctionCall, .value = L"expr1", .right = make<Node>::unique(fc2) };
+		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = L"expr2", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto fc1  = Node{ .type = Node::Type::FunctionCall, .value = L"expr1", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}), .right = make<Node>::unique(fc2) };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = make<Node>::unique(fc1) };
 		TestParser("function with compound expression", L"func: (expr1. expr2).", fd);
 	}
 
 	{
-		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = L"expr2" };
-		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = L"expr1" };
+		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = L"expr2", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = L"expr1", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
 		auto t = Node{ .type = Node::Type::Tuple, .left = make<Node>::unique(fc1), .right = make<Node>::unique(fc2) };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = make<Node>::unique(t) };
 		TestParser("function with tuple", L"func: (expr1, expr2).", fd);
 	}
 
 	{
-		auto fc3 = Node{ .type = Node::Type::FunctionCall, .value = L"expr3" };
-		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = L"expr2" };
+		auto fc3 = Node{ .type = Node::Type::FunctionCall, .value = L"expr3", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = L"expr2", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
 		auto t2 = Node{ .type = Node::Type::Tuple, .left = make<Node>::unique(fc2), .right = make<Node>::unique(fc3) };
-		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = L"expr1" };
+		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = L"expr1", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
 		auto t1 = Node{ .type = Node::Type::Tuple, .left = make<Node>::unique(fc1), .right = make<Node>::unique(t2) };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = make<Node>::unique(t1) };
 		TestParser("function with triple", L"func: (expr1, expr2, expr3).", fd);
 	}
 
 	{
-		auto fc3 = Node{ .type = Node::Type::FunctionCall, .value = L"expr2b" };
-		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = L"expr2a", .right = make<Node>::unique(fc3) };
-		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = L"expr1" };
+		auto fc3 = Node{ .type = Node::Type::FunctionCall, .value = L"expr2b", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = L"expr2a", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}), .right = make<Node>::unique(fc3) };
+		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = L"expr1", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
 		auto t = Node{ .type = Node::Type::Tuple, .left = make<Node>::unique(fc1), .right = make<Node>::unique(fc2) };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = make<Node>::unique(t) };
 		TestParser("function with tuple and compound expression", L"func: (expr1, expr2a. expr2b).", fd);
 	}
 
 	{
-		auto fc = Node{ .type = Node::Type::FunctionCall, .value = L"doWork" };
+		auto fc = Node{ .type = Node::Type::FunctionCall, .value = L"doWork", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .parameters{
 				make<VariableDeclaration>::shared({.name = L"name_only"}),
 				make<VariableDeclaration>::shared({.name = L"name", .type{.name = L"type"}}),
@@ -374,7 +376,7 @@ void Testing::RunParserTests()
 	}
 
 	{
-		auto fc = Node{ .type = Node::Type::FunctionCall, .value = L"doWork" };
+		auto fc = Node{ .type = Node::Type::FunctionCall, .value = L"doWork", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .inType = TypeSpec::NoneType(), .parameters{
 				make<VariableDeclaration>::shared({.name = L"name_only"}),
 				make<VariableDeclaration>::shared({.name = L"name", .type{.name = L"type"}}),
@@ -417,7 +419,7 @@ Out f_func(lovela::context& context, In in)
 
 	TestCodeGenerator("function call", L"[#8] func [#8]: f(1, 'a', g).", LR"code(
 int8_t f_func(lovela::context& context, int8_t in)
-{ context; auto& v1 = in; v1; const auto v2 = f_f(context, 1, "a", f_g(context)); v2; return v2; }
+{ context; auto& v1 = in; v1; const auto v2 = f_f(context, v1 , 1, "a", f_g(context, v1 )); v2; return v2; }
 )code");
 
 	TestCodeGenerator("exported function none -> none", L"<- [()] ex [()]:.", LR"code(

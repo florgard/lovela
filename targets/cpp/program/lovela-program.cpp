@@ -27,7 +27,7 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 {
 	context;
 	auto& v1 = in; v1;
-	const auto v2 = f_greet(context); v2;
+	const auto v2 = f_greet(context, v1 ); v2;
 	return {};
 }
 

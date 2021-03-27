@@ -494,10 +494,6 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 	{
 		return make<Node>::unique({ .type = Node::Type::Empty, .token = firstToken });
 	}
-	if (nodes.size() == 1)
-	{
-		return std::move(nodes.front());
-	}
 
 	auto expression = make<Node>::unique({ .type = Node::Type::Expression, .outType = inType, .token = firstToken, .inType = inType });
 	auto parent = expression.get();
@@ -550,7 +546,7 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 
 		parent->left = std::move(right);
 	}
-	else if (!parent->left)
+	else if (!parent->left || parent->left->type == Node::Type::Empty)
 	{
 		// Default expression input
 		// TODO: Check if the expected in-type is None and the implicit input should be discarded?
@@ -560,7 +556,7 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 
 	expression = ReduceExpression(std::move(expression));
 
-	// The data type of an expression node is the data type of the first child node.
+	// The out type of an expression node is the data type of the first child node.
 	if (expression->type == Node::Type::Expression && expression->left)
 	{
 		expression->outType = expression->left->outType;

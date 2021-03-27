@@ -119,12 +119,6 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const 
 
 	index++;
 
-	// HACK to avoid having to add an ExpressionInput node to every operator node.
-	if (!!tree.left && tree.left->type == Node::Type::ExpressionInput && !expectedTree.right)
-	{
-		return true;
-	}
-
 	// Fail if one pointer is set but not the other
 	if (!!tree.left != !!expectedTree.left || !!tree.right != !!expectedTree.right)
 	{
