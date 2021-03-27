@@ -20,8 +20,6 @@
 #else
 #include <stdint.h>
 #endif
-typedef float float32_t;
-typedef double float64_t;
 #endif
 
 #include "lovela-exports.h"
