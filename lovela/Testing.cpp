@@ -460,19 +460,20 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 )code");
 
 	TestCodeGenerator("main and import", L"-> [#32] im [#32]. : 1 im.", LR"code(
-extern "C" int32_t im(int32_t in);
+LOVELA_IMPORT int32_t im(int32_t in);
 
 int32_t f_im(lovela::context& context, int32_t in)
 {
-        return im(in);
+	context;
+	return im(in);
 }
 
 lovela::None lovela::main(lovela::context& context, lovela::None in)
 {
-        context;
-        auto& v1 = in; v1;
-        const auto v2 = f_im(context, 1); v2;
-        return {};
+	context;
+	auto& v1 = in; v1;
+	const auto v2 = f_im(context, 1); v2;
+	return {};
 }
 )code");
 
@@ -483,8 +484,11 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 //[](): pi transform (2, 0.28) + 1.
 //)";
 
+	// Internal error:
+	// -> [#32] puts [#8#]. : 'Hello, Wordl!" puts.
+
 	std::wstring code = LR"(
--> [#32] im [#32]. : 1 im.
+-> [#8#] puts [#32]. : 'Hello, Wordl!' puts.
 )";
 	std::wcout << code << '\n';
 

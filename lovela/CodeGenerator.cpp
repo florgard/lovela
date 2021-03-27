@@ -422,7 +422,7 @@ void CodeGenerator::ImportedFunctionDeclaration(Node& node, Context&)
 
 	// Declare import
 
-	stream << "extern \"C\" " << signature << ";\n";
+	stream << "LOVELA_IMPORT " << signature << ";\n";
 
 	stream << '\n';
 }
@@ -465,6 +465,8 @@ void CodeGenerator::ImportedFunctionBody(Node& node, Context&, const std::vector
 	stream << '\n';
 
 	BeginScope();
+
+	stream << Indent() << "context;\n";;
 
 	stream << Indent();
 
