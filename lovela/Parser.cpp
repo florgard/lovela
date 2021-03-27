@@ -233,6 +233,13 @@ TypeSpec Parser::ParseTypeSpec()
 		typeSpec.name = currentToken.value;
 		Expect(Token::Type::LiteralInteger);
 		typeSpec.name += currentToken.value;
+
+		// [#32#]
+		if (Accept(Token::Type::SeparatorHash))
+		{
+			typeSpec.name += currentToken.value;
+		}
+
 		Expect(Token::Type::ParenSquareClose);
 	}
 	// [identifier]
