@@ -412,12 +412,12 @@ void Testing::RunCodeGeneratorTests()
 	TestCodeGenerator("trivial function", L"func: + 1.", LR"code(
 template <typename Out, typename In>
 Out f_func(lovela::context& context, In in)
-{ context; auto& v1 = in; v1; const auto v2 = v1 + 1; return v2; }
+{ context; auto& v1 = in; v1; const auto v2 = v1 + 1; v2; return v2; }
 )code");
 
 	TestCodeGenerator("function call", L"[#8] func [#8]: f(1, 'a', g).", LR"code(
 int8_t f_func(lovela::context& context, int8_t in)
-{ context; auto& v1 = in; v1; const auto v2 = f_f(context, 1, "a", f_g(context)); return v2; }
+{ context; auto& v1 = in; v1; const auto v2 = f_f(context, 1, "a", f_g(context)); v2; return v2; }
 )code");
 
 	TestCodeGenerator("exported function none -> none", L"<- [()] ex [()]:.", LR"code(
@@ -430,7 +430,7 @@ void ex()
 	TestCodeGenerator("exported function any -> any", L"<- ex: + 1.", LR"code(
 template <typename Out, typename In>
 Out f_ex(lovela::context& context, In in)
-{ context; auto& v1 = in; v1; const auto v2 = v1 + 1; return v2; }
+{ context; auto& v1 = in; v1; const auto v2 = v1 + 1; v2; return v2; }
 void* ex(void* in)
 { lovela::context context; return f_ex(context, in); }
 )code");
@@ -440,7 +440,7 @@ int32_t f_ex(lovela::context& context, int32_t in)
 {
 	context;
 	auto& v1 = in; v1;
-	const auto v2 = v1 + 1;
+	const auto v2 = v1 + 1; v2;
 	return v2;
 }
 
@@ -454,7 +454,7 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 {
 	context;
 	auto& v1 = in; v1;
-	const auto v2 = f_ex(context, 1);
+	const auto v2 = f_ex(context, 1); v2;
 	return {};
 }
 )code");

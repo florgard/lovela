@@ -473,7 +473,7 @@ void CodeGenerator::EndAssign(Context& context)
 {
 	if (context.assignVariable)
 	{
-		stream << ";\n";
+		stream << "; " << LocalVar << context.variableIndex << ";\n";
 	}
 }
 
