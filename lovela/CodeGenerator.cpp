@@ -405,7 +405,7 @@ void CodeGenerator::BinaryOperation(Node& node, Context& context)
 	}
 	else
 	{
-		stream << "???";
+		errors.emplace_back(L"Left node missing in binary operation.");
 	}
 
 	stream << node.value << ' ';
@@ -416,7 +416,7 @@ void CodeGenerator::BinaryOperation(Node& node, Context& context)
 	}
 	else
 	{
-		stream << "???";
+		errors.emplace_back(L"Right node missing in binary operation.");
 	}
 
 	context.assignVariable = assignVariable;
