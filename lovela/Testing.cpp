@@ -411,7 +411,8 @@ void Testing::RunCodeGeneratorTests()
 
 	TestCodeGenerator("trivial function", L"func: + 1.", LR"code(
 template <typename Out, typename In>
-Out f_func(lovela::context& context, In in) { context; auto& v1 = in; v1; const auto v2 = v1 + 1; return v2; }
+Out f_func(lovela::context& context, In in)
+{ context; auto& v1 = in; v1; const auto v2 = v1 + 1; return v2; }
 )code");
 
 	TestCodeGenerator("function call", L"[#8] func [#8]: f(1, 'a', g).", LR"code(
@@ -427,7 +428,8 @@ void ex()
 )code");
 
 	TestCodeGenerator("exported function any -> any", L"<- ex: + 1.", LR"code(
-template <typename Out, typename In> Out f_ex(lovela::context& context, In in)
+template <typename Out, typename In>
+Out f_ex(lovela::context& context, In in)
 { context; auto& v1 = in; v1; const auto v2 = v1 + 1; return v2; }
 void* ex(void* in)
 { lovela::context context; return f_ex(context, in); }
