@@ -25,7 +25,7 @@ CodeGenerator::CodeGenerator(std::wostream& stream) : stream(stream)
 {
 }
 
-void CodeGenerator::Generate(Node& node)
+void CodeGenerator::Visit(Node& node)
 {
 	auto iter = visitors.find(node.type);
 	if (iter != visitors.end())
@@ -483,4 +483,35 @@ void CodeGenerator::EndAssign(Context& context, bool reset)
 	context.assignVariable = reset;
 
 	EndAssign(context);
+}
+
+void CodeGenerator::GenerateLibraryHeaderFile(std::wostream& file)
+{
+	CodeGenerator::BeginLibraryHeaderFile(file);
+
+	for (auto& signature : GetExports())
+	{
+		file << signature << ";\n";
+	}
+
+	CodeGenerator::EndLibraryHeaderFile(file);
+}
+
+void CodeGenerator::BeginProgramSourceFile(std::wostream& file)
+{
+	file << "#include \"lovela-program.h\"\n\n";
+}
+
+void CodeGenerator::EndProgramSourceFile(std::wostream&)
+{
+}
+
+void CodeGenerator::BeginLibraryHeaderFile(std::wostream& file)
+{
+	file << "#ifndef LOVELA_EXPORTS\n#define LOVELA_EXPORTS\n\n";
+}
+
+void CodeGenerator::EndLibraryHeaderFile(std::wostream& file)
+{
+	file << "\n#endif\n";
 }

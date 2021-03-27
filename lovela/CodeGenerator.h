@@ -6,10 +6,17 @@ class CodeGenerator
 public:
 	CodeGenerator(std::wostream& stream);
 
-	void Generate(Node& node);
-
 	const std::vector<std::wstring>& GetErrors() { return errors; }
 	const std::vector<std::wstring>& GetExports() { return exports; }
+
+	void Visit(Node& node);
+
+	void GenerateLibraryHeaderFile(std::wostream& file);
+
+	static void BeginProgramSourceFile(std::wostream& file);
+	static void EndProgramSourceFile(std::wostream& file);
+	static void BeginLibraryHeaderFile(std::wostream& file);
+	static void EndLibraryHeaderFile(std::wostream& file);
 
 private:
 	struct Context

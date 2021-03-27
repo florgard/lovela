@@ -447,7 +447,7 @@ void Testing::RunCodeGeneratorTests()
 	std::wstringstream stream;
 
 	CodeGenerator gen(stream);
-	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { gen.Generate(node); });
+	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { gen.Visit(node); });
 
 	for (auto& error : gen.GetErrors())
 	{
@@ -458,16 +458,12 @@ void Testing::RunCodeGeneratorTests()
 	std::wcout << genCode;
 
 	std::wofstream program(R"(..\targets\cpp\program\lovela-program.cpp)");
-	program << "#include \"lovela-program.h\"\n\n";
+	CodeGenerator::BeginProgramSourceFile(program);
 	program << genCode;
+	CodeGenerator::EndProgramSourceFile(program);
 	program.close();
 
 	std::wofstream exports(R"(..\targets\cpp\program\lovela-exports.h)");
-	exports << "#ifndef LOVELA_EXPORTS\n#define LOVELA_EXPORTS\n\n";
-	for (auto& signature : gen.GetExports())
-	{
-		exports << signature << ";\n";
-	}
-	exports << "\n#endif\n";
+	gen.GenerateLibraryHeaderFile(exports);
 	exports.close();
 }

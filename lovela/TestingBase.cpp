@@ -170,7 +170,7 @@ void TestingBase::TestCodeGenerator(const char* name, std::wstring_view code, st
 
 	std::wostringstream output;
 	CodeGenerator gen(output);
-	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { gen.Generate(node); });
+	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { gen.Visit(node); });
 
 	auto generatedCode = output.str();
 	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"^\\s+" }, L"");
