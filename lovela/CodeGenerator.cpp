@@ -193,14 +193,27 @@ bool CodeGenerator::CheckExportType(TypeSpec& type)
 
 bool CodeGenerator::ConvertPrimitiveType(std::wstring& name)
 {
-	static std::wregex regex(LR"(#(\.|\+)?(\d\d?)(#?)(#?))");
+	static std::map<std::wstring, std::wstring> types{
+		{L"#8", L"char"},
+		{L"#8#", L"const char*"},
+		{L"#.32", L"float"},
+		{L"#.64", L"double"}
+	};
+
+	if (types.contains(name))
+	{
+		name = types.at(name);
+		return true;
+	}
+
+	static std::wregex regex(LR"(#(\+)?(\d\d?)(#?)(#?))");
 	std::wsmatch match;
 	if (!std::regex_match(name, match, regex))
 	{
 		return false;
 	}
 
-	std::wstring exportName = match[1].str() == L"." ? L"float" : (match[1].str() == L"+" ? L"uint" : L"int");
+	std::wstring exportName = match[1].str() == L"+" ? L"uint" : L"int";
 	exportName += match[2].str() + L"_t";
 	exportName += match[3].str() == L"#" ? L"*" : L"";
 	exportName += match[4].str() == L"#" ? L"*" : L"";

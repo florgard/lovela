@@ -1,8 +1,8 @@
 #include "lovela-program.h"
 
-LOVELA_IMPORT int32_t puts(int8_t* in);
+LOVELA_IMPORT int32_t puts(const char* in);
 
-int32_t f_puts(lovela::context& context, int8_t* in)
+int32_t f_puts(lovela::context& context, const char* in)
 {
 	context;
 	return puts(in);
