@@ -24,12 +24,6 @@ typedef float float32_t;
 typedef double float64_t;
 #endif
 
-#ifdef __cplusplus
-extern "C" {
 #include "lovela-exports.h"
-}
-#else
-#include "lovela-exports.h"
-#endif
 
 #endif

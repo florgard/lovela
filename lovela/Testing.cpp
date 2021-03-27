@@ -488,7 +488,9 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 	// -> [#32] puts [#8#]. : 'Hello, Wordl!" puts.
 
 	std::wstring code = LR"(
--> [#8#] puts [#32]. : 'Hello, Wordl!' puts.
+-> [#8#] puts [#32]
+<- [()] greet [()]: 'Hello, Wordl!' puts.
+: greet.
 )";
 	std::wcout << code << '\n';
 

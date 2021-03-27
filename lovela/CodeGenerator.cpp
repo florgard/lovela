@@ -634,7 +634,7 @@ void CodeGenerator::GenerateLibraryHeaderFile(std::wostream& file)
 
 	for (auto& signature : GetExports())
 	{
-		file << signature << ";\n";
+		file << "LOVELA_EXPORT " << signature << ";\n";
 	}
 
 	CodeGenerator::EndLibraryHeaderFile(file);
