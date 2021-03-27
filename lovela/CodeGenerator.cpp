@@ -69,8 +69,8 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 		return;
 	}
 
-	TypeSpec inType = node.inType;
-	TypeSpec outType = node.outType;
+	auto inType = node.inType;
+	auto outType = node.outType;
 	std::vector<std::wstring> templateParameters;
 	std::vector<std::wstring> parameters;
 
@@ -214,10 +214,12 @@ std::wstring CodeGenerator::TypeName(const std::wstring& name)
 
 void CodeGenerator::ExportedFunctionDeclaration(Node& node, Context&)
 {
-	TypeSpec inType = node.inType;
-	TypeSpec outType = node.outType;
+	auto inType = node.inType;
+	auto outType = node.outType;
 
 	std::vector<std::pair<std::wstring, std::wstring>> parameters;
+
+	// Verify and convert the input type
 
 	if (inType.None())
 	{
@@ -231,6 +233,8 @@ void CodeGenerator::ExportedFunctionDeclaration(Node& node, Context&)
 		return;
 	}
 
+	// Verify and convert the output type
+
 	if (outType.None())
 	{
 		outType = VoidType;
@@ -240,10 +244,12 @@ void CodeGenerator::ExportedFunctionDeclaration(Node& node, Context&)
 		return;
 	}
 
+	// Verify and convert the parameter types
+
 	int index = 0;
 	for (auto& parameter : node.parameters)
 	{
-		TypeSpec type = parameter->type;
+		auto type = parameter->type;
 
 		if (parameter->name.empty())
 		{
@@ -258,15 +264,28 @@ void CodeGenerator::ExportedFunctionDeclaration(Node& node, Context&)
 		parameters.emplace_back(std::make_pair(type.name, parameter->name));
 	}
 
-	stream << Indent() << outType.name << ' ' << node.value << '(';
+	// Make the function signature
+
+	std::wstringstream ss;
+	ss << outType.name << ' ' << node.value << '(';
 
 	index = 0;
 	for (auto& parameter : parameters)
 	{
-		stream << (index++ ? ", " : "") << parameter.first << ' ' << parameter.second;
+		ss << (index++ ? ", " : "") << parameter.first << ' ' << parameter.second;
 	}
 
-	stream << ")\n";
+	ss << ')';
+
+	auto signature = ss.str();
+
+	// Store for export declarations
+
+	exports.push_back(signature);
+
+	// Define the exported function wrapper
+
+	stream << Indent() << signature << '\n';
 
 	BeginScope();
 
@@ -276,6 +295,8 @@ void CodeGenerator::ExportedFunctionDeclaration(Node& node, Context&)
 	{
 		stream << Indent() << NoneType.name << " in;\n";
 	}
+
+	// Call the actual function
 
 	stream << Indent() << (node.outType.None() ? "" : "return ") << FunctionName(node.value) << "(context";
 

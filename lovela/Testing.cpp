@@ -455,8 +455,19 @@ void Testing::RunCodeGeneratorTests()
 	auto genCode = stream.str();
 	std::wcout << genCode;
 
-	std::wofstream file(R"(..\targets\cpp\program\lovela-program.cpp)");
-	file << "#include \"lovela-program.h\"\n\n";
-	file << genCode;
-	file.close();
+	std::wofstream program(R"(..\targets\cpp\program\lovela-program.cpp)");
+	program << "#include \"lovela-program.h\"\n\n";
+	program << genCode;
+	program.close();
+
+	std::wofstream exports(R"(..\targets\cpp\program\lovela-exports.h)");
+	exports << "#ifndef LOVELA_EXPORTS\n#define LOVELA_EXPORTS\n\n";
+
+	for (auto& signature : gen.GetExports())
+	{
+		exports << signature << ";\n";
+	}
+
+	exports << "\n#endif\n";
+	exports.close();
 }
