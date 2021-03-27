@@ -488,14 +488,6 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 	}
 
 	auto expression = make<Node>::unique({ .type = Node::Type::Expression, .outType = inType, .token = firstToken, .inType = inType });
-
-	if (nodes.back()->type == Node::Type::Expression)
-	{
-		// Use a possible top-most expression node as the return node
-		expression = std::move(nodes.back());
-		nodes.pop_back();
-	}
-
 	auto parent = expression.get();
 	std::unique_ptr<Node> right;
 
@@ -556,8 +548,8 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 
 	expression = ReduceExpression(std::move(expression));
 
-	// The data type of the expression is the data type of the first child node.
-	if (expression->left)
+	// The data type of an expression node is the data type of the first child node.
+	if (expression->type == Node::Type::Expression && expression->left)
 	{
 		expression->outType = expression->left->outType;
 	}
