@@ -317,9 +317,9 @@ void Testing::RunParserTests()
 	}
 
 	{
-		auto e2 = Node{ .type = Node::Type::FunctionCall, .value = L"inner" };
-		auto e1 = Node{ .type = Node::Type::Expression, .left = make<Node>::unique({.type = Node::Type::FunctionCall, .value = L"outer", .left = make<Node>::unique(e2) }) };
-		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = make<Node>::unique(e1) };
+		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = L"inner", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = L"outer", .left = make<Node>::unique(fc2) };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = make<Node>::unique(fc1) };
 		TestParser("function with 2 chained calls", L"func: inner outer.", fd);
 	}
 
@@ -385,10 +385,9 @@ void Testing::RunParserTests()
 
 	{
 		auto l = Node{ .type = Node::Type::Literal, .value = L"1", .outType{.name = L"32"} };
-		auto fc = Node{ .type = Node::Type::FunctionCall, .value = L"call" };
+		auto fc = Node{ .type = Node::Type::FunctionCall, .value = L"call", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
 		auto bo = Node{ .type = Node::Type::BinaryOperation, .value = L"+", .left = make<Node>::unique(fc), .right = make<Node>::unique(l) };
-		auto e = Node{ .type = Node::Type::Expression, .left = make<Node>::unique(bo) };
-		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = make<Node>::unique(e) };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = make<Node>::unique(bo) };
 		TestParser("binary operation with function call", L"func: call + 1.", fd);
 	}
 }

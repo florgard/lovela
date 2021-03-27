@@ -554,6 +554,8 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		parent->left = make<Node>::unique(Node{ .type = Node::Type::ExpressionInput, .token = firstToken });
 	}
 
+	expression = ReduceExpression(std::move(expression));
+
 	// The data type of the expression is the data type of the first child node.
 	if (expression->left)
 	{
@@ -561,6 +563,35 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 	}
 
 	return expression;
+}
+
+std::unique_ptr<Node> Parser::ReduceExpression(std::unique_ptr<Node>&& expression)
+{
+	static const std::set<Node::Type> reducable{
+		Node::Type::Empty,
+		Node::Type::Expression
+	};
+
+	const bool leftEmpty = !expression->left || expression->left->type == Node::Type::Empty;
+	const bool rightEmpty = !expression->right || expression->right->type == Node::Type::Empty;
+
+	if (leftEmpty && rightEmpty)
+	{
+		// Nothing to reduce
+		return expression;
+	}
+	else if (!leftEmpty && !rightEmpty)
+	{
+		// Both children defined, can't reduce.
+		return expression;
+	}
+	else if (!reducable.contains(expression->type))
+	{
+		// This node type is not known to be reducable.
+		return expression;
+	}
+
+	return std::move(leftEmpty ? expression->right : expression->left);
 }
 
 // Returns Expression or Tuple

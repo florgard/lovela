@@ -396,8 +396,7 @@ void CodeGenerator::FunctionCall(Node& node, Context& context)
 
 void CodeGenerator::BinaryOperation(Node& node, Context& context)
 {
-	const bool assignVariable = context.assignVariable;
-	context.assignVariable = false;
+	const bool reset = BeginAssign(context, false);
 
 	if (node.left)
 	{
@@ -419,7 +418,7 @@ void CodeGenerator::BinaryOperation(Node& node, Context& context)
 		errors.emplace_back(L"Right node missing in binary operation.");
 	}
 
-	context.assignVariable = assignVariable;
+	EndAssign(context, reset);
 }
 
 void CodeGenerator::Literal(Node& node, Context& context)
