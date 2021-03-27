@@ -372,7 +372,6 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 		}
 
 		node->value = name;
-		node->inType.SetAny();
 
 		qualifiedName << name;
 
@@ -382,12 +381,10 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 	else if (IsToken(binaryOperatorTokens))
 	{
 		node->value = currentToken.value;
-		node->inType.SetAny();
 	}
 	// :
 	else if (IsToken(Token::Type::SeparatorColon))
 	{
-		node->inType.SetAny();
 	}
 	else
 	{
@@ -405,14 +402,16 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 	{
 		node->outType = ParseTypeSpec();
 	}
-	else
-	{
-		node->outType.SetAny();
-	}
 
 	// identifier:
 	if (IsToken(Token::Type::SeparatorColon) || Accept(Token::Type::SeparatorColon))
 	{
+		if (node->value.empty())
+		{
+			// The anonymous main function has no output type.
+			node->outType.SetNone();
+		}
+
 		auto innerContext = make<Context>::shared({ .parent = context, .inType = node->inType });
 
 		for (const auto& parameter : node->parameters)
