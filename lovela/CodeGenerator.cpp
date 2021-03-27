@@ -373,13 +373,11 @@ void CodeGenerator::ExpressionInput(Node&, Context& context)
 
 void CodeGenerator::FunctionCall(Node& node, Context& context)
 {
-	const bool assignVariable = context.assignVariable;
-	context.assignVariable = false;
+	const auto reset = BeginAssign(context, false);
 
 	stream << FunctionName(node.value) << "( context";
 
-	bool hasLeft = !!node.left;
-	if (hasLeft)
+	if (node.left)
 	{
 		stream << ", ";
 		Visit(*node.left, context);
@@ -387,17 +385,13 @@ void CodeGenerator::FunctionCall(Node& node, Context& context)
 
 	if (node.right)
 	{
-		if (hasLeft)
-		{
-			stream << ", ";
-		}
-
+		stream << ", ";
 		Visit(*node.right, context);
 	}
 
 	stream << ") ";
 
-	context.assignVariable = assignVariable;
+	EndAssign(context, reset);
 }
 
 void CodeGenerator::BinaryOperation(Node& node, Context& context)
@@ -431,7 +425,7 @@ void CodeGenerator::BinaryOperation(Node& node, Context& context)
 void CodeGenerator::Literal(Node& node, Context& context)
 {
 	BeginAssign(context);
-	stream << node.value << ' ';
+	stream << (node.token.type == Token::Type::LiteralString ? double_quote(node.value) : node.value) << ' ';
 	EndAssign(context);
 }
 
@@ -467,10 +461,26 @@ void CodeGenerator::BeginAssign(Context& context)
 	}
 }
 
+bool CodeGenerator::BeginAssign(Context& context, bool set)
+{
+	BeginAssign(context);
+
+	const auto reset = context.assignVariable;
+	context.assignVariable = set;
+	return reset;
+}
+
 void CodeGenerator::EndAssign(Context& context)
 {
 	if (context.assignVariable)
 	{
 		stream << ";\n";
 	}
+}
+
+void CodeGenerator::EndAssign(Context& context, bool reset)
+{
+	context.assignVariable = reset;
+
+	EndAssign(context);
 }

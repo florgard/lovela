@@ -16,6 +16,16 @@ template <typename Enum, typename std::enable_if<std::is_enum_v<Enum>>::type* = 
 	return to_wstring(magic_enum::enum_name(value));
 }
 
+inline std::wstring single_quote(const std::wstring& text)
+{
+	return L'\'' + text + L'\'';
+}
+
+inline std::wstring double_quote(const std::wstring& text)
+{
+	return L'"' + text + L'"';
+}
+
 // https://www.reddit.com/r/cpp/comments/g05m1r/stdunique_ptr_and_braced_initialization/
 template <typename T>
 struct make

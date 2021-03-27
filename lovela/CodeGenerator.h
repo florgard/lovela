@@ -37,7 +37,9 @@ private:
 	void EndScope();
 	const std::wstring& Indent() const { return indent; }
 	void BeginAssign(Context& context);
+	bool BeginAssign(Context& context, bool set);
 	void EndAssign(Context& context);
+	void EndAssign(Context& context, bool reset);
 
 	static std::wstring TypeName(const std::wstring& name);
 	static std::wstring ParameterName(const std::wstring& name) { return L"p_" + name; }
