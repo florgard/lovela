@@ -9,8 +9,7 @@ bool Node::operator==(const Node& rhs) const noexcept
 		&& rhs.outType == outType
 		&& rhs.nameSpace == nameSpace
 		&& rhs.inType == inType
-		&& rhs.imported == imported
-		&& rhs.exported == exported
+		&& rhs.api == api
 		&& std::equal(rhs.parameters.begin(), rhs.parameters.end(), parameters.begin(), [](const auto& v1, const auto& v2) { return *v1 == *v2; });
 }
 
@@ -23,7 +22,6 @@ FunctionDeclaration Node::ToFunctionDeclaration() const
 		.outType = outType,
 		.inType = inType,
 		.parameters = parameters,
-		.imported = imported,
-		.exported = exported
+		.api = api,
 	};
 }

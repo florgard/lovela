@@ -68,7 +68,7 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 		MainFunctionDeclaration(node, context);
 		return;
 	}
-	else if (node.imported)
+	else if ((node.api & Api::Import) == Api::Import)
 	{
 		ImportedFunctionDeclaration(node, context);
 	}
@@ -144,7 +144,7 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 
 	stream << ')';
 
-	if (node.imported)
+	if ((node.api & Api::Import) == Api::Import)
 	{
 		ImportedFunctionBody(node, context, parameters);
 	}
@@ -157,7 +157,7 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 
 	// Generate the exported function
 
-	if (node.exported)
+	if ((node.api & Api::Export) == Api::Export)
 	{
 		ExportedFunctionDeclaration(node, context);
 	}

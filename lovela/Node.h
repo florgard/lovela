@@ -29,6 +29,17 @@ struct VariableDeclaration
 
 using ParameterList = std::vector<std::shared_ptr<VariableDeclaration>>;
 
+struct Api
+{
+	static constexpr int None = 0;
+	static constexpr int Import = 1;
+	static constexpr int Export = 2;
+	static constexpr int Dynamic = 4;
+	static constexpr int Standard = 8;
+	static constexpr int C = 16;
+	static constexpr int Cpp = 32;
+};
+
 struct FunctionDeclaration
 {
 	std::wstring name;
@@ -36,8 +47,7 @@ struct FunctionDeclaration
 	TypeSpec outType;
 	TypeSpec inType;
 	ParameterList parameters;
-	bool imported{};
-	bool exported{};
+	int api{};
 };
 
 struct Node
@@ -63,8 +73,7 @@ struct Node
 	std::vector<std::wstring> nameSpace;
 	TypeSpec inType;
 	ParameterList parameters;
-	bool imported{};
-	bool exported{};
+	int api{};
 
 	// Function call
 	std::shared_ptr<FunctionDeclaration> callee;

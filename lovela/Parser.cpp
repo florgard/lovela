@@ -332,8 +332,39 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 	// ->
 	if (IsToken(Token::Type::OperatorArrow))
 	{
-		node->exported = currentToken.value == L"<-";
-		node->imported = currentToken.value == L"->";
+		if (currentToken.value == L"<-")
+		{
+			node->api = Api::Export;
+		}
+		else if (currentToken.value == L"->")
+		{
+			node->api = Api::Import;
+		}
+
+		if (Accept(Token::Type::LiteralString))
+		{
+			static const std::map<std::wstring, int> validApiTokens
+			{
+				{L"Dynamic", Api::Dynamic},
+				{L"Standard", Api::Standard},
+				{L"C", Api::C},
+				{L"C++", Api::Cpp},
+			};
+
+			auto apiTokens = split(currentToken.value, L' ');
+			for (auto value : apiTokens())
+			{
+				if (validApiTokens.contains(value))
+				{
+					node->api |= validApiTokens.at(value);
+				}
+				else
+				{
+					throw ParseException(currentToken, "Invalid import/export API specification.");
+				}
+			}
+		}
+
 		Expect({ Token::Type::ParenSquareOpen, Token::Type::Identifier });
 	}
 

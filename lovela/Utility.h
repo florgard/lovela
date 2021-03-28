@@ -34,6 +34,20 @@ inline std::wstring double_quote(const std::wstring& text)
 	return L'"' + text + L'"';
 }
 
+inline auto split(const std::wstring& input, wchar_t delimiter)
+{
+	return [=]() -> std::experimental::generator<std::wstring>
+	{
+		std::wistringstream ss(input);
+		std::wstring token;
+
+		while (std::getline(ss, token, delimiter))
+		{
+			co_yield token;
+		}
+	};
+}
+
 // https://www.reddit.com/r/cpp/comments/g05m1r/stdunique_ptr_and_braced_initialization/
 template <typename T>
 struct make

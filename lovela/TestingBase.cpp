@@ -180,7 +180,7 @@ void TestingBase::TestCodeGenerator(const char* name, std::wstring_view code, st
 	if (!success)
 	{
 		std::wcerr << "Code generator test \"" << name << "\" error: The generated code differs from the expected code.\nGenerated:\n" << generatedCode
-			<< "\nExpected:\n" << expectedCode << "\n\nAST:\n";
+			<< "\nExpected:\n" << expectedCode << "\n\nInput code:\n" << code << "\n\nAST:\n";
 
 		PrintTree(*tree);
 
