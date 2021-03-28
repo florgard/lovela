@@ -22,6 +22,7 @@
     <ClInclude Include="..\source\lovela.h" />
     <ClInclude Include="lovela-api.h" />
     <ClInclude Include="lovela-exports.h" />
+    <ClInclude Include="lovela-imports.h" />
     <ClInclude Include="lovela-program.h" />
   </ItemGroup>
   <ItemGroup>
