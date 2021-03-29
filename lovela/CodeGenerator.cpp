@@ -328,9 +328,27 @@ void CodeGenerator::ExportedFunctionDeclaration(Node& node, Context&)
 
 	auto signature = ss.str();
 
-	// Store for export declarations
+	// Store export declaration
 
-	exports.push_back(signature);
+	std::wostringstream exportDeclaration;
+
+	if (node.api.Is(Api::C))
+	{
+		exportDeclaration << "LOVELA_API_C ";
+	}
+	else if (node.api.Is(Api::Cpp))
+	{
+		exportDeclaration << "LOVELA_API_CPP ";
+	}
+
+	if (node.api.Is(Api::Dynamic))
+	{
+		exportDeclaration << "LOVELA_API_DYNAMIC_EXPORT ";
+	}
+
+	exportDeclaration << signature;
+
+	exports.push_back(exportDeclaration.str());
 
 	// Define the exported function wrapper
 
@@ -439,7 +457,25 @@ void CodeGenerator::ImportedFunctionDeclaration(Node& node, Context&)
 
 	// Declare import
 
-	stream << "LOVELA_IMPORT " << signature << ";\n";
+	if (node.api.Is(Api::C))
+	{
+		stream << "LOVELA_API_C ";
+	}
+	else if (node.api.Is(Api::Cpp))
+	{
+		stream << "LOVELA_API_CPP ";
+	}
+
+	if (node.api.Is(Api::Dynamic | Api::Import))
+	{
+		stream << "LOVELA_API_DYNAMIC_IMPORT ";
+	}
+	else if (node.api.Is(Api::Dynamic | Api::Export))
+	{
+		stream << "LOVELA_API_DYNAMIC_EXPORT ";
+	}
+
+	stream << signature << ";\n";
 
 	stream << '\n';
 }
@@ -638,9 +674,9 @@ void CodeGenerator::GenerateLibraryHeaderFile(std::wostream& file)
 {
 	CodeGenerator::BeginLibraryHeaderFile(file);
 
-	for (auto& signature : GetExports())
+	for (auto& declaration : GetExports())
 	{
-		file << "LOVELA_EXPORT " << signature << ";\n";
+		file << declaration << ";\n";
 	}
 
 	CodeGenerator::EndLibraryHeaderFile(file);

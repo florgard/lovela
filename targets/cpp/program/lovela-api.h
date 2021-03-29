@@ -2,16 +2,34 @@
 #define LOVELA_API
 
 #ifdef __cplusplus
-#define LOVELA_EXTERNAL_LINKAGE extern "C"
+#define LOVELA_API_C extern "C"
+#else
+#define LOVELA_API_C extern
 #endif
 
-#define LOVELA_EXPORT LOVELA_EXTERNAL_LINKAGE
+#define LOVELA_API_CPP extern
 
-#ifdef _WIN32
-// Naive assumption that all imports follow the active VC runtime (CRT) linkage
-#define LOVELA_IMPORT LOVELA_EXTERNAL_LINKAGE _CRTIMP
+#ifdef LOVELA
+// The lovela program/library is being built and exported.
+#if defined(_MSC_VER)
+#define LOVELA_API_DYNAMIC_EXPORT __declspec(dllexport)
+#define LOVELA_API_DYNAMIC_IMPORT __declspec(dllimport)
+#elif defined(__GNUC__)
+#define LOVELA_API_DYNAMIC_EXPORT __attribute__((visibility("default")))
+#define LOVELA_API_DYNAMIC_IMPORT
 #else
-#define LOVELA_IMPORT LOVELA_EXTERNAL_LINKAGE
+#define LOVELA_API_DYNAMIC_EXPORT
+#define LOVELA_API_DYNAMIC_IMPORT
+#endif
+#else
+// The interface to the lovela program/library is being imported.
+#if defined(_MSC_VER)
+#define LOVELA_API_DYNAMIC_EXPORT __declspec(dllimport)
+#define LOVELA_API_DYNAMIC_IMPORT __declspec(dllexport)
+#else
+#define LOVELA_API_DYNAMIC_EXPORT
+#define LOVELA_API_DYNAMIC_IMPORT
+#endif
 #endif
 
 typedef char l_i8;

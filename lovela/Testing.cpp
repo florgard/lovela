@@ -454,6 +454,13 @@ void* ex(void* in)
 { lovela::context context; return f_ex(context, in); }
 )code");
 
+//	TestCodeGenerator("exported function C", L"<- 'C' #32 ex #32", LR"code(
+//auto f_ex(lovela::context& context, In in)
+//{ context; auto& v1 = in; v1; const auto v2 = v1 + 1; v2; return v2; }
+//void* ex(void* in)
+//{ lovela::context context; return f_ex(context, in); }
+//)code");
+
 	TestCodeGenerator("main and export", L"<- [#32] ex [#32]: + 1. : 1 ex.", LR"code(
 l_i32 f_ex(lovela::context& context, l_i32 in)
 {
@@ -522,6 +529,7 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 	// -> [#32] puts [#8#]. : 'Hello, Wordl!" puts.
 
 	std::wstring code = LR"(
+<- 'C' #32 ex #32
 -> puts.
 : 'Hello, Wordl!' puts.
 )";

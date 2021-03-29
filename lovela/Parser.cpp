@@ -20,6 +20,13 @@ static const std::set<Token::Type> typeSpecTokens
 	Token::Type::SeparatorHash,
 };
 
+static const std::set<Token::Type> externalFunctionDeclarationTokens
+{
+	Token::Type::ParenSquareOpen,
+	Token::Type::SeparatorHash,
+	Token::Type::Identifier,
+};
+
 static const std::set<Token::Type> literalTokens
 {
 	Token::Type::LiteralInteger,
@@ -388,7 +395,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 			}
 		}
 
-		Expect({ Token::Type::ParenSquareOpen, Token::Type::Identifier });
+		Expect(externalFunctionDeclarationTokens);
 	}
 
 	// [inType]
