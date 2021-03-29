@@ -454,12 +454,9 @@ void* ex(void* in)
 { lovela::context context; return f_ex(context, in); }
 )code");
 
-//	TestCodeGenerator("exported function C", L"<- 'C' #32 ex #32", LR"code(
-//auto f_ex(lovela::context& context, In in)
-//{ context; auto& v1 = in; v1; const auto v2 = v1 + 1; v2; return v2; }
-//void* ex(void* in)
-//{ lovela::context context; return f_ex(context, in); }
-//)code");
+	TestCodeGeneratorExport("exported function C", L"<- 'C' #32 ex #32", L"LOVELA_API_C l_i32 ex(l_i32 in)");
+	TestCodeGeneratorExport("exported function C++", L"<- 'C++' #32 ex #32", L"LOVELA_API_CPP l_i32 ex(l_i32 in)");
+	TestCodeGeneratorExport("exported function C dynamic", L"<- 'C Dynamic' #32 ex #32", L"LOVELA_API_C LOVELA_API_DYNAMIC_EXPORT l_i32 ex(l_i32 in)");
 
 	TestCodeGenerator("main and export", L"<- [#32] ex [#32]: + 1. : 1 ex.", LR"code(
 l_i32 f_ex(lovela::context& context, l_i32 in)
