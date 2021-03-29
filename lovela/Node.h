@@ -56,6 +56,11 @@ public:
 	{
 		return (flags & flag) == flag;
 	}
+
+	constexpr bool IsExplicit() const
+	{
+		return flags > Export;
+	}
 };
 
 struct FunctionDeclaration

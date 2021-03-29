@@ -368,6 +368,13 @@ void CodeGenerator::ExportedFunctionDeclaration(Node& node, Context&)
 
 void CodeGenerator::ImportedFunctionDeclaration(Node& node, Context&)
 {
+	if (!node.api.IsExplicit())
+	{
+		// Don't emit a function declaration if the API hasn't explicitly been specified.
+		// The user is expected to provide the declaration in lovela-imports.h.
+		return;
+	}
+
 	auto inType = node.inType;
 	auto outType = node.outType;
 

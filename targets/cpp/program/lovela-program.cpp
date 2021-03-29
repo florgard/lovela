@@ -1,8 +1,7 @@
 #include "lovela-program.h"
 
-LOVELA_IMPORT l_i32 puts(l_cstr in);
-
-l_i32 f_puts(lovela::context& context, l_cstr in)
+template <typename In>
+auto f_puts(lovela::context& context, In in)
 {
 	context;
 	return puts(in);
