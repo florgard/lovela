@@ -390,7 +390,7 @@ void CodeGenerator::ImportedFunctionDeclaration(Node& node, Context&)
 {
 	if (node.api.Is(Api::Standard))
 	{
-		// Don't emit a function declaration for standard library API:s.
+		// Don't emit function declarations for standard library functions.
 		// Instead attempt to find the appropriate header to add to lovela-imports.h.
 
 		if (node.api.Is(Api::C))
