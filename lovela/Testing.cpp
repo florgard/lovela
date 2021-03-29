@@ -456,7 +456,14 @@ void* ex(void* in)
 
 	TestCodeGeneratorExport("exported function C", L"<- 'C' #32 ex #32", L"LOVELA_API_C l_i32 ex(l_i32 in)");
 	TestCodeGeneratorExport("exported function C++", L"<- 'C++' #32 ex #32", L"LOVELA_API_CPP l_i32 ex(l_i32 in)");
-	TestCodeGeneratorExport("exported function C dynamic", L"<- 'C Dynamic' #32 ex #32", L"LOVELA_API_C LOVELA_API_DYNAMIC_EXPORT l_i32 ex(l_i32 in)");
+	TestCodeGeneratorExport("exported function C Dynamic", L"<- 'C Dynamic' #32 ex #32", L"LOVELA_API_C LOVELA_API_DYNAMIC_EXPORT l_i32 ex(l_i32 in)");
+	TestCodeGenerator("imported function", L"-> im", L"template <typename In> auto f_im(lovela::context& context, In in) { context; return im(in); }");
+	TestCodeGenerator("imported function C", L"-> 'C' #8 im #8", L"LOVELA_API_C l_i8 im(l_i8 in); l_i8 f_im(lovela::context& context, l_i8 in) { context; return im(in); }");
+	TestCodeGenerator("imported function C Dynamic", L"-> 'C Dynamic' #8 im #8", L"LOVELA_API_C LOVELA_API_DYNAMIC_IMPORT l_i8 im(l_i8 in); l_i8 f_im(lovela::context& context, l_i8 in) { context; return im(in); }");
+	TestCodeGeneratorImport("imported function Standard C stdio", L"-> 'Standard C' puts", L"stdio.h");
+	TestCodeGeneratorImport("imported function Standard C stlib", L"-> 'Standard C' atof", L"stdlib.h");
+	TestCodeGeneratorImport("imported function Standard C string", L"-> 'Standard C' strcpy", L"string.h");
+	TestCodeGeneratorImport("imported function Standard C math", L"-> 'Standard C' sin", L"math.h");
 
 	TestCodeGenerator("main and export", L"<- [#32] ex [#32]: + 1. : 1 ex.", LR"code(
 l_i32 f_ex(lovela::context& context, l_i32 in)

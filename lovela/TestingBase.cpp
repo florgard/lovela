@@ -202,6 +202,61 @@ void TestingBase::TestCodeGenerator(const char* name, std::wstring_view code, st
 	}
 }
 
+void TestingBase::TestCodeGeneratorImport(const char* name, std::wstring_view code, std::wstring_view cppCode, int expectedErrors)
+{
+	std::wistringstream input(std::wstring(code.data(), code.size()));
+	Lexer lexer(input);
+	Parser parser(lexer.Lex());
+	auto tree = parser.Parse();
+
+	std::wostringstream output;
+	CodeGenerator gen(output);
+	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { gen.Visit(node); });
+
+	bool success = gen.GetHeaders().size() == 1 || gen.GetHeaders().empty() && cppCode.empty();
+
+	if (!success)
+	{
+		std::wcerr << "Code generator import test \"" << name << "\" error: The code didn't yield a single export.\n";
+
+		assert(success);
+		return;
+	}
+
+	auto generatedCode = gen.GetHeaders().front();
+	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"^\\s+" }, L"");
+	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"\\s+$" }, L"");
+	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"\\s+" }, L" ");
+	auto expectedCode = to_wstring(cppCode);
+	expectedCode = std::regex_replace(expectedCode, std::wregex{ L"^\\s+" }, L"");
+	expectedCode = std::regex_replace(expectedCode, std::wregex{ L"\\s+$" }, L"");
+	expectedCode = std::regex_replace(expectedCode, std::wregex{ L"\\s+" }, L" ");
+
+	success = generatedCode == expectedCode;
+
+	if (!success)
+	{
+		std::wcerr << "Code generator import test \"" << name << "\" error: The generated code differs from the expected code.\nGenerated:\n" << generatedCode
+			<< "\nExpected:\n" << expectedCode << "\n\nInput code:\n" << code << "\n";
+
+		assert(success);
+	}
+
+	success = gen.GetErrors().size() == expectedErrors;
+
+	if (!success)
+	{
+		std::wcerr << "Code generator import test \"" << name << "\" error: The error count differs from the expected count.\nError messages:\n";
+
+		for (auto& error : gen.GetErrors())
+		{
+			std::wcerr << error << '\n';
+		}
+
+		assert(success);
+	}
+}
+
 void TestingBase::TestCodeGeneratorExport(const char* name, std::wstring_view code, std::wstring_view cppCode, int expectedErrors)
 {
 	std::wistringstream input(std::wstring(code.data(), code.size()));
@@ -213,7 +268,7 @@ void TestingBase::TestCodeGeneratorExport(const char* name, std::wstring_view co
 	CodeGenerator gen(output);
 	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { gen.Visit(node); });
 
-	bool success = gen.GetExports().size() == 1;
+	bool success = gen.GetExports().size() == 1 || gen.GetExports().empty() && cppCode.empty();
 
 	if (!success)
 	{
