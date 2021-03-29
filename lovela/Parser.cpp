@@ -356,7 +356,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 			{
 				if (validApiTokens.contains(value))
 				{
-					node->api |= validApiTokens.at(value);
+					node->api.Set(validApiTokens.at(value));
 				}
 				else
 				{
