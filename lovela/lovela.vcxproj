@@ -170,6 +170,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="StandardCDeclarations.cpp" />
+    <ClCompile Include="StandardCppDeclarations.cpp" />
     <ClCompile Include="Testing.cpp" />
     <ClCompile Include="TestingBase.cpp" />
     <ClCompile Include="Token.cpp" />
@@ -186,6 +188,8 @@
     <ClInclude Include="Parser.h" />
     <ClInclude Include="ParserBase.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="StandardCDeclarations.h" />
+    <ClInclude Include="StandardCppDeclarations.h" />
     <ClInclude Include="StaticMap.h" />
     <ClInclude Include="Testing.h" />
     <ClInclude Include="TestingBase.h" />

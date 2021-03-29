@@ -6,17 +6,17 @@ class CodeGenerator
 public:
 	CodeGenerator(std::wostream& stream);
 
-	const std::vector<std::wstring>& GetErrors() { return errors; }
-	const std::vector<std::wstring>& GetExports() { return exports; }
+	const std::vector<std::wstring>& GetErrors() const { return errors; }
+	const std::vector<std::wstring>& GetHeaders() const { return headers; }
+	const std::vector<std::wstring>& GetExports() const { return exports; }
 
 	void Visit(Node& node);
 
-	void GenerateLibraryHeaderFile(std::wostream& file);
+	void GenerateImportsHeaderFile(std::wostream& file);
+	void GenerateExportsHeaderFile(std::wostream& file);
 
 	static void BeginProgramSourceFile(std::wostream& file);
 	static void EndProgramSourceFile(std::wostream& file);
-	static void BeginLibraryHeaderFile(std::wostream& file);
-	static void EndLibraryHeaderFile(std::wostream& file);
 
 private:
 	struct Context
@@ -62,6 +62,7 @@ private:
 	std::wostream& stream;
 	std::wstring indent;
 	std::vector<std::wstring> errors;
+	std::vector<std::wstring> headers;
 	std::vector<std::wstring> exports;
 	using Visitor = std::function<void(CodeGenerator*, Node&, CodeGenerator::Context&)>;
 	static std::map<Node::Type, Visitor> visitors;

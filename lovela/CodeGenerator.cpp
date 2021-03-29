@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "CodeGenerator.h"
+#include "StandardCDeclarations.h"
+#include "StandardCppDeclarations.h"
 
 std::map<Node::Type, CodeGenerator::Visitor> CodeGenerator::visitors
 {
@@ -386,10 +388,26 @@ void CodeGenerator::ExportedFunctionDeclaration(Node& node, Context&)
 
 void CodeGenerator::ImportedFunctionDeclaration(Node& node, Context&)
 {
-	if (!node.api.IsExplicit())
+	if (node.api.Is(Api::Standard))
+	{
+		// Don't emit a function declaration for standard library API:s.
+		// Instead attempt to find the appropriate header to add to lovela-imports.h.
+
+		if (node.api.Is(Api::C))
+		{
+			StandardCDeclarations::GetHeader(headers, node.value);
+		}
+		else if (node.api.Is(Api::Cpp))
+		{
+			StandardCppDeclarations::GetHeader(headers, node.value);
+		}
+
+		return;
+	}
+	else if (!node.api.IsExplicit())
 	{
 		// Don't emit a function declaration if the API hasn't explicitly been specified.
-		// The user is expected to provide the declaration in lovela-imports.h.
+		// The user is expected to provide the declaration in user-imports.h.
 		return;
 	}
 
@@ -670,16 +688,29 @@ void CodeGenerator::EndAssign(Context& context, bool reset)
 	EndAssign(context);
 }
 
-void CodeGenerator::GenerateLibraryHeaderFile(std::wostream& file)
+void CodeGenerator::GenerateImportsHeaderFile(std::wostream& file)
 {
-	CodeGenerator::BeginLibraryHeaderFile(file);
+	file << "#ifndef LOVELA_IMPORTS\n#define LOVELA_IMPORTS\n\n";
+
+	for (auto& header : GetHeaders())
+	{
+		file << "#include <" << header << ">\n";
+	}
+
+	file << "\n#endif\n";
+}
+
+
+void CodeGenerator::GenerateExportsHeaderFile(std::wostream& file)
+{
+	file << "#ifndef LOVELA_EXPORTS\n#define LOVELA_EXPORTS\n\n";
 
 	for (auto& declaration : GetExports())
 	{
 		file << declaration << ";\n";
 	}
 
-	CodeGenerator::EndLibraryHeaderFile(file);
+	file << "\n#endif\n";
 }
 
 void CodeGenerator::BeginProgramSourceFile(std::wostream& file)
@@ -689,14 +720,4 @@ void CodeGenerator::BeginProgramSourceFile(std::wostream& file)
 
 void CodeGenerator::EndProgramSourceFile(std::wostream&)
 {
-}
-
-void CodeGenerator::BeginLibraryHeaderFile(std::wostream& file)
-{
-	file << "#ifndef LOVELA_EXPORTS\n#define LOVELA_EXPORTS\n\n";
-}
-
-void CodeGenerator::EndLibraryHeaderFile(std::wostream& file)
-{
-	file << "\n#endif\n";
 }

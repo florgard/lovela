@@ -526,8 +526,7 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 	// -> [#32] puts [#8#]. : 'Hello, Wordl!" puts.
 
 	std::wstring code = LR"(
-<- 'C' #32 ex #32
--> puts.
+-> 'Standard C' puts.
 : 'Hello, Wordl!' puts.
 )";
 	std::wcout << code << '\n';
@@ -568,7 +567,11 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 	CodeGenerator::EndProgramSourceFile(program);
 	program.close();
 
+	std::wofstream imports(R"(..\targets\cpp\program\lovela-imports.h)");
+	gen.GenerateImportsHeaderFile(imports);
+	imports.close();
+
 	std::wofstream exports(R"(..\targets\cpp\program\lovela-exports.h)");
-	gen.GenerateLibraryHeaderFile(exports);
+	gen.GenerateExportsHeaderFile(exports);
 	exports.close();
 }

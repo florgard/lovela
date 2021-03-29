@@ -1,8 +1,20 @@
 #pragma once
 
+[[nodiscard]] inline std::string to_string(std::wstring_view value)
+{
+	std::string str(value.length(), 0);
+	std::transform(value.begin(), value.end(), str.begin(), [](const auto& elem) { return static_cast<char>(elem); });
+	return str;
+}
+
 [[nodiscard]] inline std::wstring to_wstring(std::string_view value)
 {
 	return std::wstring(value.begin(), value.end());
+}
+
+[[nodiscard]] inline std::wstring to_wstring(const std::string& value)
+{
+	return to_wstring(static_cast<std::string_view>(value));
 }
 
 [[nodiscard]] inline std::wstring to_wstring(std::wstring_view value)
@@ -17,7 +29,7 @@ template <typename Enum, typename std::enable_if<std::is_enum_v<Enum>>::type* = 
 }
 
 template <typename T, typename std::enable_if<!std::is_enum_v<T>>::type* = nullptr>
-[[nodiscard]] std::wstring to_wstring(T value)
+[[nodiscard]] std::wstring to_wstring(const T& value)
 {
 	std::wostringstream s;
 	s << value;

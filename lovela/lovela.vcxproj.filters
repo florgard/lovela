@@ -14,6 +14,8 @@
     <ClCompile Include="TestingBase.cpp" />
     <ClCompile Include="CodeGenerator.cpp" />
     <ClCompile Include="DataType.cpp" />
+    <ClCompile Include="StandardCDeclarations.cpp" />
+    <ClCompile Include="StandardCppDeclarations.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lexer.h" />
@@ -32,5 +34,7 @@
     <ClInclude Include="TestingBase.h" />
     <ClInclude Include="CodeGenerator.h" />
     <ClInclude Include="DataType.h" />
+    <ClInclude Include="StandardCDeclarations.h" />
+    <ClInclude Include="StandardCppDeclarations.h" />
   </ItemGroup>
 </Project>
