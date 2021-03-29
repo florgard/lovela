@@ -27,6 +27,7 @@ private:
 	};
 
 	[[nodiscard]] TypeSpec ParseTypeSpec();
+	[[nodiscard]] TypeSpec ParsePrimitiveType();
 	[[nodiscard]] ParameterList ParseParameterList();
 
 	[[nodiscard]] std::unique_ptr<Node> ParseFunctionDeclaration(std::shared_ptr<Context> context);

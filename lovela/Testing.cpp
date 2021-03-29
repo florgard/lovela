@@ -227,15 +227,27 @@ void Testing::RunParserTests()
 	TestParser("trivial function declaration", L"func",
 		Node{.type = Node::Type::FunctionDeclaration, .value = L"func"}
 		);
-	TestParser("function with any object type", L"[] func",
+	TestParser("function with any in type", L"[] func",
 		Node{.type = Node::Type::FunctionDeclaration, .value = L"func"}
 		);
-	TestParser("function with given object type", L"[type] func",
+	TestParser("function with given in type", L"[type] func",
 		Node{.type = Node::Type::FunctionDeclaration, .value = L"func", .inType{.name = L"type"}}
 		);
-	TestParser("function with empty object type", L"[()] func",
+	TestParser("function with empty in type", L"[()] func",
 		Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .inType = TypeSpec::NoneType() }
 		);
+	TestParser("function with out type", L"func [type]",
+		Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .outType{.name = L"type"} }
+	);
+	TestParser("function with in and out type", L"[in] func [out]",
+		Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .outType{.name = L"out"}, .inType{.name = L"in"} }
+	);
+	TestParser("function with primitive types", L"#8# func #32",
+		Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .outType{.name = L"#32"}, .inType{.name = L"#8#"} }
+	);
+	TestParser("function with primitive types in brackets", L"[#32] func [#8]",
+		Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .outType{.name = L"#8"}, .inType{.name = L"#32"} }
+	);
 	TestParser("anonymous function", L"[]()",
 		Node{.type = Node::Type::FunctionDeclaration}
 		);
@@ -262,10 +274,6 @@ void Testing::RunParserTests()
 			} };
 		TestParser("function with parameters", L"func(name_only, name [type], [type_only])", f);
 	}
-
-	TestParser("function with type", L"func [type]",
-		Node{.type = Node::Type::FunctionDeclaration, .value = L"func", .outType{.name = L"type"}}
-		);
 
 	{
 		auto f = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .outType{.name = L"functionType"}, .inType{.name = L"inType"}, .parameters{

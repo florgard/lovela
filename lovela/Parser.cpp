@@ -2,15 +2,22 @@
 #include "ParseException.h"
 #include "Parser.h"
 
-static const std::set<Token::Type> beginFunctionDeclarationTokens
+static const std::set<Token::Type> functionDeclarationTokens
 {
 	Token::Type::ParenSquareOpen,
+	Token::Type::SeparatorHash,
 	Token::Type::Identifier,
 	Token::Type::OperatorArrow,
 	Token::Type::OperatorArithmetic,
 	Token::Type::OperatorBitwise,
 	Token::Type::OperatorComparison,
 	Token::Type::SeparatorColon,
+};
+
+static const std::set<Token::Type> typeSpecTokens
+{
+	Token::Type::ParenSquareOpen,
+	Token::Type::SeparatorHash,
 };
 
 static const std::set<Token::Type> literalTokens
@@ -159,7 +166,7 @@ std::unique_ptr<Node> Parser::Parse() noexcept
 	{
 		try
 		{
-			if (Accept(beginFunctionDeclarationTokens))
+			if (Accept(functionDeclarationTokens))
 			{
 				nodes.emplace_back(ParseFunctionDeclaration(context));
 			}
@@ -218,9 +225,14 @@ std::unique_ptr<Node> Parser::Parse() noexcept
 
 TypeSpec Parser::ParseTypeSpec()
 {
-	TypeSpec typeSpec;
+	Assert(typeSpecTokens);
 
-	Assert(Token::Type::ParenSquareOpen);
+	if (IsToken(Token::Type::SeparatorHash))
+	{
+		return ParsePrimitiveType();
+	}
+
+	TypeSpec typeSpec;
 
 	// []
 	if (Accept(Token::Type::ParenSquareClose))
@@ -230,16 +242,7 @@ TypeSpec Parser::ParseTypeSpec()
 	// [#32]
 	else if (Accept(Token::Type::SeparatorHash))
 	{
-		typeSpec.name = currentToken.value;
-		Expect(Token::Type::LiteralInteger);
-		typeSpec.name += currentToken.value;
-
-		// [#32#]
-		if (Accept(Token::Type::SeparatorHash))
-		{
-			typeSpec.name += currentToken.value;
-		}
-
+		typeSpec = ParsePrimitiveType();
 		Expect(Token::Type::ParenSquareClose);
 	}
 	// [identifier]
@@ -258,6 +261,26 @@ TypeSpec Parser::ParseTypeSpec()
 	else
 	{
 		throw UnexpectedTokenException(*tokenIterator);
+	}
+
+	return typeSpec;
+}
+
+TypeSpec Parser::ParsePrimitiveType()
+{
+	TypeSpec typeSpec;
+
+	// [#32]
+	Assert(Token::Type::SeparatorHash);
+
+	typeSpec.name = currentToken.value;
+	Expect(Token::Type::LiteralInteger);
+	typeSpec.name += currentToken.value;
+
+	// [#32#]
+	if (Accept(Token::Type::SeparatorHash))
+	{
+		typeSpec.name += currentToken.value;
 	}
 
 	return typeSpec;
@@ -288,7 +311,7 @@ ParameterList Parser::ParseParameterList()
 		}
 
 		// Optional type
-		if (Accept(Token::Type::ParenSquareOpen))
+		if (Accept(typeSpecTokens))
 		{
 			parameter->type = ParseTypeSpec();
 			defined = true;
@@ -369,7 +392,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 	}
 
 	// [inType]
-	if (IsToken(Token::Type::ParenSquareOpen))
+	if (IsToken(typeSpecTokens))
 	{
 		node->inType = ParseTypeSpec();
 
@@ -436,7 +459,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 	}
 
 	// identifier [outType]
-	if (Accept(Token::Type::ParenSquareOpen))
+	if (Accept(typeSpecTokens))
 	{
 		node->outType = ParseTypeSpec();
 	}
