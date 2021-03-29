@@ -24,6 +24,7 @@
     <ClInclude Include="lovela-exports.h" />
     <ClInclude Include="lovela-imports.h" />
     <ClInclude Include="lovela-program.h" />
+    <ClInclude Include="user-imports.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\lovela-main.cpp" />
