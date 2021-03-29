@@ -80,8 +80,7 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 
 	if (outType.Any())
 	{
-		outType.name = L"Out";
-		templateParameters.push_back(outType.name);
+		outType.name = L"auto";
 	}
 	else if (node.outType.None())
 	{

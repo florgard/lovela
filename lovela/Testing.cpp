@@ -406,23 +406,23 @@ void Testing::RunParserTests()
 void Testing::RunCodeGeneratorTests()
 {
 	TestCodeGenerator("trivial function", L"func",
-		L"template <typename Out, typename In> Out f_func(lovela::context& context, In in);");
+		L"template <typename In> auto f_func(lovela::context& context, In in);");
 
 	TestCodeGenerator("function with return type", L"func [type]",
 		L"template <typename In> t_type f_func(lovela::context& context, In in);");
 
 	TestCodeGenerator("function with object type", L"[type] func",
-		L"template <typename Out> Out f_func(lovela::context& context, t_type in);");
+		L"auto f_func(lovela::context& context, t_type in);");
 
 	TestCodeGenerator("function with untyped parameter", L"func (arg)",
-		L"template <typename Out, typename In, typename Param1> Out f_func(lovela::context& context, In in, Param1 p_arg);");
+		L"template <typename In, typename Param1> auto f_func(lovela::context& context, In in, Param1 p_arg);");
 
 	TestCodeGenerator("function with typed parameter", L"func (arg [type])",
-		L"template <typename Out, typename In> Out f_func(lovela::context& context, In in, t_type p_arg);");
+		L"template <typename In> auto f_func(lovela::context& context, In in, t_type p_arg);");
 
 	TestCodeGenerator("trivial function", L"func: + 1.", LR"code(
-template <typename Out, typename In>
-Out f_func(lovela::context& context, In in)
+template <typename In>
+auto f_func(lovela::context& context, In in)
 { context; auto& v1 = in; v1; const auto v2 = v1 + 1; v2; return v2; }
 )code");
 
@@ -439,8 +439,8 @@ void ex()
 )code");
 
 	TestCodeGenerator("exported function any -> any", L"<- ex: + 1.", LR"code(
-template <typename Out, typename In>
-Out f_ex(lovela::context& context, In in)
+template <typename In>
+auto f_ex(lovela::context& context, In in)
 { context; auto& v1 = in; v1; const auto v2 = v1 + 1; v2; return v2; }
 void* ex(void* in)
 { lovela::context context; return f_ex(context, in); }
@@ -499,7 +499,7 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 	// -> [#32] puts [#8#]. : 'Hello, Wordl!" puts.
 
 	std::wstring code = LR"(
--> [#8#] puts [#32].
+-> puts.
 : 'Hello, Wordl!' puts.
 )";
 	std::wcout << code << '\n';
