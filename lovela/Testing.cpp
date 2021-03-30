@@ -464,6 +464,10 @@ void* ex(void* in)
 	TestCodeGeneratorImport("imported function Standard C stlib", L"-> 'Standard C' atof", L"stdlib.h");
 	TestCodeGeneratorImport("imported function Standard C string", L"-> 'Standard C' strcpy", L"string.h");
 	TestCodeGeneratorImport("imported function Standard C math", L"-> 'Standard C' sin", L"math.h");
+	TestCodeGeneratorImport("imported function Standard C++ cstdio", L"-> 'Standard C++' std|puts", L"cstdio");
+	TestCodeGeneratorImport("imported function Standard C++ cstlib", L"-> 'Standard C++' std|atof", L"cstdlib");
+	TestCodeGeneratorImport("imported function Standard C++ cstring", L"-> 'Standard C++' std|strcpy", L"cstring");
+	TestCodeGeneratorImport("imported function Standard C++ cmath", L"-> 'Standard C++' std|sin", L"cmath");
 
 	TestCodeGenerator("main and export", L"<- [#32] ex [#32]: + 1. : 1 ex.", LR"code(
 l_i32 f_ex(lovela::context& context, l_i32 in)
