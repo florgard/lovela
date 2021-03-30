@@ -108,4 +108,5 @@ struct Node
 	[[nodiscard]] bool operator!=(const Node& rhs) const noexcept { return !operator==(rhs); }
 	[[nodiscard]] operator bool() const noexcept { return type != Type::Empty; }
 	[[nodiscard]] FunctionDeclaration ToFunctionDeclaration() const;
+	[[nodiscard]] std::wstring GetQualifiedName() const;
 };

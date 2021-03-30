@@ -415,14 +415,12 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 	else if (IsToken(Token::Type::Identifier))
 	{
 		auto name = currentToken.value;
-		std::wostringstream qualifiedName;
 
 		// namespace1|namespaceN|identifier
 		// namespace1|namespaceN|binaryOperator
 		while (Accept(Token::Type::SeparatorVerticalLine))
 		{
 			node->nameSpace.emplace_back(name);
-			qualifiedName << name << '|';
 
 			// binaryOperator
 			if (Accept(binaryOperatorTokens))
@@ -441,9 +439,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 
 		node->value = name;
 
-		qualifiedName << name;
-
-		context->AddFunctionSymbol(qualifiedName.str());
+		context->AddFunctionSymbol(node->GetQualifiedName());
 	}
 	// binaryOperator
 	else if (IsToken(binaryOperatorTokens))

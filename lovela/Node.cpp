@@ -25,3 +25,14 @@ FunctionDeclaration Node::ToFunctionDeclaration() const
 		.api = api,
 	};
 }
+
+std::wstring Node::GetQualifiedName() const
+{
+	std::wostringstream name;
+	for (auto& part : nameSpace)
+	{
+		name << part << '|';
+	}
+	name << value;
+	return name.str();
+}
