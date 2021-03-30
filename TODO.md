@@ -2,14 +2,13 @@
 
 ## Small
 
-* Boolean primitive: #1
 * Generic tagged types: [1] add [1]
 * Primitive type lexing
   * Simplify parsing
 * Parser generator rewrite of Parse()
   * Code generation on the fly? What about identifier and function signature validation?
 * Bind operator
-* Built-in operators
+* Built-in comparison, arithmetic, bitwise operators
 
 ## Medium
 
@@ -24,6 +23,7 @@
 * Function objects
 * Error handlers: [!]
 * Construction
+* Target language code blocks
 
 ## Large
 
