@@ -413,6 +413,21 @@ void Testing::RunParserTests()
 
 void Testing::RunCodeGeneratorTests()
 {
+	TestCodeGenerator("l_i1", L"#1 f", L"auto f_f(lovela::context& context, l_i1 in);");
+	TestCodeGenerator("l_i8", L"#8 f", L"auto f_f(lovela::context& context, l_i8 in);");
+	TestCodeGenerator("l_i16", L"#16 f", L"auto f_f(lovela::context& context, l_i16 in);");
+	TestCodeGenerator("l_i32", L"#32 f", L"auto f_f(lovela::context& context, l_i32 in);");
+	TestCodeGenerator("l_i64", L"#64 f", L"auto f_f(lovela::context& context, l_i64 in);");
+	// TODO
+	//TestCodeGenerator("l_u1", L"#+1 f", L"auto f_f(lovela::context& context, l_u1 in);");
+	//TestCodeGenerator("l_u8", L"#+8 f", L"auto f_f(lovela::context& context, l_u8 in);");
+	//TestCodeGenerator("l_u16", L"#+16 f", L"auto f_f(lovela::context& context, l_u16 in);");
+	//TestCodeGenerator("l_u32", L"#+32 f", L"auto f_f(lovela::context& context, l_u32 in);");
+	//TestCodeGenerator("l_u64", L"#+64 f", L"auto f_f(lovela::context& context, l_u64 in);");
+	//TestCodeGenerator("l_f16 error", L"#.16 f", L"auto f_f(lovela::context& context, t_#.16 in);", 1);
+	//TestCodeGenerator("l_f32", L"#.32 f", L"auto f_f(lovela::context& context, l_f32 in);");
+	//TestCodeGenerator("l_f64", L"#.64 f", L"auto f_f(lovela::context& context, l_f64 in);");
+
 	TestCodeGenerator("trivial function", L"func",
 		L"template <typename In> auto f_func(lovela::context& context, In in);");
 

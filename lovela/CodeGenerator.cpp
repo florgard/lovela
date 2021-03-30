@@ -204,18 +204,25 @@ bool CodeGenerator::ConvertPrimitiveType(std::wstring& name)
 		return true;
 	}
 
-	static std::wregex regex(LR"(#(\+)?(\d\d?)(#?)(#?))");
+	static std::wregex regex(LR"(#(\.|\+)?(1|8|16|32|64)(#*))");
 	std::wsmatch match;
 	if (!std::regex_match(name, match, regex))
 	{
 		return false;
 	}
 
+	const bool floatingPoint = match[1].compare(L".") == 0;
+	const bool unsignedInteger = match[1].compare(L"+") == 0;
+	const auto width = match[2];
+	if (floatingPoint && !(width == L"32" || width == L"64"))
+	{
+		return false;
+	}
+
 	std::wstring exportName = L"l_";
-	exportName += match[1].str() == L"." ? L'f' : (match[1].str() == L"+" ? L'u' : L'i');
-	exportName += match[2].str();
-	exportName += match[3].str() == L"#" ? L"*" : L"";
-	exportName += match[4].str() == L"#" ? L"*" : L"";
+	exportName += floatingPoint ? L'f' : (unsignedInteger ? L'u' : L'i');
+	exportName += width;
+	exportName += std::wstring(match[3].length(), L'*');
 	name = exportName;
 
 	return true;
