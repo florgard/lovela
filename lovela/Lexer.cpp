@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Lexer.h"
 
-Lexer::Lexer(std::wistream& charStream) noexcept : charStream(charStream)
+Lexer::Lexer(std::wistream& charStream) noexcept : charStream(charStream >> std::noskipws)
 {
 }
 
@@ -34,9 +34,7 @@ TokenGenerator Lexer::Lex() noexcept
 
 	wchar_t c = 0, prev = 0, next = 0;
 
-	auto& stream = charStream >> std::noskipws;
-
-	stream >> c;
+	charStream >> c;
 
 	while (c)
 	{
@@ -48,7 +46,7 @@ TokenGenerator Lexer::Lex() noexcept
 		}
 
 		next = 0;
-		stream >> next;
+		charStream >> next;
 	
 		if (state.skipNext)
 		{
@@ -281,5 +279,55 @@ TokenGenerator Lexer::Lex() noexcept
 		lexeme.clear();
 
 		co_yield AddToken({ .type = Token::Type::End });
+	}
+}
+
+bool Lexer::Accept()
+{
+	if (nextToken)
+	{
+		previousToken = currentToken;
+		currentToken = nextToken;
+		nextToken = 0;
+		charStream >> nextToken;
+		return true;
+	}
+
+	return false;
+}
+
+bool Lexer::Accept(wchar_t token)
+{
+	if (token == nextToken)
+	{
+		return Accept();
+	}
+
+	return false;
+}
+
+bool Lexer::Accept(const std::vector<wchar_t>& tokens)
+{
+	if (std::find(tokens.begin(), tokens.end(), nextToken) != tokens.end())
+	{
+		return Accept();
+	}
+
+	return false;
+}
+
+void Lexer::Expect(wchar_t token)
+{
+	if (!Accept(token))
+	{
+		AddError(Error::Code::SyntaxError, std::wstring(L"Unexpected character \"") + nextToken + L"\", expected \"" + token + L" \".");
+	}
+}
+
+void Lexer::Expect(const std::vector<wchar_t>& tokens)
+{
+	if (!Accept(tokens))
+	{
+		AddError(Error::Code::SyntaxError, std::wstring(L"Unexpected character \"") + nextToken + L"\", expected \"" + join(tokens, ", ") + L" \".");
 	}
 }

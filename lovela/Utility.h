@@ -22,6 +22,11 @@
 	return std::wstring(value.begin(), value.end());
 }
 
+[[nodiscard]] inline const std::wstring& to_wstring(const std::wstring& value)
+{
+	return value;
+}
+
 template <typename Enum, typename std::enable_if<std::is_enum_v<Enum>>::type* = nullptr>
 [[nodiscard]] std::wstring to_wstring(Enum value)
 {
@@ -46,7 +51,20 @@ inline std::wstring double_quote(const std::wstring& text)
 	return L'"' + text + L'"';
 }
 
-inline auto split(const std::wstring& input, wchar_t delimiter)
+template <typename Container>
+[[nodiscard]] inline auto join(const Container& input, std::string_view delimiter)
+{
+	std::wostringstream ss;
+	int index = 0;
+	for (auto& token : input)
+	{
+		ss << index++ ? delimiter : "";
+		ss << to_wstring(token);
+	}
+	return ss.str();
+}
+
+[[nodiscard]] inline auto split(const std::wstring& input, wchar_t delimiter)
 {
 	return [=]() -> std::experimental::generator<std::wstring>
 	{
