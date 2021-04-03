@@ -17,19 +17,11 @@ TokenGenerator Lexer::Lex() noexcept
 {
 	static constexpr std::wstring_view delimiters{ L"()[]{}.,:;!?|#" };
 
-	std::wstring lexeme;
+	lexeme.clear();
 	currentLine = 1;
 	currentColumn = 1;
 	errors.clear();
-
-	struct State
-	{
-		bool integerLiteral = false;
-		bool stringLiteral = false;
-		wchar_t stringFieldCode = 0;
-		wchar_t nextStringInterpolation = '1';
-		int commentLevel = 0;
-	} state;
+	state.Clear();
 
 	charStream >> nextToken;
 
@@ -234,18 +226,6 @@ TokenGenerator Lexer::Lex() noexcept
 			state.integerLiteral = true;
 			continue;
 		}
-		//else if (std::iswspace(nextToken))
-		//{
-		//	Accept();
-		//	auto token = GetToken(lexeme);
-		//	if (token)
-		//	{
-		//		co_yield AddToken(token);
-		//	}
-		//	lexeme.clear();
-		//	state = State{};
-		//	continue;
-		//}
 		else if (delimiters.find(nextToken) != delimiters.npos)
 		{
 			Accept();
