@@ -18,6 +18,10 @@ private:
 	void Expect(wchar_t token);
 	void Expect(const std::vector<wchar_t>& tokens);
 
+	[[nodiscard]] TokenGenerator LexStringFieldCode() noexcept;
+	[[nodiscard]] TokenGenerator LexStringLiteral() noexcept;
+	[[nodiscard]] TokenGenerator LexIntegerLiteral() noexcept;
+
 	struct State
 	{
 		bool integerLiteral = false;

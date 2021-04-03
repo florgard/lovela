@@ -29,127 +29,29 @@ TokenGenerator Lexer::Lex() noexcept
 	{
 		if (state.stringFieldCode)
 		{
-			if (Accept('}'))
+			for (auto token : LexStringFieldCode())
 			{
-				if (std::iswdigit(state.stringFieldCode))
-				{
-					// Indexed string interpolation. Add the string literal up to this point as a token.
-					co_yield AddToken({ .type = Token::Type::LiteralString, .value = lexeme, .outType = stringTypeName });
-					lexeme.clear();
-
-					// Add a string literal interpolation token with the given index.
-					co_yield AddToken({ .type = Token::Type::LiteralStringInterpolation, .value = std::wstring(1, state.stringFieldCode) });
-				}
-				else
-				{
-					// Add the string field value to the string literal.
-					lexeme += GetStringField(state.stringFieldCode);
-				}
+				co_yield AddToken(token);
 			}
-			else
-			{
-				AddError(Error::Code::StringFieldIllformed, std::wstring(L"Ill-formed string field \"") + state.stringFieldCode + L"\".");
-			}
-
-			state.stringFieldCode = 0;
 			continue;
 		}
 
 		if (state.stringLiteral)
 		{
-			if (Accept('\''))
+			for (auto token : LexStringLiteral())
 			{
-				if (Accept('\''))
-				{
-					// Keep a single escaped quotation mark
-					lexeme += currentToken;
-				}
-				else
-				{
-					co_yield AddToken({ .type = Token::Type::LiteralString, .value = lexeme, .outType = stringTypeName });
-					lexeme.clear();
-
-					state.stringLiteral = false;
-					state.nextStringInterpolation = '1';
-				}
+				co_yield AddToken(token);
 			}
-			else if (Accept('{'))
-			{
-				if (Accept('{'))
-				{
-					// Keep a single escaped curly bracket
-					lexeme += currentToken;
-				}
-				else if (Accept('}'))
-				{
-					// Unindexed string interpolation. Add the string literal up to this point as a token.
-					co_yield AddToken({ .type = Token::Type::LiteralString, .value = lexeme, .outType = stringTypeName });
-					lexeme.clear();
-
-					// Add a string literal interpolation token with the next free index.
-					if (state.nextStringInterpolation > '9')
-					{
-						AddError(Error::Code::StringInterpolationOverflow, std::wstring(L"Too many string interpolations, index out of bounds (greater than 9)."));
-					}
-					else
-					{
-						co_yield AddToken({ .type = Token::Type::LiteralStringInterpolation, .value = std::wstring(1, state.nextStringInterpolation) });
-						state.nextStringInterpolation++;
-					}
-				}
-				else if (std::iswdigit(nextToken) || !GetStringField(nextToken).empty())
-				{
-					state.stringFieldCode = nextToken;
-					Accept();
-				}
-				else
-				{
-					AddError(Error::Code::StringFieldUnknown, std::wstring(L"Unknown string field code \"") + nextToken + L"\".");
-				}
-			}
-			else if (Accept())
-			{
-				// Consume the string literal
-				lexeme += currentToken;
-			}
-
 			continue;
 		}
 
 		if (state.integerLiteral)
 		{
-			if (Accept('.'))
+			for (auto token : LexIntegerLiteral())
 			{
-				if (std::iswdigit(nextToken))
-				{
-					// Accept a single decimal point in numbers. Go from integer to decimal literal.
-					lexeme += currentToken;
-					state.integerLiteral = false;
-				}
-				else
-				{
-					auto token = GetToken(lexeme);
-					if (token)
-					{
-						co_yield AddToken(token);
-					}
-					lexeme.clear();
-					state = State{};
-
-					token = GetToken(currentToken);
-					if (token)
-					{
-						co_yield AddToken(token);
-					}
-				}
-				continue;
+				co_yield AddToken(token);
 			}
-			else if (std::iswdigit(nextToken))
-			{
-				Accept();
-				lexeme += currentToken;
-				continue;
-			}
+			continue;
 		}
 
 		if (Accept('<'))
@@ -351,5 +253,138 @@ void Lexer::Expect(const std::vector<wchar_t>& tokens)
 	if (!Accept(tokens))
 	{
 		AddError(Error::Code::SyntaxError, std::wstring(L"Unexpected character \"") + nextToken + L"\", expected \"" + join(tokens, ", ") + L" \".");
+	}
+}
+
+TokenGenerator Lexer::LexStringFieldCode() noexcept
+{
+	if (Accept('}'))
+	{
+		if (std::iswdigit(state.stringFieldCode))
+		{
+			// Indexed string interpolation. Add the string literal up to this point as a token.
+			co_yield { .type = Token::Type::LiteralString, .value = lexeme, .outType = stringTypeName };
+			lexeme.clear();
+
+			// Add a string literal interpolation token with the given index.
+			co_yield { .type = Token::Type::LiteralStringInterpolation, .value = std::wstring(1, state.stringFieldCode) };
+		}
+		else
+		{
+			// Add the string field value to the string literal.
+			lexeme += GetStringField(state.stringFieldCode);
+		}
+	}
+	else
+	{
+		AddError(Error::Code::StringFieldIllformed, std::wstring(L"Ill-formed string field \"") + state.stringFieldCode + L"\".");
+	}
+
+	state.stringFieldCode = 0;
+}
+
+TokenGenerator Lexer::LexStringLiteral() noexcept
+{
+	if (Accept('\''))
+	{
+		if (Accept('\''))
+		{
+			// Keep a single escaped quotation mark
+			lexeme += currentToken;
+		}
+		else
+		{
+			co_yield { .type = Token::Type::LiteralString, .value = lexeme, .outType = stringTypeName };
+			lexeme.clear();
+
+			state.stringLiteral = false;
+			state.nextStringInterpolation = '1';
+		}
+	}
+	else if (Accept('{'))
+	{
+		if (Accept('{'))
+		{
+			// Keep a single escaped curly bracket
+			lexeme += currentToken;
+		}
+		else if (Accept('}'))
+		{
+			// Unindexed string interpolation. Add the string literal up to this point as a token.
+			co_yield { .type = Token::Type::LiteralString, .value = lexeme, .outType = stringTypeName };
+			lexeme.clear();
+
+			// Add a string literal interpolation token with the next free index.
+			if (state.nextStringInterpolation > '9')
+			{
+				AddError(Error::Code::StringInterpolationOverflow, std::wstring(L"Too many string interpolations, index out of bounds (greater than 9)."));
+			}
+			else
+			{
+				co_yield { .type = Token::Type::LiteralStringInterpolation, .value = std::wstring(1, state.nextStringInterpolation) };
+				state.nextStringInterpolation++;
+			}
+		}
+		else if (std::iswdigit(nextToken) || !GetStringField(nextToken).empty())
+		{
+			state.stringFieldCode = nextToken;
+			Accept();
+		}
+		else
+		{
+			AddError(Error::Code::StringFieldUnknown, std::wstring(L"Unknown string field code \"") + nextToken + L"\".");
+		}
+	}
+	else if (Accept())
+	{
+		// Consume the string literal
+		lexeme += currentToken;
+	}
+}
+
+TokenGenerator Lexer::LexIntegerLiteral() noexcept
+{
+	if (Accept('.'))
+	{
+		state.integerLiteral = false;
+
+		if (std::iswdigit(nextToken))
+		{
+			// Accept a single decimal point in numbers. Go from integer to decimal literal.
+			lexeme += currentToken;
+		}
+		else
+		{
+			auto token = GetToken(lexeme);
+			if (token)
+			{
+				co_yield token;
+			}
+			lexeme.clear();
+			state = State{};
+
+			token = GetToken(currentToken);
+			if (token)
+			{
+				co_yield token;
+			}
+		}
+	}
+	else if (std::iswdigit(nextToken))
+	{
+		Accept();
+		lexeme += currentToken;
+	}
+	else
+	{
+		state.integerLiteral = false;
+
+		auto token = GetToken(lexeme);
+		if (token)
+		{
+			co_yield token;
+		}
+		lexeme.clear();
+		state = State{};
 	}
 }
