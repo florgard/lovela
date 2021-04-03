@@ -11,7 +11,9 @@ public:
 private:
 	Token AddToken(Token token) const;
 
-	[[nodiscard]] bool Accept();
+
+	[[nodiscard]] bool Peek(wchar_t token);
+	bool Accept();
 	[[nodiscard]] bool Accept(wchar_t token);
 	[[nodiscard]] bool Accept(const std::vector<wchar_t>& tokens);
 	void Expect(wchar_t token);

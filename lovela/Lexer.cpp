@@ -24,7 +24,6 @@ TokenGenerator Lexer::Lex() noexcept
 
 	struct State
 	{
-		bool skipNext = false;
 		bool integerLiteral = false;
 		bool stringLiteral = false;
 		wchar_t stringFieldCode = 0;
@@ -32,31 +31,13 @@ TokenGenerator Lexer::Lex() noexcept
 		int commentLevel = 0;
 	} state;
 
-	wchar_t c = 0, prev = 0, next = 0;
+	charStream >> nextToken;
 
-	charStream >> c;
-
-	while (c)
+	while (nextToken)
 	{
-		static constexpr size_t codeSampleCharacters = 20;
-		currentCode.push_back(c);
-		while (currentCode.size() > codeSampleCharacters)
-		{
-			currentCode.pop_front();
-		}
-
-		next = 0;
-		charStream >> next;
-	
-		if (state.skipNext)
-		{
-			state.skipNext = false;
-			goto readNext;
-		}
-
 		if (state.stringFieldCode)
 		{
-			if (c == '}')
+			if (Accept('}'))
 			{
 				if (std::iswdigit(state.stringFieldCode))
 				{
@@ -79,18 +60,17 @@ TokenGenerator Lexer::Lex() noexcept
 			}
 
 			state.stringFieldCode = 0;
-			goto readNext;
+			continue;
 		}
 
 		if (state.stringLiteral)
 		{
-			if (c == '\'')
+			if (Accept('\''))
 			{
-				if (c == next)
+				if (Accept('\''))
 				{
 					// Keep a single escaped quotation mark
-					lexeme += c;
-					state.skipNext = true;
+					lexeme += currentToken;
 				}
 				else
 				{
@@ -101,15 +81,14 @@ TokenGenerator Lexer::Lex() noexcept
 					state.nextStringInterpolation = '1';
 				}
 			}
-			else if (c == '{')
+			else if (Accept('{'))
 			{
-				if (c == next)
+				if (Accept('{'))
 				{
 					// Keep a single escaped curly bracket
-					lexeme += c;
-					state.skipNext = true;
+					lexeme += currentToken;
 				}
-				else if (next == '}')
+				else if (Accept('}'))
 				{
 					// Unindexed string interpolation. Add the string literal up to this point as a token.
 					co_yield AddToken({ .type = Token::Type::LiteralString, .value = lexeme, .outType = stringTypeName });
@@ -125,44 +104,69 @@ TokenGenerator Lexer::Lex() noexcept
 						co_yield AddToken({ .type = Token::Type::LiteralStringInterpolation, .value = std::wstring(1, state.nextStringInterpolation) });
 						state.nextStringInterpolation++;
 					}
-
-					state.skipNext = true;
 				}
-				else if (std::iswdigit(next) || !GetStringField(next).empty())
+				else if (std::iswdigit(nextToken) || !GetStringField(nextToken).empty())
 				{
-					state.stringFieldCode = next;
-					state.skipNext = true;
+					state.stringFieldCode = nextToken;
+					Accept();
 				}
 				else
 				{
-					AddError(Error::Code::StringFieldUnknown, std::wstring(L"Unknown string field code \"") + next + L"\".");
+					AddError(Error::Code::StringFieldUnknown, std::wstring(L"Unknown string field code \"") + nextToken + L"\".");
 				}
 			}
-			else
+			else if (Accept())
 			{
 				// Consume the string literal
-				lexeme += c;
+				lexeme += currentToken;
 			}
 
-			goto readNext;
+			continue;
 		}
 
-		if (state.integerLiteral && c == '.' && std::iswdigit(next))
+		if (state.integerLiteral)
 		{
-			// Accept a single decimal point in numbers. Go from integer to decimal literal.
-			state.integerLiteral = false;
-			lexeme += c;
-			goto readNext;
+			if (Accept('.'))
+			{
+				if (std::iswdigit(nextToken))
+				{
+					// Accept a single decimal point in numbers. Go from integer to decimal literal.
+					lexeme += currentToken;
+					state.integerLiteral = false;
+				}
+				else
+				{
+					auto token = GetToken(lexeme);
+					if (token)
+					{
+						co_yield AddToken(token);
+					}
+					lexeme.clear();
+					state = State{};
+
+					token = GetToken(currentToken);
+					if (token)
+					{
+						co_yield AddToken(token);
+					}
+				}
+				continue;
+			}
+			else if (std::iswdigit(nextToken))
+			{
+				Accept();
+				lexeme += currentToken;
+				continue;
+			}
 		}
 
-		if (c == '<')
+		if (Accept('<'))
 		{
-			if (c == prev)
+			if (currentToken == previousToken)
 			{
 				// Still opening comment
-				goto readNext;
 			}
-			else if (c == next)
+			else if (currentToken == nextToken)
 			{
 				// Begin opening comment
 				state.commentLevel++;
@@ -173,34 +177,44 @@ TokenGenerator Lexer::Lex() noexcept
 					co_yield AddToken(token);
 				}
 				lexeme.clear();
-				goto readNext;
 			}
+			else
+			{
+				lexeme += currentToken;
+			}
+
+			continue;
 		}
 
-		if (c == '>')
+		if (Accept('>'))
 		{
-			if (c == prev)
+			if (currentToken == previousToken)
 			{
 				// Still closing comment
-				goto readNext;
 			}
-			else if (c == next)
+			else if (currentToken == nextToken)
 			{
 				// Begin closing comment
 				state.commentLevel--;
 
 				lexeme.clear();
-				goto readNext;
 			}
+			else
+			{
+				lexeme += currentToken;
+			}
+
+			continue;
 		}
 
 		if (state.commentLevel)
 		{
 			// Consume the comment
-			goto readNext;
+			Accept();
+			continue;
 		}
 
-		if (c == '\'')
+		if (Accept('\''))
 		{
 			auto token = GetToken(lexeme);
 			if (token)
@@ -211,14 +225,30 @@ TokenGenerator Lexer::Lex() noexcept
 			state = State{};
 
 			state.stringLiteral = true;
-			goto readNext;
+			continue;
 		}
-		else if (std::iswdigit(c) && lexeme.empty())
+		else if (std::iswdigit(nextToken) && lexeme.empty())
 		{
+			Accept();
+			lexeme += currentToken;
 			state.integerLiteral = true;
+			continue;
 		}
-		else if (std::iswspace(c))
+		//else if (std::iswspace(nextToken))
+		//{
+		//	Accept();
+		//	auto token = GetToken(lexeme);
+		//	if (token)
+		//	{
+		//		co_yield AddToken(token);
+		//	}
+		//	lexeme.clear();
+		//	state = State{};
+		//	continue;
+		//}
+		else if (delimiters.find(nextToken) != delimiters.npos)
 		{
+			Accept();
 			auto token = GetToken(lexeme);
 			if (token)
 			{
@@ -226,9 +256,18 @@ TokenGenerator Lexer::Lex() noexcept
 			}
 			lexeme.clear();
 			state = State{};
+
+			token = GetToken(currentToken);
+			if (token)
+			{
+				co_yield AddToken(token);
+			}
+			continue;
 		}
-		else if (delimiters.find(c) != delimiters.npos)
+
+		if (std::iswspace(nextToken))
 		{
+			Accept();
 			auto token = GetToken(lexeme);
 			if (token)
 			{
@@ -237,28 +276,16 @@ TokenGenerator Lexer::Lex() noexcept
 			lexeme.clear();
 			state = State{};
 
-			token = GetToken(c);
-			if (token)
+			if (currentToken == '\n')
 			{
-				co_yield AddToken(token);
+				currentLine++;
+				currentColumn = 1;
 			}
-			goto readNext;
 		}
-
-		if (!std::iswspace(c))
+		else if (Accept())
 		{
-			lexeme += c;
+			lexeme += currentToken;
 		}
-		else if (c == '\n')
-		{
-			currentLine++;
-			currentColumn = 1;
-		}
-
-	readNext:
-		prev = c;
-		c = next;
-		currentColumn++;
 	}
 
 	if (state.commentLevel)
@@ -284,21 +311,36 @@ TokenGenerator Lexer::Lex() noexcept
 
 bool Lexer::Accept()
 {
+	currentColumn++;
+
 	if (nextToken)
 	{
 		previousToken = currentToken;
 		currentToken = nextToken;
 		nextToken = 0;
 		charStream >> nextToken;
+
+		static constexpr size_t codeSampleCharacters = 20;
+		currentCode.push_back(currentToken);
+		while (currentCode.size() > codeSampleCharacters)
+		{
+			currentCode.pop_front();
+		}
+
 		return true;
 	}
 
 	return false;
 }
 
+bool Lexer::Peek(wchar_t token)
+{
+	return token == nextToken;
+}
+
 bool Lexer::Accept(wchar_t token)
 {
-	if (token == nextToken)
+	if (Peek(token))
 	{
 		return Accept();
 	}
