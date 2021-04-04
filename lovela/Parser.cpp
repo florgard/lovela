@@ -5,7 +5,7 @@
 static const std::set<Token::Type> functionDeclarationTokens
 {
 	Token::Type::ParenSquareOpen,
-	Token::Type::SeparatorHash,
+	Token::Type::PrimitiveType,
 	Token::Type::Identifier,
 	Token::Type::OperatorArrow,
 	Token::Type::OperatorArithmetic,
@@ -17,13 +17,13 @@ static const std::set<Token::Type> functionDeclarationTokens
 static const std::set<Token::Type> typeSpecTokens
 {
 	Token::Type::ParenSquareOpen,
-	Token::Type::SeparatorHash,
+	Token::Type::PrimitiveType,
 };
 
 static const std::set<Token::Type> externalFunctionDeclarationTokens
 {
 	Token::Type::ParenSquareOpen,
-	Token::Type::SeparatorHash,
+	Token::Type::PrimitiveType,
 	Token::Type::Identifier,
 };
 
@@ -234,22 +234,21 @@ TypeSpec Parser::ParseTypeSpec()
 {
 	Assert(typeSpecTokens);
 
-	if (IsToken(Token::Type::SeparatorHash))
-	{
-		return ParsePrimitiveType();
-	}
-
 	TypeSpec typeSpec;
 
+	if (IsToken(Token::Type::PrimitiveType))
+	{
+		typeSpec.name = currentToken.value;
+	}
 	// []
-	if (Accept(Token::Type::ParenSquareClose))
+	else if (Accept(Token::Type::ParenSquareClose))
 	{
 		typeSpec.SetAny();
 	}
 	// [#32]
-	else if (Accept(Token::Type::SeparatorHash))
+	else if (Accept(Token::Type::PrimitiveType))
 	{
-		typeSpec = ParsePrimitiveType();
+		typeSpec.name = currentToken.value;
 		Expect(Token::Type::ParenSquareClose);
 	}
 	// [identifier]
@@ -268,26 +267,6 @@ TypeSpec Parser::ParseTypeSpec()
 	else
 	{
 		throw UnexpectedTokenException(*tokenIterator);
-	}
-
-	return typeSpec;
-}
-
-TypeSpec Parser::ParsePrimitiveType()
-{
-	TypeSpec typeSpec;
-
-	// [#32]
-	Assert(Token::Type::SeparatorHash);
-
-	typeSpec.name = currentToken.value;
-	Expect(Token::Type::LiteralInteger);
-	typeSpec.name += currentToken.value;
-
-	// [#32#]
-	if (Accept(Token::Type::SeparatorHash))
-	{
-		typeSpec.name += currentToken.value;
 	}
 
 	return typeSpec;

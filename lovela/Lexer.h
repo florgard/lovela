@@ -17,6 +17,7 @@ private:
 	bool Accept();
 	[[nodiscard]] bool Accept(wchar_t token);
 	[[nodiscard]] bool Accept(const std::vector<wchar_t>& tokens);
+	[[nodiscard]] bool Accept(const std::wregex& regex);
 	[[nodiscard]] bool Accept(std::function<bool()> predicate);
 	void Expect(wchar_t token);
 	void Expect(const std::vector<wchar_t>& tokens);
@@ -30,6 +31,7 @@ private:
 	[[nodiscard]] void LexSeparator(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexWhitespace(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexLiteralIntegerBegin(std::vector<Token>& tokens) noexcept;
+	[[nodiscard]] void LexPrimitiveType(std::vector<Token>& tokens) noexcept;
 
 	struct State
 	{

@@ -3,8 +3,6 @@
 ## Small
 
 * Generic tagged types: [1] add [1]
-* Primitive type lexing
-  * Simplify parsing
 * Parser generator rewrite of Parse()
   * Code generation on the fly? What about identifier and function signature validation?
 * Bind operator

@@ -220,6 +220,35 @@ void Testing::RunLexerTests()
 		{.type = Token::Type::ParenRoundClose, .value = L")"},
 		endToken
 		});
+
+	TestLexer("primitive type, int32", L"#32", {
+		{.type = Token::Type::PrimitiveType, .value = L"#32"},
+		endToken
+		});
+	TestLexer("primitive type, uint32", L"#+32", {
+		{.type = Token::Type::PrimitiveType, .value = L"#+32"},
+		endToken
+		});
+	TestLexer("primitive type, int8 ", L"#8", {
+		{.type = Token::Type::PrimitiveType, .value = L"#8"},
+		endToken
+		});
+	TestLexer("primitive type, double", L"#.64", {
+		{.type = Token::Type::PrimitiveType, .value = L"#.64"},
+		endToken
+		});
+	TestLexer("primitive type, int8 array", L"#8#", {
+		{.type = Token::Type::PrimitiveType, .value = L"#8#"},
+		endToken
+		});
+	TestLexer("primitive type, int8 array of arrays", L"#8##", {
+		{.type = Token::Type::PrimitiveType, .value = L"#8##"},
+		endToken
+		});
+	TestLexer("primitive type, int32 array size 8", L"#32#8", {
+		{.type = Token::Type::PrimitiveType, .value = L"#32#8"},
+		endToken
+		});
 }
 
 void Testing::RunParserTests()

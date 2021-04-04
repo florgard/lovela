@@ -77,6 +77,10 @@ TokenGenerator Lexer::Lex() noexcept
 		{
 			LexLiteralIntegerBegin(tokens);
 		}
+		else if (Accept([&] { return nextChar == '#' && currentLexeme.empty(); }))
+		{
+			LexPrimitiveType(tokens);
+		}
 		else if (Accept([&] { return separators.find(nextChar) != separators.npos; }))
 		{
 			LexSeparator(tokens);
@@ -164,6 +168,17 @@ bool Lexer::Accept(wchar_t token)
 bool Lexer::Accept(const std::vector<wchar_t>& tokens)
 {
 	if (std::find(tokens.begin(), tokens.end(), nextChar) != tokens.end())
+	{
+		return Accept();
+	}
+
+	return false;
+}
+
+bool Lexer::Accept(const std::wregex& regex)
+{
+	std::wstring_view str(&nextChar, 1);
+	if (std::regex_match(str.begin(), str.end(), regex))
 	{
 		return Accept();
 	}
@@ -395,4 +410,28 @@ void Lexer::LexLiteralIntegerBegin(std::vector<Token>&) noexcept
 	currentLexeme += currentChar;
 
 	state.integerLiteral = true;
+}
+
+void Lexer::LexPrimitiveType(std::vector<Token>& tokens) noexcept
+{
+	static const std::wregex firstChar{LR"([\d\+\.])"};
+	static const std::wregex followingChars{ LR"([\d#])" };
+
+	std::wstring lexeme;
+	lexeme += currentChar;
+
+	if (!Accept(firstChar))
+	{
+		AddError(Error::Code::SyntaxError, L"Illegal character in primitive type.");
+		return;
+	}
+
+	lexeme += currentChar;
+
+	while (Accept(followingChars))
+	{
+		lexeme += currentChar;
+	}
+
+	tokens.emplace_back(Token{ .type = Token::Type::PrimitiveType, .value = std::move(lexeme) });
 }
