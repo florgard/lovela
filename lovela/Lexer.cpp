@@ -31,7 +31,7 @@ Token Lexer::DecorateToken(Token token) const
 
 TokenGenerator Lexer::Lex() noexcept
 {
-	static constexpr std::wstring_view delimiters{ L"()[]{}.,:;!?|#" };
+	static constexpr std::wstring_view separators{ L"()[]{}.,:;!?|#" };
 
 	lexeme.clear();
 	currentLine = 1;
@@ -112,7 +112,7 @@ TokenGenerator Lexer::Lex() noexcept
 			}
 			continue;
 		}
-		else if (delimiters.find(nextToken) != delimiters.npos)
+		else if (separators.find(nextToken) != separators.npos)
 		{
 			Accept();
 			for (auto token : LexSeparator())
