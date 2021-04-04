@@ -18,7 +18,6 @@
   * Index
   * Name
 * Data structure length operator: object#
-* Lexer accept/expect rewrite
 * String interpolation
 * Function objects
 * Error handlers: [!]
