@@ -11,6 +11,7 @@ public:
 
 	[[nodiscard]] static constexpr std::wstring_view Trim(const std::wstring_view& input) noexcept
 	{
+		constexpr wchar_t whitespace[7]{ L" \t\r\n\f\v" };
 		const auto start = input.find_first_not_of(whitespace);
 		if (start == input.npos)
 		{
@@ -33,10 +34,7 @@ protected:
 	int currentLine{};
 	int currentColumn{};
 
-	static constexpr wchar_t stringTypeName[3]{ L"8#" };
-	static constexpr wchar_t integerTypeName[3]{ L"32" };
-	static constexpr wchar_t decimalTypeName[4]{ L".32" };
-
-private:
-	static constexpr wchar_t whitespace[7]{ L" \t\r\n\f\v" };
+	static constexpr wchar_t stringTypeName[4]{ L"#8#" };
+	static constexpr wchar_t integerTypeName[5]{ L"#32" };
+	static constexpr wchar_t decimalTypeName[5]{ L"#.32" };
 };

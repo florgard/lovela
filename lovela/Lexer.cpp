@@ -31,7 +31,8 @@ Token Lexer::DecorateToken(Token token) const
 
 TokenGenerator Lexer::Lex() noexcept
 {
-	static constexpr std::wstring_view separators{ L"()[]{}.,:;!?|#" };
+	static const std::wregex separators{ LR"([\(\)\[\]\{\}\.,:;\!\?\|#])" };
+	static const std::wregex whitespace{ LR"(\s)" };
 
 	currentLexeme.clear();
 	currentLine = 1;
@@ -81,11 +82,11 @@ TokenGenerator Lexer::Lex() noexcept
 		{
 			LexPrimitiveType(tokens);
 		}
-		else if (Accept([&] { return separators.find(nextChar) != separators.npos; }))
+		else if (Accept(separators))
 		{
 			LexSeparator(tokens);
 		}
-		else if (Accept([&] { return std::iswspace(nextChar); }))
+		else if (Accept(whitespace))
 		{
 			LexWhitespace(tokens);
 		}
