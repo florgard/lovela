@@ -45,9 +45,9 @@ private:
 	} state;
 
 	std::wistream& charStream;
-	wchar_t currentToken{};
-	wchar_t previousToken{};
-	wchar_t nextToken{};
-	std::wstring lexeme;
+	wchar_t currentChar{};
+	wchar_t previousChar{};
+	wchar_t nextChar{};
+	std::wstring currentLexeme;
 	std::deque<wchar_t> currentCode;
 };

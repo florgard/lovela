@@ -7,15 +7,15 @@ Lexer::Lexer(std::wistream& charStream) noexcept : charStream(charStream >> std:
 
 Token Lexer::GetCurrentLexemeToken()
 {
-	auto token = DecorateToken(GetToken(lexeme));
-	lexeme.clear();
+	auto token = DecorateToken(GetToken(currentLexeme));
+	currentLexeme.clear();
 	state.Clear();
 	return token;
 }
 
 Token Lexer::GetCurrentCharToken()
 {
-	auto token = DecorateToken(GetToken(currentToken));
+	auto token = DecorateToken(GetToken(currentChar));
 	return token;
 }
 
@@ -34,15 +34,15 @@ TokenGenerator Lexer::Lex() noexcept
 {
 	static constexpr std::wstring_view separators{ L"()[]{}.,:;!?|#" };
 
-	lexeme.clear();
+	currentLexeme.clear();
 	currentLine = 1;
 	currentColumn = 1;
 	errors.clear();
 	state.Clear();
 
-	charStream >> nextToken;
+	charStream >> nextChar;
 
-	while (nextToken)
+	while (nextChar)
 	{
 		if (state.stringFieldCode)
 		{
@@ -105,7 +105,7 @@ TokenGenerator Lexer::Lex() noexcept
 			continue;
 		}
 
-		if (std::iswdigit(nextToken) && lexeme.empty())
+		if (std::iswdigit(nextChar) && currentLexeme.empty())
 		{
 			Accept();
 			for (auto token : LexLiteralIntegerBegin())
@@ -115,7 +115,7 @@ TokenGenerator Lexer::Lex() noexcept
 			continue;
 		}
 
-		if (separators.find(nextToken) != separators.npos)
+		if (separators.find(nextChar) != separators.npos)
 		{
 			Accept();
 			for (auto token : LexSeparator())
@@ -125,7 +125,7 @@ TokenGenerator Lexer::Lex() noexcept
 			continue;
 		}
 
-		if (std::iswspace(nextToken))
+		if (std::iswspace(nextChar))
 		{
 			Accept();
 			for (auto token : LexWhitespace())
@@ -137,7 +137,7 @@ TokenGenerator Lexer::Lex() noexcept
 
 		if (Accept())
 		{
-			lexeme += currentToken;
+			currentLexeme += currentChar;
 		}
 	}
 
@@ -165,15 +165,15 @@ bool Lexer::Accept()
 {
 	currentColumn++;
 
-	if (nextToken)
+	if (nextChar)
 	{
-		previousToken = currentToken;
-		currentToken = nextToken;
-		nextToken = 0;
-		charStream >> nextToken;
+		previousChar = currentChar;
+		currentChar = nextChar;
+		nextChar = 0;
+		charStream >> nextChar;
 
 		static constexpr size_t codeSampleCharacters = 20;
-		currentCode.push_back(currentToken);
+		currentCode.push_back(currentChar);
 		while (currentCode.size() > codeSampleCharacters)
 		{
 			currentCode.pop_front();
@@ -187,7 +187,7 @@ bool Lexer::Accept()
 
 bool Lexer::Peek(wchar_t token)
 {
-	return token == nextToken;
+	return token == nextChar;
 }
 
 bool Lexer::Accept(wchar_t token)
@@ -202,7 +202,7 @@ bool Lexer::Accept(wchar_t token)
 
 bool Lexer::Accept(const std::vector<wchar_t>& tokens)
 {
-	if (std::find(tokens.begin(), tokens.end(), nextToken) != tokens.end())
+	if (std::find(tokens.begin(), tokens.end(), nextChar) != tokens.end())
 	{
 		return Accept();
 	}
@@ -214,7 +214,7 @@ void Lexer::Expect(wchar_t token)
 {
 	if (!Accept(token))
 	{
-		AddError(Error::Code::SyntaxError, std::wstring(L"Unexpected character \"") + nextToken + L"\", expected \"" + token + L" \".");
+		AddError(Error::Code::SyntaxError, std::wstring(L"Unexpected character \"") + nextChar + L"\", expected \"" + token + L" \".");
 	}
 }
 
@@ -222,7 +222,7 @@ void Lexer::Expect(const std::vector<wchar_t>& tokens)
 {
 	if (!Accept(tokens))
 	{
-		AddError(Error::Code::SyntaxError, std::wstring(L"Unexpected character \"") + nextToken + L"\", expected \"" + join(tokens, ", ") + L" \".");
+		AddError(Error::Code::SyntaxError, std::wstring(L"Unexpected character \"") + nextChar + L"\", expected \"" + join(tokens, ", ") + L" \".");
 	}
 }
 
@@ -233,8 +233,8 @@ TokenGenerator Lexer::LexStringFieldCode() noexcept
 		if (std::iswdigit(state.stringFieldCode))
 		{
 			// Indexed string interpolation. Add the string literal up to this point as a token.
-			co_yield { .type = Token::Type::LiteralString, .value = lexeme, .outType = stringTypeName };
-			lexeme.clear();
+			co_yield { .type = Token::Type::LiteralString, .value = currentLexeme, .outType = stringTypeName };
+			currentLexeme.clear();
 
 			// Add a string literal interpolation token with the given index.
 			co_yield { .type = Token::Type::LiteralStringInterpolation, .value = std::wstring(1, state.stringFieldCode) };
@@ -242,7 +242,7 @@ TokenGenerator Lexer::LexStringFieldCode() noexcept
 		else
 		{
 			// Add the string field value to the string literal.
-			lexeme += GetStringField(state.stringFieldCode);
+			currentLexeme += GetStringField(state.stringFieldCode);
 		}
 	}
 	else
@@ -260,12 +260,12 @@ TokenGenerator Lexer::LexLiteralString() noexcept
 		if (Accept('\''))
 		{
 			// Keep a single escaped quotation mark
-			lexeme += currentToken;
+			currentLexeme += currentChar;
 		}
 		else
 		{
-			co_yield { .type = Token::Type::LiteralString, .value = lexeme, .outType = stringTypeName };
-			lexeme.clear();
+			co_yield { .type = Token::Type::LiteralString, .value = currentLexeme, .outType = stringTypeName };
+			currentLexeme.clear();
 
 			state.stringLiteral = false;
 			state.nextStringInterpolation = '1';
@@ -276,13 +276,13 @@ TokenGenerator Lexer::LexLiteralString() noexcept
 		if (Accept('{'))
 		{
 			// Keep a single escaped curly bracket
-			lexeme += currentToken;
+			currentLexeme += currentChar;
 		}
 		else if (Accept('}'))
 		{
 			// Unindexed string interpolation. Add the string literal up to this point as a token.
-			co_yield { .type = Token::Type::LiteralString, .value = lexeme, .outType = stringTypeName };
-			lexeme.clear();
+			co_yield { .type = Token::Type::LiteralString, .value = currentLexeme, .outType = stringTypeName };
+			currentLexeme.clear();
 
 			// Add a string literal interpolation token with the next free index.
 			if (state.nextStringInterpolation > '9')
@@ -295,20 +295,20 @@ TokenGenerator Lexer::LexLiteralString() noexcept
 				state.nextStringInterpolation++;
 			}
 		}
-		else if (std::iswdigit(nextToken) || !GetStringField(nextToken).empty())
+		else if (std::iswdigit(nextChar) || !GetStringField(nextChar).empty())
 		{
-			state.stringFieldCode = nextToken;
+			state.stringFieldCode = nextChar;
 			Accept();
 		}
 		else
 		{
-			AddError(Error::Code::StringFieldUnknown, std::wstring(L"Unknown string field code \"") + nextToken + L"\".");
+			AddError(Error::Code::StringFieldUnknown, std::wstring(L"Unknown string field code \"") + nextChar + L"\".");
 		}
 	}
 	else if (Accept())
 	{
 		// Consume the string literal
-		lexeme += currentToken;
+		currentLexeme += currentChar;
 	}
 }
 
@@ -318,10 +318,10 @@ TokenGenerator Lexer::LexLiteralInteger() noexcept
 	{
 		state.integerLiteral = false;
 
-		if (std::iswdigit(nextToken))
+		if (std::iswdigit(nextChar))
 		{
 			// Accept a single decimal point in numbers. Go from integer to decimal literal.
-			lexeme += currentToken;
+			currentLexeme += currentChar;
 		}
 		else
 		{
@@ -338,10 +338,10 @@ TokenGenerator Lexer::LexLiteralInteger() noexcept
 			}
 		}
 	}
-	else if (std::iswdigit(nextToken))
+	else if (std::iswdigit(nextChar))
 	{
 		Accept();
-		lexeme += currentToken;
+		currentLexeme += currentChar;
 	}
 	else
 	{
@@ -357,11 +357,11 @@ TokenGenerator Lexer::LexLiteralInteger() noexcept
 
 TokenGenerator Lexer::LexParenAngleOpen() noexcept
 {
-	if (currentToken == previousToken)
+	if (currentChar == previousChar)
 	{
 		// Still opening comment
 	}
-	else if (currentToken == nextToken)
+	else if (currentChar == nextChar)
 	{
 		// Begin opening comment
 		const auto commentLevel = state.commentLevel + 1;
@@ -376,26 +376,26 @@ TokenGenerator Lexer::LexParenAngleOpen() noexcept
 	}
 	else
 	{
-		lexeme += currentToken;
+		currentLexeme += currentChar;
 	}
 }
 
 TokenGenerator Lexer::LexParenAngleClose() noexcept
 {
-	if (currentToken == previousToken)
+	if (currentChar == previousChar)
 	{
 		// Still closing comment
 	}
-	else if (currentToken == nextToken)
+	else if (currentChar == nextChar)
 	{
 		// Begin closing comment
 		state.commentLevel--;
 
-		lexeme.clear();
+		currentLexeme.clear();
 	}
 	else
 	{
-		lexeme += currentToken;
+		currentLexeme += currentChar;
 	}
 
 	// HACK to avoid a compiler error for a coroutine without co_yield.
@@ -439,7 +439,7 @@ TokenGenerator Lexer::LexWhitespace() noexcept
 		co_yield token;
 	}
 
-	if (currentToken == '\n')
+	if (currentChar == '\n')
 	{
 		currentLine++;
 		currentColumn = 1;
@@ -448,7 +448,7 @@ TokenGenerator Lexer::LexWhitespace() noexcept
 
 TokenGenerator Lexer::LexLiteralIntegerBegin() noexcept
 {
-	lexeme += currentToken;
+	currentLexeme += currentChar;
 	state.integerLiteral = true;
 
 	// HACK to avoid a compiler error for a coroutine without co_yield.
