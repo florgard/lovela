@@ -20,15 +20,15 @@ private:
 	void Expect(wchar_t token);
 	void Expect(const std::vector<wchar_t>& tokens);
 
-	[[nodiscard]] TokenGenerator LexStringFieldCode() noexcept;
-	[[nodiscard]] TokenGenerator LexLiteralString() noexcept;
-	[[nodiscard]] TokenGenerator LexLiteralInteger() noexcept;
-	[[nodiscard]] TokenGenerator LexParenAngleOpen() noexcept;
-	[[nodiscard]] TokenGenerator LexParenAngleClose() noexcept;
-	[[nodiscard]] TokenGenerator LexLiteralStringBegin() noexcept;
-	[[nodiscard]] TokenGenerator LexSeparator() noexcept;
-	[[nodiscard]] TokenGenerator LexWhitespace() noexcept;
-	[[nodiscard]] TokenGenerator LexLiteralIntegerBegin() noexcept;
+	[[nodiscard]] void LexStringFieldCode(std::vector<Token>& tokens) noexcept;
+	[[nodiscard]] void LexLiteralString(std::vector<Token>& tokens) noexcept;
+	[[nodiscard]] void LexLiteralInteger(std::vector<Token>& tokens) noexcept;
+	[[nodiscard]] void LexParenAngleOpen(std::vector<Token>& tokens) noexcept;
+	[[nodiscard]] void LexParenAngleClose(std::vector<Token>& tokens) noexcept;
+	[[nodiscard]] void LexLiteralStringBegin(std::vector<Token>& tokens) noexcept;
+	[[nodiscard]] void LexSeparator(std::vector<Token>& tokens) noexcept;
+	[[nodiscard]] void LexWhitespace(std::vector<Token>& tokens) noexcept;
+	[[nodiscard]] void LexLiteralIntegerBegin(std::vector<Token>& tokens) noexcept;
 
 	struct State
 	{
