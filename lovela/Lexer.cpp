@@ -50,92 +50,72 @@ TokenGenerator Lexer::Lex() noexcept
 			{
 				co_yield token;
 			}
-			continue;
 		}
-
-		if (state.stringLiteral)
+		else if (state.stringLiteral)
 		{
 			for (auto token : LexLiteralString())
 			{
 				co_yield token;
 			}
-			continue;
 		}
-
-		if (state.integerLiteral)
+		else if (state.integerLiteral)
 		{
 			for (auto token : LexLiteralInteger())
 			{
 				co_yield token;
 			}
-			continue;
 		}
-
-		if (Accept('<'))
+		else if (Accept('<'))
 		{
 			for (auto token : LexParenAngleOpen())
 			{
 				co_yield token;
 			}
-			continue;
 		}
-
-		if (Accept('>'))
+		else if (Accept('>'))
 		{
 			for (auto token : LexParenAngleClose())
 			{
 				co_yield token;
 			}
-			continue;
 		}
-
-		if (state.commentLevel)
+		else if (state.commentLevel)
 		{
 			// Consume the comment
 			Accept();
-			continue;
 		}
-
-		if (Accept('\''))
+		else if (Accept('\''))
 		{
 			for (auto token : LexLiteralStringBegin())
 			{
 				co_yield token;
 			}
-			continue;
 		}
-
-		if (std::iswdigit(nextChar) && currentLexeme.empty())
+		else if (std::iswdigit(nextChar) && currentLexeme.empty())
 		{
 			Accept();
 			for (auto token : LexLiteralIntegerBegin())
 			{
 				co_yield token;
 			}
-			continue;
 		}
-
-		if (separators.find(nextChar) != separators.npos)
+		else if (separators.find(nextChar) != separators.npos)
 		{
 			Accept();
 			for (auto token : LexSeparator())
 			{
 				co_yield token;
 			}
-			continue;
 		}
-
-		if (std::iswspace(nextChar))
+		else if (std::iswspace(nextChar))
 		{
 			Accept();
 			for (auto token : LexWhitespace())
 			{
 				co_yield token;
 			}
-			continue;
 		}
-
-		if (Accept())
+		else if (Accept())
 		{
 			currentLexeme += currentChar;
 		}
