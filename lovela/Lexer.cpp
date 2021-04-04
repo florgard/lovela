@@ -126,7 +126,7 @@ TokenGenerator Lexer::Lex() noexcept
 	}
 }
 
-bool Lexer::Accept()
+bool Lexer::Accept() noexcept
 {
 	currentColumn++;
 
@@ -150,14 +150,9 @@ bool Lexer::Accept()
 	return false;
 }
 
-bool Lexer::Peek(wchar_t token)
+bool Lexer::Accept(wchar_t token) noexcept
 {
-	return token == nextChar;
-}
-
-bool Lexer::Accept(wchar_t token)
-{
-	if (Peek(token))
+	if (nextChar == token)
 	{
 		return Accept();
 	}
@@ -165,17 +160,7 @@ bool Lexer::Accept(wchar_t token)
 	return false;
 }
 
-bool Lexer::Accept(const std::vector<wchar_t>& tokens)
-{
-	if (std::find(tokens.begin(), tokens.end(), nextChar) != tokens.end())
-	{
-		return Accept();
-	}
-
-	return false;
-}
-
-bool Lexer::Accept(const std::wregex& regex)
+bool Lexer::Accept(const std::wregex& regex) noexcept
 {
 	std::wstring_view str(&nextChar, 1);
 	if (std::regex_match(str.begin(), str.end(), regex))
@@ -186,7 +171,7 @@ bool Lexer::Accept(const std::wregex& regex)
 	return false;
 }
 
-bool Lexer::Accept(std::function<bool()> predicate)
+bool Lexer::Accept(std::function<bool()> predicate) noexcept
 {
 	if (predicate())
 	{
@@ -196,20 +181,26 @@ bool Lexer::Accept(std::function<bool()> predicate)
 	return false;
 }
 
-void Lexer::Expect(wchar_t token)
+bool Lexer::Expect(wchar_t token) noexcept
 {
-	if (!Accept(token))
+	if (Accept(token))
 	{
-		AddError(Error::Code::SyntaxError, std::wstring(L"Unexpected character \"") + nextChar + L"\", expected \"" + token + L" \".");
+		return true;
 	}
+
+	AddError(Error::Code::SyntaxError, std::wstring(L"Unexpected character \"") + nextChar + L"\", expected \"" + token + L" \".");
+	return false;
 }
 
-void Lexer::Expect(const std::vector<wchar_t>& tokens)
+bool Lexer::Expect(const std::wregex& regex) noexcept
 {
-	if (!Accept(tokens))
+	if (Accept(regex))
 	{
-		AddError(Error::Code::SyntaxError, std::wstring(L"Unexpected character \"") + nextChar + L"\", expected \"" + join(tokens, ", ") + L" \".");
+		return true;
 	}
+
+	AddError(Error::Code::SyntaxError, std::wstring(L"Unexpected character \"") + nextChar + L" \".");
+	return false;
 }
 
 void Lexer::LexStringFieldCode(std::vector<Token>& tokens) noexcept
@@ -420,9 +411,9 @@ void Lexer::LexPrimitiveType(std::vector<Token>& tokens) noexcept
 	std::wstring lexeme;
 	lexeme += currentChar;
 
-	if (!Accept(firstChar))
+	if (!Expect(firstChar))
 	{
-		AddError(Error::Code::SyntaxError, L"Illegal character in primitive type.");
+		AddError(Error::Code::SyntaxError, L"Invalid primitive type.");
 		return;
 	}
 
