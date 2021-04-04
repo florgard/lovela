@@ -7,7 +7,7 @@ Lexer::Lexer(std::wistream& charStream) noexcept : charStream(charStream >> std:
 
 Token Lexer::GetCurrentLexemeToken()
 {
-	auto token = DecorateToken(GetToken(currentLexeme));
+	auto token = GetToken(currentLexeme);
 	currentLexeme.clear();
 	state.Clear();
 	return token;
@@ -15,8 +15,7 @@ Token Lexer::GetCurrentLexemeToken()
 
 Token Lexer::GetCurrentCharToken()
 {
-	auto token = DecorateToken(GetToken(currentChar));
-	return token;
+	return GetToken(currentChar);
 }
 
 Token Lexer::DecorateToken(Token token) const
@@ -97,9 +96,12 @@ TokenGenerator Lexer::Lex() noexcept
 			currentLexeme += currentChar;
 		}
 
-		for (auto token : tokens)
+		for (auto& token : tokens)
 		{
-			co_yield token;
+			if (token)
+			{
+				co_yield DecorateToken(std::move(token));
+			}
 		}
 	}
 
@@ -116,7 +118,7 @@ TokenGenerator Lexer::Lex() noexcept
 		auto token = GetCurrentLexemeToken();
 		if (token)
 		{
-			co_yield token;
+			co_yield DecorateToken(std::move(token));
 		}
 
 		co_yield DecorateToken({ .type = Token::Type::End });
@@ -287,17 +289,11 @@ void Lexer::LexLiteralInteger(std::vector<Token>& tokens) noexcept
 		}
 		else
 		{
-			auto token = GetCurrentLexemeToken();
-			if (token)
-			{
-				tokens.emplace_back(token);
-			}
+			// The integer literal has ended, add it.
+			tokens.emplace_back(GetCurrentLexemeToken());
 
-			token = GetCurrentCharToken();
-			if (token)
-			{
-				tokens.emplace_back(token);
-			}
+			// Add the full stop token.
+			tokens.emplace_back(GetCurrentCharToken());
 		}
 	}
 	else if (std::iswdigit(nextChar))
@@ -309,11 +305,8 @@ void Lexer::LexLiteralInteger(std::vector<Token>& tokens) noexcept
 	{
 		state.integerLiteral = false;
 
-		auto token = GetCurrentLexemeToken();
-		if (token)
-		{
-			tokens.emplace_back(token);
-		}
+		// The integer literal has ended, add it.
+		tokens.emplace_back(GetCurrentLexemeToken());
 	}
 }
 
@@ -321,23 +314,24 @@ void Lexer::LexParenAngleOpen(std::vector<Token>& tokens) noexcept
 {
 	if (currentChar == previousChar)
 	{
-		// Still opening comment
+		// Still opening comment.
 	}
 	else if (currentChar == nextChar)
 	{
-		// Begin opening comment
-		const auto commentLevel = state.commentLevel + 1;
+		// Begin opening comment.
 
-		auto token = GetCurrentLexemeToken();
-		if (token)
+		const auto commentLevel = state.commentLevel;
+		if (!commentLevel)
 		{
-			tokens.emplace_back(token);
+			// Add the token before the comment.
+			tokens.emplace_back(GetCurrentLexemeToken());
 		}
 
-		state.commentLevel = commentLevel;
+		state.commentLevel = commentLevel + 1;
 	}
 	else
 	{
+		// Not a comment separator, add the paren to the lexeme.
 		currentLexeme += currentChar;
 	}
 }
@@ -346,54 +340,43 @@ void Lexer::LexParenAngleClose(std::vector<Token>&) noexcept
 {
 	if (currentChar == previousChar)
 	{
-		// Still closing comment
+		// Still closing comment.
 	}
 	else if (currentChar == nextChar)
 	{
-		// Begin closing comment
+		// Begin closing comment.
 		state.commentLevel--;
 
 		currentLexeme.clear();
 	}
 	else
 	{
+		// Not a comment separator, add the paren to the lexeme.
 		currentLexeme += currentChar;
 	}
 }
 
 void Lexer::LexLiteralStringBegin(std::vector<Token>& tokens) noexcept
 {
-	auto token = GetCurrentLexemeToken();
-	if (token)
-	{
-		tokens.emplace_back(token);
-	}
+	// Add the token before the string literal.
+	tokens.emplace_back(GetCurrentLexemeToken());
 
 	state.stringLiteral = true;
 }
 
 void Lexer::LexSeparator(std::vector<Token>& tokens) noexcept
 {
-	auto token = GetCurrentLexemeToken();
-	if (token)
-	{
-		tokens.emplace_back(token);
-	}
+	// Add the token before the separator.
+	tokens.emplace_back(GetCurrentLexemeToken());
 
-	token = GetCurrentCharToken();
-	if (token)
-	{
-		tokens.emplace_back(token);
-	}
+	// Add the separator token.
+	tokens.emplace_back(GetCurrentCharToken());
 }
 
 void Lexer::LexWhitespace(std::vector<Token>& tokens) noexcept
 {
-	auto token = GetCurrentLexemeToken();
-	if (token)
-	{
-		tokens.emplace_back(token);
-	}
+	// Add the token before the whitespace.
+	tokens.emplace_back(GetCurrentLexemeToken());
 
 	if (currentChar == '\n')
 	{
@@ -405,5 +388,6 @@ void Lexer::LexWhitespace(std::vector<Token>& tokens) noexcept
 void Lexer::LexLiteralIntegerBegin(std::vector<Token>&) noexcept
 {
 	currentLexeme += currentChar;
+
 	state.integerLiteral = true;
 }
