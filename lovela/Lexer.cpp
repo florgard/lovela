@@ -45,8 +45,6 @@ TokenGenerator Lexer::Lex() noexcept
 
 	while (nextChar)
 	{
-		tokens.clear();
-		
 		if (state.stringFieldCode)
 		{
 			LexStringFieldCode(tokens);
@@ -99,6 +97,8 @@ TokenGenerator Lexer::Lex() noexcept
 				co_yield DecorateToken(std::move(token));
 			}
 		}
+
+		tokens.clear();
 	}
 
 	if (state.commentLevel)
