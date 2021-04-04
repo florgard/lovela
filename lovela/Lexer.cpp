@@ -5,11 +5,27 @@ Lexer::Lexer(std::wistream& charStream) noexcept : charStream(charStream >> std:
 {
 }
 
-Token Lexer::AddToken(Token token) const
+Token Lexer::GetCurrentLexemeToken()
 {
-	token.line = currentLine;
-	token.column = currentColumn;
-	token.code = std::wstring(currentCode.begin(), currentCode.end());
+	auto token = DecorateToken(GetToken(lexeme));
+	lexeme.clear();
+	return token;
+}
+
+Token Lexer::GetCurrentCharToken()
+{
+	auto token = DecorateToken(GetToken(currentToken));
+	return token;
+}
+
+Token Lexer::DecorateToken(Token token) const
+{
+	if (token)
+	{
+		token.line = currentLine;
+		token.column = currentColumn;
+		token.code = std::wstring(currentCode.begin(), currentCode.end());
+	}
 	return token;
 }
 
@@ -31,73 +47,44 @@ TokenGenerator Lexer::Lex() noexcept
 		{
 			for (auto token : LexStringFieldCode())
 			{
-				co_yield AddToken(token);
+				co_yield token;
 			}
 			continue;
 		}
 
 		if (state.stringLiteral)
 		{
-			for (auto token : LexStringLiteral())
+			for (auto token : LexLiteralString())
 			{
-				co_yield AddToken(token);
+				co_yield token;
 			}
 			continue;
 		}
 
 		if (state.integerLiteral)
 		{
-			for (auto token : LexIntegerLiteral())
+			for (auto token : LexLiteralInteger())
 			{
-				co_yield AddToken(token);
+				co_yield token;
 			}
 			continue;
 		}
 
 		if (Accept('<'))
 		{
-			if (currentToken == previousToken)
+			for (auto token : LexParenAngleOpen())
 			{
-				// Still opening comment
+				co_yield token;
 			}
-			else if (currentToken == nextToken)
-			{
-				// Begin opening comment
-				state.commentLevel++;
-
-				auto token = GetToken(lexeme);
-				if (token)
-				{
-					co_yield AddToken(token);
-				}
-				lexeme.clear();
-			}
-			else
-			{
-				lexeme += currentToken;
-			}
-
 			continue;
 		}
 
 		if (Accept('>'))
 		{
-			if (currentToken == previousToken)
+			for (auto token : LexParenAngleClose())
 			{
-				// Still closing comment
+				co_yield token;
 			}
-			else if (currentToken == nextToken)
-			{
-				// Begin closing comment
-				state.commentLevel--;
-
-				lexeme.clear();
-			}
-			else
-			{
-				lexeme += currentToken;
-			}
-
 			continue;
 		}
 
@@ -110,39 +97,27 @@ TokenGenerator Lexer::Lex() noexcept
 
 		if (Accept('\''))
 		{
-			auto token = GetToken(lexeme);
-			if (token)
+			for (auto token : LexLiteralStringBegin())
 			{
-				co_yield AddToken(token);
+				co_yield token;
 			}
-			lexeme.clear();
-			state = State{};
-
-			state.stringLiteral = true;
 			continue;
 		}
 		else if (std::iswdigit(nextToken) && lexeme.empty())
 		{
 			Accept();
-			lexeme += currentToken;
-			state.integerLiteral = true;
+			for (auto token : LexLiteralIntegerBegin())
+			{
+				co_yield token;
+			}
 			continue;
 		}
 		else if (delimiters.find(nextToken) != delimiters.npos)
 		{
 			Accept();
-			auto token = GetToken(lexeme);
-			if (token)
+			for (auto token : LexSeparator())
 			{
-				co_yield AddToken(token);
-			}
-			lexeme.clear();
-			state = State{};
-
-			token = GetToken(currentToken);
-			if (token)
-			{
-				co_yield AddToken(token);
+				co_yield token;
 			}
 			continue;
 		}
@@ -150,21 +125,14 @@ TokenGenerator Lexer::Lex() noexcept
 		if (std::iswspace(nextToken))
 		{
 			Accept();
-			auto token = GetToken(lexeme);
-			if (token)
+			for (auto token : LexWhitespace())
 			{
-				co_yield AddToken(token);
+				co_yield token;
 			}
-			lexeme.clear();
-			state = State{};
-
-			if (currentToken == '\n')
-			{
-				currentLine++;
-				currentColumn = 1;
-			}
+			continue;
 		}
-		else if (Accept())
+
+		if (Accept())
 		{
 			lexeme += currentToken;
 		}
@@ -180,14 +148,13 @@ TokenGenerator Lexer::Lex() noexcept
 	}
 	else
 	{
-		auto token = GetToken(lexeme);
+		auto token = GetCurrentLexemeToken();
 		if (token)
 		{
-			co_yield AddToken(token);
+			co_yield token;
 		}
-		lexeme.clear();
 
-		co_yield AddToken({ .type = Token::Type::End });
+		co_yield DecorateToken({ .type = Token::Type::End });
 	}
 }
 
@@ -283,7 +250,7 @@ TokenGenerator Lexer::LexStringFieldCode() noexcept
 	state.stringFieldCode = 0;
 }
 
-TokenGenerator Lexer::LexStringLiteral() noexcept
+TokenGenerator Lexer::LexLiteralString() noexcept
 {
 	if (Accept('\''))
 	{
@@ -342,7 +309,7 @@ TokenGenerator Lexer::LexStringLiteral() noexcept
 	}
 }
 
-TokenGenerator Lexer::LexIntegerLiteral() noexcept
+TokenGenerator Lexer::LexLiteralInteger() noexcept
 {
 	if (Accept('.'))
 	{
@@ -355,15 +322,14 @@ TokenGenerator Lexer::LexIntegerLiteral() noexcept
 		}
 		else
 		{
-			auto token = GetToken(lexeme);
+			auto token = GetCurrentLexemeToken();
 			if (token)
 			{
 				co_yield token;
 			}
-			lexeme.clear();
 			state = State{};
 
-			token = GetToken(currentToken);
+			token = GetCurrentCharToken();
 			if (token)
 			{
 				co_yield token;
@@ -379,12 +345,115 @@ TokenGenerator Lexer::LexIntegerLiteral() noexcept
 	{
 		state.integerLiteral = false;
 
-		auto token = GetToken(lexeme);
+		auto token = GetCurrentLexemeToken();
 		if (token)
 		{
 			co_yield token;
 		}
-		lexeme.clear();
 		state = State{};
+	}
+}
+
+TokenGenerator Lexer::LexParenAngleOpen() noexcept
+{
+	if (currentToken == previousToken)
+	{
+		// Still opening comment
+	}
+	else if (currentToken == nextToken)
+	{
+		// Begin opening comment
+		state.commentLevel++;
+
+		auto token = GetCurrentLexemeToken();
+		if (token)
+		{
+			co_yield token;
+		}
+	}
+	else
+	{
+		lexeme += currentToken;
+	}
+}
+
+TokenGenerator Lexer::LexParenAngleClose() noexcept
+{
+	if (currentToken == previousToken)
+	{
+		// Still closing comment
+	}
+	else if (currentToken == nextToken)
+	{
+		// Begin closing comment
+		state.commentLevel--;
+
+		lexeme.clear();
+	}
+	else
+	{
+		lexeme += currentToken;
+	}
+
+	// HACK to avoid a compiler error for a coroutine without co_yield.
+	if (false)
+	{
+		co_yield {};
+	}
+}
+
+TokenGenerator Lexer::LexLiteralStringBegin() noexcept
+{
+	auto token = GetCurrentLexemeToken();
+	if (token)
+	{
+		co_yield token;
+	}
+	state = State{};
+
+	state.stringLiteral = true;
+}
+
+TokenGenerator Lexer::LexSeparator() noexcept
+{
+	auto token = GetCurrentLexemeToken();
+	if (token)
+	{
+		co_yield token;
+	}
+	state = State{};
+
+	token = GetCurrentCharToken();
+	if (token)
+	{
+		co_yield token;
+	}
+}
+
+TokenGenerator Lexer::LexWhitespace() noexcept
+{
+	auto token = GetCurrentLexemeToken();
+	if (token)
+	{
+		co_yield token;
+	}
+	state = State{};
+
+	if (currentToken == '\n')
+	{
+		currentLine++;
+		currentColumn = 1;
+	}
+}
+
+TokenGenerator Lexer::LexLiteralIntegerBegin() noexcept
+{
+	lexeme += currentToken;
+	state.integerLiteral = true;
+
+	// HACK to avoid a compiler error for a coroutine without co_yield.
+	if (false)
+	{
+		co_yield {};
 	}
 }

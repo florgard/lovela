@@ -9,7 +9,9 @@ public:
 	[[nodiscard]] TokenGenerator Lex() noexcept override;
 
 private:
-	Token AddToken(Token token) const;
+	Token GetCurrentLexemeToken();
+	Token GetCurrentCharToken();
+	Token DecorateToken(Token token) const;
 
 	[[nodiscard]] bool Peek(wchar_t token);
 	bool Accept();
@@ -19,8 +21,14 @@ private:
 	void Expect(const std::vector<wchar_t>& tokens);
 
 	[[nodiscard]] TokenGenerator LexStringFieldCode() noexcept;
-	[[nodiscard]] TokenGenerator LexStringLiteral() noexcept;
-	[[nodiscard]] TokenGenerator LexIntegerLiteral() noexcept;
+	[[nodiscard]] TokenGenerator LexLiteralString() noexcept;
+	[[nodiscard]] TokenGenerator LexLiteralInteger() noexcept;
+	[[nodiscard]] TokenGenerator LexParenAngleOpen() noexcept;
+	[[nodiscard]] TokenGenerator LexParenAngleClose() noexcept;
+	[[nodiscard]] TokenGenerator LexLiteralStringBegin() noexcept;
+	[[nodiscard]] TokenGenerator LexSeparator() noexcept;
+	[[nodiscard]] TokenGenerator LexWhitespace() noexcept;
+	[[nodiscard]] TokenGenerator LexLiteralIntegerBegin() noexcept;
 
 	struct State
 	{
