@@ -9,9 +9,9 @@ public:
 	[[nodiscard]] TokenGenerator Lex() noexcept override;
 
 private:
-	Token GetCurrentLexemeToken();
-	Token GetCurrentCharToken();
-	Token DecorateToken(Token token) const;
+	[[nodiscard]] Token GetCurrentLexemeToken();
+	[[nodiscard]] Token GetCurrentCharToken();
+	[[nodiscard]] Token DecorateToken(Token token) const;
 
 	[[nodiscard]] bool Peek(wchar_t token);
 	bool Accept();
