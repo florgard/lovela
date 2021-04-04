@@ -103,7 +103,8 @@ TokenGenerator Lexer::Lex() noexcept
 			}
 			continue;
 		}
-		else if (std::iswdigit(nextToken) && lexeme.empty())
+
+		if (std::iswdigit(nextToken) && lexeme.empty())
 		{
 			Accept();
 			for (auto token : LexLiteralIntegerBegin())
@@ -112,7 +113,8 @@ TokenGenerator Lexer::Lex() noexcept
 			}
 			continue;
 		}
-		else if (separators.find(nextToken) != separators.npos)
+
+		if (separators.find(nextToken) != separators.npos)
 		{
 			Accept();
 			for (auto token : LexSeparator())
