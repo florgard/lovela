@@ -17,6 +17,7 @@ private:
 	bool Accept();
 	[[nodiscard]] bool Accept(wchar_t token);
 	[[nodiscard]] bool Accept(const std::vector<wchar_t>& tokens);
+	[[nodiscard]] bool Accept(std::function<bool()> predicate);
 	void Expect(wchar_t token);
 	void Expect(const std::vector<wchar_t>& tokens);
 

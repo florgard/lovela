@@ -67,28 +67,24 @@ TokenGenerator Lexer::Lex() noexcept
 		{
 			LexParenAngleClose(tokens);
 		}
-		else if (state.commentLevel)
+		else if (Accept([&] { return state.commentLevel > 0; }))
 		{
-			// Consume the comment
-			Accept();
+			// Consume the comment.
 		}
 		else if (Accept('\''))
 		{
 			LexLiteralStringBegin(tokens);
 		}
-		else if (std::iswdigit(nextChar) && currentLexeme.empty())
+		else if (Accept([&] { return std::iswdigit(nextChar) && currentLexeme.empty(); }))
 		{
-			Accept();
 			LexLiteralIntegerBegin(tokens);
 		}
-		else if (separators.find(nextChar) != separators.npos)
+		else if (Accept([&] { return separators.find(nextChar) != separators.npos; }))
 		{
-			Accept();
 			LexSeparator(tokens);
 		}
-		else if (std::iswspace(nextChar))
+		else if (Accept([&] { return std::iswspace(nextChar); }))
 		{
-			Accept();
 			LexWhitespace(tokens);
 		}
 		else if (Accept())
@@ -115,6 +111,7 @@ TokenGenerator Lexer::Lex() noexcept
 	}
 	else
 	{
+		// Get the possible token at the very end of the stream.
 		auto token = GetCurrentLexemeToken();
 		if (token)
 		{
@@ -167,6 +164,16 @@ bool Lexer::Accept(wchar_t token)
 bool Lexer::Accept(const std::vector<wchar_t>& tokens)
 {
 	if (std::find(tokens.begin(), tokens.end(), nextChar) != tokens.end())
+	{
+		return Accept();
+	}
+
+	return false;
+}
+
+bool Lexer::Accept(std::function<bool()> predicate)
+{
+	if (predicate())
 	{
 		return Accept();
 	}
@@ -259,10 +266,9 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 				state.nextStringInterpolation++;
 			}
 		}
-		else if (std::iswdigit(nextChar) || !GetStringField(nextChar).empty())
+		else if (Accept([&] { return std::iswdigit(nextChar) || !GetStringField(nextChar).empty(); }))
 		{
-			state.stringFieldCode = nextChar;
-			Accept();
+			state.stringFieldCode = currentChar;
 		}
 		else
 		{
@@ -296,9 +302,8 @@ void Lexer::LexLiteralInteger(std::vector<Token>& tokens) noexcept
 			tokens.emplace_back(GetCurrentCharToken());
 		}
 	}
-	else if (std::iswdigit(nextChar))
+	else if (Accept([&] { return std::iswdigit(nextChar); }))
 	{
-		Accept();
 		currentLexeme += currentChar;
 	}
 	else
