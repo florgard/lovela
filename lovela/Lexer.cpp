@@ -9,6 +9,7 @@ Token Lexer::GetCurrentLexemeToken()
 {
 	auto token = DecorateToken(GetToken(lexeme));
 	lexeme.clear();
+	state.Clear();
 	return token;
 }
 
@@ -329,7 +330,6 @@ TokenGenerator Lexer::LexLiteralInteger() noexcept
 			{
 				co_yield token;
 			}
-			state = State{};
 
 			token = GetCurrentCharToken();
 			if (token)
@@ -352,7 +352,6 @@ TokenGenerator Lexer::LexLiteralInteger() noexcept
 		{
 			co_yield token;
 		}
-		state = State{};
 	}
 }
 
@@ -365,13 +364,15 @@ TokenGenerator Lexer::LexParenAngleOpen() noexcept
 	else if (currentToken == nextToken)
 	{
 		// Begin opening comment
-		state.commentLevel++;
+		const auto commentLevel = state.commentLevel + 1;
 
 		auto token = GetCurrentLexemeToken();
 		if (token)
 		{
 			co_yield token;
 		}
+
+		state.commentLevel = commentLevel;
 	}
 	else
 	{
@@ -411,7 +412,6 @@ TokenGenerator Lexer::LexLiteralStringBegin() noexcept
 	{
 		co_yield token;
 	}
-	state = State{};
 
 	state.stringLiteral = true;
 }
@@ -423,7 +423,6 @@ TokenGenerator Lexer::LexSeparator() noexcept
 	{
 		co_yield token;
 	}
-	state = State{};
 
 	token = GetCurrentCharToken();
 	if (token)
@@ -439,7 +438,6 @@ TokenGenerator Lexer::LexWhitespace() noexcept
 	{
 		co_yield token;
 	}
-	state = State{};
 
 	if (currentToken == '\n')
 	{
