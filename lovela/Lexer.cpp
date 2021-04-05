@@ -92,7 +92,6 @@ TokenGenerator Lexer::Lex() noexcept
 
 void Lexer::GetNextCharacter() noexcept
 {
-	characters[Previous] = characters[Current];
 	characters[Current] = characters[Next];
 	characters[Next] = characters[NextAfter];
 	characters[NextAfter] = 0;

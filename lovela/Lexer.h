@@ -29,13 +29,12 @@ private:
 	[[nodiscard]] void LexWhitespace(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexPrimitiveType(std::vector<Token>& tokens) noexcept;
 
-	static constexpr size_t Previous = 0;
-	static constexpr size_t Current = 1;
-	static constexpr size_t Next = 2;
-	static constexpr size_t NextAfter = 3;
+	static constexpr size_t Current = 0;
+	static constexpr size_t Next = 1;
+	static constexpr size_t NextAfter = 2;
 
 	std::wistream& charStream;
-	wchar_t characters[4]{};
+	wchar_t characters[3]{};
 	std::wstring currentLexeme;
 	std::deque<wchar_t> currentCode;
 };
