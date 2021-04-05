@@ -50,14 +50,14 @@ private:
 	void EndAssign(Context& context);
 	void EndAssign(Context& context, bool reset);
 
-	static std::wstring TypeName(const std::wstring& name);
-	static std::wstring TypeName(const std::wstring& name, int index);
+	std::wstring TypeName(const std::wstring& name);
+	std::wstring TypeName(const std::wstring& name, int index);
 	static std::wstring ParameterName(const std::wstring& name);
 	static std::wstring ParameterName(const std::wstring& name, int index);
 	static std::wstring FunctionName(const std::wstring& name);
 
 	bool CheckExportType(TypeSpec& type);
-	static bool ConvertPrimitiveType(std::wstring& name);
+	bool ConvertPrimitiveType(std::wstring& name);
 
 	std::wostream& stream;
 	std::wstring indent;

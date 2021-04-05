@@ -208,6 +208,7 @@ bool CodeGenerator::ConvertPrimitiveType(std::wstring& name)
 	std::wsmatch match;
 	if (!std::regex_match(name, match, regex))
 	{
+		errors.emplace_back(L"Unsupported primitive type: " + name);
 		return false;
 	}
 
@@ -216,6 +217,7 @@ bool CodeGenerator::ConvertPrimitiveType(std::wstring& name)
 	const auto width = match[2];
 	if (floatingPoint && !(width == L"32" || width == L"64"))
 	{
+		errors.emplace_back(L"Unsupported primitive floating point type: " + name);
 		return false;
 	}
 
@@ -230,10 +232,13 @@ bool CodeGenerator::ConvertPrimitiveType(std::wstring& name)
 
 std::wstring CodeGenerator::TypeName(const std::wstring& name)
 {
-	std::wstring typeName = name;
-	if (ConvertPrimitiveType(typeName))
+	if (name.front() == '#')
 	{
-		return typeName;
+		std::wstring converted = name;
+		if (ConvertPrimitiveType(converted))
+		{
+			return converted;
+		}
 	}
 
 	return L"t_" + name;
