@@ -30,12 +30,10 @@ private:
 	[[nodiscard]] void LexLiteralStringBegin(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexSeparator(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexWhitespace(std::vector<Token>& tokens) noexcept;
-	[[nodiscard]] void LexLiteralIntegerBegin(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexPrimitiveType(std::vector<Token>& tokens) noexcept;
 
 	struct State
 	{
-		bool integerLiteral = false;
 		bool stringLiteral = false;
 		wchar_t stringFieldCode = 0;
 		wchar_t nextStringInterpolation = '1';

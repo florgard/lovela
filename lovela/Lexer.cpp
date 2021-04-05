@@ -4,6 +4,8 @@
 static const std::wregex separator{ LR"([\(\)\[\]\{\}\.,:;\!\?\|#])" };
 static const std::wregex whitespace{ LR"(\s)" };
 static const std::wregex digit{ LR"(\d)" };
+//static const std::wregex numberLiteral{ LR"([\d\+\-])" };
+static const std::wregex numberLiteral{ LR"([\d])" };
 
 Lexer::Lexer(std::wistream& charStream) noexcept : charStream(charStream >> std::noskipws)
 {
@@ -55,10 +57,6 @@ TokenGenerator Lexer::Lex() noexcept
 		{
 			LexLiteralString(tokens);
 		}
-		else if (state.integerLiteral)
-		{
-			LexLiteralInteger(tokens);
-		}
 		else if (Accept('<'))
 		{
 			LexParenAngleOpen(tokens);
@@ -75,9 +73,9 @@ TokenGenerator Lexer::Lex() noexcept
 		{
 			LexLiteralStringBegin(tokens);
 		}
-		else if (AcceptBegin(digit))
+		else if (AcceptBegin(numberLiteral))
 		{
-			LexLiteralIntegerBegin(tokens);
+			LexLiteralInteger(tokens);
 		}
 		else if (AcceptBegin('#'))
 		{
@@ -302,32 +300,40 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 
 void Lexer::LexLiteralInteger(std::vector<Token>& tokens) noexcept
 {
+	currentLexeme = currentChar;
+
+	while (Accept(digit))
+	{
+		currentLexeme += currentChar;
+	}
+
 	if (Accept('.'))
 	{
-		state.integerLiteral = false;
-
-		if (std::iswdigit(nextChar))
+		if (Accept(digit))
 		{
 			// Accept a single decimal point in numbers. Go from integer to decimal literal.
+			currentLexeme += '.';
 			currentLexeme += currentChar;
+
+			while (Accept(digit))
+			{
+				currentLexeme += currentChar;
+			}
+
+			// The integer literal has ended, add it.
+			tokens.emplace_back(GetCurrentLexemeToken());
 		}
 		else
 		{
 			// The integer literal has ended, add it.
 			tokens.emplace_back(GetCurrentLexemeToken());
 
-			// Add the full stop token.
+			// Add the full stop separator token.
 			tokens.emplace_back(GetCurrentCharToken());
 		}
 	}
-	else if (Accept(digit))
-	{
-		currentLexeme += currentChar;
-	}
 	else
 	{
-		state.integerLiteral = false;
-
 		// The integer literal has ended, add it.
 		tokens.emplace_back(GetCurrentLexemeToken());
 	}
@@ -406,13 +412,6 @@ void Lexer::LexWhitespace(std::vector<Token>& tokens) noexcept
 		currentLine++;
 		currentColumn = 1;
 	}
-}
-
-void Lexer::LexLiteralIntegerBegin(std::vector<Token>&) noexcept
-{
-	currentLexeme += currentChar;
-
-	state.integerLiteral = true;
 }
 
 void Lexer::LexPrimitiveType(std::vector<Token>& tokens) noexcept
