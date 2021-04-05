@@ -246,7 +246,7 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 					AddError(Error::Code::StringFieldIllformed, std::wstring(L"Ill-formed string field \"") + stringFieldCode + L"\".");
 				}
 			}
-			else if (Accept(digit, 1) || Accept(stringField, 1))
+			else if (Accept(stringField, 1))
 			{
 				wchar_t stringFieldCode = characters[Current];
 
