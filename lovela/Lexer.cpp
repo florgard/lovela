@@ -152,16 +152,6 @@ bool Lexer::AcceptBegin(const std::wregex& regex, size_t length) noexcept
 	return currentLexeme.empty() && Accept(regex, length);
 }
 
-bool Lexer::Accept(std::function<bool()> predicate) noexcept
-{
-	if (predicate())
-	{
-		return Accept();
-	}
-
-	return false;
-}
-
 bool Lexer::Expect(wchar_t character) noexcept
 {
 	if (Accept(character))

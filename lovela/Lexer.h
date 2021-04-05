@@ -16,7 +16,6 @@ private:
 	[[nodiscard]] bool Accept() noexcept;
 	[[nodiscard]] bool Accept(wchar_t character) noexcept;
 	[[nodiscard]] bool Accept(const std::wregex& regex, size_t length) noexcept;
-	[[nodiscard]] bool Accept(std::function<bool()> predicate) noexcept;
 	[[nodiscard]] bool AcceptBegin(wchar_t character) noexcept;
 	[[nodiscard]] bool AcceptBegin(const std::wregex& regex, size_t length) noexcept;
 	[[nodiscard]] bool Expect(wchar_t character) noexcept;
