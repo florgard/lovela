@@ -14,7 +14,6 @@ Token Lexer::GetCurrenToken()
 {
 	auto token = GetToken(currentLexeme);
 	currentLexeme.clear();
-	state.Clear();
 	return token;
 }
 
@@ -31,12 +30,6 @@ Token Lexer::DecorateToken(Token token) const
 
 TokenGenerator Lexer::Lex() noexcept
 {
-	currentLexeme.clear();
-	currentLine = 1;
-	currentColumn = 1;
-	errors.clear();
-	state.Clear();
-
 	// Populate next and next after characters.
 	GetNextCharacter();
 	GetNextCharacter();
@@ -53,7 +46,7 @@ TokenGenerator Lexer::Lex() noexcept
 		{
 			LexParenAngleClose(tokens);
 		}
-		else if (Accept([&] { return state.commentLevel > 0; }))
+		else if (Accept([&] { return commentLevel > 0; }))
 		{
 			// Consume the comment.
 		}
@@ -93,7 +86,7 @@ TokenGenerator Lexer::Lex() noexcept
 		tokens.clear();
 	}
 
-	if (state.commentLevel)
+	if (commentLevel)
 	{
 		AddError(Error::Code::CommentOpen, L"A comment has not been terminated.");
 	}
@@ -329,14 +322,13 @@ void Lexer::LexParenAngleOpen(std::vector<Token>& tokens) noexcept
 	{
 		// Begin opening comment.
 
-		const auto commentLevel = state.commentLevel;
 		if (!commentLevel)
 		{
 			// Add the token before the comment.
 			tokens.emplace_back(GetCurrenToken());
 		}
 
-		state.commentLevel = commentLevel + 1;
+		commentLevel++;
 	}
 	else
 	{
@@ -354,9 +346,8 @@ void Lexer::LexParenAngleClose(std::vector<Token>&) noexcept
 	else if (characters[Current] == characters[Next])
 	{
 		// Begin closing comment.
-		state.commentLevel--;
 
-		currentLexeme.clear();
+		commentLevel--;
 	}
 	else
 	{

@@ -31,8 +31,8 @@ protected:
 	void AddError(Error::Code code, const std::wstring& message);
 
 	std::vector<Error> errors;
-	int currentLine{};
-	int currentColumn{};
+	int currentLine = 1;
+	int currentColumn = 1;
 
 	static constexpr wchar_t stringTypeName[4]{ L"#8#" };
 	static constexpr wchar_t integerTypeName[5]{ L"#32" };

@@ -30,16 +30,6 @@ private:
 	[[nodiscard]] void LexWhitespace(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexPrimitiveType(std::vector<Token>& tokens) noexcept;
 
-	struct State
-	{
-		int commentLevel = 0;
-
-		void Clear()
-		{
-			*this = State{};
-		}
-	} state;
-
 	static constexpr size_t Previous = 0;
 	static constexpr size_t Current = 1;
 	static constexpr size_t Next = 2;
@@ -49,4 +39,5 @@ private:
 	wchar_t characters[4]{};
 	std::wstring currentLexeme;
 	std::deque<wchar_t> currentCode;
+	int commentLevel = 0;
 };
