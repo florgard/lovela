@@ -7,6 +7,7 @@ static const std::wregex digit{ LR"(\d)" };
 static const std::wregex literalNumber{ LR"([\+\-]?\d+)" };
 static const std::wregex beginComment{ LR"(<<)" };
 static const std::wregex endComment{ LR"(>>)" };
+static const std::wregex stringField{ LR"([tnr])" };
 
 Lexer::Lexer(std::wistream& charStream) noexcept : charStream(charStream >> std::noskipws)
 {
@@ -227,26 +228,32 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 					nextStringInterpolation++;
 				}
 			}
-			else if (Accept([&] { return std::iswdigit(characters[Next]) || !GetStringField(characters[Next]).empty(); }))
+			else if (Accept(digit, 1))
 			{
 				wchar_t stringFieldCode = characters[Current];
 
 				if (Accept('}'))
 				{
-					if (std::iswdigit(stringFieldCode))
-					{
-						// Indexed string interpolation. Add the string literal up to this point as a token.
-						tokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = currentLexeme, .outType = stringTypeName });
-						currentLexeme.clear();
+					// Indexed string interpolation. Add the string literal up to this point as a token.
+					tokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = currentLexeme, .outType = stringTypeName });
+					currentLexeme.clear();
 
-						// Add a string literal interpolation token with the given index.
-						tokens.emplace_back(Token{ .type = Token::Type::LiteralStringInterpolation, .value = std::wstring(1, stringFieldCode) });
-					}
-					else
-					{
-						// Add the string field value to the string literal.
-						currentLexeme += GetStringField(stringFieldCode);
-					}
+					// Add a string literal interpolation token with the given index.
+					tokens.emplace_back(Token{ .type = Token::Type::LiteralStringInterpolation, .value = std::wstring(1, stringFieldCode) });
+				}
+				else
+				{
+					AddError(Error::Code::StringFieldIllformed, std::wstring(L"Ill-formed string field \"") + stringFieldCode + L"\".");
+				}
+			}
+			else if (Accept(digit, 1) || Accept(stringField, 1))
+			{
+				wchar_t stringFieldCode = characters[Current];
+
+				if (Accept('}'))
+				{
+					// Add the string field value to the string literal.
+					currentLexeme += GetStringField(stringFieldCode);
 				}
 				else
 				{
