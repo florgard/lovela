@@ -69,7 +69,7 @@ TokenGenerator Lexer::Lex() noexcept
 		{
 			LexLiteralStringBegin(tokens);
 		}
-		else if (AcceptBegin(numberLiteral, false))
+		else if (AcceptBegin(numberLiteral, 2))
 		{
 			LexLiteralInteger(tokens);
 		}
@@ -77,11 +77,11 @@ TokenGenerator Lexer::Lex() noexcept
 		{
 			LexPrimitiveType(tokens);
 		}
-		else if (Accept(separator, true))
+		else if (Accept(separator, 1))
 		{
 			LexSeparator(tokens);
 		}
-		else if (Accept(whitespace, true))
+		else if (Accept(whitespace, 1))
 		{
 			LexWhitespace(tokens);
 		}
@@ -162,9 +162,10 @@ bool Lexer::Accept(wchar_t character) noexcept
 	return false;
 }
 
-bool Lexer::Accept(const std::wregex& regex, bool single) noexcept
+bool Lexer::Accept(const std::wregex& regex, size_t length) noexcept
 {
-	std::wstring_view str(&characters[Next], single ? 1 : 2);
+	assert(length == 1 || length == 2);
+	std::wstring_view str(&characters[Next], length);
 	if (std::regex_match(str.begin(), str.end(), regex))
 	{
 		return Accept();
@@ -178,9 +179,9 @@ bool Lexer::AcceptBegin(wchar_t character) noexcept
 	return currentLexeme.empty() && Accept(character);
 }
 
-bool Lexer::AcceptBegin(const std::wregex& regex, bool single) noexcept
+bool Lexer::AcceptBegin(const std::wregex& regex, size_t length) noexcept
 {
-	return currentLexeme.empty() && Accept(regex, single);
+	return currentLexeme.empty() && Accept(regex, length);
 }
 
 bool Lexer::Accept(std::function<bool()> predicate) noexcept
@@ -204,9 +205,9 @@ bool Lexer::Expect(wchar_t character) noexcept
 	return false;
 }
 
-bool Lexer::Expect(const std::wregex& regex, bool single) noexcept
+bool Lexer::Expect(const std::wregex& regex, size_t length) noexcept
 {
-	if (Accept(regex, single))
+	if (Accept(regex, length))
 	{
 		return true;
 	}
@@ -304,20 +305,20 @@ void Lexer::LexLiteralInteger(std::vector<Token>& tokens) noexcept
 {
 	currentLexeme = characters[Current];
 
-	while (Accept(digit, true))
+	while (Accept(digit, 1))
 	{
 		currentLexeme += characters[Current];
 	}
 
 	if (Accept('.'))
 	{
-		if (Accept(digit, true))
+		if (Accept(digit, 1))
 		{
 			// Accept a single decimal point in numbers. Go from integer to decimal literal.
 			currentLexeme += '.';
 			currentLexeme += characters[Current];
 
-			while (Accept(digit, true))
+			while (Accept(digit, 1))
 			{
 				currentLexeme += characters[Current];
 			}
@@ -422,7 +423,7 @@ void Lexer::LexPrimitiveType(std::vector<Token>& tokens) noexcept
 	std::wstring lexeme;
 	lexeme += characters[Current];
 
-	if (!Expect(firstChar, true))
+	if (!Expect(firstChar, 1))
 	{
 		AddError(Error::Code::SyntaxError, L"Invalid primitive type.");
 		return;
@@ -430,7 +431,7 @@ void Lexer::LexPrimitiveType(std::vector<Token>& tokens) noexcept
 
 	lexeme += characters[Current];
 
-	while (Accept(followingChars, true))
+	while (Accept(followingChars, 1))
 	{
 		lexeme += characters[Current];
 	}
