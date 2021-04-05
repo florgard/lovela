@@ -22,21 +22,16 @@ private:
 	[[nodiscard]] bool Expect(wchar_t character) noexcept;
 	[[nodiscard]] bool Expect(const std::wregex& regex, size_t length) noexcept;
 
-	[[nodiscard]] void LexStringFieldCode(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexLiteralString(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexLiteralNumber(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexParenAngleOpen(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexParenAngleClose(std::vector<Token>& tokens) noexcept;
-	[[nodiscard]] void LexLiteralStringBegin(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexSeparator(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexWhitespace(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexPrimitiveType(std::vector<Token>& tokens) noexcept;
 
 	struct State
 	{
-		bool stringLiteral = false;
-		wchar_t stringFieldCode = 0;
-		wchar_t nextStringInterpolation = '1';
 		int commentLevel = 0;
 
 		void Clear()

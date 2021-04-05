@@ -45,15 +45,7 @@ TokenGenerator Lexer::Lex() noexcept
 
 	while (characters[Next])
 	{
-		if (state.stringFieldCode)
-		{
-			LexStringFieldCode(tokens);
-		}
-		else if (state.stringLiteral)
-		{
-			LexLiteralString(tokens);
-		}
-		else if (Accept('<'))
+		if (Accept('<'))
 		{
 			LexParenAngleOpen(tokens);
 		}
@@ -67,7 +59,7 @@ TokenGenerator Lexer::Lex() noexcept
 		}
 		else if (Accept('\''))
 		{
-			LexLiteralStringBegin(tokens);
+			LexLiteralString(tokens);
 		}
 		else if (AcceptBegin(literalNumber, 2))
 		{
@@ -104,10 +96,6 @@ TokenGenerator Lexer::Lex() noexcept
 	if (state.commentLevel)
 	{
 		AddError(Error::Code::CommentOpen, L"A comment has not been terminated.");
-	}
-	else if (state.stringLiteral)
-	{
-		AddError(Error::Code::StringLiteralOpen, L"A string literal has not been terminated.");
 	}
 	else
 	{
@@ -216,88 +204,92 @@ bool Lexer::Expect(const std::wregex& regex, size_t length) noexcept
 	return false;
 }
 
-void Lexer::LexStringFieldCode(std::vector<Token>& tokens) noexcept
-{
-	if (Accept('}'))
-	{
-		if (std::iswdigit(state.stringFieldCode))
-		{
-			// Indexed string interpolation. Add the string literal up to this point as a token.
-			tokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = currentLexeme, .outType = stringTypeName });
-			currentLexeme.clear();
-
-			// Add a string literal interpolation token with the given index.
-			tokens.emplace_back(Token{ .type = Token::Type::LiteralStringInterpolation, .value = std::wstring(1, state.stringFieldCode) });
-		}
-		else
-		{
-			// Add the string field value to the string literal.
-			currentLexeme += GetStringField(state.stringFieldCode);
-		}
-	}
-	else
-	{
-		AddError(Error::Code::StringFieldIllformed, std::wstring(L"Ill-formed string field \"") + state.stringFieldCode + L"\".");
-	}
-
-	state.stringFieldCode = 0;
-}
-
 void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 {
-	if (Accept('\''))
+	wchar_t nextStringInterpolation = '1';
+
+	for (;;)
 	{
 		if (Accept('\''))
 		{
-			// Keep a single escaped quotation mark
-			currentLexeme += characters[Current];
-		}
-		else
-		{
-			tokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = currentLexeme, .outType = stringTypeName });
-			currentLexeme.clear();
-
-			state.stringLiteral = false;
-			state.nextStringInterpolation = '1';
-		}
-	}
-	else if (Accept('{'))
-	{
-		if (Accept('{'))
-		{
-			// Keep a single escaped curly bracket
-			currentLexeme += characters[Current];
-		}
-		else if (Accept('}'))
-		{
-			// Unindexed string interpolation. Add the string literal up to this point as a token.
-			tokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = currentLexeme, .outType = stringTypeName });
-			currentLexeme.clear();
-
-			// Add a string literal interpolation token with the next free index.
-			if (state.nextStringInterpolation > '9')
+			if (Accept('\''))
 			{
-				AddError(Error::Code::StringInterpolationOverflow, std::wstring(L"Too many string interpolations, index out of bounds (greater than 9)."));
+				// Keep a single escaped quotation mark
+				currentLexeme += characters[Current];
 			}
 			else
 			{
-				tokens.emplace_back(Token{ .type = Token::Type::LiteralStringInterpolation, .value = std::wstring(1, state.nextStringInterpolation) });
-				state.nextStringInterpolation++;
+				tokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = currentLexeme, .outType = stringTypeName });
+				currentLexeme.clear();
+				return;
 			}
 		}
-		else if (Accept([&] { return std::iswdigit(characters[Next]) || !GetStringField(characters[Next]).empty(); }))
+		else if (Accept('{'))
 		{
-			state.stringFieldCode = characters[Current];
+			if (Accept('{'))
+			{
+				// Keep a single escaped curly bracket
+				currentLexeme += characters[Current];
+			}
+			else if (Accept('}'))
+			{
+				// Unindexed string interpolation. Add the string literal up to this point as a token.
+				tokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = currentLexeme, .outType = stringTypeName });
+				currentLexeme.clear();
+
+				// Add a string literal interpolation token with the next free index.
+				if (nextStringInterpolation > '9')
+				{
+					AddError(Error::Code::StringInterpolationOverflow, std::wstring(L"Too many string interpolations, index out of bounds (greater than 9)."));
+				}
+				else
+				{
+					tokens.emplace_back(Token{ .type = Token::Type::LiteralStringInterpolation, .value = std::wstring(1, nextStringInterpolation) });
+					nextStringInterpolation++;
+				}
+			}
+			else if (Accept([&] { return std::iswdigit(characters[Next]) || !GetStringField(characters[Next]).empty(); }))
+			{
+				wchar_t stringFieldCode = characters[Current];
+
+				if (Accept('}'))
+				{
+					if (std::iswdigit(stringFieldCode))
+					{
+						// Indexed string interpolation. Add the string literal up to this point as a token.
+						tokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = currentLexeme, .outType = stringTypeName });
+						currentLexeme.clear();
+
+						// Add a string literal interpolation token with the given index.
+						tokens.emplace_back(Token{ .type = Token::Type::LiteralStringInterpolation, .value = std::wstring(1, stringFieldCode) });
+					}
+					else
+					{
+						// Add the string field value to the string literal.
+						currentLexeme += GetStringField(stringFieldCode);
+					}
+				}
+				else
+				{
+					AddError(Error::Code::StringFieldIllformed, std::wstring(L"Ill-formed string field \"") + stringFieldCode + L"\".");
+				}
+			}
+			else
+			{
+				AddError(Error::Code::StringFieldUnknown, std::wstring(L"Unknown string field code \"") + characters[Next] + L"\".");
+			}
+		}
+		else if (Accept())
+		{
+			// Consume the string literal
+			currentLexeme += characters[Current];
 		}
 		else
 		{
-			AddError(Error::Code::StringFieldUnknown, std::wstring(L"Unknown string field code \"") + characters[Next] + L"\".");
+			AddError(Error::Code::StringLiteralOpen, L"A string literal wasn't terminated.");
+			currentLexeme.clear();
+			return;
 		}
-	}
-	else if (Accept())
-	{
-		// Consume the string literal
-		currentLexeme += characters[Current];
 	}
 }
 
@@ -371,14 +363,6 @@ void Lexer::LexParenAngleClose(std::vector<Token>&) noexcept
 		// Not a comment separator, add the paren to the lexeme.
 		currentLexeme += characters[Current];
 	}
-}
-
-void Lexer::LexLiteralStringBegin(std::vector<Token>& tokens) noexcept
-{
-	// Add the token before the string literal.
-	tokens.emplace_back(GetCurrenToken());
-
-	state.stringLiteral = true;
 }
 
 void Lexer::LexSeparator(std::vector<Token>& tokens) noexcept

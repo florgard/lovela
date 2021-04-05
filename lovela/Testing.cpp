@@ -83,11 +83,11 @@ void Testing::RunLexerTests()
 		endToken
 		});
 	TestLexer("comment in string literal", L"'<< abc >>'", { {.type = Token::Type::LiteralString, .value = L"<< abc >>" }, endToken });
-	TestLexer("non-closed string literal", L"'", {}, { {.code = ILexer::Error::Code::StringLiteralOpen } });
-	TestLexer("non-closed string literal on line 1", L"'abc", {}, { {.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 1} } });
-	TestLexer("non-closed string literal on line 2", L"\r\n'abc", {}, { {.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 2} } });
-	TestLexer("non-closed string literal on line 2", L"\n'abc", {}, { {.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 2} } });
-	TestLexer("non-closed string literal on line 1", L"\r'abc", {}, { {.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 1} } });
+	TestLexer("non-closed string literal", L"'", { endToken }, { {.code = ILexer::Error::Code::StringLiteralOpen } });
+	TestLexer("non-closed string literal on line 1", L"'abc", { endToken }, { {.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 1} } });
+	TestLexer("non-closed string literal on line 2", L"\r\n'abc", { endToken }, { {.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 2} } });
+	TestLexer("non-closed string literal on line 2", L"\n'abc", { endToken }, { {.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 2} } });
+	TestLexer("non-closed string literal on line 1", L"\r'abc", { endToken }, { {.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 1} } });
 	TestLexer("whitespace outside and within string literal", L"\t'ab\r\n\tc'\r\n", { {.type = Token::Type::LiteralString, .value = L"ab\r\n\tc" }, endToken });
 
 	TestLexer("escaped curly bracket", L"'{{'", { {.type = Token::Type::LiteralString, .value = L"{" }, endToken });
