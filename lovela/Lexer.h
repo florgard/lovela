@@ -15,12 +15,12 @@ private:
 	void GetNextCharacter() noexcept;
 	[[nodiscard]] bool Accept() noexcept;
 	[[nodiscard]] bool Accept(wchar_t character) noexcept;
-	[[nodiscard]] bool Accept(const std::wregex& regex) noexcept;
+	[[nodiscard]] bool Accept(const std::wregex& regex, bool single) noexcept;
 	[[nodiscard]] bool Accept(std::function<bool()> predicate) noexcept;
 	[[nodiscard]] bool AcceptBegin(wchar_t character) noexcept;
-	[[nodiscard]] bool AcceptBegin(const std::wregex& regex) noexcept;
+	[[nodiscard]] bool AcceptBegin(const std::wregex& regex, bool single) noexcept;
 	[[nodiscard]] bool Expect(wchar_t character) noexcept;
-	[[nodiscard]] bool Expect(const std::wregex& regex) noexcept;
+	[[nodiscard]] bool Expect(const std::wregex& regex, bool single) noexcept;
 
 	[[nodiscard]] void LexStringFieldCode(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexLiteralString(std::vector<Token>& tokens) noexcept;
