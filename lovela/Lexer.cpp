@@ -5,6 +5,8 @@ static const std::wregex separator{ LR"([\(\)\[\]\{\}\.,:;\!\?\|#])" };
 static const std::wregex whitespace{ LR"(\s)" };
 static const std::wregex digit{ LR"(\d)" };
 static const std::wregex literalNumber{ LR"([\+\-]?\d+)" };
+static const std::wregex beginComment{ LR"(<<)" };
+static const std::wregex endComment{ LR"(>>)" };
 
 Lexer::Lexer(std::wistream& charStream) noexcept : charStream(charStream >> std::noskipws)
 {
@@ -38,17 +40,9 @@ TokenGenerator Lexer::Lex() noexcept
 
 	while (characters[Next])
 	{
-		if (Accept('<'))
+		if (Accept(beginComment, 2))
 		{
-			LexParenAngleOpen(tokens);
-		}
-		else if (Accept('>'))
-		{
-			LexParenAngleClose(tokens);
-		}
-		else if (Accept([&] { return commentLevel > 0; }))
-		{
-			// Consume the comment.
+			LexComment(tokens);
 		}
 		else if (Accept('\''))
 		{
@@ -86,21 +80,14 @@ TokenGenerator Lexer::Lex() noexcept
 		tokens.clear();
 	}
 
-	if (commentLevel)
+	// Get the possible token at the very end of the stream.
+	auto token = GetCurrenToken();
+	if (token)
 	{
-		AddError(Error::Code::CommentOpen, L"A comment has not been terminated.");
+		co_yield DecorateToken(std::move(token));
 	}
-	else
-	{
-		// Get the possible token at the very end of the stream.
-		auto token = GetCurrenToken();
-		if (token)
-		{
-			co_yield DecorateToken(std::move(token));
-		}
 
-		co_yield DecorateToken({ .type = Token::Type::End });
-	}
+	co_yield DecorateToken({ .type = Token::Type::End });
 }
 
 void Lexer::GetNextCharacter() noexcept
@@ -312,47 +299,51 @@ void Lexer::LexLiteralNumber(std::vector<Token>& tokens) noexcept
 	tokens.emplace_back(GetCurrenToken());
 }
 
-void Lexer::LexParenAngleOpen(std::vector<Token>& tokens) noexcept
+void Lexer::LexComment(std::vector<Token>& tokens) noexcept
 {
-	if (characters[Current] == characters[Previous])
-	{
-		// Still opening comment.
-	}
-	else if (characters[Current] == characters[Next])
-	{
-		// Begin opening comment.
+	// Add the token before the comment.
+	tokens.emplace_back(GetCurrenToken());
 
-		if (!commentLevel)
+	while (Accept('<'))
+	{
+	}
+
+	int commentLevel = 1;
+
+	for (;;)
+	{
+		if (Accept(endComment, 2))
 		{
-			// Add the token before the comment.
-			tokens.emplace_back(GetCurrenToken());
+			while (Accept('>'))
+			{
+			}
+
+			commentLevel--;
+
+			if (!commentLevel)
+			{
+				return;
+			}
 		}
+		else if (Accept(beginComment, 2))
+		{
+			// Nested comment.
 
-		commentLevel++;
-	}
-	else
-	{
-		// Not a comment separator, add the paren to the lexeme.
-		currentLexeme += characters[Current];
-	}
-}
+			while (Accept('<'))
+			{
+			}
 
-void Lexer::LexParenAngleClose(std::vector<Token>&) noexcept
-{
-	if (characters[Current] == characters[Previous])
-	{
-		// Still closing comment.
-	}
-	else if (characters[Current] == characters[Next])
-	{
-		// Begin closing comment.
-
-		commentLevel--;
-	}
-	else
-	{
-		// Not a comment separator, add the paren to the lexeme.
-		currentLexeme += characters[Current];
+			commentLevel++;
+		}
+		else if (Accept())
+		{
+			// Consume the comment.
+		}
+		else
+		{
+			AddError(Error::Code::CommentOpen, L"A comment wan't terminated.");
+			return;
+		}
 	}
 }
 

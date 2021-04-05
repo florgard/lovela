@@ -24,8 +24,7 @@ private:
 
 	[[nodiscard]] void LexLiteralString(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexLiteralNumber(std::vector<Token>& tokens) noexcept;
-	[[nodiscard]] void LexParenAngleOpen(std::vector<Token>& tokens) noexcept;
-	[[nodiscard]] void LexParenAngleClose(std::vector<Token>& tokens) noexcept;
+	[[nodiscard]] void LexComment(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexSeparator(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexWhitespace(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexPrimitiveType(std::vector<Token>& tokens) noexcept;
@@ -39,5 +38,4 @@ private:
 	wchar_t characters[4]{};
 	std::wstring currentLexeme;
 	std::deque<wchar_t> currentCode;
-	int commentLevel = 0;
 };

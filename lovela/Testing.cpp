@@ -205,6 +205,7 @@ void Testing::RunLexerTests()
 		});
 	TestLexer("non-closed comment", L"<<<<123>>ident234<<<<123<<456>>>:>.", {
 		{.type = Token::Type::Identifier, .value = L"ident234"},
+		endToken
 		}, { {.code = ILexer::Error::Code::CommentOpen, .token{.line = 1}} });
 	TestLexer("comparison operator", L"1 < 2", {
 		{.type = Token::Type::LiteralInteger, .value = L"1"},
