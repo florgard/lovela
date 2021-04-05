@@ -38,6 +38,7 @@ TokenGenerator Lexer::Lex() noexcept
 	GetNextCharacter();
 
 	std::vector<Token> tokens;
+	tokens.reserve(64);
 
 	while (characters[Next])
 	{
