@@ -9,10 +9,10 @@ public:
 	[[nodiscard]] TokenGenerator Lex() noexcept override;
 
 private:
-	[[nodiscard]] Token GetCurrentLexemeToken();
-	[[nodiscard]] Token GetCurrentCharToken();
+	[[nodiscard]] Token GetCurrenToken();
 	[[nodiscard]] Token DecorateToken(Token token) const;
 
+	void GetNextCharacter() noexcept;
 	[[nodiscard]] bool Accept() noexcept;
 	[[nodiscard]] bool Accept(wchar_t character) noexcept;
 	[[nodiscard]] bool Accept(const std::wregex& regex) noexcept;
@@ -45,10 +45,13 @@ private:
 		}
 	} state;
 
+	static constexpr size_t Previous = 0;
+	static constexpr size_t Current = 1;
+	static constexpr size_t Next = 2;
+	static constexpr size_t NextAfter = 3;
+
 	std::wistream& charStream;
-	wchar_t currentChar{};
-	wchar_t previousChar{};
-	wchar_t nextChar{};
+	wchar_t characters[4]{};
 	std::wstring currentLexeme;
 	std::deque<wchar_t> currentCode;
 };

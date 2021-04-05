@@ -11,17 +11,12 @@ Lexer::Lexer(std::wistream& charStream) noexcept : charStream(charStream >> std:
 {
 }
 
-Token Lexer::GetCurrentLexemeToken()
+Token Lexer::GetCurrenToken()
 {
 	auto token = GetToken(currentLexeme);
 	currentLexeme.clear();
 	state.Clear();
 	return token;
-}
-
-Token Lexer::GetCurrentCharToken()
-{
-	return GetToken(currentChar);
 }
 
 Token Lexer::DecorateToken(Token token) const
@@ -43,11 +38,13 @@ TokenGenerator Lexer::Lex() noexcept
 	errors.clear();
 	state.Clear();
 
-	charStream >> nextChar;
+	// Populate next and next after characters.
+	GetNextCharacter();
+	GetNextCharacter();
 
 	std::vector<Token> tokens;
 
-	while (nextChar)
+	while (characters[Next])
 	{
 		if (state.stringFieldCode)
 		{
@@ -91,7 +88,7 @@ TokenGenerator Lexer::Lex() noexcept
 		}
 		else if (Accept())
 		{
-			currentLexeme += currentChar;
+			currentLexeme += characters[Current];
 		}
 
 		for (auto& token : tokens)
@@ -116,7 +113,7 @@ TokenGenerator Lexer::Lex() noexcept
 	else
 	{
 		// Get the possible token at the very end of the stream.
-		auto token = GetCurrentLexemeToken();
+		auto token = GetCurrenToken();
 		if (token)
 		{
 			co_yield DecorateToken(std::move(token));
@@ -126,33 +123,39 @@ TokenGenerator Lexer::Lex() noexcept
 	}
 }
 
+void Lexer::GetNextCharacter() noexcept
+{
+	characters[Previous] = characters[Current];
+	characters[Current] = characters[Next];
+	characters[Next] = characters[NextAfter];
+	characters[NextAfter] = 0;
+	charStream >> characters[NextAfter];
+}
+
 bool Lexer::Accept() noexcept
 {
-	currentColumn++;
+	GetNextCharacter();
 
-	if (nextChar)
+	if (!characters[Current])
 	{
-		previousChar = currentChar;
-		currentChar = nextChar;
-		nextChar = 0;
-		charStream >> nextChar;
-
-		static constexpr size_t codeSampleCharacters = 20;
-		currentCode.push_back(currentChar);
-		while (currentCode.size() > codeSampleCharacters)
-		{
-			currentCode.pop_front();
-		}
-
-		return true;
+		return false;
 	}
 
-	return false;
+	currentColumn++;
+
+	static constexpr size_t codeSampleCharacterCount = 20;
+	currentCode.push_back(characters[Current]);
+	while (currentCode.size() > codeSampleCharacterCount)
+	{
+		currentCode.pop_front();
+	}
+
+	return true;
 }
 
 bool Lexer::Accept(wchar_t character) noexcept
 {
-	if (nextChar == character)
+	if (characters[Next] == character)
 	{
 		return Accept();
 	}
@@ -162,7 +165,7 @@ bool Lexer::Accept(wchar_t character) noexcept
 
 bool Lexer::Accept(const std::wregex& regex) noexcept
 {
-	std::wstring_view str(&nextChar, 1);
+	std::wstring_view str(&characters[Next], 1);
 	if (std::regex_match(str.begin(), str.end(), regex))
 	{
 		return Accept();
@@ -198,7 +201,7 @@ bool Lexer::Expect(wchar_t character) noexcept
 		return true;
 	}
 
-	AddError(Error::Code::SyntaxError, std::wstring(L"Unexpected character \"") + nextChar + L"\", expected \"" + character + L" \".");
+	AddError(Error::Code::SyntaxError, std::wstring(L"Unexpected character \"") + characters[Next] + L"\", expected \"" + character + L" \".");
 	return false;
 }
 
@@ -209,7 +212,7 @@ bool Lexer::Expect(const std::wregex& regex) noexcept
 		return true;
 	}
 
-	AddError(Error::Code::SyntaxError, std::wstring(L"Unexpected character \"") + nextChar + L" \".");
+	AddError(Error::Code::SyntaxError, std::wstring(L"Unexpected character \"") + characters[Next] + L" \".");
 	return false;
 }
 
@@ -247,7 +250,7 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 		if (Accept('\''))
 		{
 			// Keep a single escaped quotation mark
-			currentLexeme += currentChar;
+			currentLexeme += characters[Current];
 		}
 		else
 		{
@@ -263,7 +266,7 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 		if (Accept('{'))
 		{
 			// Keep a single escaped curly bracket
-			currentLexeme += currentChar;
+			currentLexeme += characters[Current];
 		}
 		else if (Accept('}'))
 		{
@@ -282,29 +285,29 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 				state.nextStringInterpolation++;
 			}
 		}
-		else if (Accept([&] { return std::iswdigit(nextChar) || !GetStringField(nextChar).empty(); }))
+		else if (Accept([&] { return std::iswdigit(characters[Next]) || !GetStringField(characters[Next]).empty(); }))
 		{
-			state.stringFieldCode = currentChar;
+			state.stringFieldCode = characters[Current];
 		}
 		else
 		{
-			AddError(Error::Code::StringFieldUnknown, std::wstring(L"Unknown string field code \"") + nextChar + L"\".");
+			AddError(Error::Code::StringFieldUnknown, std::wstring(L"Unknown string field code \"") + characters[Next] + L"\".");
 		}
 	}
 	else if (Accept())
 	{
 		// Consume the string literal
-		currentLexeme += currentChar;
+		currentLexeme += characters[Current];
 	}
 }
 
 void Lexer::LexLiteralInteger(std::vector<Token>& tokens) noexcept
 {
-	currentLexeme = currentChar;
+	currentLexeme = characters[Current];
 
 	while (Accept(digit))
 	{
-		currentLexeme += currentChar;
+		currentLexeme += characters[Current];
 	}
 
 	if (Accept('.'))
@@ -313,39 +316,36 @@ void Lexer::LexLiteralInteger(std::vector<Token>& tokens) noexcept
 		{
 			// Accept a single decimal point in numbers. Go from integer to decimal literal.
 			currentLexeme += '.';
-			currentLexeme += currentChar;
+			currentLexeme += characters[Current];
 
 			while (Accept(digit))
 			{
-				currentLexeme += currentChar;
+				currentLexeme += characters[Current];
 			}
 
 			// The integer literal has ended, add it.
-			tokens.emplace_back(GetCurrentLexemeToken());
+			tokens.emplace_back(GetCurrenToken());
 		}
 		else
 		{
-			// The integer literal has ended, add it.
-			tokens.emplace_back(GetCurrentLexemeToken());
-
-			// Add the full stop separator token.
-			tokens.emplace_back(GetCurrentCharToken());
+			// Full stop separator token.
+			LexSeparator(tokens);
 		}
 	}
 	else
 	{
 		// The integer literal has ended, add it.
-		tokens.emplace_back(GetCurrentLexemeToken());
+		tokens.emplace_back(GetCurrenToken());
 	}
 }
 
 void Lexer::LexParenAngleOpen(std::vector<Token>& tokens) noexcept
 {
-	if (currentChar == previousChar)
+	if (characters[Current] == characters[Previous])
 	{
 		// Still opening comment.
 	}
-	else if (currentChar == nextChar)
+	else if (characters[Current] == characters[Next])
 	{
 		// Begin opening comment.
 
@@ -353,7 +353,7 @@ void Lexer::LexParenAngleOpen(std::vector<Token>& tokens) noexcept
 		if (!commentLevel)
 		{
 			// Add the token before the comment.
-			tokens.emplace_back(GetCurrentLexemeToken());
+			tokens.emplace_back(GetCurrenToken());
 		}
 
 		state.commentLevel = commentLevel + 1;
@@ -361,17 +361,17 @@ void Lexer::LexParenAngleOpen(std::vector<Token>& tokens) noexcept
 	else
 	{
 		// Not a comment separator, add the paren to the lexeme.
-		currentLexeme += currentChar;
+		currentLexeme += characters[Current];
 	}
 }
 
 void Lexer::LexParenAngleClose(std::vector<Token>&) noexcept
 {
-	if (currentChar == previousChar)
+	if (characters[Current] == characters[Previous])
 	{
 		// Still closing comment.
 	}
-	else if (currentChar == nextChar)
+	else if (characters[Current] == characters[Next])
 	{
 		// Begin closing comment.
 		state.commentLevel--;
@@ -381,14 +381,14 @@ void Lexer::LexParenAngleClose(std::vector<Token>&) noexcept
 	else
 	{
 		// Not a comment separator, add the paren to the lexeme.
-		currentLexeme += currentChar;
+		currentLexeme += characters[Current];
 	}
 }
 
 void Lexer::LexLiteralStringBegin(std::vector<Token>& tokens) noexcept
 {
 	// Add the token before the string literal.
-	tokens.emplace_back(GetCurrentLexemeToken());
+	tokens.emplace_back(GetCurrenToken());
 
 	state.stringLiteral = true;
 }
@@ -396,18 +396,19 @@ void Lexer::LexLiteralStringBegin(std::vector<Token>& tokens) noexcept
 void Lexer::LexSeparator(std::vector<Token>& tokens) noexcept
 {
 	// Add the token before the separator.
-	tokens.emplace_back(GetCurrentLexemeToken());
+	tokens.emplace_back(GetCurrenToken());
 
 	// Add the separator token.
-	tokens.emplace_back(GetCurrentCharToken());
+	currentLexeme = characters[Current];
+	tokens.emplace_back(GetCurrenToken());
 }
 
 void Lexer::LexWhitespace(std::vector<Token>& tokens) noexcept
 {
 	// Add the token before the whitespace.
-	tokens.emplace_back(GetCurrentLexemeToken());
+	tokens.emplace_back(GetCurrenToken());
 
-	if (currentChar == '\n')
+	if (characters[Current] == '\n')
 	{
 		currentLine++;
 		currentColumn = 1;
@@ -420,7 +421,7 @@ void Lexer::LexPrimitiveType(std::vector<Token>& tokens) noexcept
 	static const std::wregex followingChars{ LR"([\d#])" };
 
 	std::wstring lexeme;
-	lexeme += currentChar;
+	lexeme += characters[Current];
 
 	if (!Expect(firstChar))
 	{
@@ -428,11 +429,11 @@ void Lexer::LexPrimitiveType(std::vector<Token>& tokens) noexcept
 		return;
 	}
 
-	lexeme += currentChar;
+	lexeme += characters[Current];
 
 	while (Accept(followingChars))
 	{
-		lexeme += currentChar;
+		lexeme += characters[Current];
 	}
 
 	tokens.emplace_back(Token{ .type = Token::Type::PrimitiveType, .value = std::move(lexeme) });
