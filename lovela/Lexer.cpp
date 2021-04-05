@@ -1,6 +1,10 @@
 #include "pch.h"
 #include "Lexer.h"
 
+static const std::wregex separator{ LR"([\(\)\[\]\{\}\.,:;\!\?\|#])" };
+static const std::wregex whitespace{ LR"(\s)" };
+static const std::wregex digit{ LR"(\d)" };
+
 Lexer::Lexer(std::wistream& charStream) noexcept : charStream(charStream >> std::noskipws)
 {
 }
@@ -31,9 +35,6 @@ Token Lexer::DecorateToken(Token token) const
 
 TokenGenerator Lexer::Lex() noexcept
 {
-	static const std::wregex separators{ LR"([\(\)\[\]\{\}\.,:;\!\?\|#])" };
-	static const std::wregex whitespace{ LR"(\s)" };
-
 	currentLexeme.clear();
 	currentLine = 1;
 	currentColumn = 1;
@@ -74,15 +75,15 @@ TokenGenerator Lexer::Lex() noexcept
 		{
 			LexLiteralStringBegin(tokens);
 		}
-		else if (Accept([&] { return std::iswdigit(nextChar) && currentLexeme.empty(); }))
+		else if (AcceptBegin(digit))
 		{
 			LexLiteralIntegerBegin(tokens);
 		}
-		else if (Accept([&] { return nextChar == '#' && currentLexeme.empty(); }))
+		else if (AcceptBegin('#'))
 		{
 			LexPrimitiveType(tokens);
 		}
-		else if (Accept(separators))
+		else if (Accept(separator))
 		{
 			LexSeparator(tokens);
 		}
@@ -151,9 +152,9 @@ bool Lexer::Accept() noexcept
 	return false;
 }
 
-bool Lexer::Accept(wchar_t token) noexcept
+bool Lexer::Accept(wchar_t character) noexcept
 {
-	if (nextChar == token)
+	if (nextChar == character)
 	{
 		return Accept();
 	}
@@ -172,6 +173,16 @@ bool Lexer::Accept(const std::wregex& regex) noexcept
 	return false;
 }
 
+bool Lexer::AcceptBegin(wchar_t character) noexcept
+{
+	return currentLexeme.empty() && Accept(character);
+}
+
+bool Lexer::AcceptBegin(const std::wregex& regex) noexcept
+{
+	return currentLexeme.empty() && Accept(regex);
+}
+
 bool Lexer::Accept(std::function<bool()> predicate) noexcept
 {
 	if (predicate())
@@ -182,14 +193,14 @@ bool Lexer::Accept(std::function<bool()> predicate) noexcept
 	return false;
 }
 
-bool Lexer::Expect(wchar_t token) noexcept
+bool Lexer::Expect(wchar_t character) noexcept
 {
-	if (Accept(token))
+	if (Accept(character))
 	{
 		return true;
 	}
 
-	AddError(Error::Code::SyntaxError, std::wstring(L"Unexpected character \"") + nextChar + L"\", expected \"" + token + L" \".");
+	AddError(Error::Code::SyntaxError, std::wstring(L"Unexpected character \"") + nextChar + L"\", expected \"" + character + L" \".");
 	return false;
 }
 

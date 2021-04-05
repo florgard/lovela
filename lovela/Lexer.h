@@ -14,10 +14,12 @@ private:
 	[[nodiscard]] Token DecorateToken(Token token) const;
 
 	[[nodiscard]] bool Accept() noexcept;
-	[[nodiscard]] bool Accept(wchar_t token) noexcept;
+	[[nodiscard]] bool Accept(wchar_t character) noexcept;
 	[[nodiscard]] bool Accept(const std::wregex& regex) noexcept;
 	[[nodiscard]] bool Accept(std::function<bool()> predicate) noexcept;
-	[[nodiscard]] bool Expect(wchar_t token) noexcept;
+	[[nodiscard]] bool AcceptBegin(wchar_t character) noexcept;
+	[[nodiscard]] bool AcceptBegin(const std::wregex& regex) noexcept;
+	[[nodiscard]] bool Expect(wchar_t character) noexcept;
 	[[nodiscard]] bool Expect(const std::wregex& regex) noexcept;
 
 	[[nodiscard]] void LexStringFieldCode(std::vector<Token>& tokens) noexcept;
