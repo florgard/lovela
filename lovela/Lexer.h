@@ -24,7 +24,7 @@ private:
 
 	[[nodiscard]] void LexStringFieldCode(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexLiteralString(std::vector<Token>& tokens) noexcept;
-	[[nodiscard]] void LexLiteralInteger(std::vector<Token>& tokens) noexcept;
+	[[nodiscard]] void LexLiteralNumber(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexParenAngleOpen(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexParenAngleClose(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexLiteralStringBegin(std::vector<Token>& tokens) noexcept;

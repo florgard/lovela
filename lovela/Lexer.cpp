@@ -4,7 +4,7 @@
 static const std::wregex separator{ LR"([\(\)\[\]\{\}\.,:;\!\?\|#])" };
 static const std::wregex whitespace{ LR"(\s)" };
 static const std::wregex digit{ LR"(\d)" };
-static const std::wregex numberLiteral{ LR"([\+\-]?\d+)" };
+static const std::wregex literalNumber{ LR"([\+\-]?\d+)" };
 
 Lexer::Lexer(std::wistream& charStream) noexcept : charStream(charStream >> std::noskipws)
 {
@@ -69,9 +69,9 @@ TokenGenerator Lexer::Lex() noexcept
 		{
 			LexLiteralStringBegin(tokens);
 		}
-		else if (AcceptBegin(numberLiteral, 2))
+		else if (AcceptBegin(literalNumber, 2))
 		{
-			LexLiteralInteger(tokens);
+			LexLiteralNumber(tokens);
 		}
 		else if (AcceptBegin('#'))
 		{
@@ -301,7 +301,7 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 	}
 }
 
-void Lexer::LexLiteralInteger(std::vector<Token>& tokens) noexcept
+void Lexer::LexLiteralNumber(std::vector<Token>& tokens) noexcept
 {
 	currentLexeme = characters[Current];
 
@@ -310,33 +310,21 @@ void Lexer::LexLiteralInteger(std::vector<Token>& tokens) noexcept
 		currentLexeme += characters[Current];
 	}
 
-	if (Accept('.'))
+	static const std::wregex decimalPart{ LR"(\.\d)" };
+
+	if (Accept(decimalPart, 2))
 	{
-		if (Accept(digit, 1))
+		// Accept a single decimal point in numbers. Go from integer to decimal literal.
+		currentLexeme += characters[Current];
+
+		while (Accept(digit, 1))
 		{
-			// Accept a single decimal point in numbers. Go from integer to decimal literal.
-			currentLexeme += '.';
 			currentLexeme += characters[Current];
-
-			while (Accept(digit, 1))
-			{
-				currentLexeme += characters[Current];
-			}
-
-			// The integer literal has ended, add it.
-			tokens.emplace_back(GetCurrenToken());
-		}
-		else
-		{
-			// Full stop separator token.
-			LexSeparator(tokens);
 		}
 	}
-	else
-	{
-		// The integer literal has ended, add it.
-		tokens.emplace_back(GetCurrenToken());
-	}
+
+	// The numeric literal has ended, add it.
+	tokens.emplace_back(GetCurrenToken());
 }
 
 void Lexer::LexParenAngleOpen(std::vector<Token>& tokens) noexcept
