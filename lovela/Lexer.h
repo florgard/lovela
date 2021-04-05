@@ -35,5 +35,4 @@ private:
 	std::wistream& charStream;
 	wchar_t characters[3]{};
 	std::wstring currentLexeme;
-	std::deque<wchar_t> currentCode;
 };

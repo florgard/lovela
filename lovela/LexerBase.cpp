@@ -60,7 +60,7 @@ Token LexerBase::GetToken(const std::wstring_view& lexeme) noexcept
 	{
 		{ std::wregex{ LR"(\d+)" }, Token::Type::LiteralInteger },
 		{ std::wregex{ LR"(\d+\.\d+)" }, Token::Type::LiteralDecimal },
-		{ std::wregex{ LR"(\w+)" }, Token::Type::Identifier },
+		{ std::wregex{ LR"(\w[\w<>=\+\-\*/]*)" }, Token::Type::Identifier },
 		{ std::wregex{ LR"(<|>|<>|<=|>=|=)" }, Token::Type::OperatorComparison },
 		{ std::wregex{ LR"(\+|-|\*|/|/*)" }, Token::Type::OperatorArithmetic },
 		{ std::wregex{ LR"(\*\*|\+\+|--)" }, Token::Type::OperatorBitwise },
@@ -109,5 +109,5 @@ Token LexerBase::GetToken(const std::wstring_view& lexeme) noexcept
 
 void LexerBase::AddError(Error::Code code, const std::wstring& message)
 {
-	errors.emplace_back(Error{ .code = code, .message = message, .token{.line = currentLine, .column = currentColumn} });
+	errors.emplace_back(Error{ .code = code, .message = message, .token{.line = currentLine, .column = currentColumn, .code{currentCode.begin(), currentCode.end()} } });
 }

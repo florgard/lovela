@@ -28,8 +28,6 @@ void TestingBase::TestLexer(const char* name, std::wstring_view code, const std:
 		}
 	}
 
-	assert(success);
-
 	auto& errors = lexer.GetErrors();
 
 	actualCount = errors.size();

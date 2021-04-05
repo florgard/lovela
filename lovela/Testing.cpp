@@ -50,8 +50,13 @@ void Testing::RunLexerTests()
 	TestLexer("single character", L".", { {.type = Token::Type::SeparatorDot, .value = L"." }, endToken });
 
 	TestLexer("simple identifier", L"abc", { {.type = Token::Type::Identifier, .value = L"abc" }, endToken });
+	TestLexer("alphanumerical identifier", L"abc123", { {.type = Token::Type::Identifier, .value = L"abc123" }, endToken });
+	TestLexer("kebab case identifier", L"abc-123", { {.type = Token::Type::Identifier, .value = L"abc-123" }, endToken });
+	TestLexer("snake case identifier", L"abc_123", { {.type = Token::Type::Identifier, .value = L"abc_123" }, endToken });
+	TestLexer("operator character identifier", L"abc>=123", { {.type = Token::Type::Identifier, .value = L"abc>=123" }, endToken });
 	TestLexer("Unicode identifier", L"\u65E5\u672C", { {.type = Token::Type::Identifier, .value = L"\u65E5\u672C" }, endToken });
-	//TestLexer(L"\u0061\u0300", { { .type = Token::Type::Identifier, .value = L"\u0061\u0300" }, endToken });
+	// https://www.regular-expressions.info/unicode.html
+	//TestLexer("Unicode combining mark identifier", L"\u0061\u0300", { { .type = Token::Type::Identifier, .value = L"\u0061\u0300" }, endToken });
 
 	TestLexer("integer literal", L"123", { {.type = Token::Type::LiteralInteger, .value = L"123" }, endToken });
 	TestLexer("integer literal and full stop", L"123.", {
