@@ -177,6 +177,7 @@ bool Lexer::Expect(const std::wregex& regex, size_t length) noexcept
 
 void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 {
+	std::wstring value;
 	wchar_t nextStringInterpolation = '1';
 
 	for (;;)
@@ -186,12 +187,11 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 			if (Accept('\''))
 			{
 				// Keep a single escaped quotation mark
-				currentLexeme += characters[Current];
+				value += characters[Current];
 			}
 			else
 			{
-				tokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = currentLexeme, .outType = stringTypeName });
-				currentLexeme.clear();
+				tokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = std::move(value), .outType = stringTypeName });
 				return;
 			}
 		}
@@ -200,13 +200,12 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 			if (Accept('{'))
 			{
 				// Keep a single escaped curly bracket
-				currentLexeme += characters[Current];
+				value += characters[Current];
 			}
 			else if (Accept('}'))
 			{
 				// Unindexed string interpolation. Add the string literal up to this point as a token.
-				tokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = currentLexeme, .outType = stringTypeName });
-				currentLexeme.clear();
+				tokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = std::move(value), .outType = stringTypeName });
 
 				// Add a string literal interpolation token with the next free index.
 				if (nextStringInterpolation > '9')
@@ -226,8 +225,7 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 				if (Accept('}'))
 				{
 					// Indexed string interpolation. Add the string literal up to this point as a token.
-					tokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = currentLexeme, .outType = stringTypeName });
-					currentLexeme.clear();
+					tokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = std::move(value), .outType = stringTypeName });
 
 					// Add a string literal interpolation token with the given index.
 					tokens.emplace_back(Token{ .type = Token::Type::LiteralStringInterpolation, .value = std::wstring(1, stringFieldCode) });
@@ -244,7 +242,7 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 				if (Accept('}'))
 				{
 					// Add the string field value to the string literal.
-					currentLexeme += GetStringField(stringFieldCode);
+					value += GetStringField(stringFieldCode);
 				}
 				else
 				{
@@ -259,12 +257,11 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 		else if (Accept())
 		{
 			// Consume the string literal
-			currentLexeme += characters[Current];
+			value += characters[Current];
 		}
 		else
 		{
 			AddError(Error::Code::StringLiteralOpen, L"A string literal wasn't terminated.");
-			currentLexeme.clear();
 			return;
 		}
 	}
