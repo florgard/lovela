@@ -320,7 +320,7 @@ void Lexer::LexLiteralInteger(std::vector<Token>& tokens) noexcept
 			tokens.emplace_back(GetCurrentCharToken());
 		}
 	}
-	else if (Accept([&] { return std::iswdigit(nextChar); }))
+	else if (Accept(digit))
 	{
 		currentLexeme += currentChar;
 	}
