@@ -269,13 +269,12 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 
 void Lexer::LexLiteralNumber(std::vector<Token>& tokens) noexcept
 {
-	Token token{ .type = Token::Type::LiteralInteger, .outType = integerTypeName };
-
-	token.value = characters[Current];
+	std::wstring value;
+	value += characters[Current];
 
 	while (Accept(digit, 1))
 	{
-		token.value += characters[Current];
+		value += characters[Current];
 	}
 
 	// Accept a single decimal point in numbers.
@@ -284,20 +283,19 @@ void Lexer::LexLiteralNumber(std::vector<Token>& tokens) noexcept
 
 	if (Accept(decimalPart, 2))
 	{
-		// Go from integer to decimal literal.
-		token.type = Token::Type::LiteralDecimal;
-		token.outType = decimalTypeName;
-
-		token.value += characters[Current];
+		value += characters[Current];
 
 		while (Accept(digit, 1))
 		{
-			token.value += characters[Current];
+			value += characters[Current];
 		}
-	}
 
-	// The numeric literal has ended, add it.
-	tokens.emplace_back(std::move(token));
+		tokens.emplace_back(Token{ .type = Token::Type::LiteralDecimal, .value = std::move(value), .outType = decimalTypeName });
+	}
+	else
+	{
+		tokens.emplace_back(Token{ .type = Token::Type::LiteralInteger, .value = std::move(value), .outType = integerTypeName });
+	}
 }
 
 void Lexer::LexComment(std::vector<Token>& tokens) noexcept
