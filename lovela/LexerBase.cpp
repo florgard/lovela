@@ -56,21 +56,15 @@ Token LexerBase::GetToken(wchar_t lexeme) noexcept
 
 Token LexerBase::GetToken(const std::wstring_view& lexeme) noexcept
 {
-	static const std::vector<std::pair<std::wregex, Token::Type>> tokenRegexes
+	static const std::vector<std::tuple<std::wregex, Token::Type, std::wstring_view>> definitions
 	{
-		{ std::wregex{ LR"(\d+)" }, Token::Type::LiteralInteger },
-		{ std::wregex{ LR"(\d+\.\d+)" }, Token::Type::LiteralDecimal },
-		{ std::wregex{ LR"(\w[\w<>=\+\-\*/]*)" }, Token::Type::Identifier },
-		{ std::wregex{ LR"(<|>|<>|<=|>=|=)" }, Token::Type::OperatorComparison },
-		{ std::wregex{ LR"(\+|-|\*|/|/*)" }, Token::Type::OperatorArithmetic },
-		{ std::wregex{ LR"(\*\*|\+\+|--)" }, Token::Type::OperatorBitwise },
-		{ std::wregex{ LR"(<-|->)" }, Token::Type::OperatorArrow },
-	};
-
-	static const std::map<Token::Type, std::wstring> tokenDataTypes
-	{
-		{Token::Type::LiteralInteger, integerTypeName},
-		{Token::Type::LiteralDecimal, decimalTypeName},
+		{ std::wregex{ LR"(\d+)" }, Token::Type::LiteralInteger, integerTypeName },
+		{ std::wregex{ LR"(\d+\.\d+)" }, Token::Type::LiteralDecimal, decimalTypeName },
+		{ std::wregex{ LR"(\w[\w<>=\+\-\*/]*)" }, Token::Type::Identifier, {} },
+		{ std::wregex{ LR"(<|>|<>|<=|>=|=)" }, Token::Type::OperatorComparison, {} },
+		{ std::wregex{ LR"(\+|-|\*|/|/*)" }, Token::Type::OperatorArithmetic, {} },
+		{ std::wregex{ LR"(\*\*|\+\+|--)" }, Token::Type::OperatorBitwise, {} },
+		{ std::wregex{ LR"(<-|->)" }, Token::Type::OperatorArrow, {} },
 	};
 
 	auto trimmed = Trim(lexeme);
@@ -89,16 +83,11 @@ Token LexerBase::GetToken(const std::wstring_view& lexeme) noexcept
 		}
 	}
 
-	for (const auto& pair : tokenRegexes)
+	for (const auto& definition : definitions)
 	{
-		if (std::regex_match(trimmed.begin(), trimmed.end(), pair.first))
+		if (std::regex_match(trimmed.begin(), trimmed.end(), std::get<0>(definition)))
 		{
-			Token token{ .type = pair.second, .value = std::wstring(trimmed.data(), trimmed.size()) };
-			if (tokenDataTypes.contains(pair.second))
-			{
-				token.outType = tokenDataTypes.at(pair.second);
-			}
-			return token;
+			return { .type = std::get<1>(definition), .value = std::wstring(trimmed.data(), trimmed.size()), .outType = to_wstring(std::get<2>(definition)) };
 		}
 	}
 
