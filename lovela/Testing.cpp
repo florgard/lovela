@@ -50,6 +50,7 @@ void Testing::RunLexerTests()
 	TestLexer("single character", L".", { {.type = Token::Type::SeparatorDot, .value = L"." }, endToken });
 
 	TestLexer("simple identifier", L"abc", { {.type = Token::Type::Identifier, .value = L"abc" }, endToken });
+	TestLexer("two identifiers", L"abc def", { {.type = Token::Type::Identifier, .value = L"abc" }, {.type = Token::Type::Identifier, .value = L"def" }, endToken });
 	TestLexer("alphanumerical identifier", L"abc123", { {.type = Token::Type::Identifier, .value = L"abc123" }, endToken });
 	TestLexer("kebab case identifier", L"abc-123", { {.type = Token::Type::Identifier, .value = L"abc-123" }, endToken });
 	TestLexer("snake case identifier", L"abc_123", { {.type = Token::Type::Identifier, .value = L"abc_123" }, endToken });
