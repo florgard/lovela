@@ -45,19 +45,23 @@ void Testing::RunTypeTests()
 void Testing::RunLexerTests()
 {
 	static const Token endToken{ .type = Token::Type::End };
+	static constexpr auto ident = Token::Type::Identifier;
 
 	TestLexer("empty expression", L"", { endToken });
 	TestLexer("single character", L".", { {.type = Token::Type::SeparatorDot, .value = L"." }, endToken });
 
-	TestLexer("simple identifier", L"abc", { {.type = Token::Type::Identifier, .value = L"abc" }, endToken });
-	TestLexer("two identifiers", L"abc def", { {.type = Token::Type::Identifier, .value = L"abc" }, {.type = Token::Type::Identifier, .value = L"def" }, endToken });
-	TestLexer("alphanumerical identifier", L"abc123", { {.type = Token::Type::Identifier, .value = L"abc123" }, endToken });
-	TestLexer("kebab case identifier", L"abc-123", { {.type = Token::Type::Identifier, .value = L"abc-123" }, endToken });
-	TestLexer("snake case identifier", L"abc_123", { {.type = Token::Type::Identifier, .value = L"abc_123" }, endToken });
-	TestLexer("operator character identifier", L"abc>=123", { {.type = Token::Type::Identifier, .value = L"abc>=123" }, endToken });
-	TestLexer("Unicode identifier", L"\u65E5\u672C", { {.type = Token::Type::Identifier, .value = L"\u65E5\u672C" }, endToken });
+	TestLexer("simple identifier", L"abc", { {.type = ident, .value = L"abc" }, endToken });
+	TestLexer("two identifiers", L"abc def", { {.type = ident, .value = L"abc" }, {.type = ident, .value = L"def" }, endToken });
+	TestLexer("alphanumerical identifier", L"abc123", { {.type = ident, .value = L"abc123" }, endToken });
+	TestLexer("kebab case identifier", L"abc-123", { {.type = ident, .value = L"abc-123" }, endToken });
+	TestLexer("snake case identifier", L"abc_123", { {.type = ident, .value = L"abc_123" }, endToken });
+	TestLexer("operator character identifier", L"abc>=123", { {.type = ident, .value = L"abc>=123" }, endToken });
+	TestLexer("Unicode identifier", L"\u65E5\u672C", { {.type = ident, .value = L"\u65E5\u672C" }, endToken });
 	// https://www.regular-expressions.info/unicode.html
-	//TestLexer("Unicode combining mark identifier", L"\u0061\u0300", { { .type = Token::Type::Identifier, .value = L"\u0061\u0300" }, endToken });
+	// \p{L}\p{M}*+
+	//TestLexer("Unicode combining mark identifier", L"\u0061\u0300", { { .type = ident, .value = L"\u0061\u0300" }, endToken });
+	TestLexer("invalid identifier 1", L"1abc", { endToken }, { {.code = ILexer::Error::Code::SyntaxError} });
+	TestLexer("invalid identifier 2", L"=abc", { endToken }, { {.code = ILexer::Error::Code::SyntaxError} });
 
 	TestLexer("integer literal", L"123", { {.type = Token::Type::LiteralInteger, .value = L"123" }, endToken });
 	TestLexer("integer literal and full stop", L"123.", {
@@ -142,25 +146,25 @@ void Testing::RunLexerTests()
 		});
 
 	TestLexer("trivial function declaration", L"func", {
-		{.type = Token::Type::Identifier, .value = L"func"},
+		{.type = ident, .value = L"func"},
 		endToken
 		});
 	TestLexer("trivial integer function", L"func: 123.", {
-		{.type = Token::Type::Identifier, .value = L"func"},
+		{.type = ident, .value = L"func"},
 		{.type = Token::Type::SeparatorColon, .value = L":"},
 		{.type = Token::Type::LiteralInteger, .value = L"123"},
 		{.type = Token::Type::SeparatorDot, .value = L"."},
 		endToken
 		});
 	TestLexer("trivial decimal function with whitespace", L"func : 123.4.", {
-		{.type = Token::Type::Identifier, .value = L"func"},
+		{.type = ident, .value = L"func"},
 		{.type = Token::Type::SeparatorColon, .value = L":"},
 		{.type = Token::Type::LiteralDecimal, .value = L"123.4"},
 		{.type = Token::Type::SeparatorDot, .value = L"."},
 		endToken
 		});
 	TestLexer("trivial decimal function with mixed name and group", L"\r\nfunc44: (123.4).", {
-		{.type = Token::Type::Identifier, .value = L"func44"},
+		{.type = ident, .value = L"func44"},
 		{.type = Token::Type::SeparatorColon, .value = L":"},
 		{.type = Token::Type::ParenRoundOpen, .value = L"("},
 		{.type = Token::Type::LiteralDecimal, .value = L"123.4"},
@@ -170,47 +174,47 @@ void Testing::RunLexerTests()
 		});
 	TestLexer("imported function", L"-> func", {
 		{.type = Token::Type::OperatorArrow, .value = L"->"},
-		{.type = Token::Type::Identifier, .value = L"func"},
+		{.type = ident, .value = L"func"},
 		endToken
 		});
 	TestLexer("exported function", L"<- []func", {
 		{.type = Token::Type::OperatorArrow, .value = L"<-"},
 		{.type = Token::Type::ParenSquareOpen, .value = L"["},
 		{.type = Token::Type::ParenSquareClose, .value = L"]"},
-		{.type = Token::Type::Identifier, .value = L"func"},
+		{.type = ident, .value = L"func"},
 		endToken
 		});
 	TestLexer("function with namespace", L"namespace|func", {
-		{.type = Token::Type::Identifier, .value = L"namespace"},
+		{.type = ident, .value = L"namespace"},
 		{.type = Token::Type::SeparatorVerticalLine, .value = L"|"},
-		{.type = Token::Type::Identifier, .value = L"func"},
+		{.type = ident, .value = L"func"},
 		endToken
 		});
 
 	TestLexer("mixed character identifier", L"ident123.", {
-		{.type = Token::Type::Identifier, .value = L"ident123"},
+		{.type = ident, .value = L"ident123"},
 		{.type = Token::Type::SeparatorDot, .value = L"."},
 		endToken
 		});
 	TestLexer("commented out identifier", L"<< ident123. >>", { endToken });
 	TestLexer("commented out identifier and whitespace", L"<<\r\nident123.\r\n>>", { endToken });
 	TestLexer("commented and non-commented identifier", L"<< ident123. >> ident456.", {
-		{.type = Token::Type::Identifier, .value = L"ident456"},
+		{.type = ident, .value = L"ident456"},
 		{.type = Token::Type::SeparatorDot, .value = L"."},
 		endToken
 		});
 	TestLexer("nested comments", L"<<<< 123 << 456 >>>>.>> ident456.", {
-		{.type = Token::Type::Identifier, .value = L"ident456"},
+		{.type = ident, .value = L"ident456"},
 		{.type = Token::Type::SeparatorDot, .value = L"."},
 		endToken
 		});
 	TestLexer("multiple comments", L"<<<<123>>ident234<<<<123<<456>>>:>>.", {
-		{.type = Token::Type::Identifier, .value = L"ident234"},
+		{.type = ident, .value = L"ident234"},
 		{.type = Token::Type::SeparatorDot, .value = L"."},
 		endToken
 		});
 	TestLexer("non-closed comment", L"<<<<123>>ident234<<<<123<<456>>>:>.", {
-		{.type = Token::Type::Identifier, .value = L"ident234"},
+		{.type = ident, .value = L"ident234"},
 		endToken
 		}, { {.code = ILexer::Error::Code::CommentOpen, .token{.line = 1}} });
 	TestLexer("comparison operator", L"1 < 2", {
@@ -223,7 +227,7 @@ void Testing::RunLexerTests()
 	TestLexer("comparison declaration", L"<(operand)", {
 		{.type = Token::Type::OperatorComparison, .value = L"<"},
 		{.type = Token::Type::ParenRoundOpen, .value = L"("},
-		{.type = Token::Type::Identifier, .value = L"operand"},
+		{.type = ident, .value = L"operand"},
 		{.type = Token::Type::ParenRoundClose, .value = L")"},
 		endToken
 		});
