@@ -56,15 +56,15 @@ Token LexerBase::GetToken(wchar_t lexeme) noexcept
 
 Token LexerBase::GetToken(const std::wstring_view& lexeme) noexcept
 {
-	// Note: Not supporting combining marks, ref \p{L}\p{M}*+
 	// https://en.cppreference.com/w/cpp/regex/ecmascript
 	// https://www.regular-expressions.info/posixbrackets.html
 	// https://www.regular-expressions.info/unicode.html
+	// https://en.wikipedia.org/wiki/Combining_character
 	static const std::vector<std::tuple<std::wregex, Token::Type, std::wstring_view>> definitions
 	{
 		{ std::wregex{ LR"(\d+)" }, Token::Type::LiteralInteger, integerTypeName },
 		{ std::wregex{ LR"(\d+\.\d+)" }, Token::Type::LiteralDecimal, decimalTypeName },
-		{ std::wregex{ LR"([[:alpha:]][\w<>=\+\-\*/]*)" }, Token::Type::Identifier, {} },
+		{ std::wregex{ LR"([[:alpha:]][\w<>=\+\-\*/\u0300–\u036F\u1AB0–\u1AFF\u1DC0–\u1DFF\u20D0–\u20FF\uFE20–\uFE2F]*)" }, Token::Type::Identifier, {} },
 		{ std::wregex{ LR"(<|>|<>|<=|>=|=)" }, Token::Type::OperatorComparison, {} },
 		{ std::wregex{ LR"(\+|-|\*|/|/*)" }, Token::Type::OperatorArithmetic, {} },
 		{ std::wregex{ LR"(\*\*|\+\+|--)" }, Token::Type::OperatorBitwise, {} },
