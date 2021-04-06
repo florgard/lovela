@@ -133,9 +133,9 @@ bool Lexer::Accept(wchar_t character) noexcept
 
 bool Lexer::Accept(const std::wregex& regex, size_t length) noexcept
 {
-	assert(length == 1 || length == 2);
-	std::wstring_view str(&characters[Next], length);
-	if (std::regex_match(str.begin(), str.end(), regex))
+	assert(length > 0 && length <= characters.size() - Next);
+	const auto* str = &characters[Next];
+	if (std::regex_match(str, str + length, regex))
 	{
 		return Accept();
 	}

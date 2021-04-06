@@ -33,6 +33,6 @@ private:
 	static constexpr size_t NextAfter = 2;
 
 	std::wistream& charStream;
-	wchar_t characters[3]{};
+	std::array<wchar_t, 3> characters{};
 	std::wstring currentLexeme;
 };
