@@ -2,8 +2,9 @@
 
 [[nodiscard]] inline std::string to_string(std::wstring_view value)
 {
-	std::string str(value.length(), 0);
-	std::transform(value.begin(), value.end(), str.begin(), [](const auto& elem) { return static_cast<char>(elem); });
+	std::string str;
+	str.resize(value.length());
+	std::transform(value.begin(), value.end(), str.begin(), [](auto elem) { return static_cast<char>(elem); });
 	return str;
 }
 
