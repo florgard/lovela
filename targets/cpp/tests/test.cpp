@@ -1,16 +1,6 @@
 #include "pch.h"
 #include "test.h"
 
-TEST(LovelaDataStructures, Streams) {
-	lovela::streams streams;
-	EXPECT_EQ(&streams.in, &std::wcin);
-	EXPECT_EQ(&streams.out, &std::wcout);
-	EXPECT_EQ(&streams.err, &std::wcerr);
-	EXPECT_EQ(&streams.select<1>(), &std::wcin);
-	EXPECT_EQ(&streams.select<2>(), &std::wcout);
-	EXPECT_EQ(&streams.select<3>(), &std::wcerr);
-}
-
 TEST(LovelaDataStructures, Error) {
 	lovela::error e1("msg");
 	lovela::error e2("msg", 2);
@@ -36,7 +26,6 @@ TEST(LovelaDataStructures, Error) {
 TEST(LovelaDataStructures, Context) {
 	lovela::context context{ .error{"msg"}, .parameters{"param"} };
 	EXPECT_EQ(context.select<2>().select<1>(), "msg");
-	EXPECT_EQ(&context.select<3>().select<2>(), &std::wcout);
 	EXPECT_EQ(context.select<4>().front(), "param");
 }
 
