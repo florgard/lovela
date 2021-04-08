@@ -1,6 +1,20 @@
 #include "pch.h"
 #include "test.h"
 
+TEST(NamedTuple, SetGetAddRange) {
+	lovela::named_tuple<int, double, std::string> obj;
+	EXPECT_NO_THROW(obj.set_size(3));
+	EXPECT_THROW(obj.set_size(20), std::out_of_range);
+	EXPECT_EQ(obj.get_size(), 3);
+	EXPECT_NO_THROW(obj.set_item<1>(123));
+	EXPECT_NO_THROW(obj.set_item<2>(123.456));
+	EXPECT_NO_THROW(obj.set_item<3>("abc"));
+	EXPECT_EQ(obj.get_item<1>(), 123);
+	EXPECT_EQ(obj.get_item<2>(), 123.456);
+	EXPECT_EQ(obj.get_item<3>(), "abc");
+	EXPECT_THROW(obj.add_item(20), std::out_of_range);
+}
+
 TEST(DynamicArray, SetGetAddRange) {
 	lovela::dynamic_array<std::string> arr;
 	EXPECT_NO_THROW(arr.set_size(10));

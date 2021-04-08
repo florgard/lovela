@@ -37,7 +37,7 @@ namespace lovela
 		fixed_size_array& operator=(fixed_size_array&& src) noexcept = default;
 
 		size_t get_size() const { return items.size(); }
-		void set_size(size_t size) { size == items.size() || (throw std::out_of_range("a fixed sized array cannot be resized"), false); }
+		void set_size(size_t size) { size == get_size() || (throw std::out_of_range("a fixed sized array cannot be resized"), false); }
 		const Item& get_item(size_t index) { return items.at(check(index)); }
 		void set_item(size_t index, const Item& item) { items[check(index)] = item; }
 		void set_item(size_t index, Item&& item) { items[check(index)] = item; }
@@ -68,6 +68,48 @@ namespace lovela
 		void set_item(size_t index, Item&& item) { items[check(index)] = item; }
 		void add_item(const Item& item) { items.push_back(item); }
 		void add_item(Item&& item) { items.emplace_back(item); }
+	};
+
+	template <typename... Types>
+	class named_tuple
+	{
+		std::tuple<Types...> items;
+		std::vector<std::string> names;
+
+	public:
+		constexpr size_t get_size() const
+		{
+			return std::tuple_size_v<decltype(items)>;
+		}
+
+		constexpr void set_size(size_t size)
+		{
+			size == get_size() || (throw std::out_of_range("a fixed sized array cannot be resized"), false);
+		}
+
+		template <int index>
+		constexpr const auto& get_item()
+		{
+			static_assert(index > 0, "invalid index");
+			return std::get<index - 1>(items);
+		};
+
+		template <int index>
+		constexpr void set_item(const auto& item)
+		{
+			static_assert(index > 0, "invalid index");
+			std::get<index - 1>(items) = item;
+		};
+
+		template <int index>
+		constexpr void set_item(auto&& item)
+		{
+			static_assert(index > 0, "invalid index");
+			std::get<index - 1>(items) = item;
+		};
+
+		constexpr void add_item(const auto&) { throw std::out_of_range("a named tuple cannot be appended to"); }
+		//constexpr void add_item(auto&&) { throw std::out_of_range("a named tuple cannot be appended to"); }
 	};
 
 	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
