@@ -36,11 +36,38 @@ namespace lovela
 		fixed_size_array& operator=(const fixed_size_array& src) noexcept = default;
 		fixed_size_array& operator=(fixed_size_array&& src) noexcept = default;
 
-		const Item& get(size_t index) { return items.at(check(index)); }
-		void set(size_t index, const Item& item) { items[check(index)] = item; }
-		void set(size_t index, Item&& item) { items[check(index)] = item; }
-		void add(const Item&) { throw std::out_of_range("a fixed sized array cannot be appended to"); }
-		void add(Item&&) { throw std::out_of_range("a fixed sized array cannot be appended to"); }
+		size_t get_size() const { return items.size(); }
+		void set_size(size_t size) { size == items.size() || (throw std::out_of_range("a fixed sized array cannot be resized"), false); }
+		const Item& get_item(size_t index) { return items.at(check(index)); }
+		void set_item(size_t index, const Item& item) { items[check(index)] = item; }
+		void set_item(size_t index, Item&& item) { items[check(index)] = item; }
+		void add_item(const Item&) { throw std::out_of_range("a fixed sized array cannot be appended to"); }
+		void add_item(Item&&) { throw std::out_of_range("a fixed sized array cannot be appended to"); }
+	};
+
+	template <typename Item>
+	class dynamic_array
+	{
+		std::vector<Item> items;
+
+		size_t check(size_t index)
+		{
+			if (!index || index > items.size())
+			{
+				throw std::out_of_range("a dynamic array index was out of range");
+			}
+
+			return index - 1;
+		}
+
+	public:
+		size_t get_size() const { return items.size(); }
+		void set_size(size_t size) { items.resize(size); }
+		const Item& get_item(size_t index) { return items.at(check(index)); }
+		void set_item(size_t index, const Item& item) { items[check(index)] = item; }
+		void set_item(size_t index, Item&& item) { items[check(index)] = item; }
+		void add_item(const Item& item) { items.push_back(item); }
+		void add_item(Item&& item) { items.emplace_back(item); }
 	};
 
 	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };

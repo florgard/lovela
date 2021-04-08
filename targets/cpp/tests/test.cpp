@@ -1,15 +1,35 @@
 #include "pch.h"
 #include "test.h"
 
+TEST(DynamicArray, SetGetAddRange) {
+	lovela::dynamic_array<std::string> arr;
+	EXPECT_NO_THROW(arr.set_size(10));
+	EXPECT_NO_THROW(arr.set_size(20));
+	EXPECT_EQ(arr.get_size(), 20);
+	EXPECT_NO_THROW(arr.set_item(1, "abc"));
+	EXPECT_EQ(arr.get_item(1), "abc");
+	EXPECT_NO_THROW(arr.set_item(20, "bcd"));
+	EXPECT_EQ(arr.get_item(20), "bcd");
+	EXPECT_THROW(arr.get_item(0), std::out_of_range);
+	EXPECT_THROW(arr.set_item(21, "cde"), std::out_of_range);
+	EXPECT_NO_THROW(arr.add_item("def"));
+	EXPECT_EQ(arr.get_item(21), "def");
+	EXPECT_EQ(arr.get_size(), 21);
+}
+
 TEST(FixedSizeArray, SetGetAddRange) {
 	lovela::fixed_size_array<int> arr(10);
-	EXPECT_NO_THROW(arr.set(1, 123));
-	EXPECT_EQ(arr.get(1), 123);
-	EXPECT_NO_THROW(arr.set(10, 234));
-	EXPECT_EQ(arr.get(10), 234);
-	EXPECT_THROW(arr.get(0), std::out_of_range);
-	EXPECT_THROW(arr.set(11, 345), std::out_of_range);
-	EXPECT_THROW(arr.add(123), std::out_of_range);
+	EXPECT_NO_THROW(arr.set_size(10));
+	EXPECT_THROW(arr.set_size(20), std::out_of_range);
+	EXPECT_EQ(arr.get_size(), 10);
+	EXPECT_NO_THROW(arr.set_item(1, 123));
+	EXPECT_EQ(arr.get_item(1), 123);
+	EXPECT_NO_THROW(arr.set_item(10, 234));
+	EXPECT_EQ(arr.get_item(10), 234);
+	EXPECT_THROW(arr.get_item(0), std::out_of_range);
+	EXPECT_THROW(arr.set_item(11, 345), std::out_of_range);
+	EXPECT_THROW(arr.add_item(123), std::out_of_range);
+	EXPECT_EQ(arr.get_size(), 10);
 }
 
 TEST(Streams, SimpleOut) {
