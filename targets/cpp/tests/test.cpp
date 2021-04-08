@@ -1,6 +1,24 @@
 #include "pch.h"
 #include "test.h"
 
+TEST(Streams, SimpleOut) {
+	std::wostringstream s;
+	auto* buf = std::wcout.rdbuf(s.rdbuf());
+	lovela::streams streams;
+	streams.select(2).write("abc");
+	EXPECT_STREQ(s.str().c_str(), L"abc");
+	std::wcout.rdbuf(buf);
+}
+
+TEST(Streams, Utf8Out) {
+	std::wostringstream s;
+	auto* buf = std::wcout.rdbuf(s.rdbuf());
+	lovela::streams streams;
+	streams.select(2).write("100\xE2\x82\xAC");
+	EXPECT_STREQ(s.str().c_str(), L"100€");
+	std::wcout.rdbuf(buf);
+}
+
 TEST(LovelaDataStructures, Error) {
 	lovela::error e1("msg");
 	lovela::error e2("msg", 2);

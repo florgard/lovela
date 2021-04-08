@@ -47,10 +47,10 @@ namespace lovela
 		stream(std::ostream& stream) noexcept : io(&stream) {}
 		stream(std::wistream& stream) noexcept : io(&stream) { buffer.reserve(4096); }
 		stream(std::wostream& stream) noexcept : io(&stream) { buffer.reserve(4096); }
-		stream(const stream& src) = delete;
-		stream(stream&& src) = delete;
-		stream& operator=(const stream& src) = delete;
-		stream& operator=(stream&& src) = delete;
+		stream(const stream& src) noexcept = default;
+		stream(stream&& src) noexcept = default;
+		stream& operator=(const stream& src) noexcept = default;
+		stream& operator=(stream&& src) noexcept = default;
 
 		void read_word(std::string& word)
 		{
@@ -114,22 +114,19 @@ namespace lovela
 		}
 	};
 
-	struct streams
+	class streams
 	{
 #if defined(_MSC_VER)
-		stream in{ std::wcin };
-		stream out{ std::wcout };
-		stream err{ std::wcerr };
+		std::vector<stream> items{ {}, { std::wcin }, { std::wcout }, { std::wcerr } };
 #else
-		stream in{ std::cin };
-		stream out{ std::cout };
-		stream err{ std::cerr };
+		std::vector<stream> items{ {}, { std::cin }, { std::cout }, { std::cerr } };
 #endif
 
-		template <int index> auto& select() { static_assert(false, "invalid select index"); return *this; };
-		template <> auto& select<1>() { return in; }
-		template <> auto& select<2>() { return out; }
-		template <> auto& select<3>() { return err; }
+	public:
+		stream& select(size_t index)
+		{
+			return index < items.size() ? items.at(index) : items.front();
+		}
 	};
 
 	class error : public std::exception
