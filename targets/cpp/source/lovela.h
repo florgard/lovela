@@ -8,10 +8,41 @@
 #include <cstdint>
 #include <variant>
 #include <algorithm>
+#include <exception>
 #include "utfcpp/utf8.h"
 
 namespace lovela
 {
+	template <typename Item>
+	class fixed_size_array
+	{
+		std::vector<Item> items;
+
+		size_t check(size_t index)
+		{
+			if (!index || index > items.size())
+			{
+				throw std::out_of_range("a fixed sized array index was out of range");
+			}
+
+			return index - 1;
+		}
+
+	public:
+		fixed_size_array(size_t size) noexcept : items(size) {}
+		~fixed_size_array() noexcept = default;
+		fixed_size_array(const fixed_size_array& src) noexcept = default;
+		fixed_size_array(fixed_size_array&& src) noexcept = default;
+		fixed_size_array& operator=(const fixed_size_array& src) noexcept = default;
+		fixed_size_array& operator=(fixed_size_array&& src) noexcept = default;
+
+		const Item& get(size_t index) { return items.at(check(index)); }
+		void set(size_t index, const Item& item) { items[check(index)] = item; }
+		void set(size_t index, Item&& item) { items[check(index)] = item; }
+		void add(const Item&) {}
+		void add(Item&&) {}
+	};
+
 	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 	template<class... Ts> overloaded(Ts...)->overloaded<Ts...>;
 
