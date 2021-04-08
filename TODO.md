@@ -12,6 +12,7 @@
 
 * Assignment
 * Stream in/out syntax
+* Use msgpack for serialization
 * Select operator: object|property
   * Index
   * Name
