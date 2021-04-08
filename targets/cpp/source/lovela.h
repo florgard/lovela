@@ -39,8 +39,8 @@ namespace lovela
 		const Item& get(size_t index) { return items.at(check(index)); }
 		void set(size_t index, const Item& item) { items[check(index)] = item; }
 		void set(size_t index, Item&& item) { items[check(index)] = item; }
-		void add(const Item&) {}
-		void add(Item&&) {}
+		void add(const Item&) { throw std::out_of_range("a fixed sized array cannot be appended to"); }
+		void add(Item&&) { throw std::out_of_range("a fixed sized array cannot be appended to"); }
 	};
 
 	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };

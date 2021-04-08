@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "test.h"
 
-TEST(FixedSizeArray, SetGetRange) {
+TEST(FixedSizeArray, SetGetAddRange) {
 	lovela::fixed_size_array<int> arr(10);
 	EXPECT_NO_THROW(arr.set(1, 123));
 	EXPECT_EQ(arr.get(1), 123);
@@ -9,6 +9,7 @@ TEST(FixedSizeArray, SetGetRange) {
 	EXPECT_EQ(arr.get(10), 234);
 	EXPECT_THROW(arr.get(0), std::out_of_range);
 	EXPECT_THROW(arr.set(11, 345), std::out_of_range);
+	EXPECT_THROW(arr.add(123), std::out_of_range);
 }
 
 TEST(Streams, SimpleOut) {
