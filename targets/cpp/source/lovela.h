@@ -73,39 +73,51 @@ namespace lovela
 	template <typename... Types>
 	class named_tuple
 	{
-		std::tuple<Types...> items;
-		std::vector<std::string> names;
+		std::tuple<Types...> _items;
+		const size_t _size = std::tuple_size_v<decltype(_items)>;
+		std::vector<std::u8string> _names{ _size };
 
 	public:
+		named_tuple(const std::vector<std::u8string>& names) noexcept : _names(names) {}
+		named_tuple(std::vector<std::u8string>&& names) noexcept : _names(names) {}
+		named_tuple(const named_tuple& src) noexcept = default;
+		named_tuple(named_tuple&& src) noexcept = default;
+		named_tuple& operator=(const named_tuple& src) noexcept = default;
+		named_tuple& operator=(named_tuple&& src) noexcept = default;
+		~named_tuple() noexcept = default;
+
 		constexpr size_t get_size() const
 		{
-			return std::tuple_size_v<decltype(items)>;
+			return _size;
 		}
 
 		constexpr void set_size(size_t size)
 		{
-			size == get_size() || (throw std::out_of_range("a fixed sized array cannot be resized"), false);
+			if (size != _size)
+			{
+				throw std::out_of_range("a named tuple cannot be resized");
+			}
 		}
 
 		template <int index>
 		constexpr const auto& get_item()
 		{
 			static_assert(index > 0, "invalid index");
-			return std::get<index - 1>(items);
+			return std::get<index - 1>(_items);
 		};
 
 		template <int index>
 		constexpr void set_item(const auto& item)
 		{
 			static_assert(index > 0, "invalid index");
-			std::get<index - 1>(items) = item;
+			std::get<index - 1>(_items) = item;
 		};
 
 		template <int index>
 		constexpr void set_item(auto&& item)
 		{
 			static_assert(index > 0, "invalid index");
-			std::get<index - 1>(items) = item;
+			std::get<index - 1>(_items) = item;
 		};
 
 		constexpr void add_item(const auto&) { throw std::out_of_range("a named tuple cannot be appended to"); }

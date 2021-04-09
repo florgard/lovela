@@ -2,7 +2,7 @@
 #include "test.h"
 
 TEST(NamedTuple, SetGetAddRange) {
-	lovela::named_tuple<int, double, std::string> obj;
+	lovela::named_tuple<int, double, std::string> obj({ u8"Pcs", u8"Price", u8"Name" });
 	EXPECT_NO_THROW(obj.set_size(3));
 	EXPECT_THROW(obj.set_size(20), std::out_of_range);
 	EXPECT_EQ(obj.get_size(), 3);
