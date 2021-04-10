@@ -26,23 +26,23 @@ namespace lovela
 	template <typename Item>
 	class fixed_size_array
 	{
-		std::vector<Item> items;
+		std::vector<Item> _items;
 
-		constexpr size_t check(size_t index) const { return rebase(index, items.size()); }
+		constexpr size_t rebase(size_t index) const { return lovela::rebase(index, _items.size()); }
 
 	public:
-		fixed_size_array(size_t size) noexcept : items(size) {}
+		fixed_size_array(size_t size) noexcept : _items(size) {}
 		~fixed_size_array() noexcept = default;
 		fixed_size_array(const fixed_size_array& src) noexcept = default;
 		fixed_size_array(fixed_size_array&& src) noexcept = default;
 		fixed_size_array& operator=(const fixed_size_array& src) noexcept = default;
 		fixed_size_array& operator=(fixed_size_array&& src) noexcept = default;
 
-		size_t get_size() const { return items.size(); }
+		size_t get_size() const { return _items.size(); }
 		void set_size(size_t size) { size == get_size() || (throw std::out_of_range("a fixed sized array cannot be resized"), false); }
-		const Item& get_item(size_t index) { return items.at(check(index)); }
-		void set_item(size_t index, const Item& item) { items[check(index)] = item; }
-		void set_item(size_t index, Item&& item) { items[check(index)] = item; }
+		const Item& get_item(size_t index) { return _items.at(rebase(index)); }
+		void set_item(size_t index, const Item& item) { _items[rebase(index)] = item; }
+		void set_item(size_t index, Item&& item) { _items[rebase(index)] = item; }
 		void add_item(const Item&) { throw std::out_of_range("a fixed sized array cannot be appended to"); }
 		void add_item(Item&&) { throw std::out_of_range("a fixed sized array cannot be appended to"); }
 	};
@@ -50,30 +50,29 @@ namespace lovela
 	template <typename Item>
 	class dynamic_array
 	{
-		std::vector<Item> items;
+		std::vector<Item> _items;
 
-		constexpr size_t check(size_t index) const  { return rebase(index, items.size()); }
+		constexpr size_t rebase(size_t index) const  { return lovela::rebase(index, _items.size()); }
 
 	public:
-		size_t get_size() const { return items.size(); }
-		void set_size(size_t size) { items.resize(size); }
-		const Item& get_item(size_t index) { return items.at(check(index)); }
-		void set_item(size_t index, const Item& item) { items[check(index)] = item; }
-		void set_item(size_t index, Item&& item) { items[check(index)] = item; }
-		void add_item(const Item& item) { items.push_back(item); }
-		void add_item(Item&& item) { items.emplace_back(item); }
+		size_t get_size() const { return _items.size(); }
+		void set_size(size_t size) { _items.resize(size); }
+		const Item& get_item(size_t index) { return _items.at(rebase(index)); }
+		void set_item(size_t index, const Item& item) { _items[rebase(index)] = item; }
+		void set_item(size_t index, Item&& item) { _items[rebase(index)] = item; }
+		void add_item(const Item& item) { _items.push_back(item); }
+		void add_item(Item&& item) { _items.emplace_back(item); }
 	};
 
 	template <typename... Types>
 	class named_tuple
 	{
 		std::tuple<Types...> _items;
-		using items_t = decltype(_items);
-		static constexpr size_t _size = std::tuple_size_v<items_t>;
+		static constexpr size_t _size = std::tuple_size_v<decltype(_items)>;
 		static_assert(_size <= 10, "add more NAMED_TUPLE_CASE_GET_ITEM");
 		std::vector<std::u8string> _names{ _size };
 
-		constexpr size_t check(size_t index) const { return rebase(index, _size); }
+		constexpr size_t rebase(size_t index) const { return lovela::rebase(index, _size); }
 
 	public:
 		named_tuple(const std::vector<std::u8string>& names) noexcept : _names(names) {}
@@ -106,7 +105,7 @@ namespace lovela
 		template <typename Item>
 		constexpr void get_item(size_t index, Item& item)
 		{
-			switch (check(index))
+			switch (rebase(index))
 			{
 				NAMED_TUPLE_CASE_GET_ITEM(0);
 				NAMED_TUPLE_CASE_GET_ITEM(1);
@@ -253,15 +252,15 @@ namespace lovela
 	class streams
 	{
 #if defined(_MSC_VER)
-		std::vector<stream> items{ {}, { std::wcin }, { std::wcout }, { std::wcerr } };
+		std::vector<stream> _items{ {}, { std::wcin }, { std::wcout }, { std::wcerr } };
 #else
-		std::vector<stream> items{ {}, { std::cin }, { std::cout }, { std::cerr } };
+		std::vector<stream> _items{ {}, { std::cin }, { std::cout }, { std::cerr } };
 #endif
 
 	public:
 		stream& select(size_t index)
 		{
-			return index < items.size() ? items.at(index) : items.front();
+			return index < _items.size() ? _items.at(index) : _items.front();
 		}
 	};
 
