@@ -74,8 +74,20 @@ namespace lovela
 	class named_tuple
 	{
 		std::tuple<Types...> _items;
-		const size_t _size = std::tuple_size_v<decltype(_items)>;
+		using items_t = decltype(_items);
+		static constexpr size_t _size = std::tuple_size_v<items_t>;
+		static_assert(_size <= 10, "add more NAMED_TUPLE_CASE_GET_ITEM");
 		std::vector<std::u8string> _names{ _size };
+
+		constexpr size_t check(size_t index)
+		{
+			if (!index || index > _size)
+			{
+				throw std::out_of_range("a named tuple index was out of range");
+			}
+
+			return index - 1;
+		}
 
 	public:
 		named_tuple(const std::vector<std::u8string>& names) noexcept : _names(names) {}
@@ -99,21 +111,47 @@ namespace lovela
 			}
 		}
 
-		template <int index>
-		constexpr const auto& get_item()
+#define NAMED_TUPLE_CASE_GET_ITEM(index_) case index_: \
+	if constexpr (index_ < _size) { \
+	if constexpr (std::is_same_v<std::remove_cvref_t<Item>, std::remove_cvref_t<decltype(std::get<index_>(_items))>>) { \
+	item = std::get<index_>(_items); \
+	} } break;
+
+		template <typename Item>
+		constexpr void get_item(size_t index, Item& item)
+		{
+			switch (check(index))
+			{
+				NAMED_TUPLE_CASE_GET_ITEM(0);
+				NAMED_TUPLE_CASE_GET_ITEM(1);
+				NAMED_TUPLE_CASE_GET_ITEM(2);
+				NAMED_TUPLE_CASE_GET_ITEM(3);
+				NAMED_TUPLE_CASE_GET_ITEM(4);
+				NAMED_TUPLE_CASE_GET_ITEM(5);
+				NAMED_TUPLE_CASE_GET_ITEM(6);
+				NAMED_TUPLE_CASE_GET_ITEM(7);
+				NAMED_TUPLE_CASE_GET_ITEM(8);
+				NAMED_TUPLE_CASE_GET_ITEM(9);
+			}
+		}
+
+#undef NAMED_TUPLE_CASE_GET_ITEM
+
+		template <size_t index>
+		constexpr auto& get_item()
 		{
 			static_assert(index > 0, "invalid index");
 			return std::get<index - 1>(_items);
 		};
 
-		template <int index>
+		template <size_t index>
 		constexpr void set_item(const auto& item)
 		{
 			static_assert(index > 0, "invalid index");
 			std::get<index - 1>(_items) = item;
 		};
 
-		template <int index>
+		template <size_t index>
 		constexpr void set_item(auto&& item)
 		{
 			static_assert(index > 0, "invalid index");
