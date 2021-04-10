@@ -1,29 +1,62 @@
 #include "pch.h"
 #include "test.h"
 
-TEST(NamedTuple, SetGetAddRange) {
+TEST(NamedTuple, InitAndRange) {
 	lovela::named_tuple<int, double, std::string> obj({ u8"Pcs", u8"Price", u8"Name" });
 	EXPECT_NO_THROW(obj.set_size(3));
 	EXPECT_THROW(obj.set_size(20), std::out_of_range);
 	EXPECT_EQ(obj.get_size(), 3);
+	EXPECT_THROW(obj.add_item(123), std::out_of_range);
+}
+
+TEST(NamedTuple, SetGetStaticIndex) {
+	lovela::named_tuple<int, double, std::string> obj({ u8"Pcs", u8"Price", u8"Name" });
 	EXPECT_NO_THROW(obj.set_item<1>(123));
 	EXPECT_NO_THROW(obj.set_item<2>(123.456));
 	EXPECT_NO_THROW(obj.set_item<3>(std::string("abc")));
+
 	int i; double d; std::string s;
 	EXPECT_NO_THROW(obj.get_item<1>(i));
 	EXPECT_NO_THROW(obj.get_item<2>(d));
 	EXPECT_NO_THROW(obj.get_item<3>(s));
+	EXPECT_THROW(obj.get_item(4, i), std::out_of_range);
 	EXPECT_EQ(i, 123);
 	EXPECT_EQ(d, 123.456);
 	EXPECT_EQ(s, std::string("abc"));
-	EXPECT_THROW(obj.get_item<4>(i), std::out_of_range);
+}
+
+TEST(NamedTuple, SetGetRuntimeIndex) {
+	lovela::named_tuple<int, double, std::string> obj({ u8"Pcs", u8"Price", u8"Name" });
+	// TODO
+	EXPECT_NO_THROW(obj.set_item<1>(123));
+	EXPECT_NO_THROW(obj.set_item<2>(123.456));
+	EXPECT_NO_THROW(obj.set_item<3>(std::string("abc")));
+
+	int i; double d; std::string s;
 	EXPECT_NO_THROW(obj.get_item(1, i));
 	EXPECT_NO_THROW(obj.get_item(2, d));
 	EXPECT_NO_THROW(obj.get_item(3, s));
+	EXPECT_THROW(obj.get_item(4, i), std::out_of_range);
 	EXPECT_EQ(i, 123);
 	EXPECT_EQ(d, 123.456);
 	EXPECT_EQ(s, std::string("abc"));
-	EXPECT_THROW(obj.add_item(20), std::out_of_range);
+}
+
+TEST(NamedTuple, SetGetRuntimeName) {
+	lovela::named_tuple<int, double, std::string> obj({ u8"Pcs", u8"Price", u8"Name" });
+	// TODO
+	EXPECT_NO_THROW(obj.set_item<1>(123));
+	EXPECT_NO_THROW(obj.set_item<2>(123.456));
+	EXPECT_NO_THROW(obj.set_item<3>(std::string("abc")));
+
+	int i; double d; std::string s;
+	EXPECT_NO_THROW(obj.get_item(u8"Pcs", i));
+	EXPECT_NO_THROW(obj.get_item(u8"Price", d));
+	EXPECT_NO_THROW(obj.get_item(u8"Name", s));
+	EXPECT_THROW(obj.get_item(u8"Type", i), std::out_of_range);
+	EXPECT_EQ(i, 123);
+	EXPECT_EQ(d, 123.456);
+	EXPECT_EQ(s, std::string("abc"));
 }
 
 TEST(DynamicArray, SetGetAddRange) {

@@ -2,6 +2,7 @@
 #define LOVELA
 #include <string>
 #include <vector>
+#include <map>
 #include <iostream>
 #include <exception>
 #include <typeinfo>
@@ -76,16 +77,24 @@ namespace lovela
 	template <typename... Types>
 	class named_tuple
 	{
-		std::tuple<Types...> _items;
-		static constexpr size_t _size = std::tuple_size_v<decltype(_items)>;
+		using items_t = std::tuple<Types...>;
+		using names_t = std::map<std::u8string, size_t>;
+		static constexpr size_t _size = std::tuple_size_v<items_t>;
 		static_assert(_size <= 10, "add more NAMED_TUPLE_CASE_GET_ITEM");
-		std::vector<std::u8string> _names{ _size };
+
+		items_t _items;
+		names_t _names;
 
 		constexpr size_t rebase(size_t index) const { return lovela::rebase(index, _size); }
 
 	public:
-		named_tuple(const std::vector<std::u8string>& names) noexcept : _names(names) {}
-		named_tuple(std::vector<std::u8string>&& names) noexcept : _names(names) {}
+		named_tuple(const std::vector<std::u8string>& names) noexcept
+		{
+			for (size_t i = 0; i < names.size(); i++)
+			{
+				_names.insert(std::make_pair(names[i], i + 1));
+			}
+		}
 		named_tuple(const named_tuple& src) noexcept = default;
 		named_tuple(named_tuple&& src) noexcept = default;
 		named_tuple& operator=(const named_tuple& src) noexcept = default;
@@ -138,12 +147,25 @@ namespace lovela
 			}
 		}
 
+		template <typename Item>
+		constexpr void get_item(const std::u8string& name, Item& item)
+		{
+			auto iter = _names.find(name);
+			if (iter != _names.end())
+			{
+				get_item(iter->second, item);
+			}
+			else
+			{
+				throw std::out_of_range("named tuple: the name doesn't exist");
+			}
+		}
+
 		template <size_t index, typename Item>
 		constexpr void get_item(Item& item)
 		{
 			NAMED_TUPLE_SAFE_GET_ITEM(rebase_v<index>, item);
 		};
-
 
 		template <size_t index, typename Item>
 		constexpr void set_item(const Item& item)
