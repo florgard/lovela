@@ -8,17 +8,21 @@ TEST(NamedTuple, SetGetAddRange) {
 	EXPECT_EQ(obj.get_size(), 3);
 	EXPECT_NO_THROW(obj.set_item<1>(123));
 	EXPECT_NO_THROW(obj.set_item<2>(123.456));
-	EXPECT_NO_THROW(obj.set_item<3>("abc"));
-	EXPECT_EQ(obj.get_item<1>(), 123);
-	EXPECT_EQ(obj.get_item<2>(), 123.456);
-	EXPECT_EQ(obj.get_item<3>(), "abc");
+	EXPECT_NO_THROW(obj.set_item<3>(std::string("abc")));
 	int i; double d; std::string s;
-	obj.get_item<int>(1, i);
-	obj.get_item<double>(2, d);
-	obj.get_item<std::string>(3, s);
+	EXPECT_NO_THROW(obj.get_item<1>(i));
+	EXPECT_NO_THROW(obj.get_item<2>(d));
+	EXPECT_NO_THROW(obj.get_item<3>(s));
 	EXPECT_EQ(i, 123);
 	EXPECT_EQ(d, 123.456);
-	EXPECT_EQ(s, "abc");
+	EXPECT_EQ(s, std::string("abc"));
+	EXPECT_THROW(obj.get_item<4>(i), std::out_of_range);
+	EXPECT_NO_THROW(obj.get_item(1, i));
+	EXPECT_NO_THROW(obj.get_item(2, d));
+	EXPECT_NO_THROW(obj.get_item(3, s));
+	EXPECT_EQ(i, 123);
+	EXPECT_EQ(d, 123.456);
+	EXPECT_EQ(s, std::string("abc"));
 	EXPECT_THROW(obj.add_item(20), std::out_of_range);
 }
 

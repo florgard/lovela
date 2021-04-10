@@ -13,6 +13,15 @@
 
 namespace lovela
 {
+	template <size_t index>
+	struct rebase_t
+	{
+		static constexpr size_t value = index - 1;
+	};
+
+	template <size_t index>
+	static constexpr auto rebase_v = rebase_t<index>::value;
+
 	constexpr size_t rebase(size_t index, size_t size)
 	{
 		if (!index || index > size)
@@ -96,52 +105,63 @@ namespace lovela
 			}
 		}
 
-#define NAMED_TUPLE_CASE_GET_ITEM(index_) case index_: \
+#define NAMED_TUPLE_GUARD_BEGIN(index_) index_; \
 	if constexpr (index_ < _size) { \
-	if constexpr (std::is_same_v<std::remove_cvref_t<Item>, std::remove_cvref_t<decltype(std::get<index_>(_items))>>) { \
-	item = std::get<index_>(_items); \
-	} } break;
+	if constexpr (std::is_same_v<std::remove_cvref_t<Item>, std::remove_cvref_t<decltype(std::get<index_>(_items))>>) {
+
+#define NAMED_TUPLE_GUARD_END } else throw std::invalid_argument("named tuple: invalid access type"); } else throw std::out_of_range("index out of range");
+
+#define NAMED_TUPLE_SAFE_GET_ITEM(index_, item_) item_; \
+	NAMED_TUPLE_GUARD_BEGIN(index_); item_ = std::get<index_>(_items); NAMED_TUPLE_GUARD_END;
+
+#define NAMED_TUPLE_SAFE_SET_ITEM(index_, item_) item_; \
+	NAMED_TUPLE_GUARD_BEGIN(index_); std::get<index_>(_items) = item_; NAMED_TUPLE_GUARD_END;
+
+#define NAMED_TUPLE_CASE_GET_ITEM(index_, item_) \
+	case index_: NAMED_TUPLE_SAFE_GET_ITEM(index_, item_); break;
 
 		template <typename Item>
 		constexpr void get_item(size_t index, Item& item)
 		{
 			switch (rebase(index))
 			{
-				NAMED_TUPLE_CASE_GET_ITEM(0);
-				NAMED_TUPLE_CASE_GET_ITEM(1);
-				NAMED_TUPLE_CASE_GET_ITEM(2);
-				NAMED_TUPLE_CASE_GET_ITEM(3);
-				NAMED_TUPLE_CASE_GET_ITEM(4);
-				NAMED_TUPLE_CASE_GET_ITEM(5);
-				NAMED_TUPLE_CASE_GET_ITEM(6);
-				NAMED_TUPLE_CASE_GET_ITEM(7);
-				NAMED_TUPLE_CASE_GET_ITEM(8);
-				NAMED_TUPLE_CASE_GET_ITEM(9);
+				NAMED_TUPLE_CASE_GET_ITEM(0, item);
+				NAMED_TUPLE_CASE_GET_ITEM(1, item);
+				NAMED_TUPLE_CASE_GET_ITEM(2, item);
+				NAMED_TUPLE_CASE_GET_ITEM(3, item);
+				NAMED_TUPLE_CASE_GET_ITEM(4, item);
+				NAMED_TUPLE_CASE_GET_ITEM(5, item);
+				NAMED_TUPLE_CASE_GET_ITEM(6, item);
+				NAMED_TUPLE_CASE_GET_ITEM(7, item);
+				NAMED_TUPLE_CASE_GET_ITEM(8, item);
+				NAMED_TUPLE_CASE_GET_ITEM(9, item);
 			}
 		}
 
+		template <size_t index, typename Item>
+		constexpr void get_item(Item& item)
+		{
+			NAMED_TUPLE_SAFE_GET_ITEM(rebase_v<index>, item);
+		};
+
+
+		template <size_t index, typename Item>
+		constexpr void set_item(const Item& item)
+		{
+			NAMED_TUPLE_SAFE_SET_ITEM(rebase_v<index>, item);
+		};
+
+		template <size_t index, typename Item>
+		constexpr void set_item(Item&& item)
+		{
+			NAMED_TUPLE_SAFE_SET_ITEM(rebase_v<index>, item);
+		};
+
 #undef NAMED_TUPLE_CASE_GET_ITEM
-
-		template <size_t index>
-		constexpr auto& get_item()
-		{
-			static_assert(index > 0, "invalid index");
-			return std::get<index - 1>(_items);
-		};
-
-		template <size_t index>
-		constexpr void set_item(const auto& item)
-		{
-			static_assert(index > 0, "invalid index");
-			std::get<index - 1>(_items) = item;
-		};
-
-		template <size_t index>
-		constexpr void set_item(auto&& item)
-		{
-			static_assert(index > 0, "invalid index");
-			std::get<index - 1>(_items) = item;
-		};
+#undef NAMED_TUPLE_SAFE_GET_ITEM
+#undef NAMED_TUPLE_SAFE_SET_ITEM
+#undef NAMED_TUPLE_GUARD_END
+#undef NAMED_TUPLE_GUARD_BEGIN
 
 		constexpr void add_item(const auto&) { throw std::out_of_range("a named tuple cannot be appended to"); }
 		//constexpr void add_item(auto&&) { throw std::out_of_range("a named tuple cannot be appended to"); }
