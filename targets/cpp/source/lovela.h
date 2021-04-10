@@ -13,20 +13,22 @@
 
 namespace lovela
 {
+	constexpr size_t rebase(size_t index, size_t size)
+	{
+		if (!index || index > size)
+		{
+			throw std::out_of_range("index out of range");
+		}
+
+		return index - 1;
+	}
+
 	template <typename Item>
 	class fixed_size_array
 	{
 		std::vector<Item> items;
 
-		size_t check(size_t index)
-		{
-			if (!index || index > items.size())
-			{
-				throw std::out_of_range("a fixed sized array index was out of range");
-			}
-
-			return index - 1;
-		}
+		constexpr size_t check(size_t index) const { return rebase(index, items.size()); }
 
 	public:
 		fixed_size_array(size_t size) noexcept : items(size) {}
@@ -50,15 +52,7 @@ namespace lovela
 	{
 		std::vector<Item> items;
 
-		size_t check(size_t index)
-		{
-			if (!index || index > items.size())
-			{
-				throw std::out_of_range("a dynamic array index was out of range");
-			}
-
-			return index - 1;
-		}
+		constexpr size_t check(size_t index) const  { return rebase(index, items.size()); }
 
 	public:
 		size_t get_size() const { return items.size(); }
@@ -79,15 +73,7 @@ namespace lovela
 		static_assert(_size <= 10, "add more NAMED_TUPLE_CASE_GET_ITEM");
 		std::vector<std::u8string> _names{ _size };
 
-		constexpr size_t check(size_t index)
-		{
-			if (!index || index > _size)
-			{
-				throw std::out_of_range("a named tuple index was out of range");
-			}
-
-			return index - 1;
-		}
+		constexpr size_t check(size_t index) const { return rebase(index, _size); }
 
 	public:
 		named_tuple(const std::vector<std::u8string>& names) noexcept : _names(names) {}
