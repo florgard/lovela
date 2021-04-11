@@ -54,18 +54,8 @@ namespace lovela
 		static constexpr size_t rebase(size_t index) { return detail::rebase(index, _size); }
 
 	public:
-		constexpr size_t get_size() const
-		{
-			return _size;
-		}
-
-		constexpr void set_size(size_t size)
-		{
-			if (size != _size)
-			{
-				throw std::out_of_range("a fixed array cannot be resized");
-			}
-		}
+		constexpr size_t get_size() const { return _size; }
+		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("a fixed array cannot be resized"); } }
 
 		template <size_t index> void get_item(Item& item) { get_item(index, item); }
 		void get_item(size_t index, Item& item) { item = _items.at(rebase(index)); }
@@ -137,24 +127,10 @@ namespace lovela
 		static constexpr size_t rebase(size_t index) { return detail::rebase(index, _size); }
 
 	public:
-		constexpr size_t get_size() const
-		{
-			return _size;
-		}
+		constexpr size_t get_size() const { return _size; }
+		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("an indexed tuple cannot be resized"); } }
 
-		constexpr void set_size(size_t size)
-		{
-			if (size != _size)
-			{
-				throw std::out_of_range("an indexed tuple cannot be resized");
-			}
-		}
-
-		template <size_t index, typename Item>
-		constexpr void get_item(Item& item)
-		{
-			get_item(index, item);
-		};
+		template <size_t index, typename Item> constexpr void get_item(Item& item) { get_item(index, item); };
 
 		template <typename Item>
 		constexpr void get_item(size_t index, Item& item)
@@ -176,20 +152,10 @@ namespace lovela
 			}
 		}
 
-		template <typename Item>
-		void get_item(std::u8string_view name, Item& item) { get_item(detail::to_size(name), item); }
+		template <typename Item> void get_item(std::u8string_view name, Item& item) { get_item(detail::to_size(name), item); }
 
-		template <size_t index, typename Item>
-		constexpr void set_item(const Item& item)
-		{
-			set_item(index, item);
-		};
-
-		template <size_t index, typename Item>
-		constexpr void set_item(Item&& item)
-		{
-			set_item(index, std::move(item));
-		};
+		template <size_t index, typename Item> constexpr void set_item(const Item& item) { set_item(index, item); };
+		template <size_t index, typename Item> constexpr void set_item(Item&& item) { set_item(index, std::move(item)); };
 
 		template <typename Item>
 		constexpr void set_item(size_t index, const Item& item)
@@ -234,17 +200,8 @@ namespace lovela
 		template <typename Item> void set_item(std::u8string_view name, const Item& item) { set_item(detail::to_size(name), item); }
 		template <typename Item> void set_item(std::u8string_view name, Item&& item) { set_item(detail::to_size(name), std::move(item)); }
 
-		template <typename Item>
-		constexpr void add_item(const Item&)
-		{
-			throw std::out_of_range("an indexed tuple cannot be appended to");
-		}
-
-		template <typename Item>
-		constexpr void add_item(Item&&)
-		{
-			throw std::out_of_range("an indexed tuple cannot be appended to");
-		}
+		template <typename Item> constexpr void add_item(const Item&) { throw std::out_of_range("an indexed tuple cannot be appended to"); }
+		template <typename Item> constexpr void add_item(Item&&) { throw std::out_of_range("an indexed tuple cannot be appended to"); }
 	};
 
 #undef INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE
@@ -281,81 +238,22 @@ namespace lovela
 		}
 
 	public:
-		constexpr size_t get_size() const
-		{
-			return _tuple.get_size();
-		}
+		constexpr size_t get_size() const { return _tuple.get_size(); }
+		constexpr void set_size(size_t size) { _tuple.set_size(size); }
 
-		constexpr void set_size(size_t size)
-		{
-			_tuple.set_size(size);
-		}
+		template <size_t index, typename Item> constexpr void get_item(Item& item) { get_item(index, item); };
+		template <typename Item> constexpr void get_item(size_t index, Item& item) { _tuple.get_item(index, item); }
+		template <typename Item> constexpr void get_item(std::u8string_view name, Item& item) { get_item(get_index(name), item); }
 
-		template <size_t index, typename Item>
-		constexpr void get_item(Item& item)
-		{
-			get_item(index, item);
-		};
+		template <size_t index, typename Item> constexpr void set_item(const Item& item) { set_item(index, item); };
+		template <size_t index, typename Item> constexpr void set_item(Item&& item) { set_item(index, std::move(item)); };
+		template <typename Item> constexpr void set_item(size_t index, const Item& item) { _tuple.set_item(index, item); };
+		template <typename Item> constexpr void set_item(size_t index, Item&& item) { _tuple.set_item(index, std::move(item)); };
+		template <typename Item> constexpr void set_item(std::u8string_view name, const Item& item) { set_item(get_index(name), item); }
+		template <typename Item> constexpr void set_item(std::u8string_view name, Item&& item) { set_item(get_index(name), std::move(item)); }
 
-		template <typename Item>
-		constexpr void get_item(size_t index, Item& item)
-		{
-			_tuple.get_item(index, item);
-		}
-
-		template <typename Item>
-		constexpr void get_item(std::u8string_view name, Item& item)
-		{
-			get_item(get_index(name), item);
-		}
-
-		template <size_t index, typename Item>
-		constexpr void set_item(const Item& item)
-		{
-			set_item(index, item);
-		};
-
-		template <size_t index, typename Item>
-		constexpr void set_item(Item&& item)
-		{
-			set_item(index, std::move(item));
-		};
-
-		template <typename Item>
-		constexpr void set_item(size_t index, const Item& item)
-		{
-			_tuple.set_item(index, item);
-		};
-
-		template <typename Item>
-		constexpr void set_item(size_t index, Item&& item)
-		{
-			_tuple.set_item(index, std::move(item));
-		};
-
-		template <typename Item>
-		constexpr void set_item(std::u8string_view name, const Item& item)
-		{
-			set_item(get_index(name), item);
-		}
-
-		template <typename Item>
-		constexpr void set_item(std::u8string_view name, Item&& item)
-		{
-			set_item(get_index(name), std::move(item));
-		}
-
-		template <typename Item>
-		constexpr void add_item(const Item& item)
-		{
-			_tuple.add_item<Item>(item);
-		}
-
-		template <typename Item>
-		constexpr void add_item(Item&& item)
-		{
-			_tuple.add_item<Item>(std::move(item));
-		}
+		template <typename Item> constexpr void add_item(const Item& item) { _tuple.add_item<Item>(item); }
+		template <typename Item> constexpr void add_item(Item&& item) { _tuple.add_item<Item>(std::move(item)); }
 	};
 
 	class stream
