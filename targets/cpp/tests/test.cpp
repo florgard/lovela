@@ -149,6 +149,51 @@ TEST(NamedTuple, GetRuntimeRandomAccess) {
 	}
 }
 
+static constexpr size_t NamedTupleTotalRest = 2;
+
+template <>
+struct lovela::named_tuple_names<NamedTupleTotalRest>
+{
+	static constexpr std::array<std::u8string_view, 2> names{ u8"Total", u8"Rest" };
+};
+
+static constexpr size_t NamedTupleRestTotal = 3;
+
+template <>
+struct lovela::named_tuple_names<NamedTupleRestTotal>
+{
+	static constexpr std::array<std::u8string_view, 2> names{ u8"Rest", u8"Total" };
+};
+
+TEST(NamedTuple, CoexistingTuples) {
+	lovela::named_tuple<NamedTupleTotalRest, int, int> totalRest;
+	lovela::named_tuple<NamedTupleRestTotal, int, int> restTotal;
+
+	EXPECT_NO_THROW(totalRest.set_item(u8"Total", 111));
+	EXPECT_NO_THROW(totalRest.set_item(u8"Rest", 100));
+	EXPECT_NO_THROW(restTotal.set_item(u8"Total", 222));
+	EXPECT_NO_THROW(restTotal.set_item(u8"Rest", 200));
+
+	int i{};
+	EXPECT_NO_THROW(totalRest.get_item(u8"Total", i));
+	EXPECT_EQ(i, 111);
+	EXPECT_NO_THROW(totalRest.get_item(u8"Rest", i));
+	EXPECT_EQ(i, 100);
+	EXPECT_NO_THROW(restTotal.get_item(u8"Total", i));
+	EXPECT_EQ(i, 222);
+	EXPECT_NO_THROW(restTotal.get_item(u8"Rest", i));
+	EXPECT_EQ(i, 200);
+
+	EXPECT_NO_THROW(totalRest.get_item(1, i));
+	EXPECT_EQ(i, 111);
+	EXPECT_NO_THROW(totalRest.get_item(2, i));
+	EXPECT_EQ(i, 100);
+	EXPECT_NO_THROW(restTotal.get_item(2, i));
+	EXPECT_EQ(i, 222);
+	EXPECT_NO_THROW(restTotal.get_item(1, i));
+	EXPECT_EQ(i, 200);
+}
+
 TEST(DynamicArray, SetGetAddRange) {
 	lovela::dynamic_array<std::string> arr;
 	EXPECT_NO_THROW(arr.set_size(10));
