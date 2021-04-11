@@ -27,16 +27,6 @@ namespace lovela
 			return index - 1;
 		}
 
-		template <size_t index>
-		struct rebase_t
-		{
-			static_assert(index > 0, "index out of range");
-			static constexpr size_t value = rebase(index, SIZE_MAX);
-		};
-
-		template <size_t index>
-		static constexpr auto rebase_v = rebase_t<index>::value;
-
 		inline size_t to_size(std::u8string_view str)
 		{
 			return std::stoi(std::string(reinterpret_cast<const char*>(str.data()), str.size()));
