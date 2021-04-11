@@ -1,6 +1,7 @@
 #pragma once
 #define LOVELA
 #include <string>
+#include <array>
 #include <vector>
 #include <map>
 #include <iostream>
@@ -88,11 +89,12 @@ namespace lovela
 		constexpr size_t rebase(size_t index) const { return lovela::rebase(index, _size); }
 
 	public:
-		named_tuple(const std::vector<std::u8string>& names) noexcept
+		named_tuple(const std::array<std::u8string_view, _size>& names) noexcept
 		{
-			for (size_t i = 0; i < names.size(); i++)
+			size_t i = 0;
+			for (auto name : names)
 			{
-				_names.insert(std::make_pair(names[i], i + 1));
+				_names.insert(std::make_pair(std::u8string(name.data(), name.size()), ++i));
 			}
 		}
 		named_tuple(const named_tuple& src) noexcept = default;
