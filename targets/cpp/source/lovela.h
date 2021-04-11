@@ -57,12 +57,12 @@ namespace lovela
 		fixed_array& operator=(fixed_array&& src) noexcept = default;
 
 		size_t get_size() const { return _items.size(); }
-		void set_size(size_t size) { size == get_size() || (throw std::out_of_range("a fixed sized array cannot be resized"), false); }
+		void set_size(size_t size) { size == get_size() || (throw std::out_of_range("a fixed array cannot be resized"), false); }
 		void get_item(size_t index, Item& item) { item = _items.at(rebase(index)); }
 		void set_item(size_t index, const Item& item) { _items[rebase(index)] = item; }
 		void set_item(size_t index, Item&& item) { _items[rebase(index)] = std::move(item); }
-		void add_item(const Item&) { throw std::out_of_range("a fixed sized array cannot be appended to"); }
-		void add_item(Item&&) { throw std::out_of_range("a fixed sized array cannot be appended to"); }
+		void add_item(const Item&) { throw std::out_of_range("a fixed array cannot be appended to"); }
+		void add_item(Item&&) { throw std::out_of_range("a fixed array cannot be appended to"); }
 	};
 
 	template <typename Item>
