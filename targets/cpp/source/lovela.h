@@ -15,23 +15,26 @@
 
 namespace lovela
 {
-	template <size_t index>
-	struct rebase_t
+	namespace detail
 	{
-		static constexpr size_t value = index - 1;
-	};
-
-	template <size_t index>
-	static constexpr auto rebase_v = rebase_t<index>::value;
-
-	constexpr size_t rebase(size_t index, size_t size)
-	{
-		if (!index || index > size)
+		template <size_t index>
+		struct rebase_t
 		{
-			throw std::out_of_range("index out of range");
-		}
+			static constexpr size_t value = index - 1;
+		};
 
-		return index - 1;
+		template <size_t index>
+		static constexpr auto rebase_v = rebase_t<index>::value;
+
+		constexpr size_t rebase(size_t index, size_t size)
+		{
+			if (!index || index > size)
+			{
+				throw std::out_of_range("index out of range");
+			}
+
+			return index - 1;
+		}
 	}
 
 	template <typename Item>
@@ -39,7 +42,7 @@ namespace lovela
 	{
 		std::vector<Item> _items;
 
-		constexpr size_t rebase(size_t index) const { return lovela::rebase(index, _items.size()); }
+		constexpr size_t rebase(size_t index) const { return detail::rebase(index, _items.size()); }
 
 	public:
 		fixed_size_array(size_t size) noexcept : _items(size) {}
@@ -63,7 +66,7 @@ namespace lovela
 	{
 		std::vector<Item> _items;
 
-		constexpr size_t rebase(size_t index) const  { return lovela::rebase(index, _items.size()); }
+		constexpr size_t rebase(size_t index) const  { return detail::rebase(index, _items.size()); }
 
 	public:
 		size_t get_size() const { return _items.size(); }
@@ -98,7 +101,7 @@ namespace lovela
 		static constexpr size_t _size = std::tuple_size_v<std::tuple<Types...>>;
 		static_assert(_size <= 10, "insufficient number of handled indices in indexed_tuple::get_item(size_t, Item&)");
 
-		constexpr size_t rebase(size_t index) const { return lovela::rebase(index, _size); }
+		constexpr size_t rebase(size_t index) const { return detail::rebase(index, _size); }
 
 	public:
 		constexpr size_t get_size() const
@@ -137,19 +140,19 @@ namespace lovela
 		template <size_t index, typename Item>
 		constexpr void get_item(Item& item)
 		{
-			INDEXED_TUPLE_SAFE_GET_ITEM(rebase_v<index>, item);
+			INDEXED_TUPLE_SAFE_GET_ITEM(detail::rebase_v<index>, item);
 		};
 
 		template <size_t index, typename Item>
 		constexpr void set_item(const Item& item)
 		{
-			INDEXED_TUPLE_SAFE_SET_ITEM(rebase_v<index>, item);
+			INDEXED_TUPLE_SAFE_SET_ITEM(detail::rebase_v<index>, item);
 		};
 
 		template <size_t index, typename Item>
 		constexpr void set_item(Item&& item)
 		{
-			INDEXED_TUPLE_SAFE_SET_ITEM(rebase_v<index>, item);
+			INDEXED_TUPLE_SAFE_SET_ITEM(detail::rebase_v<index>, item);
 		};
 
 		template <typename Item>
