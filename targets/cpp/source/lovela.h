@@ -234,10 +234,6 @@ namespace lovela
 	{
 		indexed_tuple<Types...> _tuple;
 
-		static constexpr size_t _size = std::tuple_size_v<std::tuple<Types...>>;
-
-		static constexpr std::array<std::u8string_view, _size> _names = named_tuple_names<NamedTupleTypeOrdinal>::names;
-
 	public:
 		constexpr size_t get_size() const
 		{
@@ -252,10 +248,12 @@ namespace lovela
 		template <typename Item>
 		constexpr void get_item(const std::u8string& name, Item& item)
 		{
-			auto iter = std::find(_names.begin(), _names.end(), name);
-			if (iter != _names.end())
+			static constexpr auto names = named_tuple_names<NamedTupleTypeOrdinal>::names;
+
+			auto iter = std::find(names.begin(), names.end(), name);
+			if (iter != names.end())
 			{
-				_tuple.get_item(std::distance(_names.begin(), iter) + 1, item);
+				_tuple.get_item(std::distance(names.begin(), iter) + 1, item);
 			}
 			else
 			{
