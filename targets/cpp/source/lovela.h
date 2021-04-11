@@ -41,23 +41,27 @@ namespace lovela
 		template<class... Ts> overloaded(Ts...)->overloaded<Ts...>;
 	}
 
-	template <typename Item>
+	template <typename Item, size_t _size>
 	class fixed_array
 	{
-		std::vector<Item> _items;
+		std::array<Item, _size> _items;
 
-		constexpr size_t rebase(size_t index) const { return detail::rebase(index, _items.size()); }
+		static constexpr size_t rebase(size_t index) { return detail::rebase(index, _size); }
 
 	public:
-		fixed_array(size_t size) noexcept : _items(size) {}
-		~fixed_array() noexcept = default;
-		fixed_array(const fixed_array& src) noexcept = default;
-		fixed_array(fixed_array&& src) noexcept = default;
-		fixed_array& operator=(const fixed_array& src) noexcept = default;
-		fixed_array& operator=(fixed_array&& src) noexcept = default;
+		constexpr size_t get_size() const
+		{
+			return _size;
+		}
 
-		size_t get_size() const { return _items.size(); }
-		void set_size(size_t size) { size == get_size() || (throw std::out_of_range("a fixed array cannot be resized"), false); }
+		constexpr void set_size(size_t size)
+		{
+			if (size != _size)
+			{
+				throw std::out_of_range("a fixed array cannot be resized");
+			}
+		}
+
 		void get_item(size_t index, Item& item) { item = _items.at(rebase(index)); }
 		void set_item(size_t index, const Item& item) { _items[rebase(index)] = item; }
 		void set_item(size_t index, Item&& item) { _items[rebase(index)] = std::move(item); }
@@ -108,7 +112,7 @@ namespace lovela
 		static constexpr size_t _size = std::tuple_size_v<std::tuple<Types...>>;
 		static_assert(_size <= 10, "indexed_tuple: insufficient number of handled indices in item getters/setters by index argument.");
 
-		constexpr size_t rebase(size_t index) const { return detail::rebase(index, _size); }
+		static constexpr size_t rebase(size_t index) { return detail::rebase(index, _size); }
 
 	public:
 		constexpr size_t get_size() const
