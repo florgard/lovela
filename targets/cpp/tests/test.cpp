@@ -42,8 +42,14 @@ TEST(IndexedTuple, SetGetRuntimeIndex) {
 	EXPECT_EQ(s, std::string("abc"));
 }
 
+template <>
+struct lovela::named_tuple_names<1>
+{
+	static constexpr std::array<std::u8string_view, 3> names{ u8"Pcs", u8"Price", u8"Name" };
+};
+
 TEST(NamedTuple, InitAndRange) {
-	lovela::named_tuple<int, double, std::string> obj({ u8"Pcs", u8"Price", u8"Name" });
+	lovela::named_tuple<1, int, double, std::string> obj;
 	EXPECT_NO_THROW(obj.set_size(3));
 	EXPECT_THROW(obj.set_size(20), std::out_of_range);
 	EXPECT_EQ(obj.get_size(), 3);
@@ -51,7 +57,7 @@ TEST(NamedTuple, InitAndRange) {
 }
 
 TEST(NamedTuple, SetGetStaticIndex) {
-	lovela::named_tuple<int, double, std::string> obj({ u8"Pcs", u8"Price", u8"Name" });
+	lovela::named_tuple<1, int, double, std::string> obj;
 	EXPECT_NO_THROW(obj.set_item<1>(123));
 	EXPECT_NO_THROW(obj.set_item<2>(123.456));
 	EXPECT_NO_THROW(obj.set_item<3>(std::string("abc")));
@@ -67,7 +73,7 @@ TEST(NamedTuple, SetGetStaticIndex) {
 }
 
 TEST(NamedTuple, SetGetRuntimeIndex) {
-	lovela::named_tuple<int, double, std::string> obj({ u8"Pcs", u8"Price", u8"Name" });
+	lovela::named_tuple<1, int, double, std::string> obj;
 	// TODO
 	EXPECT_NO_THROW(obj.set_item<1>(123));
 	EXPECT_NO_THROW(obj.set_item<2>(123.456));
@@ -84,7 +90,7 @@ TEST(NamedTuple, SetGetRuntimeIndex) {
 }
 
 TEST(NamedTuple, SetGetRuntimeName) {
-	lovela::named_tuple<int, double, std::string> obj({ u8"Pcs", u8"Price", u8"Name" });
+	lovela::named_tuple<1, int, double, std::string> obj;
 	// TODO
 	EXPECT_NO_THROW(obj.set_item<1>(123));
 	EXPECT_NO_THROW(obj.set_item<2>(123.456));
@@ -98,6 +104,40 @@ TEST(NamedTuple, SetGetRuntimeName) {
 	EXPECT_EQ(i, 123);
 	EXPECT_EQ(d, 123.456);
 	EXPECT_EQ(s, std::string("abc"));
+}
+
+TEST(NamedTuple, GetRuntimeRandomAccess) {
+	lovela::named_tuple<1, int, double, std::string> obj;
+	EXPECT_NO_THROW(obj.set_item<1>(123));
+	EXPECT_NO_THROW(obj.set_item<2>(123.456));
+	EXPECT_NO_THROW(obj.set_item<3>(std::string("abc")));
+
+	size_t rnd = rand() % 3;
+	auto val = lovela::named_tuple_names<1>::names[rnd];
+	std::u8string name(val.data(), val.size());
+
+	int i{}; double d{}; std::string s;
+	switch (rnd)
+	{
+	case 0:
+		EXPECT_NO_THROW(obj.get_item(name, i));
+		EXPECT_EQ(i, 123);
+		break;
+
+	case 1:
+		EXPECT_NO_THROW(obj.get_item(name, d));
+		EXPECT_EQ(d, 123.456);
+		break;
+
+	case 2:
+		EXPECT_NO_THROW(obj.get_item(name, s));
+		EXPECT_EQ(s, std::string("abc"));
+		break;
+
+	default:
+		EXPECT_EQ(0, 1);
+		break;
+	}
 }
 
 TEST(DynamicArray, SetGetAddRange) {

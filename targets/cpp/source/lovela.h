@@ -171,23 +171,22 @@ namespace lovela
 #undef INDEXED_TUPLE_GUARD_END
 #undef INDEXED_TUPLE_GUARD_BEGIN
 
-	template <typename... Types>
+	template <size_t NamedTupleTypeOrdinal>
+	struct named_tuple_names
+	{
+		static constexpr std::array<std::u8string_view, 0> names{};
+	};
+
+	template <size_t NamedTupleTypeOrdinal, typename... Types>
 	class named_tuple
 	{
 		indexed_tuple<Types...> _tuple;
 
 		static constexpr size_t _size = std::tuple_size_v<std::tuple<Types...>>;
 
-		const std::array<std::u8string_view, _size> _names;
+		static constexpr std::array<std::u8string_view, _size> _names = named_tuple_names<NamedTupleTypeOrdinal>::names;
 
 	public:
-		named_tuple(const std::array<std::u8string_view, _size>& names) noexcept : _names(names) {}
-		named_tuple(const named_tuple& src) noexcept = default;
-		named_tuple(named_tuple&& src) noexcept = default;
-		named_tuple& operator=(const named_tuple& src) noexcept = default;
-		named_tuple& operator=(named_tuple&& src) noexcept = default;
-		~named_tuple() noexcept = default;
-
 		constexpr size_t get_size() const
 		{
 			return _tuple.get_size();
