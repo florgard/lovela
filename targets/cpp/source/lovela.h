@@ -41,19 +41,19 @@ namespace lovela
 	}
 
 	template <typename Item>
-	class fixed_size_array
+	class fixed_array
 	{
 		std::vector<Item> _items;
 
 		constexpr size_t rebase(size_t index) const { return detail::rebase(index, _items.size()); }
 
 	public:
-		fixed_size_array(size_t size) noexcept : _items(size) {}
-		~fixed_size_array() noexcept = default;
-		fixed_size_array(const fixed_size_array& src) noexcept = default;
-		fixed_size_array(fixed_size_array&& src) noexcept = default;
-		fixed_size_array& operator=(const fixed_size_array& src) noexcept = default;
-		fixed_size_array& operator=(fixed_size_array&& src) noexcept = default;
+		fixed_array(size_t size) noexcept : _items(size) {}
+		~fixed_array() noexcept = default;
+		fixed_array(const fixed_array& src) noexcept = default;
+		fixed_array(fixed_array&& src) noexcept = default;
+		fixed_array& operator=(const fixed_array& src) noexcept = default;
+		fixed_array& operator=(fixed_array&& src) noexcept = default;
 
 		size_t get_size() const { return _items.size(); }
 		void set_size(size_t size) { size == get_size() || (throw std::out_of_range("a fixed sized array cannot be resized"), false); }

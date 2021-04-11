@@ -161,7 +161,7 @@ TEST(DynamicArray, SetGetAddRange) {
 }
 
 TEST(FixedSizeArray, SetGetAddRange) {
-	lovela::fixed_size_array<int> arr(10);
+	lovela::fixed_array<int> arr(10);
 	EXPECT_NO_THROW(arr.set_size(10));
 	EXPECT_THROW(arr.set_size(20), std::out_of_range);
 	EXPECT_EQ(arr.get_size(), 10);
