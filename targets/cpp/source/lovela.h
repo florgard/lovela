@@ -37,6 +37,11 @@ namespace lovela
 			return index - 1;
 		}
 
+		inline size_t to_size(std::u8string_view str)
+		{
+			return std::stoi(std::string(reinterpret_cast<const char*>(str.data()), str.size()));
+		}
+
 		template<class... Functions> struct overloaded : Functions... { using Functions::operator()...; };
 		template<class... Functions> overloaded(Functions...)->overloaded<Functions...>;
 	}
@@ -64,11 +69,14 @@ namespace lovela
 
 		template <size_t index> void get_item(Item& item) { item = _items.at(rebase(index)); }
 		void get_item(size_t index, Item& item) { item = _items.at(rebase(index)); }
+		void get_item(std::u8string_view name, Item& item) { item = _items.at(rebase(detail::to_size(name))); }
 
 		template <size_t index> void set_item(const Item& item) { _items.at(rebase(index)) = item; }
 		template <size_t index> void set_item(Item&& item) { _items.at(rebase(index)) = std::move(item); }
 		void set_item(size_t index, const Item& item) { _items[rebase(index)] = item; }
 		void set_item(size_t index, Item&& item) { _items[rebase(index)] = std::move(item); }
+		void set_item(std::u8string_view name, const Item& item) { _items.at(rebase(detail::to_size(name))) = item; }
+		void set_item(std::u8string_view name, Item&& item) { _items.at(rebase(detail::to_size(name))) = std::move(item); }
 
 		void add_item(const Item&) { throw std::out_of_range("a fixed array cannot be appended to"); }
 		void add_item(Item&&) { throw std::out_of_range("a fixed array cannot be appended to"); }
@@ -87,11 +95,14 @@ namespace lovela
 
 		template <size_t index> void get_item(Item& item) { item = _items.at(rebase(index)); }
 		void get_item(size_t index, Item& item) { item = _items.at(rebase(index)); }
+		void get_item(std::u8string_view name, Item& item) { item = _items.at(rebase(detail::to_size(name))); }
 
 		template <size_t index> void set_item(const Item& item) { _items.at(rebase(index)) = item; }
 		template <size_t index> void set_item(Item&& item) { _items.at(rebase(index)) = std::move(item); }
 		void set_item(size_t index, const Item& item) { _items[rebase(index)] = item; }
 		void set_item(size_t index, Item&& item) { _items[rebase(index)] = std::move(item); }
+		void set_item(std::u8string_view name, const Item& item) { _items.at(rebase(detail::to_size(name))) = item; }
+		void set_item(std::u8string_view name, Item&& item) { _items.at(rebase(detail::to_size(name))) = std::move(item); }
 
 		void add_item(const Item& item) { _items.push_back(item); }
 		void add_item(Item&& item) { _items.emplace_back(std::move(item)); }
