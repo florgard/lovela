@@ -35,6 +35,9 @@ namespace lovela
 
 			return index - 1;
 		}
+
+		template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+		template<class... Ts> overloaded(Ts...)->overloaded<Ts...>;
 	}
 
 	template <typename Item>
@@ -251,9 +254,6 @@ namespace lovela
 		}
 	};
 
-	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
-	template<class... Ts> overloaded(Ts...)->overloaded<Ts...>;
-
 	class stream
 	{
 		std::variant<std::monostate, std::istream*, std::ostream*, std::wistream*, std::wostream*> io;
@@ -293,7 +293,7 @@ namespace lovela
 
 		void read_word(std::string& word)
 		{
-			std::visit(overloaded{
+			std::visit(detail::overloaded{
 				[&](auto&) {},
 				[&](std::istream* stream) { *stream >> word; },
 				[&](std::wistream* stream) { *stream >> buffer; to_string(word, buffer); }
@@ -302,7 +302,7 @@ namespace lovela
 
 		void read_line(std::string& line)
 		{
-			std::visit(overloaded{
+			std::visit(detail::overloaded{
 				[&](auto&) {},
 				[&](std::istream* stream) { std::getline(*stream, line); },
 				[&](std::wistream* stream) { std::getline(*stream, buffer); to_string(line, buffer); }
@@ -311,7 +311,7 @@ namespace lovela
 
 		void read_all(std::string& text)
 		{
-			std::visit(overloaded{
+			std::visit(detail::overloaded{
 				[&](auto&) {},
 				[&](std::istream* stream) { text.assign(std::istreambuf_iterator<char>(*stream), {}); },
 				[&](std::wistream* stream) { buffer.assign(std::istreambuf_iterator<wchar_t>(*stream), {}); to_string(text, buffer); }
@@ -320,7 +320,7 @@ namespace lovela
 
 		void read_bytes(std::string& bytes, size_t count)
 		{
-			std::visit(overloaded{
+			std::visit(detail::overloaded{
 				[&](auto&) {},
 				[&](std::istream* stream) { bytes.resize(count); stream->read(&bytes[0], count); }
 				}, io);
@@ -328,7 +328,7 @@ namespace lovela
 
 		void write(std::string_view text)
 		{
-			std::visit(overloaded{
+			std::visit(detail::overloaded{
 				[&](auto) {},
 				[&](std::ostream* stream) { *stream << text; },
 				[&](std::wostream* stream) { to_wstring(buffer, text); *stream << buffer; }
@@ -337,7 +337,7 @@ namespace lovela
 
 		void write_line(std::string_view line)
 		{
-			std::visit(overloaded{
+			std::visit(detail::overloaded{
 				[&](auto&) {},
 				[&](std::ostream* stream) { *stream << line << '\n'; },
 				[&](std::wostream* stream) { to_wstring(buffer, line); *stream << buffer << '\n'; }
@@ -346,7 +346,7 @@ namespace lovela
 
 		void write_bytes(std::string_view bytes, size_t count)
 		{
-			std::visit(overloaded{
+			std::visit(detail::overloaded{
 				[&](auto&) {},
 				[&](std::ostream* stream) { stream->write(bytes.data(), count); }
 				}, io);
