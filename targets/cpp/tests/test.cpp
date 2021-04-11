@@ -39,6 +39,7 @@ TEST(IndexedTuple, SetGetRuntimeIndex) {
 	EXPECT_NO_THROW(obj.set_item(1, 123));
 	EXPECT_NO_THROW(obj.set_item(2, 123.456));
 	EXPECT_NO_THROW(obj.set_item(3, std::string("abc")));
+	EXPECT_THROW(obj.set_item(4, 123), std::out_of_range);
 
 	int i{}; double d{}; std::string s;
 	EXPECT_NO_THROW(obj.get_item(1, i));
@@ -85,6 +86,7 @@ TEST(NamedTuple, SetGetRuntimeIndex) {
 	EXPECT_NO_THROW(obj.set_item(1, 123));
 	EXPECT_NO_THROW(obj.set_item(2, 123.456));
 	EXPECT_NO_THROW(obj.set_item(3, std::string("abc")));
+	EXPECT_THROW(obj.set_item(4, 123), std::out_of_range);
 
 	int i{}; double d{}; std::string s;
 	EXPECT_NO_THROW(obj.get_item(1, i));
@@ -98,10 +100,10 @@ TEST(NamedTuple, SetGetRuntimeIndex) {
 
 TEST(NamedTuple, SetGetRuntimeName) {
 	lovela::named_tuple<1, int, double, std::string> obj;
-	// TODO
-	EXPECT_NO_THROW(obj.set_item<1>(123));
-	EXPECT_NO_THROW(obj.set_item<2>(123.456));
-	EXPECT_NO_THROW(obj.set_item<3>(std::string("abc")));
+	EXPECT_NO_THROW(obj.set_item(u8"Pcs", 123));
+	EXPECT_NO_THROW(obj.set_item(u8"Price", 123.456));
+	EXPECT_NO_THROW(obj.set_item(u8"Name", std::string("abc")));
+	EXPECT_THROW(obj.set_item(u8"Type", 123), std::out_of_range);
 
 	int i{}; double d{}; std::string s;
 	EXPECT_NO_THROW(obj.get_item(u8"Pcs", i));
