@@ -1,6 +1,15 @@
 #include "pch.h"
 #include "test.h"
 
+TEST(IndexRebase, StaticAndDynamic) {
+	EXPECT_EQ(lovela::detail::rebase(1, 10), 0);
+	EXPECT_EQ(lovela::detail::rebase(10, 10), 9);
+	EXPECT_THROW(lovela::detail::rebase(0, 10), std::out_of_range);
+	EXPECT_THROW(lovela::detail::rebase(11, 10), std::out_of_range);
+	EXPECT_EQ(lovela::detail::rebase_v<1>, 0);
+	EXPECT_EQ(lovela::detail::rebase_v<10>, 9);
+}
+
 TEST(IndexedTuple, InitAndRange) {
 	lovela::indexed_tuple<int, double, std::string> obj;
 	EXPECT_NO_THROW(obj.set_size(3));

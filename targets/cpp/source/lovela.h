@@ -20,6 +20,7 @@ namespace lovela
 		template <size_t index>
 		struct rebase_t
 		{
+			static_assert(index > 0, "index out of range");
 			static constexpr size_t value = index - 1;
 		};
 
