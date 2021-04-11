@@ -266,6 +266,20 @@ namespace lovela
 	{
 		indexed_tuple<Types...> _tuple;
 
+		static constexpr size_t get_index(std::u8string_view name)
+		{
+			static constexpr auto names = named_tuple_names<NamedTupleTypeOrdinal>::names;
+
+			auto iter = std::find(names.begin(), names.end(), name);
+			if (iter != names.end())
+			{
+				return std::distance(names.begin(), iter) + 1;
+			}
+
+			// Attempt to parse a literal index as fallback, throws std::invalid_argument on failure.
+			return detail::to_size(name);
+		}
+
 	public:
 		constexpr size_t get_size() const
 		{
@@ -292,15 +306,7 @@ namespace lovela
 		template <typename Item>
 		constexpr void get_item(std::u8string_view name, Item& item)
 		{
-			static constexpr auto names = named_tuple_names<NamedTupleTypeOrdinal>::names;
-
-			auto iter = std::find(names.begin(), names.end(), name);
-			if (iter == names.end())
-			{
-				throw std::out_of_range("named tuple: the name doesn't exist");
-			}
-
-			get_item(std::distance(names.begin(), iter) + 1, item);
+			get_item(get_index(name), item);
 		}
 
 		template <size_t index, typename Item>
@@ -330,29 +336,13 @@ namespace lovela
 		template <typename Item>
 		constexpr void set_item(std::u8string_view name, const Item& item)
 		{
-			static constexpr auto names = named_tuple_names<NamedTupleTypeOrdinal>::names;
-
-			auto iter = std::find(names.begin(), names.end(), name);
-			if (iter == names.end())
-			{
-				throw std::out_of_range("named tuple: the name doesn't exist");
-			}
-
-			set_item(std::distance(names.begin(), iter) + 1, item);
+			set_item(get_index(name), item);
 		}
 
 		template <typename Item>
 		constexpr void set_item(std::u8string_view name, Item&& item)
 		{
-			static constexpr auto names = named_tuple_names<NamedTupleTypeOrdinal>::names;
-
-			auto iter = std::find(names.begin(), names.end(), name);
-			if (iter == names.end())
-			{
-				throw std::out_of_range("named tuple: the name doesn't exist");
-			}
-
-			set_item(std::distance(names.begin(), iter) + 1, std::move(item));
+			set_item(get_index(name), std::move(item));
 		}
 
 		template <typename Item>

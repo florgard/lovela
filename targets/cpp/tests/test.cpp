@@ -78,7 +78,7 @@ TEST(NamedTuple, SetGetRange) {
 	EXPECT_EQ(v1, 123);
 	EXPECT_NO_THROW(obj.get_item(1, v1));
 	EXPECT_EQ(v1, 123);
-	//EXPECT_NO_THROW(obj.get_item(u8"1", v1));
+	EXPECT_NO_THROW(obj.get_item(u8"1", v1));
 	EXPECT_EQ(v1, 123);
 
 	double v2{};
@@ -86,7 +86,7 @@ TEST(NamedTuple, SetGetRange) {
 	EXPECT_EQ(v2, 456.789);
 	EXPECT_NO_THROW(obj.get_item(2, v2));
 	EXPECT_EQ(v2, 456.789);
-	//EXPECT_NO_THROW(obj.get_item(u8"2", v2));
+	EXPECT_NO_THROW(obj.get_item(u8"2", v2));
 	EXPECT_EQ(v2, 456.789);
 
 	std::string v3{};
@@ -94,7 +94,7 @@ TEST(NamedTuple, SetGetRange) {
 	EXPECT_EQ(v3, "abc");
 	EXPECT_NO_THROW(obj.get_item(3, v3));
 	EXPECT_EQ(v3, "abc");
-	//EXPECT_NO_THROW(obj.get_item(u8"3", v3));
+	EXPECT_NO_THROW(obj.get_item(u8"3", v3));
 	EXPECT_EQ(v3, "abc");
 
 	EXPECT_THROW(obj.get_item<4>(v1), std::out_of_range);
@@ -107,13 +107,13 @@ TEST(NamedTuple, SetGetRuntimeName) {
 	EXPECT_NO_THROW(obj.set_item(u8"Pcs", 123));
 	EXPECT_NO_THROW(obj.set_item(u8"Price", 123.456));
 	EXPECT_NO_THROW(obj.set_item(u8"Name", std::string("abc")));
-	EXPECT_THROW(obj.set_item(u8"Type", 123), std::out_of_range);
+	EXPECT_THROW(obj.set_item(u8"Type", 123), std::invalid_argument);
 
 	int v1{}; double v2{}; std::string v3;
 	EXPECT_NO_THROW(obj.get_item(u8"Pcs", v1));
 	EXPECT_NO_THROW(obj.get_item(u8"Price", v2));
 	EXPECT_NO_THROW(obj.get_item(u8"Name", v3));
-	EXPECT_THROW(obj.get_item(u8"Type", v1), std::out_of_range);
+	EXPECT_THROW(obj.get_item(u8"Type", v1), std::invalid_argument);
 	EXPECT_EQ(v1, 123);
 	EXPECT_EQ(v2, 123.456);
 	EXPECT_EQ(v3, std::string("abc"));
