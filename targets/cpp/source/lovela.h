@@ -94,8 +94,11 @@ namespace lovela
 #define INDEXED_TUPLE_SAFE_SET_ITEM(index_, item_) item_; \
 	INDEXED_TUPLE_GUARD_BEGIN(index_); std::get<index_>(_items) = item_; INDEXED_TUPLE_GUARD_END_RANGE;
 
-#define INDEXED_TUPLE_SAFE_GET_ITEM_NO_RANGE(index_, item_) item_; \
+#define INDEXED_TUPLE_SAFE_GET_ITEM_NO_RANGE(index_, item_) \
 	INDEXED_TUPLE_GUARD_BEGIN(index_); item_ = std::get<index_>(_items); INDEXED_TUPLE_GUARD_END;
+
+#define INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(index_, item_) \
+	INDEXED_TUPLE_GUARD_BEGIN(index_); std::get<index_>(_items) = item_; INDEXED_TUPLE_GUARD_END;
 
 	template <typename... Types>
 	class indexed_tuple
@@ -147,6 +150,46 @@ namespace lovela
 			INDEXED_TUPLE_SAFE_GET_ITEM(detail::rebase_v<index>, item);
 		};
 
+		template <typename Item>
+		constexpr void set_item(size_t index, const Item& item)
+		{
+			switch (rebase(index))
+			{
+			case 0: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(0, item); break;
+			case 1: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(1, item); break;
+			case 2: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(2, item); break;
+			case 3: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(3, item); break;
+			case 4: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(4, item); break;
+			case 5: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(5, item); break;
+			case 6: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(6, item); break;
+			case 7: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(7, item); break;
+			case 8: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(8, item); break;
+			case 9: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(9, item); break;
+			default:
+				throw std::out_of_range("index out of range");
+			}
+		}
+
+		template <typename Item>
+		constexpr void set_item(size_t index, Item&& item)
+		{
+			switch (rebase(index))
+			{
+			case 0: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(0, std::move(item)); break;
+			case 1: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(1, std::move(item)); break;
+			case 2: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(2, std::move(item)); break;
+			case 3: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(3, std::move(item)); break;
+			case 4: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(4, std::move(item)); break;
+			case 5: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(5, std::move(item)); break;
+			case 6: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(6, std::move(item)); break;
+			case 7: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(7, std::move(item)); break;
+			case 8: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(8, std::move(item)); break;
+			case 9: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(9, std::move(item)); break;
+			default:
+				throw std::out_of_range("index out of range");
+			}
+		}
+
 		template <size_t index, typename Item>
 		constexpr void set_item(const Item& item)
 		{
@@ -172,9 +215,11 @@ namespace lovela
 		}
 	};
 
+#undef INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE
 #undef INDEXED_TUPLE_SAFE_GET_ITEM_NO_RANGE
-#undef INDEXED_TUPLE_SAFE_GET_ITEM
 #undef INDEXED_TUPLE_SAFE_SET_ITEM
+#undef INDEXED_TUPLE_SAFE_GET_ITEM
+#undef INDEXED_TUPLE_GUARD_END_RANGE
 #undef INDEXED_TUPLE_GUARD_END
 #undef INDEXED_TUPLE_GUARD_BEGIN
 
@@ -228,6 +273,18 @@ namespace lovela
 		constexpr void get_item(Item& item)
 		{
 			_tuple.get_item<index, Item>(item);
+		};
+
+		template <typename Item>
+		constexpr void set_item(size_t index, const Item& item)
+		{
+			_tuple.set_item<Item>(index, item);
+		};
+
+		template <typename Item>
+		constexpr void set_item(size_t index, Item&& item)
+		{
+			_tuple.set_item<Item>(index, item);
 		};
 
 		template <size_t index, typename Item>

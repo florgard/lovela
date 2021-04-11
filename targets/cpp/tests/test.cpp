@@ -36,10 +36,9 @@ TEST(IndexedTuple, SetGetStaticIndex) {
 
 TEST(IndexedTuple, SetGetRuntimeIndex) {
 	lovela::indexed_tuple<int, double, std::string> obj;
-	// TODO
-	EXPECT_NO_THROW(obj.set_item<1>(123));
-	EXPECT_NO_THROW(obj.set_item<2>(123.456));
-	EXPECT_NO_THROW(obj.set_item<3>(std::string("abc")));
+	EXPECT_NO_THROW(obj.set_item(1, 123));
+	EXPECT_NO_THROW(obj.set_item(2, 123.456));
+	EXPECT_NO_THROW(obj.set_item(3, std::string("abc")));
 
 	int i{}; double d{}; std::string s;
 	EXPECT_NO_THROW(obj.get_item(1, i));
@@ -83,10 +82,9 @@ TEST(NamedTuple, SetGetStaticIndex) {
 
 TEST(NamedTuple, SetGetRuntimeIndex) {
 	lovela::named_tuple<1, int, double, std::string> obj;
-	// TODO
-	EXPECT_NO_THROW(obj.set_item<1>(123));
-	EXPECT_NO_THROW(obj.set_item<2>(123.456));
-	EXPECT_NO_THROW(obj.set_item<3>(std::string("abc")));
+	EXPECT_NO_THROW(obj.set_item(1, 123));
+	EXPECT_NO_THROW(obj.set_item(2, 123.456));
+	EXPECT_NO_THROW(obj.set_item(3, std::string("abc")));
 
 	int i{}; double d{}; std::string s;
 	EXPECT_NO_THROW(obj.get_item(1, i));
