@@ -60,7 +60,7 @@ namespace lovela
 		void set_size(size_t size) { size == get_size() || (throw std::out_of_range("a fixed sized array cannot be resized"), false); }
 		void get_item(size_t index, Item& item) { item = _items.at(rebase(index)); }
 		void set_item(size_t index, const Item& item) { _items[rebase(index)] = item; }
-		void set_item(size_t index, Item&& item) { _items[rebase(index)] = item; }
+		void set_item(size_t index, Item&& item) { _items[rebase(index)] = std::move(item); }
 		void add_item(const Item&) { throw std::out_of_range("a fixed sized array cannot be appended to"); }
 		void add_item(Item&&) { throw std::out_of_range("a fixed sized array cannot be appended to"); }
 	};
@@ -77,9 +77,9 @@ namespace lovela
 		void set_size(size_t size) { _items.resize(size); }
 		void get_item(size_t index, Item& item) { item = _items.at(rebase(index)); }
 		void set_item(size_t index, const Item& item) { _items[rebase(index)] = item; }
-		void set_item(size_t index, Item&& item) { _items[rebase(index)] = item; }
+		void set_item(size_t index, Item&& item) { _items[rebase(index)] = std::move(item); }
 		void add_item(const Item& item) { _items.push_back(item); }
-		void add_item(Item&& item) { _items.emplace_back(item); }
+		void add_item(Item&& item) { _items.emplace_back(std::move(item)); }
 	};
 
 #define INDEXED_TUPLE_GUARD_BEGIN(index_) index_; \
@@ -88,10 +88,10 @@ namespace lovela
 #define INDEXED_TUPLE_GUARD_END } else throw std::invalid_argument("indexed tuple: invalid access type"); }
 #define INDEXED_TUPLE_GUARD_END_RANGE INDEXED_TUPLE_GUARD_END else throw std::out_of_range("index out of range");
 
-#define INDEXED_TUPLE_SAFE_GET_ITEM(index_, item_) item_; \
+#define INDEXED_TUPLE_SAFE_GET_ITEM(index_, item_) \
 	INDEXED_TUPLE_GUARD_BEGIN(index_); item_ = std::get<index_>(_items); INDEXED_TUPLE_GUARD_END_RANGE;
 
-#define INDEXED_TUPLE_SAFE_SET_ITEM(index_, item_) item_; \
+#define INDEXED_TUPLE_SAFE_SET_ITEM(index_, item_) \
 	INDEXED_TUPLE_GUARD_BEGIN(index_); std::get<index_>(_items) = item_; INDEXED_TUPLE_GUARD_END_RANGE;
 
 #define INDEXED_TUPLE_SAFE_GET_ITEM_NO_RANGE(index_, item_) \
@@ -199,7 +199,7 @@ namespace lovela
 		template <size_t index, typename Item>
 		constexpr void set_item(Item&& item)
 		{
-			INDEXED_TUPLE_SAFE_SET_ITEM(detail::rebase_v<index>, item);
+			INDEXED_TUPLE_SAFE_SET_ITEM(detail::rebase_v<index>, std::move(item));
 		};
 
 		template <typename Item>
@@ -251,14 +251,12 @@ namespace lovela
 			static constexpr auto names = named_tuple_names<NamedTupleTypeOrdinal>::names;
 
 			auto iter = std::find(names.begin(), names.end(), name);
-			if (iter != names.end())
-			{
-				_tuple.get_item(std::distance(names.begin(), iter) + 1, item);
-			}
-			else
+			if (iter == names.end())
 			{
 				throw std::out_of_range("named tuple: the name doesn't exist");
 			}
+
+			_tuple.get_item(std::distance(names.begin(), iter) + 1, item);
 		}
 
 		template <typename Item>
@@ -274,6 +272,34 @@ namespace lovela
 		};
 
 		template <typename Item>
+		constexpr void set_item(const std::u8string& name, const Item& item)
+		{
+			static constexpr auto names = named_tuple_names<NamedTupleTypeOrdinal>::names;
+
+			auto iter = std::find(names.begin(), names.end(), name);
+			if (iter == names.end())
+			{
+				throw std::out_of_range("named tuple: the name doesn't exist");
+			}
+
+			_tuple.set_item(std::distance(names.begin(), iter) + 1, item);
+		}
+
+		template <typename Item>
+		constexpr void set_item(const std::u8string& name, Item&& item)
+		{
+			static constexpr auto names = named_tuple_names<NamedTupleTypeOrdinal>::names;
+
+			auto iter = std::find(names.begin(), names.end(), name);
+			if (iter == names.end())
+			{
+				throw std::out_of_range("named tuple: the name doesn't exist");
+			}
+
+			_tuple.set_item(std::distance(names.begin(), iter) + 1, std::move(item));
+		}
+
+		template <typename Item>
 		constexpr void set_item(size_t index, const Item& item)
 		{
 			_tuple.set_item<Item>(index, item);
@@ -282,7 +308,7 @@ namespace lovela
 		template <typename Item>
 		constexpr void set_item(size_t index, Item&& item)
 		{
-			_tuple.set_item<Item>(index, item);
+			_tuple.set_item<Item>(index, std::move(item));
 		};
 
 		template <size_t index, typename Item>
@@ -294,7 +320,7 @@ namespace lovela
 		template <size_t index, typename Item>
 		constexpr void set_item(Item&& item)
 		{
-			_tuple.set_item<index, Item>(item);
+			_tuple.set_item<index, Item>(std::move(item));
 		};
 
 		template <typename Item>
@@ -306,7 +332,7 @@ namespace lovela
 		template <typename Item>
 		constexpr void add_item(Item&& item)
 		{
-			_tuple.add_item<Item>(item);
+			_tuple.add_item<Item>(std::move(item));
 		}
 	};
 
