@@ -199,15 +199,21 @@ TEST(DynamicArray, SetGetAddRange) {
 	EXPECT_NO_THROW(arr.set_size(10));
 	EXPECT_NO_THROW(arr.set_size(20));
 	EXPECT_EQ(arr.get_size(), 20);
-	EXPECT_NO_THROW(arr.set_item(1, "abc"));
+
 	std::string s;
+	EXPECT_NO_THROW(arr.set_item<1>("aaa"));
+	EXPECT_NO_THROW(arr.get_item<1>(s));
+	EXPECT_EQ(s, "aaa");
+	EXPECT_NO_THROW(arr.set_item(1, "abc"));
 	EXPECT_NO_THROW(arr.get_item(1, s));
 	EXPECT_EQ(s, "abc");
 	EXPECT_NO_THROW(arr.set_item(20, "bcd"));
 	EXPECT_NO_THROW(arr.get_item(20, s));
 	EXPECT_EQ(s, "bcd");
+
 	EXPECT_THROW(arr.get_item(0, s), std::out_of_range);
 	EXPECT_THROW(arr.set_item(21, "cde"), std::out_of_range);
+
 	EXPECT_NO_THROW(arr.add_item("def"));
 	EXPECT_NO_THROW(arr.get_item(21, s));
 	EXPECT_EQ(s, "def");
@@ -219,15 +225,21 @@ TEST(FixedSizeArray, SetGetAddRange) {
 	EXPECT_NO_THROW(arr.set_size(10));
 	EXPECT_THROW(arr.set_size(20), std::out_of_range);
 	EXPECT_EQ(arr.get_size(), 10);
-	EXPECT_NO_THROW(arr.set_item(1, 123));
+
 	int i{};
+	EXPECT_NO_THROW(arr.set_item<1>(111));
+	EXPECT_NO_THROW(arr.get_item<1>(i));
+	EXPECT_EQ(i, 111);
+	EXPECT_NO_THROW(arr.set_item(1, 123));
 	EXPECT_NO_THROW(arr.get_item(1, i));
 	EXPECT_EQ(i, 123);
 	EXPECT_NO_THROW(arr.set_item(10, 234));
 	EXPECT_NO_THROW(arr.get_item(10, i));
 	EXPECT_EQ(i, 234);
+
 	EXPECT_THROW(arr.get_item(0, i), std::out_of_range);
 	EXPECT_THROW(arr.set_item(11, 345), std::out_of_range);
+
 	EXPECT_THROW(arr.add_item(123), std::out_of_range);
 	EXPECT_EQ(arr.get_size(), 10);
 }
