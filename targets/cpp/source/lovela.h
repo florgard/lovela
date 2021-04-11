@@ -76,33 +76,16 @@ namespace lovela
 	};
 
 	template <typename... Types>
-	class named_tuple
+	class indexed_tuple
 	{
-		using items_t = std::tuple<Types...>;
-		using names_t = std::map<std::u8string, size_t>;
-		static constexpr size_t _size = std::tuple_size_v<items_t>;
-		static_assert(_size <= 10, "add more NAMED_TUPLE_CASE_GET_ITEM");
+		std::tuple<Types...> _items;
 
-		items_t _items;
-		names_t _names;
+		static constexpr size_t _size = std::tuple_size_v<std::tuple<Types...>>;
+		static_assert(_size <= 10, "add more NAMED_TUPLE_CASE_GET_ITEM");
 
 		constexpr size_t rebase(size_t index) const { return lovela::rebase(index, _size); }
 
 	public:
-		named_tuple(const std::array<std::u8string_view, _size>& names) noexcept
-		{
-			size_t i = 0;
-			for (auto name : names)
-			{
-				_names.insert(std::make_pair(std::u8string(name.data(), name.size()), ++i));
-			}
-		}
-		named_tuple(const named_tuple& src) noexcept = default;
-		named_tuple(named_tuple&& src) noexcept = default;
-		named_tuple& operator=(const named_tuple& src) noexcept = default;
-		named_tuple& operator=(named_tuple&& src) noexcept = default;
-		~named_tuple() noexcept = default;
-
 		constexpr size_t get_size() const
 		{
 			return _size;
@@ -112,14 +95,14 @@ namespace lovela
 		{
 			if (size != _size)
 			{
-				throw std::out_of_range("a named tuple cannot be resized");
+				throw std::out_of_range("an indexed tuple cannot be resized");
 			}
 		}
 
 #define NAMED_TUPLE_GUARD_BEGIN(index_) index_; \
 	if constexpr (index_ < _size) { \
 	if constexpr (std::is_same_v<std::remove_cvref_t<Item>, std::remove_cvref_t<decltype(std::get<index_>(_items))>>) {
-#define NAMED_TUPLE_GUARD_END } else throw std::invalid_argument("named tuple: invalid access type"); }
+#define NAMED_TUPLE_GUARD_END } else throw std::invalid_argument("indexed tuple: invalid access type"); }
 #define NAMED_TUPLE_GUARD_END_RANGE NAMED_TUPLE_GUARD_END else throw std::out_of_range("index out of range");
 
 #define NAMED_TUPLE_SAFE_GET_ITEM(index_, item_) item_; \
@@ -154,20 +137,6 @@ namespace lovela
 			}
 		}
 
-		template <typename Item>
-		constexpr void get_item(const std::u8string& name, Item& item)
-		{
-			auto iter = _names.find(name);
-			if (iter != _names.end())
-			{
-				get_item(iter->second, item);
-			}
-			else
-			{
-				throw std::out_of_range("named tuple: the name doesn't exist");
-			}
-		}
-
 		template <size_t index, typename Item>
 		constexpr void get_item(Item& item)
 		{
@@ -193,8 +162,104 @@ namespace lovela
 #undef NAMED_TUPLE_GUARD_END
 #undef NAMED_TUPLE_GUARD_BEGIN
 
-		constexpr void add_item(const auto&) { throw std::out_of_range("a named tuple cannot be appended to"); }
-		//constexpr void add_item(auto&&) { throw std::out_of_range("a named tuple cannot be appended to"); }
+		template <typename Item>
+		constexpr void add_item(const Item&)
+		{
+			throw std::out_of_range("an indexed tuple cannot be appended to");
+		}
+
+		template <typename Item>
+		constexpr void add_item(Item&&)
+		{
+			throw std::out_of_range("an indexed tuple cannot be appended to");
+		}
+	};
+
+	template <typename... Types>
+	class named_tuple
+	{
+		indexed_tuple<Types...> _tuple;
+
+		static constexpr size_t _size = std::tuple_size_v<std::tuple<Types...>>;
+		static_assert(_size <= 10, "add more NAMED_TUPLE_CASE_GET_ITEM");
+
+		using names_t = std::map<std::u8string, size_t>;
+		names_t _names;
+
+	public:
+		named_tuple(const std::array<std::u8string_view, _size>& names) noexcept
+		{
+			size_t i = 0;
+			for (auto name : names)
+			{
+				_names.insert(std::make_pair(std::u8string(name.data(), name.size()), ++i));
+			}
+		}
+		named_tuple(const named_tuple& src) noexcept = default;
+		named_tuple(named_tuple&& src) noexcept = default;
+		named_tuple& operator=(const named_tuple& src) noexcept = default;
+		named_tuple& operator=(named_tuple&& src) noexcept = default;
+		~named_tuple() noexcept = default;
+
+		constexpr size_t get_size() const
+		{
+			return _tuple.get_size();
+		}
+
+		constexpr void set_size(size_t size)
+		{
+			_tuple.set_size(size);
+		}
+
+		template <typename Item>
+		constexpr void get_item(const std::u8string& name, Item& item)
+		{
+			auto iter = _names.find(name);
+			if (iter != _names.end())
+			{
+				_tuple.get_item(iter->second, item);
+			}
+			else
+			{
+				throw std::out_of_range("named tuple: the name doesn't exist");
+			}
+		}
+
+		template <typename Item>
+		constexpr void get_item(size_t index, Item& item)
+		{
+			_tuple.get_item(index, item);
+		}
+
+		template <size_t index, typename Item>
+		constexpr void get_item(Item& item)
+		{
+			_tuple.get_item<index, Item>(item);
+		};
+
+		template <size_t index, typename Item>
+		constexpr void set_item(const Item& item)
+		{
+			_tuple.set_item<index, Item>(item);
+		};
+
+		template <size_t index, typename Item>
+		constexpr void set_item(Item&& item)
+		{
+			_tuple.set_item<index, Item>(item);
+		};
+
+		template <typename Item>
+		constexpr void add_item(const Item& item)
+		{
+			_tuple.add_item<Item>(item);
+		}
+
+		template <typename Item>
+		constexpr void add_item(Item&& item)
+		{
+			_tuple.add_item<Item>(item);
+		}
 	};
 
 	template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
