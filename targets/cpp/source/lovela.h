@@ -106,7 +106,7 @@ namespace lovela
 		std::tuple<Types...> _items;
 
 		static constexpr size_t _size = std::tuple_size_v<std::tuple<Types...>>;
-		static_assert(_size <= 10, "insufficient number of handled indices in indexed_tuple::get_item(size_t, Item&)");
+		static_assert(_size <= 10, "indexed_tuple: insufficient number of handled indices in item getters/setters by index argument.");
 
 		constexpr size_t rebase(size_t index) const { return detail::rebase(index, _size); }
 
