@@ -37,8 +37,8 @@ namespace lovela
 			return index - 1;
 		}
 
-		template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
-		template<class... Ts> overloaded(Ts...)->overloaded<Ts...>;
+		template<class... Functions> struct overloaded : Functions... { using Functions::operator()...; };
+		template<class... Functions> overloaded(Functions...)->overloaded<Functions...>;
 	}
 
 	template <typename Item, size_t _size>
