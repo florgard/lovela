@@ -117,17 +117,20 @@ namespace lovela
 #define NAMED_TUPLE_GUARD_BEGIN(index_) index_; \
 	if constexpr (index_ < _size) { \
 	if constexpr (std::is_same_v<std::remove_cvref_t<Item>, std::remove_cvref_t<decltype(std::get<index_>(_items))>>) {
-
-#define NAMED_TUPLE_GUARD_END } else throw std::invalid_argument("named tuple: invalid access type"); } else throw std::out_of_range("index out of range");
+#define NAMED_TUPLE_GUARD_END } else throw std::invalid_argument("named tuple: invalid access type"); }
+#define NAMED_TUPLE_GUARD_END_RANGE NAMED_TUPLE_GUARD_END else throw std::out_of_range("index out of range");
 
 #define NAMED_TUPLE_SAFE_GET_ITEM(index_, item_) item_; \
-	NAMED_TUPLE_GUARD_BEGIN(index_); item_ = std::get<index_>(_items); NAMED_TUPLE_GUARD_END;
+	NAMED_TUPLE_GUARD_BEGIN(index_); item_ = std::get<index_>(_items); NAMED_TUPLE_GUARD_END_RANGE;
 
 #define NAMED_TUPLE_SAFE_SET_ITEM(index_, item_) item_; \
-	NAMED_TUPLE_GUARD_BEGIN(index_); std::get<index_>(_items) = item_; NAMED_TUPLE_GUARD_END;
+	NAMED_TUPLE_GUARD_BEGIN(index_); std::get<index_>(_items) = item_; NAMED_TUPLE_GUARD_END_RANGE;
+
+#define NAMED_TUPLE_SAFE_GET_ITEM_NO_RANGE(index_, item_) item_; \
+	NAMED_TUPLE_GUARD_BEGIN(index_); item_ = std::get<index_>(_items); NAMED_TUPLE_GUARD_END;
 
 #define NAMED_TUPLE_CASE_GET_ITEM(index_, item_) \
-	case index_: NAMED_TUPLE_SAFE_GET_ITEM(index_, item_); break;
+	case index_: NAMED_TUPLE_SAFE_GET_ITEM_NO_RANGE(index_, item_); break;
 
 		template <typename Item>
 		constexpr void get_item(size_t index, Item& item)
@@ -144,6 +147,8 @@ namespace lovela
 				NAMED_TUPLE_CASE_GET_ITEM(7, item);
 				NAMED_TUPLE_CASE_GET_ITEM(8, item);
 				NAMED_TUPLE_CASE_GET_ITEM(9, item);
+			default:
+				throw std::out_of_range("index out of range");
 			}
 		}
 
