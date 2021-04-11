@@ -273,7 +273,7 @@ namespace lovela
 		}
 
 		template <typename Item>
-		constexpr void get_item(const std::u8string& name, Item& item)
+		constexpr void get_item(std::u8string_view name, Item& item)
 		{
 			static constexpr auto names = named_tuple_names<NamedTupleTypeOrdinal>::names;
 
@@ -311,7 +311,7 @@ namespace lovela
 		};
 
 		template <typename Item>
-		constexpr void set_item(const std::u8string& name, const Item& item)
+		constexpr void set_item(std::u8string_view name, const Item& item)
 		{
 			static constexpr auto names = named_tuple_names<NamedTupleTypeOrdinal>::names;
 
@@ -325,7 +325,7 @@ namespace lovela
 		}
 
 		template <typename Item>
-		constexpr void set_item(const std::u8string& name, Item&& item)
+		constexpr void set_item(std::u8string_view name, Item&& item)
 		{
 			static constexpr auto names = named_tuple_names<NamedTupleTypeOrdinal>::names;
 
