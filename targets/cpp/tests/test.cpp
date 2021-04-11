@@ -15,7 +15,7 @@ TEST(IndexedTuple, SetGetStaticIndex) {
 	EXPECT_NO_THROW(obj.set_item<2>(123.456));
 	EXPECT_NO_THROW(obj.set_item<3>(std::string("abc")));
 
-	int i; double d; std::string s;
+	int i{}; double d{}; std::string s;
 	EXPECT_NO_THROW(obj.get_item<1>(i));
 	EXPECT_NO_THROW(obj.get_item<2>(d));
 	EXPECT_NO_THROW(obj.get_item<3>(s));
@@ -32,7 +32,7 @@ TEST(IndexedTuple, SetGetRuntimeIndex) {
 	EXPECT_NO_THROW(obj.set_item<2>(123.456));
 	EXPECT_NO_THROW(obj.set_item<3>(std::string("abc")));
 
-	int i; double d; std::string s;
+	int i{}; double d{}; std::string s;
 	EXPECT_NO_THROW(obj.get_item(1, i));
 	EXPECT_NO_THROW(obj.get_item(2, d));
 	EXPECT_NO_THROW(obj.get_item(3, s));
@@ -56,7 +56,7 @@ TEST(NamedTuple, SetGetStaticIndex) {
 	EXPECT_NO_THROW(obj.set_item<2>(123.456));
 	EXPECT_NO_THROW(obj.set_item<3>(std::string("abc")));
 
-	int i; double d; std::string s;
+	int i{}; double d{}; std::string s;
 	EXPECT_NO_THROW(obj.get_item<1>(i));
 	EXPECT_NO_THROW(obj.get_item<2>(d));
 	EXPECT_NO_THROW(obj.get_item<3>(s));
@@ -73,7 +73,7 @@ TEST(NamedTuple, SetGetRuntimeIndex) {
 	EXPECT_NO_THROW(obj.set_item<2>(123.456));
 	EXPECT_NO_THROW(obj.set_item<3>(std::string("abc")));
 
-	int i; double d; std::string s;
+	int i{}; double d{}; std::string s;
 	EXPECT_NO_THROW(obj.get_item(1, i));
 	EXPECT_NO_THROW(obj.get_item(2, d));
 	EXPECT_NO_THROW(obj.get_item(3, s));
@@ -90,7 +90,7 @@ TEST(NamedTuple, SetGetRuntimeName) {
 	EXPECT_NO_THROW(obj.set_item<2>(123.456));
 	EXPECT_NO_THROW(obj.set_item<3>(std::string("abc")));
 
-	int i; double d; std::string s;
+	int i{}; double d{}; std::string s;
 	EXPECT_NO_THROW(obj.get_item(u8"Pcs", i));
 	EXPECT_NO_THROW(obj.get_item(u8"Price", d));
 	EXPECT_NO_THROW(obj.get_item(u8"Name", s));

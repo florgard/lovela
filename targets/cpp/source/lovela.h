@@ -178,17 +178,10 @@ namespace lovela
 
 		static constexpr size_t _size = std::tuple_size_v<std::tuple<Types...>>;
 
-		std::map<std::u8string, size_t> _names;
+		const std::array<std::u8string_view, _size> _names;
 
 	public:
-		named_tuple(const std::array<std::u8string_view, _size>& names) noexcept
-		{
-			size_t i = 0;
-			for (auto name : names)
-			{
-				_names.insert(std::make_pair(std::u8string(name.data(), name.size()), ++i));
-			}
-		}
+		named_tuple(const std::array<std::u8string_view, _size>& names) noexcept : _names(names) {}
 		named_tuple(const named_tuple& src) noexcept = default;
 		named_tuple(named_tuple&& src) noexcept = default;
 		named_tuple& operator=(const named_tuple& src) noexcept = default;
@@ -208,10 +201,10 @@ namespace lovela
 		template <typename Item>
 		constexpr void get_item(const std::u8string& name, Item& item)
 		{
-			auto iter = _names.find(name);
+			auto iter = std::find(_names.begin(), _names.end(), name);
 			if (iter != _names.end())
 			{
-				_tuple.get_item(iter->second, item);
+				_tuple.get_item(std::distance(_names.begin(), iter) + 1, item);
 			}
 			else
 			{
