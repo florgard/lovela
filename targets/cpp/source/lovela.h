@@ -51,7 +51,7 @@ namespace lovela
 
 		size_t get_size() const { return _items.size(); }
 		void set_size(size_t size) { size == get_size() || (throw std::out_of_range("a fixed sized array cannot be resized"), false); }
-		const Item& get_item(size_t index) { return _items.at(rebase(index)); }
+		void get_item(size_t index, Item& item) { item = _items.at(rebase(index)); }
 		void set_item(size_t index, const Item& item) { _items[rebase(index)] = item; }
 		void set_item(size_t index, Item&& item) { _items[rebase(index)] = item; }
 		void add_item(const Item&) { throw std::out_of_range("a fixed sized array cannot be appended to"); }
@@ -68,7 +68,7 @@ namespace lovela
 	public:
 		size_t get_size() const { return _items.size(); }
 		void set_size(size_t size) { _items.resize(size); }
-		const Item& get_item(size_t index) { return _items.at(rebase(index)); }
+		void get_item(size_t index, Item& item) { item = _items.at(rebase(index)); }
 		void set_item(size_t index, const Item& item) { _items[rebase(index)] = item; }
 		void set_item(size_t index, Item&& item) { _items[rebase(index)] = item; }
 		void add_item(const Item& item) { _items.push_back(item); }
