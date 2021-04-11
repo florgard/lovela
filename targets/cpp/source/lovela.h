@@ -67,16 +67,16 @@ namespace lovela
 			}
 		}
 
-		template <size_t index> void get_item(Item& item) { item = _items.at(rebase(index)); }
+		template <size_t index> void get_item(Item& item) { get_item(index, item); }
 		void get_item(size_t index, Item& item) { item = _items.at(rebase(index)); }
-		void get_item(std::u8string_view name, Item& item) { item = _items.at(rebase(detail::to_size(name))); }
+		void get_item(std::u8string_view name, Item& item) { get_item(detail::to_size(name), item); }
 
-		template <size_t index> void set_item(const Item& item) { _items.at(rebase(index)) = item; }
-		template <size_t index> void set_item(Item&& item) { _items.at(rebase(index)) = std::move(item); }
+		template <size_t index> void set_item(const Item& item) { set_item(index, item); }
+		template <size_t index> void set_item(Item&& item) { set_item(index, std::move(item)); }
 		void set_item(size_t index, const Item& item) { _items[rebase(index)] = item; }
 		void set_item(size_t index, Item&& item) { _items[rebase(index)] = std::move(item); }
-		void set_item(std::u8string_view name, const Item& item) { _items.at(rebase(detail::to_size(name))) = item; }
-		void set_item(std::u8string_view name, Item&& item) { _items.at(rebase(detail::to_size(name))) = std::move(item); }
+		void set_item(std::u8string_view name, const Item& item) { set_item(detail::to_size(name), item); }
+		void set_item(std::u8string_view name, Item&& item) { set_item(detail::to_size(name), std::move(item)); }
 
 		void add_item(const Item&) { throw std::out_of_range("a fixed array cannot be appended to"); }
 		void add_item(Item&&) { throw std::out_of_range("a fixed array cannot be appended to"); }
@@ -93,16 +93,16 @@ namespace lovela
 		size_t get_size() const { return _items.size(); }
 		void set_size(size_t size) { _items.resize(size); }
 
-		template <size_t index> void get_item(Item& item) { item = _items.at(rebase(index)); }
+		template <size_t index> void get_item(Item& item) { get_item(index, item); }
 		void get_item(size_t index, Item& item) { item = _items.at(rebase(index)); }
-		void get_item(std::u8string_view name, Item& item) { item = _items.at(rebase(detail::to_size(name))); }
+		void get_item(std::u8string_view name, Item& item) { get_item(detail::to_size(name), item); }
 
-		template <size_t index> void set_item(const Item& item) { _items.at(rebase(index)) = item; }
-		template <size_t index> void set_item(Item&& item) { _items.at(rebase(index)) = std::move(item); }
+		template <size_t index> void set_item(const Item& item) { set_item(index, item); }
+		template <size_t index> void set_item(Item&& item) { set_item(index, std::move(item)); }
 		void set_item(size_t index, const Item& item) { _items[rebase(index)] = item; }
 		void set_item(size_t index, Item&& item) { _items[rebase(index)] = std::move(item); }
-		void set_item(std::u8string_view name, const Item& item) { _items.at(rebase(detail::to_size(name))) = item; }
-		void set_item(std::u8string_view name, Item&& item) { _items.at(rebase(detail::to_size(name))) = std::move(item); }
+		void set_item(std::u8string_view name, const Item& item) { set_item(detail::to_size(name), item); }
+		void set_item(std::u8string_view name, Item&& item) { set_item(detail::to_size(name), std::move(item)); }
 
 		void add_item(const Item& item) { _items.push_back(item); }
 		void add_item(Item&& item) { _items.emplace_back(std::move(item)); }
@@ -153,7 +153,7 @@ namespace lovela
 		template <size_t index, typename Item>
 		constexpr void get_item(Item& item)
 		{
-			INDEXED_TUPLE_SAFE_GET_ITEM(detail::rebase_v<index>, item);
+			get_item(index, item);
 		};
 
 		template <typename Item>
@@ -176,16 +176,19 @@ namespace lovela
 			}
 		}
 
+		template <typename Item>
+		void get_item(std::u8string_view name, Item& item) { get_item(detail::to_size(name), item); }
+
 		template <size_t index, typename Item>
 		constexpr void set_item(const Item& item)
 		{
-			INDEXED_TUPLE_SAFE_SET_ITEM(detail::rebase_v<index>, item);
+			set_item(index, item);
 		};
 
 		template <size_t index, typename Item>
 		constexpr void set_item(Item&& item)
 		{
-			INDEXED_TUPLE_SAFE_SET_ITEM(detail::rebase_v<index>, std::move(item));
+			set_item(index, std::move(item));
 		};
 
 		template <typename Item>
@@ -227,6 +230,9 @@ namespace lovela
 				throw std::out_of_range("index out of range");
 			}
 		}
+
+		template <typename Item> void set_item(std::u8string_view name, const Item& item) { set_item(detail::to_size(name), item); }
+		template <typename Item> void set_item(std::u8string_view name, Item&& item) { set_item(detail::to_size(name), std::move(item)); }
 
 		template <typename Item>
 		constexpr void add_item(const Item&)
@@ -274,7 +280,7 @@ namespace lovela
 		template <size_t index, typename Item>
 		constexpr void get_item(Item& item)
 		{
-			_tuple.get_item<index, Item>(item);
+			get_item(index, item);
 		};
 
 		template <typename Item>
@@ -294,31 +300,31 @@ namespace lovela
 				throw std::out_of_range("named tuple: the name doesn't exist");
 			}
 
-			_tuple.get_item(std::distance(names.begin(), iter) + 1, item);
+			get_item(std::distance(names.begin(), iter) + 1, item);
 		}
 
 		template <size_t index, typename Item>
 		constexpr void set_item(const Item& item)
 		{
-			_tuple.set_item<index, Item>(item);
+			set_item(index, item);
 		};
 
 		template <size_t index, typename Item>
 		constexpr void set_item(Item&& item)
 		{
-			_tuple.set_item<index, Item>(std::move(item));
+			set_item(index, std::move(item));
 		};
 
 		template <typename Item>
 		constexpr void set_item(size_t index, const Item& item)
 		{
-			_tuple.set_item<Item>(index, item);
+			_tuple.set_item(index, item);
 		};
 
 		template <typename Item>
 		constexpr void set_item(size_t index, Item&& item)
 		{
-			_tuple.set_item<Item>(index, std::move(item));
+			_tuple.set_item(index, std::move(item));
 		};
 
 		template <typename Item>
@@ -332,7 +338,7 @@ namespace lovela
 				throw std::out_of_range("named tuple: the name doesn't exist");
 			}
 
-			_tuple.set_item(std::distance(names.begin(), iter) + 1, item);
+			set_item(std::distance(names.begin(), iter) + 1, item);
 		}
 
 		template <typename Item>
@@ -346,7 +352,7 @@ namespace lovela
 				throw std::out_of_range("named tuple: the name doesn't exist");
 			}
 
-			_tuple.set_item(std::distance(names.begin(), iter) + 1, std::move(item));
+			set_item(std::distance(names.begin(), iter) + 1, std::move(item));
 		}
 
 		template <typename Item>
