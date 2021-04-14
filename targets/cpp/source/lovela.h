@@ -58,9 +58,9 @@ namespace lovela
 		static constexpr size_t rebase(size_t index) { return detail::rebase(index, _size); }
 
 	public:
-		static constexpr size_t get_size() { return _size; }
-		static constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("a fixed array cannot be resized"); } }
-		static constexpr size_t get_index(std::u8string_view name) { return detail::to_index(name, get_size()); }
+		constexpr size_t get_size() const { return _size; }
+		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("a fixed array cannot be resized"); } }
+		constexpr size_t get_index(std::u8string_view name) const { return detail::to_index(name, get_size()); }
 
 		template <size_t index> void get_item(Item& item) { get_item(index, item); }
 		void get_item(size_t index, Item& item) { item = _items.at(rebase(index)); }
@@ -154,9 +154,9 @@ namespace lovela
 		};
 
 	public:
-		static constexpr size_t get_size() { return _size; }
-		static constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("an indexed tuple cannot be resized"); } }
-		static constexpr size_t get_index(std::u8string_view name) { return detail::to_index(name, get_size()); }
+		constexpr size_t get_size() const { return _size; }
+		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("an indexed tuple cannot be resized"); } }
+		constexpr size_t get_index(std::u8string_view name) const { return detail::to_index(name, get_size()); }
 
 		template <size_t index, typename Item> constexpr void get_item(Item& item) { item = checked_get<index, Item>(); };
 		template <typename Item> constexpr void get_item(size_t index, Item& item) { visit<Item>(index, [&](Item& elem) { item = elem; }); }
@@ -182,13 +182,12 @@ namespace lovela
 	template <size_t NamedTupleTypeOrdinal, typename... Types>
 	class named_tuple
 	{
-		using tuple_t = indexed_tuple<Types...>;
-		tuple_t _tuple;
+		indexed_tuple<Types...> _tuple;
 
 	public:
-		static constexpr size_t get_size() { return tuple_t::get_size(); }
-		static constexpr void set_size(size_t size) { tuple_t::set_size(size); }
-		static constexpr size_t get_index(std::u8string_view name)
+		constexpr size_t get_size() const { return _tuple.get_size(); }
+		constexpr void set_size(size_t size) { _tuple.set_size(size); }
+		constexpr size_t get_index(std::u8string_view name) const
 		{
 			static constexpr auto names = named_tuple_names<NamedTupleTypeOrdinal>::names;
 
