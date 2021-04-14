@@ -17,6 +17,12 @@ namespace lovela
 {
 	namespace detail
 	{
+		template <typename T1, typename T2>
+		static constexpr bool is_same_referred = std::is_same_v<std::remove_reference_t<T1>, std::remove_reference_t<T2>>;
+
+		template <size_t index>
+		static constexpr size_t rebase_v = index - 1;
+
 		constexpr size_t rebase(size_t index, size_t size)
 		{
 			if (!index || index > size)
@@ -109,13 +115,13 @@ namespace lovela
 			}
 			else if (index == visitIndex)
 			{
-				if constexpr (std::is_same_v<std::remove_reference_t<Item>, std::remove_reference_t<decltype(std::get<visitIndex>(_items))>>)
+				if constexpr (detail::is_same_referred<Item, decltype(std::get<visitIndex>(_items))>)
 				{
 					visitor(std::get<visitIndex>(_items));
 				}
 				else
 				{
-					throw std::invalid_argument("indexed tuple: invalid access type");
+					throw std::invalid_argument("invalid access type");
 				}
 			}
 			else
@@ -128,12 +134,27 @@ namespace lovela
 		constexpr size_t get_size() const { return _size; }
 		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("an indexed tuple cannot be resized"); } }
 
-		template <size_t index, typename Item> constexpr void get_item(Item& item) { get_item(index, item); };
+		template <size_t index, typename Item> constexpr void get_item(Item& item)
+		{
+			static_assert(detail::rebase_v<index> < _size, "index out of bounds");
+			static_assert(detail::is_same_referred<Item, decltype(std::get<detail::rebase_v<index>>(_items))>, "invalid access type");
+			item = std::get<detail::rebase_v<index>>(_items);
+		};
 		template <typename Item> constexpr void get_item(size_t index, Item& item) { visit<Item>(rebase(index), [&](Item& element) { item = element; }); }
 		template <typename Item> void get_item(std::u8string_view name, Item& item) { get_item(detail::to_size(name), item); }
 
-		template <size_t index, typename Item> constexpr void set_item(const Item& item) { set_item(index, item); };
-		template <size_t index, typename Item> constexpr void set_item(Item&& item) { set_item(index, std::move(item)); };
+		template <size_t index, typename Item> constexpr void set_item(const Item& item)
+		{
+			static_assert(detail::rebase_v<index> < _size, "index out of bounds");
+			static_assert(detail::is_same_referred<Item, decltype(std::get<detail::rebase_v<index>>(_items))>, "invalid access type");
+			std::get<detail::rebase_v<index>>(_items) = item;
+		};
+		template <size_t index, typename Item> constexpr void set_item(Item&& item)
+		{
+			static_assert(detail::rebase_v<index> < _size, "index out of bounds");
+			static_assert(detail::is_same_referred<Item, decltype(std::get<detail::rebase_v<index>>(_items))>, "invalid access type");
+			std::get<detail::rebase_v<index>>(_items) = std::move(item);
+		};
 		template <typename Item> constexpr void set_item(size_t index, const Item& item) { visit<Item>(rebase(index), [&](Item& element) { element = item; }); }
 		template <typename Item> constexpr void set_item(size_t index, Item&& item) { visit<Item>(rebase(index), [&](Item& element) { element = std::move(item); }); }
 		template <typename Item> void set_item(std::u8string_view name, const Item& item) { set_item(detail::to_size(name), item); }
