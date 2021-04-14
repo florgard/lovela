@@ -108,6 +108,11 @@ namespace lovela
 		template <typename Item, size_t visitIndex = 0>
 		void visit(size_t index, auto&& visitor)
 		{
+			if constexpr (!visitIndex)
+			{
+				index = rebase(index);
+			}
+
 			if constexpr (visitIndex >= _size)
 			{
 				visitor;
@@ -144,13 +149,13 @@ namespace lovela
 		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("an indexed tuple cannot be resized"); } }
 
 		template <size_t index, typename Item> constexpr void get_item(Item& item) { item = checked_get<index, Item>(); };
-		template <typename Item> constexpr void get_item(size_t index, Item& item) { visit<Item>(rebase(index), [&](Item& element) { item = element; }); }
+		template <typename Item> constexpr void get_item(size_t index, Item& item) { visit<Item>(index, [&](Item& elem) { item = elem; }); }
 		template <typename Item> void get_item(std::u8string_view name, Item& item) { get_item(detail::to_size(name), item); }
 
 		template <size_t index, typename Item> constexpr void set_item(const Item& item) { checked_get<index, Item>() = item; };
 		template <size_t index, typename Item> constexpr void set_item(Item&& item) { checked_get<index, Item>() = std::move(item); };
-		template <typename Item> constexpr void set_item(size_t index, const Item& item) { visit<Item>(rebase(index), [&](Item& element) { element = item; }); }
-		template <typename Item> constexpr void set_item(size_t index, Item&& item) { visit<Item>(rebase(index), [&](Item& element) { element = std::move(item); }); }
+		template <typename Item> constexpr void set_item(size_t index, const Item& item) { visit<Item>(index, [&](Item& elem) { elem = item; }); }
+		template <typename Item> constexpr void set_item(size_t index, Item&& item) { visit<Item>(index, [&](Item& elem) { elem = std::move(item); }); }
 		template <typename Item> void set_item(std::u8string_view name, const Item& item) { set_item(detail::to_size(name), item); }
 		template <typename Item> void set_item(std::u8string_view name, Item&& item) { set_item(detail::to_size(name), std::move(item)); }
 
