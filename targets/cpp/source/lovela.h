@@ -23,7 +23,7 @@ namespace lovela
 		template <size_t index>
 		static constexpr size_t rebase_v = index - 1;
 
-		constexpr size_t rebase(size_t index, size_t size)
+		[[nodiscard]] constexpr size_t rebase(size_t index, size_t size)
 		{
 			if (!index || index > size)
 			{
@@ -33,9 +33,17 @@ namespace lovela
 			return index - 1;
 		}
 
-		inline size_t to_size(std::u8string_view str)
+		[[nodiscard]] inline size_t to_size(std::u8string_view str)
 		{
 			return std::stoi(std::string(reinterpret_cast<const char*>(str.data()), str.size()));
+		}
+
+		[[nodiscard]] inline size_t to_index(std::u8string_view str, size_t size)
+		{
+			const size_t index = to_size(str);
+			// Check bounds.
+			static_cast<void>(rebase(index, size));
+			return index;
 		}
 
 		template<class... Functions> struct overloaded : Functions... { using Functions::operator()...; };
@@ -50,19 +58,21 @@ namespace lovela
 		static constexpr size_t rebase(size_t index) { return detail::rebase(index, _size); }
 
 	public:
-		constexpr size_t get_size() const { return _size; }
-		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("a fixed array cannot be resized"); } }
+		static constexpr size_t get_index(std::u8string_view name) { return detail::to_index(name, get_size()); }
+
+		static constexpr size_t get_size() { return _size; }
+		static constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("a fixed array cannot be resized"); } }
 
 		template <size_t index> void get_item(Item& item) { get_item(index, item); }
 		void get_item(size_t index, Item& item) { item = _items.at(rebase(index)); }
-		void get_item(std::u8string_view name, Item& item) { get_item(detail::to_size(name), item); }
+		void get_item(std::u8string_view name, Item& item) { get_item(get_index(name), item); }
 
 		template <size_t index> void set_item(const Item& item) { set_item(index, item); }
 		template <size_t index> void set_item(Item&& item) { set_item(index, std::move(item)); }
 		void set_item(size_t index, const Item& item) { _items[rebase(index)] = item; }
 		void set_item(size_t index, Item&& item) { _items[rebase(index)] = std::move(item); }
-		void set_item(std::u8string_view name, const Item& item) { set_item(detail::to_size(name), item); }
-		void set_item(std::u8string_view name, Item&& item) { set_item(detail::to_size(name), std::move(item)); }
+		void set_item(std::u8string_view name, const Item& item) { set_item(get_index(name), item); }
+		void set_item(std::u8string_view name, Item&& item) { set_item(get_index(name), std::move(item)); }
 
 		void add_item(const Item&) { throw std::out_of_range("a fixed array cannot be appended to"); }
 		void add_item(Item&&) { throw std::out_of_range("a fixed array cannot be appended to"); }
@@ -76,19 +86,21 @@ namespace lovela
 		constexpr size_t rebase(size_t index) const  { return detail::rebase(index, _items.size()); }
 
 	public:
+		size_t get_index(std::u8string_view name) const { return detail::to_index(name, get_size()); }
+
 		size_t get_size() const { return _items.size(); }
 		void set_size(size_t size) { _items.resize(size); }
 
 		template <size_t index> void get_item(Item& item) { get_item(index, item); }
 		void get_item(size_t index, Item& item) { item = _items.at(rebase(index)); }
-		void get_item(std::u8string_view name, Item& item) { get_item(detail::to_size(name), item); }
+		void get_item(std::u8string_view name, Item& item) { get_item(get_index(name), item); }
 
 		template <size_t index> void set_item(const Item& item) { set_item(index, item); }
 		template <size_t index> void set_item(Item&& item) { set_item(index, std::move(item)); }
 		void set_item(size_t index, const Item& item) { _items[rebase(index)] = item; }
 		void set_item(size_t index, Item&& item) { _items[rebase(index)] = std::move(item); }
-		void set_item(std::u8string_view name, const Item& item) { set_item(detail::to_size(name), item); }
-		void set_item(std::u8string_view name, Item&& item) { set_item(detail::to_size(name), std::move(item)); }
+		void set_item(std::u8string_view name, const Item& item) { set_item(get_index(name), item); }
+		void set_item(std::u8string_view name, Item&& item) { set_item(get_index(name), std::move(item)); }
 
 		void add_item(const Item& item) { _items.push_back(item); }
 		void add_item(Item&& item) { _items.emplace_back(std::move(item)); }
@@ -145,19 +157,21 @@ namespace lovela
 		};
 
 	public:
-		constexpr size_t get_size() const { return _size; }
-		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("an indexed tuple cannot be resized"); } }
+		static constexpr size_t get_index(std::u8string_view name) { return detail::to_index(name, get_size()); }
+
+		static constexpr size_t get_size() { return _size; }
+		static constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("an indexed tuple cannot be resized"); } }
 
 		template <size_t index, typename Item> constexpr void get_item(Item& item) { item = checked_get<index, Item>(); };
 		template <typename Item> constexpr void get_item(size_t index, Item& item) { visit<Item>(index, [&](Item& elem) { item = elem; }); }
-		template <typename Item> void get_item(std::u8string_view name, Item& item) { get_item(detail::to_size(name), item); }
+		template <typename Item> void get_item(std::u8string_view name, Item& item) { get_item(get_index(name), item); }
 
 		template <size_t index, typename Item> constexpr void set_item(const Item& item) { checked_get<index, Item>() = item; };
 		template <size_t index, typename Item> constexpr void set_item(Item&& item) { checked_get<index, Item>() = std::move(item); };
 		template <typename Item> constexpr void set_item(size_t index, const Item& item) { visit<Item>(index, [&](Item& elem) { elem = item; }); }
 		template <typename Item> constexpr void set_item(size_t index, Item&& item) { visit<Item>(index, [&](Item& elem) { elem = std::move(item); }); }
-		template <typename Item> void set_item(std::u8string_view name, const Item& item) { set_item(detail::to_size(name), item); }
-		template <typename Item> void set_item(std::u8string_view name, Item&& item) { set_item(detail::to_size(name), std::move(item)); }
+		template <typename Item> void set_item(std::u8string_view name, const Item& item) { set_item(get_index(name), item); }
+		template <typename Item> void set_item(std::u8string_view name, Item&& item) { set_item(get_index(name), std::move(item)); }
 
 		template <typename Item> constexpr void add_item(const Item&) { throw std::out_of_range("an indexed tuple cannot be appended to"); }
 		template <typename Item> constexpr void add_item(Item&&) { throw std::out_of_range("an indexed tuple cannot be appended to"); }
@@ -172,8 +186,10 @@ namespace lovela
 	template <size_t NamedTupleTypeOrdinal, typename... Types>
 	class named_tuple
 	{
-		indexed_tuple<Types...> _tuple;
+		using tuple_t = indexed_tuple<Types...>;
+		tuple_t _tuple;
 
+	public:
 		static constexpr size_t get_index(std::u8string_view name)
 		{
 			static constexpr auto names = named_tuple_names<NamedTupleTypeOrdinal>::names;
@@ -183,14 +199,14 @@ namespace lovela
 			{
 				return std::distance(names.begin(), iter) + 1;
 			}
-
-			// Attempt to parse a literal index as fallback, throws std::invalid_argument on failure.
-			return detail::to_size(name);
+			else
+			{
+				return detail::to_index(name, get_size());
+			}
 		}
 
-	public:
-		constexpr size_t get_size() const { return _tuple.get_size(); }
-		constexpr void set_size(size_t size) { _tuple.set_size(size); }
+		static constexpr size_t get_size() { return tuple_t::get_size(); }
+		static constexpr void set_size(size_t size) { tuple_t::set_size(size); }
 
 		template <size_t index, typename Item> constexpr void get_item(Item& item) { _tuple.get_item<index>(item); };
 		template <typename Item> constexpr void get_item(size_t index, Item& item) { _tuple.get_item(index, item); }

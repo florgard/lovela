@@ -4,8 +4,8 @@
 TEST(IndexRebase, TestRebaseAndRange) {
 	EXPECT_EQ(lovela::detail::rebase(1, 10), 0);
 	EXPECT_EQ(lovela::detail::rebase(10, 10), 9);
-	EXPECT_THROW(lovela::detail::rebase(0, 10), std::out_of_range);
-	EXPECT_THROW(lovela::detail::rebase(11, 10), std::out_of_range);
+	EXPECT_THROW(static_cast<void>(lovela::detail::rebase(0, 10)), std::out_of_range);
+	EXPECT_THROW(static_cast<void>(lovela::detail::rebase(11, 10)), std::out_of_range);
 }
 
 TEST(IndexedTuple, InitAndRange) {
@@ -16,7 +16,7 @@ TEST(IndexedTuple, InitAndRange) {
 	EXPECT_THROW(obj.add_item(123), std::out_of_range);
 }
 
-TEST(IndexedTuple, SetGetRange) {
+TEST(IndexedTuple, SetGet) {
 	lovela::indexed_tuple<int, double, std::string> obj;
 	EXPECT_NO_THROW(obj.set_item<1>(123));
 	EXPECT_NO_THROW(obj.set_item<2>(456.789));
@@ -45,11 +45,27 @@ TEST(IndexedTuple, SetGetRange) {
 	EXPECT_EQ(v3, "abc");
 	EXPECT_NO_THROW(obj.get_item(u8"3", v3));
 	EXPECT_EQ(v3, "abc");
+}
 
+TEST(IndexedTuple, Range) {
+	lovela::indexed_tuple<int, double, std::string> obj;
+	int v1{};
 	EXPECT_THROW(obj.get_item(3, v1), std::invalid_argument);
 	EXPECT_THROW(obj.get_item(0, v1), std::out_of_range);
 	EXPECT_THROW(obj.get_item(4, v1), std::out_of_range);
+	EXPECT_THROW(obj.get_item(u8"", v1), std::invalid_argument);
+	EXPECT_THROW(obj.get_item(u8"null", v1), std::invalid_argument);
+	EXPECT_THROW(obj.get_item(u8"0", v1), std::out_of_range);
 	EXPECT_THROW(obj.get_item(u8"4", v1), std::out_of_range);
+}
+
+TEST(IndexedTuple, GetIndex) {
+	lovela::indexed_tuple<int, double, std::string> obj;
+	EXPECT_EQ(obj.get_index(u8"1"), 1);
+	EXPECT_THROW(obj.get_index(u8""), std::invalid_argument);
+	EXPECT_THROW(obj.get_index(u8"null"), std::invalid_argument);
+	EXPECT_THROW(obj.get_index(u8"0"), std::out_of_range);
+	EXPECT_THROW(obj.get_index(u8"4"), std::out_of_range);
 }
 
 template <>
@@ -66,7 +82,7 @@ TEST(NamedTuple, InitAndRange) {
 	EXPECT_THROW(obj.add_item(123), std::out_of_range);
 }
 
-TEST(NamedTuple, SetGetRange) {
+TEST(NamedTuple, SetGet) {
 	lovela::named_tuple<1, int, double, std::string> obj;
 	EXPECT_NO_THROW(obj.set_item<1>(123));
 	EXPECT_NO_THROW(obj.set_item<2>(456.789));
@@ -95,11 +111,27 @@ TEST(NamedTuple, SetGetRange) {
 	EXPECT_EQ(v3, "abc");
 	EXPECT_NO_THROW(obj.get_item(u8"3", v3));
 	EXPECT_EQ(v3, "abc");
+}
 
+TEST(NamedTuple, Range) {
+	lovela::named_tuple<1, int, double, std::string> obj;
+	int v1{};
 	EXPECT_THROW(obj.get_item(3, v1), std::invalid_argument);
 	EXPECT_THROW(obj.get_item(0, v1), std::out_of_range);
 	EXPECT_THROW(obj.get_item(4, v1), std::out_of_range);
+	EXPECT_THROW(obj.get_item(u8"", v1), std::invalid_argument);
+	EXPECT_THROW(obj.get_item(u8"null", v1), std::invalid_argument);
+	EXPECT_THROW(obj.get_item(u8"0", v1), std::out_of_range);
 	EXPECT_THROW(obj.get_item(u8"4", v1), std::out_of_range);
+}
+
+TEST(NamedTuple, GetIndex) {
+	lovela::named_tuple<1, int, double, std::string> obj;
+	EXPECT_EQ(obj.get_index(u8"1"), 1);
+	EXPECT_THROW(obj.get_index(u8""), std::invalid_argument);
+	EXPECT_THROW(obj.get_index(u8"null"), std::invalid_argument);
+	EXPECT_THROW(obj.get_index(u8"0"), std::out_of_range);
+	EXPECT_THROW(obj.get_index(u8"4"), std::out_of_range);
 }
 
 TEST(NamedTuple, SetGetRuntimeName) {
@@ -266,6 +298,18 @@ TEST(DynamicArray, SetGetAddRange) {
 	EXPECT_EQ(obj1.get_size(), 21);
 }
 
+TEST(DynamicArray, GetIndex) {
+	lovela::dynamic_array<std::string> obj1;
+
+	EXPECT_NO_THROW(obj1.set_size(20));
+
+	EXPECT_EQ(obj1.get_index(u8"1"), 1);
+	EXPECT_THROW(obj1.get_index(u8""), std::invalid_argument);
+	EXPECT_THROW(obj1.get_index(u8"null"), std::invalid_argument);
+	EXPECT_THROW(obj1.get_index(u8"0"), std::out_of_range);
+	EXPECT_THROW(obj1.get_index(u8"21"), std::out_of_range);
+}
+
 TEST(FixedSizeArray, SetGetSize) {
 	lovela::fixed_array<int, 10> obj1;
 	EXPECT_NO_THROW(obj1.set_size(10));
@@ -330,6 +374,18 @@ TEST(FixedSizeArray, SetGetAddRange) {
 
 	EXPECT_THROW(obj1.add_item("cde"), std::out_of_range);
 	EXPECT_EQ(obj1.get_size(), 20);
+}
+
+TEST(FixedSizeArray, GetIndex) {
+	lovela::fixed_array<std::string, 20> obj1;
+
+	EXPECT_NO_THROW(obj1.set_size(20));
+
+	EXPECT_EQ(obj1.get_index(u8"1"), 1);
+	EXPECT_THROW(obj1.get_index(u8""), std::invalid_argument);
+	EXPECT_THROW(obj1.get_index(u8"null"), std::invalid_argument);
+	EXPECT_THROW(obj1.get_index(u8"0"), std::out_of_range);
+	EXPECT_THROW(obj1.get_index(u8"21"), std::out_of_range);
 }
 
 TEST(Streams, SimpleOut) {
