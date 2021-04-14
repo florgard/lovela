@@ -136,7 +136,7 @@ namespace lovela
 			static constexpr size_t rebased = detail::rebase_v<index>;
 			static_assert(rebased < _size, "index out of bounds");
 			static_assert(detail::is_same_tuple_element<Item, items_t, rebased>, "invalid access type");
-			return std::get<detail::rebase_v<index>>(_items);
+			return std::get<rebased>(_items);
 		};
 
 	public:
