@@ -58,10 +58,9 @@ namespace lovela
 		static constexpr size_t rebase(size_t index) { return detail::rebase(index, _size); }
 
 	public:
-		static constexpr size_t get_index(std::u8string_view name) { return detail::to_index(name, get_size()); }
-
 		static constexpr size_t get_size() { return _size; }
 		static constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("a fixed array cannot be resized"); } }
+		static constexpr size_t get_index(std::u8string_view name) { return detail::to_index(name, get_size()); }
 
 		template <size_t index> void get_item(Item& item) { get_item(index, item); }
 		void get_item(size_t index, Item& item) { item = _items.at(rebase(index)); }
@@ -86,10 +85,9 @@ namespace lovela
 		constexpr size_t rebase(size_t index) const  { return detail::rebase(index, _items.size()); }
 
 	public:
-		size_t get_index(std::u8string_view name) const { return detail::to_index(name, get_size()); }
-
 		size_t get_size() const { return _items.size(); }
 		void set_size(size_t size) { _items.resize(size); }
+		size_t get_index(std::u8string_view name) const { return detail::to_index(name, get_size()); }
 
 		template <size_t index> void get_item(Item& item) { get_item(index, item); }
 		void get_item(size_t index, Item& item) { item = _items.at(rebase(index)); }
@@ -157,10 +155,9 @@ namespace lovela
 		};
 
 	public:
-		static constexpr size_t get_index(std::u8string_view name) { return detail::to_index(name, get_size()); }
-
 		static constexpr size_t get_size() { return _size; }
 		static constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("an indexed tuple cannot be resized"); } }
+		static constexpr size_t get_index(std::u8string_view name) { return detail::to_index(name, get_size()); }
 
 		template <size_t index, typename Item> constexpr void get_item(Item& item) { item = checked_get<index, Item>(); };
 		template <typename Item> constexpr void get_item(size_t index, Item& item) { visit<Item>(index, [&](Item& elem) { item = elem; }); }
@@ -190,6 +187,8 @@ namespace lovela
 		tuple_t _tuple;
 
 	public:
+		static constexpr size_t get_size() { return tuple_t::get_size(); }
+		static constexpr void set_size(size_t size) { tuple_t::set_size(size); }
 		static constexpr size_t get_index(std::u8string_view name)
 		{
 			static constexpr auto names = named_tuple_names<NamedTupleTypeOrdinal>::names;
@@ -204,9 +203,6 @@ namespace lovela
 				return detail::to_index(name, get_size());
 			}
 		}
-
-		static constexpr size_t get_size() { return tuple_t::get_size(); }
-		static constexpr void set_size(size_t size) { tuple_t::set_size(size); }
 
 		template <size_t index, typename Item> constexpr void get_item(Item& item) { _tuple.get_item<index>(item); };
 		template <typename Item> constexpr void get_item(size_t index, Item& item) { _tuple.get_item(index, item); }
