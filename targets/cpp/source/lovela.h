@@ -88,119 +88,60 @@ namespace lovela
 		void add_item(Item&& item) { _items.emplace_back(std::move(item)); }
 	};
 
-#define INDEXED_TUPLE_GUARD_BEGIN(index_) index_; \
-	if constexpr (index_ < _size) { \
-	if constexpr (std::is_same_v<std::remove_cvref_t<Item>, std::remove_cvref_t<decltype(std::get<index_>(_items))>>) {
-#define INDEXED_TUPLE_GUARD_END } else throw std::invalid_argument("indexed tuple: invalid access type"); }
-#define INDEXED_TUPLE_GUARD_END_RANGE INDEXED_TUPLE_GUARD_END else throw std::out_of_range("index out of range");
-
-#define INDEXED_TUPLE_SAFE_GET_ITEM(index_, item_) \
-	INDEXED_TUPLE_GUARD_BEGIN(index_); item_ = std::get<index_>(_items); INDEXED_TUPLE_GUARD_END_RANGE;
-
-#define INDEXED_TUPLE_SAFE_SET_ITEM(index_, item_) \
-	INDEXED_TUPLE_GUARD_BEGIN(index_); std::get<index_>(_items) = item_; INDEXED_TUPLE_GUARD_END_RANGE;
-
-#define INDEXED_TUPLE_SAFE_GET_ITEM_NO_RANGE(index_, item_) \
-	INDEXED_TUPLE_GUARD_BEGIN(index_); item_ = std::get<index_>(_items); INDEXED_TUPLE_GUARD_END;
-
-#define INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(index_, item_) \
-	INDEXED_TUPLE_GUARD_BEGIN(index_); std::get<index_>(_items) = item_; INDEXED_TUPLE_GUARD_END;
-
 	template <typename... Types>
 	class indexed_tuple
 	{
-		std::tuple<Types...> _items;
+		using items_t = std::tuple<Types...>;
+		items_t _items;
 
 		static constexpr size_t _size = std::tuple_size_v<std::tuple<Types...>>;
 		static_assert(_size <= 10, "indexed_tuple: insufficient number of handled indices in item getters/setters by index argument.");
 
 		static constexpr size_t rebase(size_t index) { return detail::rebase(index, _size); }
 
+		template <typename Item, size_t visitIndex = 0>
+		void visit(size_t index, auto&& visitor)
+		{
+			if constexpr (visitIndex >= _size)
+			{
+				visitor;
+				throw std::out_of_range("index out of range");
+			}
+			else if (index == visitIndex)
+			{
+				if constexpr (std::is_same_v<std::remove_reference_t<Item>, std::remove_reference_t<decltype(std::get<visitIndex>(_items))>>)
+				{
+					visitor(std::get<visitIndex>(_items));
+				}
+				else
+				{
+					throw std::invalid_argument("indexed tuple: invalid access type");
+				}
+			}
+			else
+			{
+				visit<Item, visitIndex + 1>(index, visitor);
+			}
+		}
+
 	public:
 		constexpr size_t get_size() const { return _size; }
 		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("an indexed tuple cannot be resized"); } }
 
 		template <size_t index, typename Item> constexpr void get_item(Item& item) { get_item(index, item); };
-
-		template <typename Item>
-		constexpr void get_item(size_t index, Item& item)
-		{
-			switch (rebase(index))
-			{
-			case 0: INDEXED_TUPLE_SAFE_GET_ITEM_NO_RANGE(0, item); break;
-			case 1: INDEXED_TUPLE_SAFE_GET_ITEM_NO_RANGE(1, item); break;
-			case 2: INDEXED_TUPLE_SAFE_GET_ITEM_NO_RANGE(2, item); break;
-			case 3: INDEXED_TUPLE_SAFE_GET_ITEM_NO_RANGE(3, item); break;
-			case 4: INDEXED_TUPLE_SAFE_GET_ITEM_NO_RANGE(4, item); break;
-			case 5: INDEXED_TUPLE_SAFE_GET_ITEM_NO_RANGE(5, item); break;
-			case 6: INDEXED_TUPLE_SAFE_GET_ITEM_NO_RANGE(6, item); break;
-			case 7: INDEXED_TUPLE_SAFE_GET_ITEM_NO_RANGE(7, item); break;
-			case 8: INDEXED_TUPLE_SAFE_GET_ITEM_NO_RANGE(8, item); break;
-			case 9: INDEXED_TUPLE_SAFE_GET_ITEM_NO_RANGE(9, item); break;
-			default:
-				throw std::out_of_range("index out of range");
-			}
-		}
-
+		template <typename Item> constexpr void get_item(size_t index, Item& item) { visit<Item>(rebase(index), [&](Item& element) { item = element; }); }
 		template <typename Item> void get_item(std::u8string_view name, Item& item) { get_item(detail::to_size(name), item); }
 
 		template <size_t index, typename Item> constexpr void set_item(const Item& item) { set_item(index, item); };
 		template <size_t index, typename Item> constexpr void set_item(Item&& item) { set_item(index, std::move(item)); };
-
-		template <typename Item>
-		constexpr void set_item(size_t index, const Item& item)
-		{
-			switch (rebase(index))
-			{
-			case 0: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(0, item); break;
-			case 1: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(1, item); break;
-			case 2: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(2, item); break;
-			case 3: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(3, item); break;
-			case 4: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(4, item); break;
-			case 5: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(5, item); break;
-			case 6: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(6, item); break;
-			case 7: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(7, item); break;
-			case 8: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(8, item); break;
-			case 9: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(9, item); break;
-			default:
-				throw std::out_of_range("index out of range");
-			}
-		}
-
-		template <typename Item>
-		constexpr void set_item(size_t index, Item&& item)
-		{
-			switch (rebase(index))
-			{
-			case 0: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(0, std::move(item)); break;
-			case 1: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(1, std::move(item)); break;
-			case 2: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(2, std::move(item)); break;
-			case 3: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(3, std::move(item)); break;
-			case 4: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(4, std::move(item)); break;
-			case 5: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(5, std::move(item)); break;
-			case 6: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(6, std::move(item)); break;
-			case 7: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(7, std::move(item)); break;
-			case 8: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(8, std::move(item)); break;
-			case 9: INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE(9, std::move(item)); break;
-			default:
-				throw std::out_of_range("index out of range");
-			}
-		}
-
+		template <typename Item> constexpr void set_item(size_t index, const Item& item) { visit<Item>(rebase(index), [&](Item& element) { element = item; }); }
+		template <typename Item> constexpr void set_item(size_t index, Item&& item) { visit<Item>(rebase(index), [&](Item& element) { element = std::move(item); }); }
 		template <typename Item> void set_item(std::u8string_view name, const Item& item) { set_item(detail::to_size(name), item); }
 		template <typename Item> void set_item(std::u8string_view name, Item&& item) { set_item(detail::to_size(name), std::move(item)); }
 
 		template <typename Item> constexpr void add_item(const Item&) { throw std::out_of_range("an indexed tuple cannot be appended to"); }
 		template <typename Item> constexpr void add_item(Item&&) { throw std::out_of_range("an indexed tuple cannot be appended to"); }
 	};
-
-#undef INDEXED_TUPLE_SAFE_SET_ITEM_NO_RANGE
-#undef INDEXED_TUPLE_SAFE_GET_ITEM_NO_RANGE
-#undef INDEXED_TUPLE_SAFE_SET_ITEM
-#undef INDEXED_TUPLE_SAFE_GET_ITEM
-#undef INDEXED_TUPLE_GUARD_END_RANGE
-#undef INDEXED_TUPLE_GUARD_END
-#undef INDEXED_TUPLE_GUARD_BEGIN
 
 	template <size_t NamedTupleTypeOrdinal>
 	struct named_tuple_names
