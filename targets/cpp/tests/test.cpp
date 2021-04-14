@@ -46,6 +46,7 @@ TEST(IndexedTuple, SetGetRange) {
 	EXPECT_NO_THROW(obj.get_item(u8"3", v3));
 	EXPECT_EQ(v3, "abc");
 
+	EXPECT_THROW(obj.get_item<3>(v1), std::invalid_argument);
 	EXPECT_THROW(obj.get_item<4>(v1), std::out_of_range);
 	EXPECT_THROW(obj.get_item(4, v1), std::out_of_range);
 	EXPECT_THROW(obj.get_item(u8"4", v1), std::out_of_range);
@@ -95,6 +96,7 @@ TEST(NamedTuple, SetGetRange) {
 	EXPECT_NO_THROW(obj.get_item(u8"3", v3));
 	EXPECT_EQ(v3, "abc");
 
+	EXPECT_THROW(obj.get_item<3>(v1), std::invalid_argument);
 	EXPECT_THROW(obj.get_item<4>(v1), std::out_of_range);
 	EXPECT_THROW(obj.get_item(4, v1), std::out_of_range);
 	EXPECT_THROW(obj.get_item(u8"4", v1), std::out_of_range);
