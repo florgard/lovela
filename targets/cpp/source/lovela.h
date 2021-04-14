@@ -17,9 +17,6 @@ namespace lovela
 {
 	namespace detail
 	{
-		template <typename T1, typename T2>
-		static constexpr bool is_same_referred = std::is_same_v<std::remove_reference_t<T1>, std::remove_reference_t<T2>>;
-
 		template <typename Item, typename Tuple, size_t index>
 		static constexpr bool is_same_tuple_element = std::is_same_v<Item, std::tuple_element<index, Tuple>::type>;
 
