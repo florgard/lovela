@@ -136,24 +136,27 @@ namespace lovela
 
 		template <size_t index, typename Item> constexpr void get_item(Item& item)
 		{
-			static_assert(detail::rebase_v<index> < _size, "index out of bounds");
-			static_assert(detail::is_same_referred<Item, decltype(std::get<detail::rebase_v<index>>(_items))>, "invalid access type");
-			item = std::get<detail::rebase_v<index>>(_items);
+			static constexpr size_t rebased = detail::rebase_v<index>;
+			static_assert(rebased < _size, "index out of bounds");
+			static_assert(detail::is_same_referred<Item, decltype(std::get<rebased>(_items))>, "invalid access type");
+			item = std::get<rebased>(_items);
 		};
 		template <typename Item> constexpr void get_item(size_t index, Item& item) { visit<Item>(rebase(index), [&](Item& element) { item = element; }); }
 		template <typename Item> void get_item(std::u8string_view name, Item& item) { get_item(detail::to_size(name), item); }
 
 		template <size_t index, typename Item> constexpr void set_item(const Item& item)
 		{
-			static_assert(detail::rebase_v<index> < _size, "index out of bounds");
-			static_assert(detail::is_same_referred<Item, decltype(std::get<detail::rebase_v<index>>(_items))>, "invalid access type");
-			std::get<detail::rebase_v<index>>(_items) = item;
+			static constexpr size_t rebased = detail::rebase_v<index>;
+			static_assert(rebased < _size, "index out of bounds");
+			static_assert(detail::is_same_referred<Item, decltype(std::get<rebased>(_items))>, "invalid access type");
+			std::get<rebased>(_items) = item;
 		};
 		template <size_t index, typename Item> constexpr void set_item(Item&& item)
 		{
-			static_assert(detail::rebase_v<index> < _size, "index out of bounds");
-			static_assert(detail::is_same_referred<Item, decltype(std::get<detail::rebase_v<index>>(_items))>, "invalid access type");
-			std::get<detail::rebase_v<index>>(_items) = std::move(item);
+			static constexpr size_t rebased = detail::rebase_v<index>;
+			static_assert(rebased < _size, "index out of bounds");
+			static_assert(detail::is_same_referred<Item, decltype(std::get<rebased>(_items))>, "invalid access type");
+			std::get<rebased>(_items) = std::move(item);
 		};
 		template <typename Item> constexpr void set_item(size_t index, const Item& item) { visit<Item>(rebase(index), [&](Item& element) { element = item; }); }
 		template <typename Item> constexpr void set_item(size_t index, Item&& item) { visit<Item>(rebase(index), [&](Item& element) { element = std::move(item); }); }
