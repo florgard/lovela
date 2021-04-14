@@ -20,6 +20,9 @@ namespace lovela
 		template <typename T1, typename T2>
 		static constexpr bool is_same_referred = std::is_same_v<std::remove_reference_t<T1>, std::remove_reference_t<T2>>;
 
+		template <typename Item, typename Tuple, size_t index>
+		static constexpr bool is_same_tuple_element = std::is_same_v<Item, std::tuple_element<index, Tuple>::type>;
+
 		template <size_t index>
 		static constexpr size_t rebase_v = index - 1;
 
@@ -115,7 +118,7 @@ namespace lovela
 			}
 			else if (index == visitIndex)
 			{
-				if constexpr (detail::is_same_referred<Item, decltype(std::get<visitIndex>(_items))>)
+				if constexpr (detail::is_same_tuple_element<Item, items_t, visitIndex>)
 				{
 					visitor(std::get<visitIndex>(_items));
 				}
@@ -138,7 +141,7 @@ namespace lovela
 		{
 			static constexpr size_t rebased = detail::rebase_v<index>;
 			static_assert(rebased < _size, "index out of bounds");
-			static_assert(detail::is_same_referred<Item, decltype(std::get<rebased>(_items))>, "invalid access type");
+			static_assert(detail::is_same_tuple_element<Item, items_t, rebased>, "invalid access type");
 			item = std::get<rebased>(_items);
 		};
 		template <typename Item> constexpr void get_item(size_t index, Item& item) { visit<Item>(rebase(index), [&](Item& element) { item = element; }); }
@@ -148,14 +151,14 @@ namespace lovela
 		{
 			static constexpr size_t rebased = detail::rebase_v<index>;
 			static_assert(rebased < _size, "index out of bounds");
-			static_assert(detail::is_same_referred<Item, decltype(std::get<rebased>(_items))>, "invalid access type");
+			static_assert(detail::is_same_tuple_element<Item, items_t, rebased>, "invalid access type");
 			std::get<rebased>(_items) = item;
 		};
 		template <size_t index, typename Item> constexpr void set_item(Item&& item)
 		{
 			static constexpr size_t rebased = detail::rebase_v<index>;
 			static_assert(rebased < _size, "index out of bounds");
-			static_assert(detail::is_same_referred<Item, decltype(std::get<rebased>(_items))>, "invalid access type");
+			static_assert(detail::is_same_tuple_element<Item, items_t, rebased>, "invalid access type");
 			std::get<rebased>(_items) = std::move(item);
 		};
 		template <typename Item> constexpr void set_item(size_t index, const Item& item) { visit<Item>(rebase(index), [&](Item& element) { element = item; }); }
