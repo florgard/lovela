@@ -115,12 +115,20 @@ namespace lovela
 		void add_item(Item&& item) { _items.emplace_back(std::move(item)); }
 	};
 
+	template <size_t size>
+	struct default_tuple_names_t
+	{
+		static constexpr auto values = std::array<std::u8string_view, size>{};
+	};
+
 	template <typename tuple_t>
 	struct fixed_tuple
 	{
 		tuple_t _items;
 
-		tuple_t& as_tuple() { return _items; }
+		auto& as_tuple() { return _items; }
+		auto& as_fixed_tuple() { return *this; }
+		//named_tuple<default_tuple_names_t<_size>, tuple_t> as_named_tuple() { return { {{_items}} }; }
 
 	private:
 		static constexpr size_t _size = std::tuple_size_v<tuple_t>;
@@ -193,7 +201,9 @@ namespace lovela
 
 		fixed_tuple_t _fixed_tuple;
 
-		tuple_t& as_tuple() { return _fixed_tuple.as_tuple(); }
+		auto& as_tuple() { return _fixed_tuple.as_tuple(); }
+		auto& as_fixed_tuple() { return _fixed_tuple; }
+		auto& as_named_tuple() { return *this; }
 
 		constexpr size_t get_size() const { return _fixed_tuple.get_size(); }
 		constexpr void set_size(size_t size) { _fixed_tuple.set_size(size); }
