@@ -116,11 +116,12 @@ namespace lovela
 	};
 
 	template <typename... Types>
-	class indexed_tuple
+	struct indexed_tuple
 	{
 		using items_t = std::tuple<Types...>;
 		items_t _items;
 
+	private:
 		static constexpr size_t _size = std::tuple_size_v<std::tuple<Types...>>;
 
 		static constexpr size_t rebase(size_t index) { return detail::rebase(index, _size); }
@@ -189,7 +190,6 @@ namespace lovela
 	{
 		indexed_tuple<Types...> _tuple;
 
-	public:
 		constexpr size_t get_size() const { return _tuple.get_size(); }
 		constexpr void set_size(size_t size) { _tuple.set_size(size); }
 		constexpr size_t get_index(std::u8string_view name) const

@@ -11,15 +11,27 @@ struct l_tuple_names_2
 	static constexpr std::array<std::u8string_view, 3> names{ u8"Price", u8"Tax", u8"Discount" };
 };
 
-struct l_tuple_names_5
+struct l_tuple_names_12
 {
 	static constexpr auto names = lovela::detail::array_cat(l_tuple_names_1::names, l_tuple_names_2::names);
 };
 
 TEST(NamedTuple, Concatenate) {
-	lovela::named_tuple<l_tuple_names_1, int, double, std::string> obj1;
-	lovela::named_tuple<l_tuple_names_2, double, double, double> obj2;
-	lovela::named_tuple<l_tuple_names_5, int, double, std::string, double, double, double> obj3;
+	lovela::named_tuple<l_tuple_names_1, int, double, std::string> obj1{ {{ 10, 5.25, "Boots" }} };
+	lovela::named_tuple<l_tuple_names_2, double, double, double> obj2{ {{7.75, 1.25, 0.1}} };
+	lovela::named_tuple<l_tuple_names_12, int, double, std::string, double, double, double> obj12{ {
+			std::tuple_cat(obj1._tuple._items, obj2._tuple._items)
+		} };
+
+	double v1{};
+	EXPECT_NO_THROW(obj12.get_item(2, v1));
+	EXPECT_EQ(v1, 5.25);
+	EXPECT_NO_THROW(obj12.get_item(5, v1));
+	EXPECT_EQ(v1, 1.25);
+	EXPECT_NO_THROW(obj12.get_item(u8"Price", v1));
+	EXPECT_EQ(v1, 5.25);
+	EXPECT_NO_THROW(obj12.get_item(u8"Tax", v1));
+	EXPECT_EQ(v1, 1.25);
 }
 
 TEST(IndexRebase, TestRebaseAndRange) {
