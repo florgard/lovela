@@ -41,16 +41,16 @@ TEST(IndexRebase, TestRebaseAndRange) {
 	EXPECT_THROW(static_cast<void>(lovela::detail::rebase(11, 10)), std::out_of_range);
 }
 
-TEST(IndexedTuple, InitAndRange) {
-	lovela::indexed_tuple<int, double, std::string> obj1;
+TEST(FixedTuple, InitAndRange) {
+	lovela::fixed_tuple<int, double, std::string> obj1;
 	EXPECT_NO_THROW(obj1.set_size(3));
 	EXPECT_THROW(obj1.set_size(20), std::out_of_range);
 	EXPECT_EQ(obj1.get_size(), 3);
 	EXPECT_THROW(obj1.add_item(123), std::out_of_range);
 }
 
-TEST(IndexedTuple, SetGet) {
-	lovela::indexed_tuple<int, double, std::string> obj1;
+TEST(FixedTuple, SetGet) {
+	lovela::fixed_tuple<int, double, std::string> obj1;
 	EXPECT_NO_THROW(obj1.set_item<1>(123));
 	EXPECT_NO_THROW(obj1.set_item<2>(456.789));
 	EXPECT_NO_THROW(obj1.set_item<3>(std::string("abc")));
@@ -80,8 +80,8 @@ TEST(IndexedTuple, SetGet) {
 	EXPECT_EQ(v3, "abc");
 }
 
-TEST(IndexedTuple, Range) {
-	lovela::indexed_tuple<int, double, std::string> obj1;
+TEST(FixedTuple, Range) {
+	lovela::fixed_tuple<int, double, std::string> obj1;
 	int v1{};
 	EXPECT_THROW(obj1.get_item(3, v1), std::invalid_argument);
 	EXPECT_THROW(obj1.get_item(0, v1), std::out_of_range);
@@ -92,8 +92,8 @@ TEST(IndexedTuple, Range) {
 	EXPECT_THROW(obj1.get_item(u8"4", v1), std::out_of_range);
 }
 
-TEST(IndexedTuple, GetIndex) {
-	lovela::indexed_tuple<int, double, std::string> obj1;
+TEST(FixedTuple, GetIndex) {
+	lovela::fixed_tuple<int, double, std::string> obj1;
 	EXPECT_EQ(obj1.get_index(u8"1"), 1);
 	EXPECT_THROW(obj1.get_index(u8""), std::invalid_argument);
 	EXPECT_THROW(obj1.get_index(u8"null"), std::invalid_argument);

@@ -116,7 +116,7 @@ namespace lovela
 	};
 
 	template <typename... Types>
-	struct indexed_tuple
+	struct fixed_tuple
 	{
 		using items_t = std::tuple<Types...>;
 		using tuple_t = items_t;
@@ -191,7 +191,7 @@ namespace lovela
 	template <typename Names, typename... Types>
 	struct named_tuple
 	{
-		using fixed_tuple_t = indexed_tuple<Types...>;
+		using fixed_tuple_t = fixed_tuple<Types...>;
 		using tuple_t = fixed_tuple_t::tuple_t;
 
 		fixed_tuple_t _tuple;
