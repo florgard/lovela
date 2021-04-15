@@ -119,7 +119,10 @@ namespace lovela
 	struct indexed_tuple
 	{
 		using items_t = std::tuple<Types...>;
-		items_t _items;
+		using tuple_t = items_t;
+		tuple_t _items;
+
+		tuple_t& as_tuple() { return _items; }
 
 	private:
 		static constexpr size_t _size = std::tuple_size_v<std::tuple<Types...>>;
@@ -188,7 +191,12 @@ namespace lovela
 	template <typename Names, typename... Types>
 	struct named_tuple
 	{
-		indexed_tuple<Types...> _tuple;
+		using fixed_tuple_t = indexed_tuple<Types...>;
+		using tuple_t = fixed_tuple_t::tuple_t;
+
+		fixed_tuple_t _tuple;
+
+		tuple_t& as_tuple() { return _tuple._items; }
 
 		constexpr size_t get_size() const { return _tuple.get_size(); }
 		constexpr void set_size(size_t size) { _tuple.set_size(size); }

@@ -20,7 +20,7 @@ TEST(NamedTuple, Concatenate) {
 	lovela::named_tuple<l_tuple_names_1, int, double, std::string> obj1{ {{ 10, 5.25, "Boots" }} };
 	lovela::named_tuple<l_tuple_names_2, double, double, double> obj2{ {{7.75, 1.25, 0.1}} };
 	lovela::named_tuple<l_tuple_names_12, int, double, std::string, double, double, double> obj12{ {
-			std::tuple_cat(obj1._tuple._items, obj2._tuple._items)
+			std::tuple_cat(obj1.as_tuple(), obj2.as_tuple())
 		} };
 
 	double v1{};
