@@ -3,12 +3,12 @@
 
 struct l_tuple_names_1
 {
-	static constexpr std::array<std::u8string_view, 3> values{ u8"Pcs", u8"Price", u8"Name" };
+	static constexpr auto values = std::array<std::u8string_view, 3>{ u8"Pcs", u8"Price", u8"Name" };
 };
 
 struct l_tuple_names_2
 {
-	static constexpr std::array<std::u8string_view, 3> values{ u8"Price", u8"Tax", u8"Discount" };
+	static constexpr auto values = std::array<std::u8string_view, 3>{ u8"Price", u8"Tax", u8"Discount" };
 };
 
 struct l_tuple_names_12
@@ -214,12 +214,12 @@ TEST(NamedTuple, GetRuntimeRandomAccess) {
 
 struct l_tuple_names_totalRest
 {
-	static constexpr std::array<std::u8string_view, 2> values{ u8"Total", u8"Rest" };
+	static constexpr auto values = std::array<std::u8string_view, 2>{ u8"Total", u8"Rest" };
 };
 
 struct l_tuple_names_restTotal
 {
-	static constexpr std::array<std::u8string_view, 2> values{ u8"Rest", u8"Total" };
+	static constexpr auto values = std::array<std::u8string_view, 2>{ u8"Rest", u8"Total" };
 };
 
 TEST(NamedTuple, CoexistingTuples) {
