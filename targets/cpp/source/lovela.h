@@ -118,8 +118,7 @@ namespace lovela
 	template <typename tuple_t>
 	struct fixed_tuple
 	{
-		using items_t = tuple_t;
-		items_t _items;
+		tuple_t _items;
 
 		tuple_t& as_tuple() { return _items; }
 
@@ -143,7 +142,7 @@ namespace lovela
 			}
 			else if (index == visitIndex)
 			{
-				if constexpr (detail::is_same_tuple_element<Item, items_t, visitIndex>)
+				if constexpr (detail::is_same_tuple_element<Item, tuple_t, visitIndex>)
 				{
 					visitor(std::get<visitIndex>(_items));
 				}
@@ -163,7 +162,7 @@ namespace lovela
 		{
 			static constexpr size_t rebased = detail::rebase_v<index>;
 			static_assert(rebased < _size, "index out of bounds");
-			static_assert(detail::is_same_tuple_element<Item, items_t, rebased>, "invalid access type");
+			static_assert(detail::is_same_tuple_element<Item, tuple_t, rebased>, "invalid access type");
 			return std::get<rebased>(_items);
 		};
 
