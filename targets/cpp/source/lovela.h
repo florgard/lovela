@@ -184,14 +184,8 @@ namespace lovela
 		template <typename Item> constexpr void add_item(Item&&) { throw std::out_of_range("an indexed tuple cannot be appended to"); }
 	};
 
-	template <size_t NamedTupleTypeOrdinal>
-	struct named_tuple_names
-	{
-		static constexpr std::array<std::u8string_view, 0> names{};
-	};
-
 	template <typename Names, typename... Types>
-	class named_tuple
+	struct named_tuple
 	{
 		indexed_tuple<Types...> _tuple;
 
