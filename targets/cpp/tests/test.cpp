@@ -1,25 +1,25 @@
 #include "pch.h"
 #include "test.h"
 
-struct l_tuple_names1
+struct l_tuple_names_1
 {
 	static constexpr std::array<std::u8string_view, 3> names{ u8"Pcs", u8"Price", u8"Name" };
 };
 
-struct l_tuple_names2
+struct l_tuple_names_2
 {
 	static constexpr std::array<std::u8string_view, 3> names{ u8"Price", u8"Tax", u8"Discount" };
 };
 
-struct l_tuple_names5
+struct l_tuple_names_5
 {
-	static constexpr auto names = lovela::detail::array_cat(l_tuple_names1::names, l_tuple_names2::names);
+	static constexpr auto names = lovela::detail::array_cat(l_tuple_names_1::names, l_tuple_names_2::names);
 };
 
 TEST(NamedTuple, Concatenate) {
-	lovela::named_tuple<l_tuple_names1, int, double, std::string> obj1;
-	lovela::named_tuple<l_tuple_names2, double, double, double> obj2;
-	lovela::named_tuple<l_tuple_names5, int, double, std::string, double, double, double> obj3;
+	lovela::named_tuple<l_tuple_names_1, int, double, std::string> obj1;
+	lovela::named_tuple<l_tuple_names_2, double, double, double> obj2;
+	lovela::named_tuple<l_tuple_names_5, int, double, std::string, double, double, double> obj3;
 }
 
 TEST(IndexRebase, TestRebaseAndRange) {
@@ -90,7 +90,7 @@ TEST(IndexedTuple, GetIndex) {
 }
 
 TEST(NamedTuple, InitAndRange) {
-	lovela::named_tuple<l_tuple_names1, int, double, std::string> obj1;
+	lovela::named_tuple<l_tuple_names_1, int, double, std::string> obj1;
 	EXPECT_NO_THROW(obj1.set_size(3));
 	EXPECT_THROW(obj1.set_size(20), std::out_of_range);
 	EXPECT_EQ(obj1.get_size(), 3);
@@ -98,7 +98,7 @@ TEST(NamedTuple, InitAndRange) {
 }
 
 TEST(NamedTuple, SetGet) {
-	lovela::named_tuple<l_tuple_names1, int, double, std::string> obj1;
+	lovela::named_tuple<l_tuple_names_1, int, double, std::string> obj1;
 	EXPECT_NO_THROW(obj1.set_item<1>(123));
 	EXPECT_NO_THROW(obj1.set_item<2>(456.789));
 	EXPECT_NO_THROW(obj1.set_item<3>(std::string("abc")));
@@ -129,7 +129,7 @@ TEST(NamedTuple, SetGet) {
 }
 
 TEST(NamedTuple, Range) {
-	lovela::named_tuple<l_tuple_names1, int, double, std::string> obj1;
+	lovela::named_tuple<l_tuple_names_1, int, double, std::string> obj1;
 	int v1{};
 	EXPECT_THROW(obj1.get_item(3, v1), std::invalid_argument);
 	EXPECT_THROW(obj1.get_item(0, v1), std::out_of_range);
@@ -141,7 +141,7 @@ TEST(NamedTuple, Range) {
 }
 
 TEST(NamedTuple, GetIndex) {
-	lovela::named_tuple<l_tuple_names1, int, double, std::string> obj1;
+	lovela::named_tuple<l_tuple_names_1, int, double, std::string> obj1;
 	EXPECT_EQ(obj1.get_index(u8"1"), 1);
 	EXPECT_THROW(obj1.get_index(u8""), std::invalid_argument);
 	EXPECT_THROW(obj1.get_index(u8"null"), std::invalid_argument);
@@ -150,7 +150,7 @@ TEST(NamedTuple, GetIndex) {
 }
 
 TEST(NamedTuple, SetGetRuntimeName) {
-	lovela::named_tuple<l_tuple_names1, int, double, std::string> obj1;
+	lovela::named_tuple<l_tuple_names_1, int, double, std::string> obj1;
 	EXPECT_NO_THROW(obj1.set_item(u8"Pcs", 123));
 	EXPECT_NO_THROW(obj1.set_item(u8"Price", 123.456));
 	EXPECT_NO_THROW(obj1.set_item(u8"Name", std::string("abc")));
@@ -167,13 +167,13 @@ TEST(NamedTuple, SetGetRuntimeName) {
 }
 
 TEST(NamedTuple, GetRuntimeRandomAccess) {
-	lovela::named_tuple<l_tuple_names1, int, double, std::string> obj1;
+	lovela::named_tuple<l_tuple_names_1, int, double, std::string> obj1;
 	EXPECT_NO_THROW(obj1.set_item<1>(123));
 	EXPECT_NO_THROW(obj1.set_item<2>(123.456));
 	EXPECT_NO_THROW(obj1.set_item<3>(std::string("abc")));
 
 	size_t rnd = rand() % 3;
-	auto val = l_tuple_names1::names[rnd];
+	auto val = l_tuple_names_1::names[rnd];
 	std::u8string name(val.data(), val.size());
 
 	int v1{}; double v2{}; std::string v3;
@@ -200,19 +200,19 @@ TEST(NamedTuple, GetRuntimeRandomAccess) {
 	}
 }
 
-struct l_tuple_names3
+struct l_tuple_names_totalRest
 {
 	static constexpr std::array<std::u8string_view, 2> names{ u8"Total", u8"Rest" };
 };
 
-struct l_tuple_names4
+struct l_tuple_names_restTotal
 {
 	static constexpr std::array<std::u8string_view, 2> names{ u8"Rest", u8"Total" };
 };
 
 TEST(NamedTuple, CoexistingTuples) {
-	lovela::named_tuple<l_tuple_names3, int, int> totalRest;
-	lovela::named_tuple<l_tuple_names4, int, int> restTotal;
+	lovela::named_tuple<l_tuple_names_totalRest, int, int> totalRest;
+	lovela::named_tuple<l_tuple_names_restTotal, int, int> restTotal;
 
 	EXPECT_NO_THROW(totalRest.set_item(u8"Total", 111));
 	EXPECT_NO_THROW(totalRest.set_item(u8"Rest", 100));
