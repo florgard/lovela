@@ -3,17 +3,17 @@
 
 struct l_tuple_names_1
 {
-	static constexpr std::array<std::u8string_view, 3> names{ u8"Pcs", u8"Price", u8"Name" };
+	static constexpr std::array<std::u8string_view, 3> values{ u8"Pcs", u8"Price", u8"Name" };
 };
 
 struct l_tuple_names_2
 {
-	static constexpr std::array<std::u8string_view, 3> names{ u8"Price", u8"Tax", u8"Discount" };
+	static constexpr std::array<std::u8string_view, 3> values{ u8"Price", u8"Tax", u8"Discount" };
 };
 
 struct l_tuple_names_12
 {
-	static constexpr auto names = lovela::detail::array_cat(l_tuple_names_1::names, l_tuple_names_2::names);
+	static constexpr auto values = lovela::detail::array_cat(l_tuple_names_1::values, l_tuple_names_2::values);
 };
 
 TEST(NamedTuple, Concatenate) {
@@ -185,7 +185,7 @@ TEST(NamedTuple, GetRuntimeRandomAccess) {
 	EXPECT_NO_THROW(obj1.set_item<3>(std::string("abc")));
 
 	size_t rnd = rand() % 3;
-	auto val = l_tuple_names_1::names[rnd];
+	auto val = l_tuple_names_1::values[rnd];
 	std::u8string name(val.data(), val.size());
 
 	int v1{}; double v2{}; std::string v3;
@@ -214,12 +214,12 @@ TEST(NamedTuple, GetRuntimeRandomAccess) {
 
 struct l_tuple_names_totalRest
 {
-	static constexpr std::array<std::u8string_view, 2> names{ u8"Total", u8"Rest" };
+	static constexpr std::array<std::u8string_view, 2> values{ u8"Total", u8"Rest" };
 };
 
 struct l_tuple_names_restTotal
 {
-	static constexpr std::array<std::u8string_view, 2> names{ u8"Rest", u8"Total" };
+	static constexpr std::array<std::u8string_view, 2> values{ u8"Rest", u8"Total" };
 };
 
 TEST(NamedTuple, CoexistingTuples) {

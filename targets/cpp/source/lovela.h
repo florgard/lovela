@@ -200,7 +200,7 @@ namespace lovela
 		constexpr void set_size(size_t size) { _fixed_tuple.set_size(size); }
 		constexpr size_t get_index(std::u8string_view name) const
 		{
-			static constexpr auto names = names_t::names;
+			static constexpr auto names = names_t::values;
 
 			auto iter = std::find(names.begin(), names.end(), name);
 			if (iter != names.end())
