@@ -21,7 +21,7 @@ TEST(NamedTuple, Concatenate) {
 	lovela::named_tuple<l_tuple_names_2, std::tuple<double, double, double>> obj2{ {{7.75, 1.25, 0.1}} };
 
 	auto cat = std::tuple_cat(obj1.as_tuple(), obj2.as_tuple());
-	lovela::named_tuple<l_tuple_names_12, decltype(cat)> obj12{ {cat} };
+	lovela::named_tuple<l_tuple_names_12, decltype(cat)> obj12{ {std::move(cat)} };
 
 	double v1{};
 	EXPECT_NO_THROW(obj12.get_item(2, v1));
