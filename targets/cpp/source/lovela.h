@@ -46,6 +46,17 @@ namespace lovela
 			return index;
 		}
 
+		template<typename... Arrays>
+		constexpr auto array_cat(Arrays&... arrays)
+		{
+			std::array<std::common_type_t<typename Arrays::value_type...>, (std::tuple_size_v<Arrays> +...)> cat;
+
+			size_t i = 0;
+			([&](auto& arr) { for (auto& elem : arr) { cat[i++] = std::move(elem); } }(arrays), ...);
+
+			return cat;
+		}
+
 		template<class... Functions> struct overloaded : Functions... { using Functions::operator()...; };
 		template<class... Functions> overloaded(Functions...)->overloaded<Functions...>;
 	}
@@ -179,7 +190,7 @@ namespace lovela
 		static constexpr std::array<std::u8string_view, 0> names{};
 	};
 
-	template <size_t NamedTupleTypeOrdinal, typename... Types>
+	template <typename Names, typename... Types>
 	class named_tuple
 	{
 		indexed_tuple<Types...> _tuple;
@@ -189,7 +200,7 @@ namespace lovela
 		constexpr void set_size(size_t size) { _tuple.set_size(size); }
 		constexpr size_t get_index(std::u8string_view name) const
 		{
-			static constexpr auto names = named_tuple_names<NamedTupleTypeOrdinal>::names;
+			static constexpr auto names = Names::names;
 
 			auto iter = std::find(names.begin(), names.end(), name);
 			if (iter != names.end())
