@@ -115,17 +115,16 @@ namespace lovela
 		void add_item(Item&& item) { _items.emplace_back(std::move(item)); }
 	};
 
-	template <typename... Types>
+	template <typename tuple_t>
 	struct fixed_tuple
 	{
-		using tuple_t = std::tuple<Types...>;
 		using items_t = tuple_t;
 		items_t _items;
 
 		tuple_t& as_tuple() { return _items; }
 
 	private:
-		static constexpr size_t _size = std::tuple_size_v<std::tuple<Types...>>;
+		static constexpr size_t _size = std::tuple_size_v<tuple_t>;
 
 		static constexpr size_t rebase(size_t index) { return detail::rebase(index, _size); }
 
@@ -188,11 +187,10 @@ namespace lovela
 		template <typename Item> constexpr void add_item(Item&&) { throw std::out_of_range("an indexed tuple cannot be appended to"); }
 	};
 
-	template <typename Names, typename... Types>
+	template <typename names_t, typename tuple_t>
 	struct named_tuple
 	{
-		using fixed_tuple_t = fixed_tuple<Types...>;
-		using tuple_t = fixed_tuple_t::tuple_t;
+		using fixed_tuple_t = fixed_tuple<tuple_t>;
 
 		fixed_tuple_t _fixed_tuple;
 
@@ -202,7 +200,7 @@ namespace lovela
 		constexpr void set_size(size_t size) { _fixed_tuple.set_size(size); }
 		constexpr size_t get_index(std::u8string_view name) const
 		{
-			static constexpr auto names = Names::names;
+			static constexpr auto names = names_t::names;
 
 			auto iter = std::find(names.begin(), names.end(), name);
 			if (iter != names.end())
