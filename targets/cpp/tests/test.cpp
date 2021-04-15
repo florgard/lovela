@@ -7,6 +7,24 @@ struct lovela::named_tuple_names<1>
 	static constexpr std::array<std::u8string_view, 3> names{ u8"Pcs", u8"Price", u8"Name" };
 };
 
+template <>
+struct lovela::named_tuple_names<2>
+{
+	static constexpr std::array<std::u8string_view, 3> names{ u8"Price", u8"Tax", u8"Discount" };
+};
+
+template <>
+struct lovela::named_tuple_names<5>
+{
+	static constexpr auto names = lovela::detail::array_cat(lovela::named_tuple_names<1>::names, lovela::named_tuple_names<2>::names);
+};
+
+TEST(NamedTuple, Concatenate) {
+	lovela::named_tuple<lovela::named_tuple_names<1>, int, double, std::string> obj1;
+	lovela::named_tuple<lovela::named_tuple_names<2>, double, double, double> obj2;
+	lovela::named_tuple<lovela::named_tuple_names<5>, int, double, std::string, double, double, double> obj3;
+}
+
 TEST(IndexRebase, TestRebaseAndRange) {
 	EXPECT_EQ(lovela::detail::rebase(1, 10), 0);
 	EXPECT_EQ(lovela::detail::rebase(10, 10), 9);
