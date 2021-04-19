@@ -53,6 +53,10 @@ namespace lovela
 		}
 	}
 
+	struct None
+	{
+	};
+
 	template <typename Item, size_t _size>
 	class fixed_array
 	{
@@ -229,7 +233,44 @@ namespace lovela
 		template <typename Item> constexpr void add_item(Item&& item) { _fixed_tuple.add_item<Item>(std::move(item)); }
 	};
 
-	struct None
+	// Type casts
+
+	namespace detail
 	{
-	};
+		template <class T, size_t N, size_t... Is>
+		constexpr auto as_tuple(std::array<T, N> const& arr, std::index_sequence<Is...>)
+		{
+			return std::make_tuple(T{ arr[Is] }...);
+		}
+
+		template <class T, size_t N>
+		constexpr auto as_tuple(std::array<T, N> const& arr)
+		{
+			return as_tuple(arr, std::make_index_sequence<N>{});
+		}
+	}
+
+	template <typename... Items>
+	constexpr auto to_fixed_tuple(Items&&... items)
+	{
+		return fixed_tuple<std::tuple<Items...>>{ {std::move(items)...} };
+	}
+
+	template <typename... Items>
+	constexpr auto to_fixed_tuple(std::tuple<Items...>&& src)
+	{
+		return fixed_tuple<std::tuple<Items...>>{ std::move(src) };
+	}
+
+	template <typename Tuple>
+	constexpr auto to_fixed_tuple(fixed_tuple<Tuple>&& src)
+	{
+		return std::move(src);
+	}
+
+	template <typename Tuple, typename Names>
+	constexpr auto to_fixed_tuple(named_tuple<Names, Tuple>&& src)
+	{
+		return std::move(src.as_fixed_tuple());
+	}
 }

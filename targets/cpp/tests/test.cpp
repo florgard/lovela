@@ -16,6 +16,36 @@ struct l_tuple_names_12
 	static constexpr auto values = lovela::detail::array_cat(l_tuple_names_1::values, l_tuple_names_2::values);
 };
 
+TEST(Convert, ArrayToTuple) {
+	std::array<int, 3> obj1{ 5, 4, 10 };
+	auto obj2 = lovela::detail::as_tuple(obj1);
+	EXPECT_EQ(std::get<1>(obj2), 4);
+}
+
+TEST(Convert, ToFixedTuple) {
+	int v1{};
+	lovela::to_fixed_tuple(6).get_item<1>(v1);
+	EXPECT_EQ(v1, 6);
+	lovela::to_fixed_tuple(6, 23).get_item<2>(v1);
+	EXPECT_EQ(v1, 23);
+
+	double v2{};
+	EXPECT_NO_THROW(lovela::to_fixed_tuple(6, 23.5).get_item(2, v2));
+	EXPECT_EQ(v2, 23.5);
+
+	auto t = std::make_tuple(12.3, 45);
+	EXPECT_NO_THROW(lovela::to_fixed_tuple(std::move(t)).get_item(2, v1));
+	EXPECT_EQ(v1, 45);
+
+	auto ft = lovela::to_fixed_tuple(6, 1.5);
+	EXPECT_NO_THROW(lovela::to_fixed_tuple(std::move(ft)).get_item(2, v2));
+	EXPECT_EQ(v2, 1.5);
+
+	lovela::named_tuple<l_tuple_names_1, std::tuple<int, double, std::string>> nt{ {{10, 5.25, "Boots"}} };
+	EXPECT_NO_THROW(lovela::to_fixed_tuple(std::move(nt)).get_item(2, v2));
+	EXPECT_EQ(v2, 5.25);
+}
+
 TEST(NamedTuple, Concatenate) {
 	lovela::named_tuple<l_tuple_names_1, std::tuple<int, double, std::string>> obj1{ {{10, 5.25, "Boots"}} };
 	lovela::named_tuple<l_tuple_names_2, std::tuple<double, double, double>> obj2{ {{7.75, 1.25, 0.1}} };
