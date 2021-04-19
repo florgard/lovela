@@ -18,7 +18,7 @@ struct l_tuple_names_12
 
 TEST(Convert, ArrayToTuple) {
 	std::array<int, 3> obj1{ 5, 4, 10 };
-	auto obj2 = lovela::detail::as_tuple(obj1);
+	auto obj2 = lovela::detail::as_tuple(std::move(obj1));
 	EXPECT_EQ(std::get<1>(obj2), 4);
 }
 

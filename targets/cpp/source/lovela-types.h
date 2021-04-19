@@ -238,15 +238,15 @@ namespace lovela
 	namespace detail
 	{
 		template <class T, size_t N, size_t... Is>
-		constexpr auto as_tuple(std::array<T, N> const& arr, std::index_sequence<Is...>)
+		constexpr auto as_tuple(std::array<T, N>&& arr, std::index_sequence<Is...>)
 		{
-			return std::make_tuple(T{ arr[Is] }...);
+			return std::make_tuple(T{ std::move(arr[Is]) }...);
 		}
 
 		template <class T, size_t N>
-		constexpr auto as_tuple(std::array<T, N> const& arr)
+		constexpr auto as_tuple(std::array<T, N>&& arr)
 		{
-			return as_tuple(arr, std::make_index_sequence<N>{});
+			return as_tuple(std::move(arr), std::make_index_sequence<N>{});
 		}
 	}
 
