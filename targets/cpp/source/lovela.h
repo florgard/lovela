@@ -145,7 +145,7 @@ namespace lovela
 
 			if constexpr (visitIndex >= _size)
 			{
-				visitor;
+				static_cast<void>(visitor);
 				throw std::out_of_range("index out of range");
 			}
 			else if (index == visitIndex)
