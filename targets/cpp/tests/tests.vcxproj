@@ -33,7 +33,8 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
-    <ClInclude Include="..\include\lovela.h" />
+    <ClInclude Include="..\source\lovela-types.h" />
+    <ClInclude Include="..\source\lovela.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="test.h" />
   </ItemGroup>

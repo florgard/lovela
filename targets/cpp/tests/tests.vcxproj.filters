@@ -6,10 +6,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="..\include\lovela.h">
+    <ClInclude Include="test.h" />
+    <ClInclude Include="..\source\lovela-types.h">
       <Filter>lovela</Filter>
     </ClInclude>
-    <ClInclude Include="test.h" />
+    <ClInclude Include="..\source\lovela.h">
+      <Filter>lovela</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="lovela">
