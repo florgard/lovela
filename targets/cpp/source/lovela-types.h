@@ -190,7 +190,7 @@ namespace lovela
 		template <typename Item> constexpr void add_item(Item&&) { throw std::out_of_range("an indexed tuple cannot be appended to"); }
 	};
 
-	template <typename names_t, typename tuple_t>
+	template <typename tuple_t, typename names_t>
 	struct named_tuple
 	{
 		using fixed_tuple_t = fixed_tuple<tuple_t>;
