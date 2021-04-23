@@ -122,8 +122,8 @@ namespace lovela
 	{
 		tuple_t _items;
 
-		auto& as_tuple() { return _items; }
-		auto& as_fixed_tuple() { return *this; }
+		constexpr auto& as_tuple() { return _items; }
+		constexpr auto& as_fixed_tuple() { return *this; }
 		//named_tuple<default_tuple_names_t<_size>, tuple_t> as_named_tuple() { return { {{_items}} }; }
 
 	private:
@@ -171,6 +171,9 @@ namespace lovela
 		};
 
 	public:
+		template <size_t index>
+		using item_type = std::remove_reference_t<decltype(std::get<detail::rebase_v<index>>(_items))>;
+
 		constexpr size_t get_size() const { return _size; }
 		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("an indexed tuple cannot be resized"); } }
 		constexpr size_t get_index(std::u8string_view name) const { return detail::to_index(name, get_size()); }
@@ -197,9 +200,12 @@ namespace lovela
 
 		fixed_tuple_t _fixed_tuple;
 
-		auto& as_tuple() { return _fixed_tuple.as_tuple(); }
-		auto& as_fixed_tuple() { return _fixed_tuple; }
-		auto& as_named_tuple() { return *this; }
+		constexpr auto& as_tuple() { return _fixed_tuple.as_tuple(); }
+		constexpr auto& as_fixed_tuple() { return _fixed_tuple; }
+		constexpr auto& as_named_tuple() { return *this; }
+
+		template <size_t index>
+		using item_type = std::remove_reference_t<decltype(std::get<detail::rebase_v<index>>(_fixed_tuple._items))>;
 
 		constexpr size_t get_size() const { return _fixed_tuple.get_size(); }
 		constexpr void set_size(size_t size) { _fixed_tuple.set_size(size); }
