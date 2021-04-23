@@ -104,6 +104,8 @@ namespace lovela
 		[[nodiscard]] static constexpr size_t rebase(size_t index) { return detail::rebase(index, _size); }
 
 	public:
+		using item_type = Item;
+
 		[[nodiscard]] constexpr size_t get_size() const { return _size; }
 		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("a fixed array cannot be resized"); } }
 		[[nodiscard]] constexpr size_t get_index(std::u8string_view name) const { return detail::to_index(name, get_size()); }
@@ -134,6 +136,8 @@ namespace lovela
 		[[nodiscard]] constexpr size_t rebase(size_t index) const  { return detail::rebase(index, _items.size()); }
 
 	public:
+		using item_type = Item;
+
 		[[nodiscard]] constexpr size_t get_size() const { return _items.size(); }
 		constexpr void set_size(size_t size) { _items.resize(size); }
 		[[nodiscard]] constexpr size_t get_index(std::u8string_view name) const { return detail::to_index(name, get_size()); }
