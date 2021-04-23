@@ -271,6 +271,7 @@ TEST(DynamicArray, SetGetAddRange) {
 
 	std::string v1;
 	EXPECT_NO_THROW(obj1.set_item<1>("aaa"));
+	EXPECT_EQ(obj1.get_item<1>(), "aaa");
 	EXPECT_NO_THROW(obj1.get_item<1>(v1));
 	EXPECT_EQ(v1, "aaa");
 	EXPECT_NO_THROW(obj1.get_item(1, v1));
@@ -279,6 +280,7 @@ TEST(DynamicArray, SetGetAddRange) {
 	EXPECT_EQ(v1, "aaa");
 
 	EXPECT_NO_THROW(obj1.set_item(1, "bbb"));
+	EXPECT_EQ(obj1.get_item<1>(), "bbb");
 	EXPECT_NO_THROW(obj1.get_item<1>(v1));
 	EXPECT_EQ(v1, "bbb");
 	EXPECT_NO_THROW(obj1.get_item(1, v1));
@@ -287,6 +289,7 @@ TEST(DynamicArray, SetGetAddRange) {
 	EXPECT_EQ(v1, "bbb");
 
 	EXPECT_NO_THROW(obj1.set_item(u8"1", "ccc"));
+	EXPECT_EQ(obj1.get_item<1>(), "ccc");
 	EXPECT_NO_THROW(obj1.get_item<1>(v1));
 	EXPECT_EQ(v1, "ccc");
 	EXPECT_NO_THROW(obj1.get_item(1, v1));
@@ -351,6 +354,7 @@ TEST(FixedArray, SetGetAddRange) {
 
 	std::string v1;
 	EXPECT_NO_THROW(obj1.set_item<1>("aaa"));
+	EXPECT_EQ(obj1.get_item<1>(), "aaa");
 	EXPECT_NO_THROW(obj1.get_item<1>(v1));
 	EXPECT_EQ(v1, "aaa");
 	EXPECT_NO_THROW(obj1.get_item(1, v1));
@@ -359,6 +363,7 @@ TEST(FixedArray, SetGetAddRange) {
 	EXPECT_EQ(v1, "aaa");
 
 	EXPECT_NO_THROW(obj1.set_item(1, "bbb"));
+	EXPECT_EQ(obj1.get_item<1>(), "bbb");
 	EXPECT_NO_THROW(obj1.get_item<1>(v1));
 	EXPECT_EQ(v1, "bbb");
 	EXPECT_NO_THROW(obj1.get_item(1, v1));
@@ -367,6 +372,7 @@ TEST(FixedArray, SetGetAddRange) {
 	EXPECT_EQ(v1, "bbb");
 
 	EXPECT_NO_THROW(obj1.set_item(u8"1", "ccc"));
+	EXPECT_EQ(obj1.get_item<1>(), "ccc");
 	EXPECT_NO_THROW(obj1.get_item<1>(v1));
 	EXPECT_EQ(v1, "ccc");
 	EXPECT_NO_THROW(obj1.get_item(1, v1));

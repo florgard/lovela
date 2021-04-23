@@ -108,8 +108,11 @@ namespace lovela
 		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("a fixed array cannot be resized"); } }
 		constexpr size_t get_index(std::u8string_view name) const { return detail::to_index(name, get_size()); }
 
+		template <size_t index> auto& get_item() { return get_item(index); }
 		template <size_t index> void get_item(Item& item) { get_item(index, item); }
+		auto& get_item(size_t index) { return _items.at(rebase(index)); }
 		void get_item(size_t index, Item& item) { item = _items.at(rebase(index)); }
+		auto& get_item(std::u8string_view name) { return get_item(get_index(name)); }
 		void get_item(std::u8string_view name, Item& item) { get_item(get_index(name), item); }
 
 		template <size_t index> void set_item(const Item& item) { set_item(index, item); }
@@ -135,8 +138,11 @@ namespace lovela
 		void set_size(size_t size) { _items.resize(size); }
 		size_t get_index(std::u8string_view name) const { return detail::to_index(name, get_size()); }
 
+		template <size_t index> auto& get_item() { return get_item(index); }
 		template <size_t index> void get_item(Item& item) { get_item(index, item); }
+		auto& get_item(size_t index) { return _items.at(rebase(index)); }
 		void get_item(size_t index, Item& item) { item = _items.at(rebase(index)); }
+		auto& get_item(std::u8string_view name) { return get_item(get_index(name)); }
 		void get_item(std::u8string_view name, Item& item) { get_item(get_index(name), item); }
 
 		template <size_t index> void set_item(const Item& item) { set_item(index, item); }
