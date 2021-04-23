@@ -460,6 +460,11 @@ TEST(FixedTuple, Combine) {
 	EXPECT_EQ(v1, 7.75);
 }
 
+struct l_tuple_names_combined
+{
+	static constexpr auto values = std::array<std::u8string_view, 3>{ l_tuple_names_2::values[0], l_tuple_names_1::values[0], l_tuple_names_1::values[2] };
+};
+
 TEST(NamedTuple, Combine) {
 	lovela::named_tuple<std::tuple<int, double, std::string>, l_tuple_names_1> obj1{ {{10, 5.25, "Boots"}} };
 	lovela::named_tuple<std::tuple<double, double, double>, l_tuple_names_2> obj2{ {{7.75, 1.25, 0.1}} };
@@ -474,10 +479,10 @@ TEST(NamedTuple, Combine) {
 	obj1.get_item<1>(item2);
 	item3_type item3;
 	obj1.get_item<3>(item3);
-	lovela::fixed_tuple<combined_type> obj3{ std::make_tuple(item1, item2, item3) };
+	lovela::named_tuple<combined_type, l_tuple_names_combined> obj3{ std::make_tuple(item1, item2, item3) };
 
 	double v1{};
-	EXPECT_NO_THROW(obj3.get_item(1, v1));
+	EXPECT_NO_THROW(obj3.get_item(u8"Price", v1));
 	EXPECT_EQ(v1, 7.75);
 }
 
