@@ -186,7 +186,9 @@ namespace lovela
 
 		template <size_t index> [[nodiscard]] constexpr auto& get_item() { return detail::checked_tuple_get<index, tuple_t>(_items); };
 		template <size_t index, typename Item> constexpr void get_item(Item& item) { item = detail::checked_tuple_get<index, tuple_t, Item>(_items); };
+		template <typename Item> [[nodiscard]] constexpr auto get_item(size_t index) { Item item; detail::visit<Item, tuple_t>(_items, index, [&](Item& elem) { item = elem; }); return item; }
 		template <typename Item> constexpr void get_item(size_t index, Item& item) { detail::visit<Item, tuple_t>(_items, index, [&](Item& elem) { item = elem; }); }
+		template <typename Item> [[nodiscard]] constexpr auto get_item(std::u8string_view name) { return get_item<Item>(get_index(name)); }
 		template <typename Item> constexpr void get_item(std::u8string_view name, Item& item) { get_item(get_index(name), item); }
 
 		template <size_t index, typename Item> constexpr void set_item(const Item& item) { detail::checked_tuple_get<index, tuple_t, Item>(_items) = item; };
@@ -237,7 +239,9 @@ namespace lovela
 
 		template <size_t index> [[nodiscard]] constexpr auto& get_item() { return detail::checked_tuple_get<index, tuple_t>(_items); };
 		template <size_t index, typename Item> constexpr void get_item(Item& item) { item = detail::checked_tuple_get<index, tuple_t, Item>(_items); };
+		template <typename Item> [[nodiscard]] constexpr auto get_item(size_t index) { Item item; detail::visit<Item, tuple_t>(_items, index, [&](Item& elem) { item = elem; }); return item; }
 		template <typename Item> constexpr void get_item(size_t index, Item& item) { detail::visit<Item, tuple_t>(_items, index, [&](Item& elem) { item = elem; }); }
+		template <typename Item> [[nodiscard]] constexpr auto get_item(std::u8string_view name) { return get_item<Item>(get_index(name)); }
 		template <typename Item> constexpr void get_item(std::u8string_view name, Item& item) { get_item(get_index(name), item); }
 
 		template <size_t index, typename Item> constexpr void set_item(const Item& item) { detail::checked_tuple_get<index, tuple_t, Item>(_items) = item; };

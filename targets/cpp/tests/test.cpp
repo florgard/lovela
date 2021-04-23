@@ -44,8 +44,10 @@ TEST(FixedTuple, SetGet) {
 	EXPECT_EQ(obj1.get_item<1>(), 123);
 	EXPECT_NO_THROW(obj1.get_item<1>(v1));
 	EXPECT_EQ(v1, 123);
+	EXPECT_EQ(obj1.get_item<int>(1), 123);
 	EXPECT_NO_THROW(obj1.get_item(1, v1));
 	EXPECT_EQ(v1, 123);
+	EXPECT_EQ(obj1.get_item<int>(u8"1"), 123);
 	EXPECT_NO_THROW(obj1.get_item(u8"1", v1));
 	EXPECT_EQ(v1, 123);
 
@@ -53,8 +55,10 @@ TEST(FixedTuple, SetGet) {
 	EXPECT_EQ(obj1.get_item<2>(), 456.789);
 	EXPECT_NO_THROW(obj1.get_item<2>(v2));
 	EXPECT_EQ(v2, 456.789);
+	EXPECT_EQ(obj1.get_item<double>(2), 456.789);
 	EXPECT_NO_THROW(obj1.get_item(2, v2));
 	EXPECT_EQ(v2, 456.789);
+	EXPECT_EQ(obj1.get_item<double>(u8"2"), 456.789);
 	EXPECT_NO_THROW(obj1.get_item(u8"2", v2));
 	EXPECT_EQ(v2, 456.789);
 
@@ -62,8 +66,10 @@ TEST(FixedTuple, SetGet) {
 	EXPECT_EQ(obj1.get_item<3>(), "abc");
 	EXPECT_NO_THROW(obj1.get_item<3>(v3));
 	EXPECT_EQ(v3, "abc");
+	EXPECT_EQ(obj1.get_item<std::string>(3), "abc");
 	EXPECT_NO_THROW(obj1.get_item(3, v3));
 	EXPECT_EQ(v3, "abc");
+	EXPECT_EQ(obj1.get_item<std::string>(u8"3"), "abc");
 	EXPECT_NO_THROW(obj1.get_item(u8"3", v3));
 	EXPECT_EQ(v3, "abc");
 }
@@ -107,8 +113,10 @@ TEST(NamedTuple, SetGet) {
 	EXPECT_EQ(obj1.get_item<1>(), 123);
 	EXPECT_NO_THROW(obj1.get_item<1>(v1));
 	EXPECT_EQ(v1, 123);
+	EXPECT_EQ(obj1.get_item<int>(1), 123);
 	EXPECT_NO_THROW(obj1.get_item(1, v1));
 	EXPECT_EQ(v1, 123);
+	EXPECT_EQ(obj1.get_item<int>(u8"1"), 123);
 	EXPECT_NO_THROW(obj1.get_item(u8"1", v1));
 	EXPECT_EQ(v1, 123);
 
@@ -116,8 +124,10 @@ TEST(NamedTuple, SetGet) {
 	EXPECT_EQ(obj1.get_item<2>(), 456.789);
 	EXPECT_NO_THROW(obj1.get_item<2>(v2));
 	EXPECT_EQ(v2, 456.789);
+	EXPECT_EQ(obj1.get_item<double>(2), 456.789);
 	EXPECT_NO_THROW(obj1.get_item(2, v2));
 	EXPECT_EQ(v2, 456.789);
+	EXPECT_EQ(obj1.get_item<double>(u8"2"), 456.789);
 	EXPECT_NO_THROW(obj1.get_item(u8"2", v2));
 	EXPECT_EQ(v2, 456.789);
 
@@ -125,8 +135,10 @@ TEST(NamedTuple, SetGet) {
 	EXPECT_EQ(obj1.get_item<3>(), "abc");
 	EXPECT_NO_THROW(obj1.get_item<3>(v3));
 	EXPECT_EQ(v3, "abc");
+	EXPECT_EQ(obj1.get_item<std::string>(3), "abc");
 	EXPECT_NO_THROW(obj1.get_item(3, v3));
 	EXPECT_EQ(v3, "abc");
+	EXPECT_EQ(obj1.get_item<std::string>(u8"3"), "abc");
 	EXPECT_NO_THROW(obj1.get_item(u8"3", v3));
 	EXPECT_EQ(v3, "abc");
 }
