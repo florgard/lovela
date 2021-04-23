@@ -472,17 +472,8 @@ TEST(FixedTuple, Combine) {
 	lovela::fixed_tuple<std::tuple<int, double, std::string>> obj1{ {10, 5.25, "Boots"} };
 	lovela::fixed_tuple<std::tuple<double, double, double>> obj2{ {7.75, 1.25, 0.1} };
 
-	using item1_type = decltype(obj2)::item_type<1>;
-	using item2_type = decltype(obj1)::item_type<1>;
-	using item3_type = decltype(obj1)::item_type<3>;
-	using combined_type = std::tuple<item1_type, item2_type, item3_type>;
-	item1_type item1;
-	obj2.get_item<1>(item1);
-	item2_type item2;
-	obj1.get_item<1>(item2);
-	item3_type item3;
-	obj1.get_item<3>(item3);
-	lovela::fixed_tuple<combined_type> obj3{ std::make_tuple(item1, item2, item3) };
+	using combined_type = decltype(std::make_tuple(obj2.get_item<1>(), obj1.get_item<1>(), obj1.get_item<3>()));
+	lovela::fixed_tuple<combined_type> obj3{ std::make_tuple(obj2.get_item<1>(), obj1.get_item<1>(), obj1.get_item<3>()) };
 
 	double v1{};
 	EXPECT_NO_THROW(obj3.get_item(1, v1));
@@ -498,17 +489,8 @@ TEST(NamedTuple, Combine) {
 	lovela::named_tuple<std::tuple<int, double, std::string>, l_tuple_names_1> obj1{ {10, 5.25, "Boots"} };
 	lovela::named_tuple<std::tuple<double, double, double>, l_tuple_names_2> obj2{ {7.75, 1.25, 0.1} };
 
-	using item1_type = decltype(obj2)::item_type<1>;
-	using item2_type = decltype(obj1)::item_type<1>;
-	using item3_type = decltype(obj1)::item_type<3>;
-	using combined_type = std::tuple<item1_type, item2_type, item3_type>;
-	item1_type item1;
-	obj2.get_item<1>(item1);
-	item2_type item2;
-	obj1.get_item<1>(item2);
-	item3_type item3;
-	obj1.get_item<3>(item3);
-	lovela::named_tuple<combined_type, l_tuple_names_combined> obj3{ std::make_tuple(item1, item2, item3) };
+	using combined_type = decltype(std::make_tuple(obj2.get_item<1>(), obj1.get_item<1>(), obj1.get_item<3>()));
+	lovela::named_tuple<combined_type, l_tuple_names_combined> obj3{ std::make_tuple(obj2.get_item<1>(), obj1.get_item<1>(), obj1.get_item<3>()) };
 
 	double v1{};
 	EXPECT_NO_THROW(obj3.get_item(u8"Price", v1));
