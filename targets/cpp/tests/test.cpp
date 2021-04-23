@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "test.h"
 
+#pragma warning(push)
+#pragma warning(disable:4834)
+
 struct l_tuple_names_1
 {
 	static constexpr auto values = std::array<std::u8string_view, 3>{ u8"Pcs", u8"Price", u8"Name" };
@@ -402,6 +405,8 @@ TEST(FixedArray, GetIndex) {
 	EXPECT_THROW(obj1.get_index(u8"0"), std::out_of_range);
 	EXPECT_THROW(obj1.get_index(u8"21"), std::out_of_range);
 }
+
+#pragma warning(pop) // 4834
 
 TEST(Convert, ArrayToTuple) {
 	std::array<int, 3> obj1{ 5, 4, 10 };

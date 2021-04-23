@@ -38,7 +38,7 @@ namespace lovela
 		};
 
 		template <typename Item, typename Tuple, size_t visitIndex = 0>
-		void visit(Tuple& tuple, size_t index, auto&& visitor)
+		constexpr void visit(Tuple& tuple, size_t index, auto&& visitor)
 		{
 			if constexpr (!visitIndex)
 			{
@@ -81,7 +81,7 @@ namespace lovela
 		}
 
 		template<typename... Arrays>
-		constexpr auto array_cat(Arrays&... arrays)
+		[[nodiscard]] constexpr auto array_cat(Arrays&... arrays)
 		{
 			std::array<std::common_type_t<typename Arrays::value_type...>, (std::tuple_size_v<Arrays> +...)> cat;
 
@@ -101,18 +101,18 @@ namespace lovela
 	{
 		std::array<Item, _size> _items;
 
-		static constexpr size_t rebase(size_t index) { return detail::rebase(index, _size); }
+		[[nodiscard]] static constexpr size_t rebase(size_t index) { return detail::rebase(index, _size); }
 
 	public:
-		constexpr size_t get_size() const { return _size; }
+		[[nodiscard]] constexpr size_t get_size() const { return _size; }
 		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("a fixed array cannot be resized"); } }
-		constexpr size_t get_index(std::u8string_view name) const { return detail::to_index(name, get_size()); }
+		[[nodiscard]] constexpr size_t get_index(std::u8string_view name) const { return detail::to_index(name, get_size()); }
 
-		template <size_t index> constexpr auto& get_item() { return get_item(index); }
+		template <size_t index> [[nodiscard]] constexpr auto& get_item() { return get_item(index); }
 		template <size_t index> constexpr void get_item(Item& item) { get_item(index, item); }
-		constexpr auto& get_item(size_t index) { return _items.at(rebase(index)); }
+		[[nodiscard]] constexpr auto& get_item(size_t index) { return _items.at(rebase(index)); }
 		constexpr void get_item(size_t index, Item& item) { item = _items.at(rebase(index)); }
-		constexpr auto& get_item(std::u8string_view name) { return get_item(get_index(name)); }
+		[[nodiscard]] constexpr auto& get_item(std::u8string_view name) { return get_item(get_index(name)); }
 		constexpr void get_item(std::u8string_view name, Item& item) { get_item(get_index(name), item); }
 
 		template <size_t index> constexpr void set_item(const Item& item) { set_item(index, item); }
@@ -131,18 +131,18 @@ namespace lovela
 	{
 		std::vector<Item> _items;
 
-		constexpr size_t rebase(size_t index) const  { return detail::rebase(index, _items.size()); }
+		[[nodiscard]] constexpr size_t rebase(size_t index) const  { return detail::rebase(index, _items.size()); }
 
 	public:
-		constexpr size_t get_size() const { return _items.size(); }
+		[[nodiscard]] constexpr size_t get_size() const { return _items.size(); }
 		constexpr void set_size(size_t size) { _items.resize(size); }
-		constexpr size_t get_index(std::u8string_view name) const { return detail::to_index(name, get_size()); }
+		[[nodiscard]] constexpr size_t get_index(std::u8string_view name) const { return detail::to_index(name, get_size()); }
 
-		template <size_t index> constexpr auto& get_item() { return get_item(index); }
+		template <size_t index> [[nodiscard]] constexpr auto& get_item() { return get_item(index); }
 		template <size_t index> constexpr void get_item(Item& item) { get_item(index, item); }
-		constexpr auto& get_item(size_t index) { return _items.at(rebase(index)); }
+		[[nodiscard]] constexpr auto& get_item(size_t index) { return _items.at(rebase(index)); }
 		constexpr void get_item(size_t index, Item& item) { item = _items.at(rebase(index)); }
-		constexpr auto& get_item(std::u8string_view name) { return get_item(get_index(name)); }
+		[[nodiscard]] constexpr auto& get_item(std::u8string_view name) { return get_item(get_index(name)); }
 		constexpr void get_item(std::u8string_view name, Item& item) { get_item(get_index(name), item); }
 
 		template <size_t index> constexpr void set_item(const Item& item) { set_item(index, item); }
@@ -174,17 +174,17 @@ namespace lovela
 	private:
 		static constexpr size_t _size = std::tuple_size_v<tuple_t>;
 
-		static constexpr size_t rebase(size_t index) { return detail::rebase(index, _size); }
+		[[nodiscard]] static constexpr size_t rebase(size_t index) { return detail::rebase(index, _size); }
 
 	public:
 		template <size_t index>
 		using item_type = std::remove_reference_t<decltype(std::get<detail::rebase_v<index>>(_items))>;
 
-		constexpr size_t get_size() const { return _size; }
+		[[nodiscard]] constexpr size_t get_size() const { return _size; }
 		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("a fixed tuple cannot be resized"); } }
-		constexpr size_t get_index(std::u8string_view name) const { return detail::to_index(name, get_size()); }
+		[[nodiscard]] constexpr size_t get_index(std::u8string_view name) const { return detail::to_index(name, get_size()); }
 
-		template <size_t index> constexpr auto& get_item() { return detail::checked_tuple_get<index, tuple_t>(_items); };
+		template <size_t index> [[nodiscard]] constexpr auto& get_item() { return detail::checked_tuple_get<index, tuple_t>(_items); };
 		template <size_t index, typename Item> constexpr void get_item(Item& item) { item = detail::checked_tuple_get<index, tuple_t, Item>(_items); };
 		template <typename Item> constexpr void get_item(size_t index, Item& item) { detail::visit<Item, tuple_t>(_items, index, [&](Item& elem) { item = elem; }); }
 		template <typename Item> constexpr void get_item(std::u8string_view name, Item& item) { get_item(get_index(name), item); }
@@ -205,22 +205,22 @@ namespace lovela
 	{
 		tuple_t _items;
 
-		constexpr auto& as_tuple() { return _items; }
-		constexpr auto as_fixed_tuple() { return fixed_tuple<tuple_t>{ _items }; }
-		constexpr auto& as_named_tuple() { return *this; }
+		[[nodiscard]] constexpr auto& as_tuple() { return _items; }
+		[[nodiscard]] constexpr auto as_fixed_tuple() { return fixed_tuple<tuple_t>{ _items }; }
+		[[nodiscard]] constexpr auto& as_named_tuple() { return *this; }
 
 	private:
 		static constexpr size_t _size = std::tuple_size_v<tuple_t>;
 
-		static constexpr size_t rebase(size_t index) { return detail::rebase(index, _size); }
+		[[nodiscard]] static constexpr size_t rebase(size_t index) { return detail::rebase(index, _size); }
 
 	public:
 		template <size_t index>
 		using item_type = std::remove_reference_t<decltype(std::get<detail::rebase_v<index>>(_items))>;
 
-		constexpr size_t get_size() const { return _size; }
+		[[nodiscard]] constexpr size_t get_size() const { return _size; }
 		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("a named tuple cannot be resized"); } }
-		constexpr size_t get_index(std::u8string_view name) const
+		[[nodiscard]] constexpr size_t get_index(std::u8string_view name) const
 		{
 			static constexpr auto names = names_t::values;
 
@@ -235,7 +235,7 @@ namespace lovela
 			}
 		}
 
-		template <size_t index> constexpr auto& get_item() { return detail::checked_tuple_get<index, tuple_t>(_items); };
+		template <size_t index> [[nodiscard]] constexpr auto& get_item() { return detail::checked_tuple_get<index, tuple_t>(_items); };
 		template <size_t index, typename Item> constexpr void get_item(Item& item) { item = detail::checked_tuple_get<index, tuple_t, Item>(_items); };
 		template <typename Item> constexpr void get_item(size_t index, Item& item) { detail::visit<Item, tuple_t>(_items, index, [&](Item& elem) { item = elem; }); }
 		template <typename Item> constexpr void get_item(std::u8string_view name, Item& item) { get_item(get_index(name), item); }
@@ -256,38 +256,38 @@ namespace lovela
 	namespace detail
 	{
 		template <class T, size_t N, size_t... Is>
-		constexpr auto as_tuple(std::array<T, N>&& arr, std::index_sequence<Is...>)
+		[[nodiscard]] constexpr auto as_tuple(std::array<T, N>&& arr, std::index_sequence<Is...>)
 		{
 			return std::make_tuple(T{ std::move(arr[Is]) }...);
 		}
 
 		template <class T, size_t N>
-		constexpr auto as_tuple(std::array<T, N>&& arr)
+		[[nodiscard]] constexpr auto as_tuple(std::array<T, N>&& arr)
 		{
 			return as_tuple(std::move(arr), std::make_index_sequence<N>{});
 		}
 	}
 
 	template <typename... Items>
-	constexpr auto to_fixed_tuple(Items&&... items)
+	[[nodiscard]] constexpr auto to_fixed_tuple(Items&&... items)
 	{
 		return fixed_tuple<std::tuple<Items...>>{ {std::move(items)...} };
 	}
 
 	template <typename... Items>
-	constexpr auto to_fixed_tuple(std::tuple<Items...>&& src)
+	[[nodiscard]] constexpr auto to_fixed_tuple(std::tuple<Items...>&& src)
 	{
 		return fixed_tuple<std::tuple<Items...>>{ std::move(src) };
 	}
 
 	template <typename Tuple>
-	constexpr auto to_fixed_tuple(fixed_tuple<Tuple>&& src)
+	[[nodiscard]] constexpr auto to_fixed_tuple(fixed_tuple<Tuple>&& src)
 	{
 		return std::move(src);
 	}
 
 	template <typename Tuple, typename Names>
-	constexpr auto to_fixed_tuple(named_tuple<Names, Tuple>&& src)
+	[[nodiscard]] constexpr auto to_fixed_tuple(named_tuple<Names, Tuple>&& src)
 	{
 		return std::move(src.as_fixed_tuple());
 	}
