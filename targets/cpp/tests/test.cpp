@@ -38,6 +38,7 @@ TEST(FixedTuple, SetGet) {
 	EXPECT_NO_THROW(obj1.set_item<3>(std::string("abc")));
 
 	int v1{};
+	EXPECT_EQ(obj1.get_item<1>(), 123);
 	EXPECT_NO_THROW(obj1.get_item<1>(v1));
 	EXPECT_EQ(v1, 123);
 	EXPECT_NO_THROW(obj1.get_item(1, v1));
@@ -46,6 +47,7 @@ TEST(FixedTuple, SetGet) {
 	EXPECT_EQ(v1, 123);
 
 	double v2{};
+	EXPECT_EQ(obj1.get_item<2>(), 456.789);
 	EXPECT_NO_THROW(obj1.get_item<2>(v2));
 	EXPECT_EQ(v2, 456.789);
 	EXPECT_NO_THROW(obj1.get_item(2, v2));
@@ -54,6 +56,7 @@ TEST(FixedTuple, SetGet) {
 	EXPECT_EQ(v2, 456.789);
 
 	std::string v3{};
+	EXPECT_EQ(obj1.get_item<3>(), "abc");
 	EXPECT_NO_THROW(obj1.get_item<3>(v3));
 	EXPECT_EQ(v3, "abc");
 	EXPECT_NO_THROW(obj1.get_item(3, v3));
@@ -98,6 +101,7 @@ TEST(NamedTuple, SetGet) {
 	EXPECT_NO_THROW(obj1.set_item<3>(std::string("abc")));
 
 	int v1{};
+	EXPECT_EQ(obj1.get_item<1>(), 123);
 	EXPECT_NO_THROW(obj1.get_item<1>(v1));
 	EXPECT_EQ(v1, 123);
 	EXPECT_NO_THROW(obj1.get_item(1, v1));
@@ -106,6 +110,7 @@ TEST(NamedTuple, SetGet) {
 	EXPECT_EQ(v1, 123);
 
 	double v2{};
+	EXPECT_EQ(obj1.get_item<2>(), 456.789);
 	EXPECT_NO_THROW(obj1.get_item<2>(v2));
 	EXPECT_EQ(v2, 456.789);
 	EXPECT_NO_THROW(obj1.get_item(2, v2));
@@ -114,6 +119,7 @@ TEST(NamedTuple, SetGet) {
 	EXPECT_EQ(v2, 456.789);
 
 	std::string v3{};
+	EXPECT_EQ(obj1.get_item<3>(), "abc");
 	EXPECT_NO_THROW(obj1.get_item<3>(v3));
 	EXPECT_EQ(v3, "abc");
 	EXPECT_NO_THROW(obj1.get_item(3, v3));

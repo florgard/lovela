@@ -28,7 +28,7 @@ namespace lovela
 			return index - 1;
 		}
 
-		template <size_t index, typename Tuple, typename Item = std::tuple_element<index, Tuple>::type>
+		template <size_t index, typename Tuple, typename Item = std::tuple_element<rebase_v<index>, Tuple>::type>
 		[[nodiscard]] constexpr auto& checked_tuple_get(Tuple& tuple)
 		{
 			static constexpr size_t rebased = detail::rebase_v<index>;
@@ -178,6 +178,7 @@ namespace lovela
 		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("an indexed tuple cannot be resized"); } }
 		constexpr size_t get_index(std::u8string_view name) const { return detail::to_index(name, get_size()); }
 
+		template <size_t index> constexpr auto& get_item() { return detail::checked_tuple_get<index, tuple_t>(_items); };
 		template <size_t index, typename Item> constexpr void get_item(Item& item) { item = detail::checked_tuple_get<index, tuple_t, Item>(_items); };
 		template <typename Item> constexpr void get_item(size_t index, Item& item) { detail::visit<Item, tuple_t>(_items, index, [&](Item& elem) { item = elem; }); }
 		template <typename Item> constexpr void get_item(std::u8string_view name, Item& item) { get_item(get_index(name), item); }
@@ -228,6 +229,7 @@ namespace lovela
 			}
 		}
 
+		template <size_t index> constexpr auto& get_item() { return detail::checked_tuple_get<index, tuple_t>(_items); };
 		template <size_t index, typename Item> constexpr void get_item(Item& item) { item = detail::checked_tuple_get<index, tuple_t, Item>(_items); };
 		template <typename Item> constexpr void get_item(size_t index, Item& item) { detail::visit<Item, tuple_t>(_items, index, [&](Item& elem) { item = elem; }); }
 		template <typename Item> constexpr void get_item(std::u8string_view name, Item& item) { get_item(get_index(name), item); }
