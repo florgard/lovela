@@ -175,7 +175,7 @@ namespace lovela
 		using item_type = std::remove_reference_t<decltype(std::get<detail::rebase_v<index>>(_items))>;
 
 		constexpr size_t get_size() const { return _size; }
-		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("an indexed tuple cannot be resized"); } }
+		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("a fixed tuple cannot be resized"); } }
 		constexpr size_t get_index(std::u8string_view name) const { return detail::to_index(name, get_size()); }
 
 		template <size_t index> constexpr auto& get_item() { return detail::checked_tuple_get<index, tuple_t>(_items); };
@@ -190,8 +190,8 @@ namespace lovela
 		template <typename Item> constexpr void set_item(std::u8string_view name, const Item& item) { set_item(get_index(name), item); }
 		template <typename Item> constexpr void set_item(std::u8string_view name, Item&& item) { set_item(get_index(name), std::move(item)); }
 
-		template <typename Item> constexpr void add_item(const Item&) { throw std::out_of_range("an indexed tuple cannot be appended to"); }
-		template <typename Item> constexpr void add_item(Item&&) { throw std::out_of_range("an indexed tuple cannot be appended to"); }
+		template <typename Item> constexpr void add_item(const Item&) { throw std::out_of_range("a fixed tuple cannot be appended to"); }
+		template <typename Item> constexpr void add_item(Item&&) { throw std::out_of_range("a fixed tuple cannot be appended to"); }
 	};
 
 	template <typename tuple_t, typename names_t>
