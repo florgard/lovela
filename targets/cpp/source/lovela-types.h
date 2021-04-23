@@ -178,7 +178,7 @@ namespace lovela
 
 	public:
 		template <size_t index>
-		using item_type = std::remove_reference_t<decltype(std::get<detail::rebase_v<index>>(_items))>;
+		using item_type = std::tuple_element<detail::rebase_v<index>, tuple_t>::type;
 
 		[[nodiscard]] constexpr size_t get_size() const { return _size; }
 		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("a fixed tuple cannot be resized"); } }
@@ -218,7 +218,7 @@ namespace lovela
 
 	public:
 		template <size_t index>
-		using item_type = std::remove_reference_t<decltype(std::get<detail::rebase_v<index>>(_items))>;
+		using item_type = std::tuple_element<detail::rebase_v<index>, tuple_t>::type;
 
 		[[nodiscard]] constexpr size_t get_size() const { return _size; }
 		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("a named tuple cannot be resized"); } }
