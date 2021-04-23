@@ -416,14 +416,14 @@ TEST(Convert, ToFixedTuple) {
 	EXPECT_NO_THROW(lovela::to_fixed_tuple(std::move(ft)).get_item(2, v2));
 	EXPECT_EQ(v2, 1.5);
 
-	lovela::named_tuple<std::tuple<int, double, std::string>, l_tuple_names_1> nt{ {{10, 5.25, "Boots"}} };
+	lovela::named_tuple<std::tuple<int, double, std::string>, l_tuple_names_1> nt{ {10, 5.25, "Boots"} };
 	EXPECT_NO_THROW(lovela::to_fixed_tuple(std::move(nt)).get_item(2, v2));
 	EXPECT_EQ(v2, 5.25);
 }
 
 TEST(NamedTuple, Concatenate) {
-	lovela::named_tuple<std::tuple<int, double, std::string>, l_tuple_names_1> obj1{ {{10, 5.25, "Boots"}} };
-	lovela::named_tuple<std::tuple<double, double, double>, l_tuple_names_2> obj2{ {{7.75, 1.25, 0.1}} };
+	lovela::named_tuple<std::tuple<int, double, std::string>, l_tuple_names_1> obj1{ {10, 5.25, "Boots"} };
+	lovela::named_tuple<std::tuple<double, double, double>, l_tuple_names_2> obj2{ {7.75, 1.25, 0.1} };
 
 	auto cat = std::tuple_cat(obj1.as_tuple(), obj2.as_tuple());
 	lovela::named_tuple<decltype(cat), l_tuple_names_12> obj12{ {std::move(cat)} };
@@ -466,8 +466,8 @@ struct l_tuple_names_combined
 };
 
 TEST(NamedTuple, Combine) {
-	lovela::named_tuple<std::tuple<int, double, std::string>, l_tuple_names_1> obj1{ {{10, 5.25, "Boots"}} };
-	lovela::named_tuple<std::tuple<double, double, double>, l_tuple_names_2> obj2{ {{7.75, 1.25, 0.1}} };
+	lovela::named_tuple<std::tuple<int, double, std::string>, l_tuple_names_1> obj1{ {10, 5.25, "Boots"} };
+	lovela::named_tuple<std::tuple<double, double, double>, l_tuple_names_2> obj2{ {7.75, 1.25, 0.1} };
 
 	using item1_type = decltype(obj2)::item_type<1>;
 	using item2_type = decltype(obj1)::item_type<1>;
