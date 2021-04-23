@@ -31,9 +31,9 @@ namespace lovela
 		template <size_t index, typename Tuple, typename Item = std::tuple_element<rebase_v<index>, Tuple>::type>
 		[[nodiscard]] constexpr auto& checked_tuple_get(Tuple& tuple)
 		{
-			static constexpr size_t rebased = detail::rebase_v<index>;
+			static constexpr size_t rebased = rebase_v<index>;
 			static_assert(rebased < std::tuple_size_v<Tuple>, "index out of bounds");
-			static_assert(detail::is_same_tuple_element<Item, Tuple, rebased>, "invalid access type");
+			static_assert(is_same_tuple_element<Item, Tuple, rebased>, "invalid access type");
 			return std::get<rebased>(tuple);
 		};
 
@@ -42,7 +42,7 @@ namespace lovela
 		{
 			if constexpr (!visitIndex)
 			{
-				index = detail::rebase(index, std::tuple_size_v<Tuple>);
+				index = rebase(index, std::tuple_size_v<Tuple>);
 			}
 
 			if constexpr (visitIndex >= std::tuple_size_v<Tuple>)
@@ -52,7 +52,7 @@ namespace lovela
 			}
 			else if (index == visitIndex)
 			{
-				if constexpr (detail::is_same_tuple_element<Item, Tuple, visitIndex>)
+				if constexpr (is_same_tuple_element<Item, Tuple, visitIndex>)
 				{
 					visitor(std::get<visitIndex>(tuple));
 				}
