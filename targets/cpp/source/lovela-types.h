@@ -37,6 +37,36 @@ namespace lovela
 			return std::get<rebased>(tuple);
 		};
 
+		template <typename Item, typename Tuple, size_t visitIndex = 0>
+		void visit(Tuple& tuple, size_t index, auto&& visitor)
+		{
+			if constexpr (!visitIndex)
+			{
+				index = detail::rebase(index, std::tuple_size_v<Tuple>);
+			}
+
+			if constexpr (visitIndex >= std::tuple_size_v<Tuple>)
+			{
+				static_cast<void>(visitor);
+				throw std::out_of_range("index out of range");
+			}
+			else if (index == visitIndex)
+			{
+				if constexpr (detail::is_same_tuple_element<Item, Tuple, visitIndex>)
+				{
+					visitor(std::get<visitIndex>(tuple));
+				}
+				else
+				{
+					throw std::invalid_argument("invalid access type");
+				}
+			}
+			else
+			{
+				visit<Item, Tuple, visitIndex + 1>(tuple, index, visitor);
+			}
+		}
+
 		[[nodiscard]] inline size_t to_size(std::u8string_view str)
 		{
 			return std::stoi(std::string(reinterpret_cast<const char*>(str.data()), str.size()));
@@ -140,36 +170,6 @@ namespace lovela
 
 		static constexpr size_t rebase(size_t index) { return detail::rebase(index, _size); }
 
-		template <typename Item, size_t visitIndex = 0>
-		void visit(size_t index, auto&& visitor)
-		{
-			if constexpr (!visitIndex)
-			{
-				index = rebase(index);
-			}
-
-			if constexpr (visitIndex >= _size)
-			{
-				static_cast<void>(visitor);
-				throw std::out_of_range("index out of range");
-			}
-			else if (index == visitIndex)
-			{
-				if constexpr (detail::is_same_tuple_element<Item, tuple_t, visitIndex>)
-				{
-					visitor(std::get<visitIndex>(_items));
-				}
-				else
-				{
-					throw std::invalid_argument("invalid access type");
-				}
-			}
-			else
-			{
-				visit<Item, visitIndex + 1>(index, visitor);
-			}
-		}
-
 	public:
 		template <size_t index>
 		using item_type = std::remove_reference_t<decltype(std::get<detail::rebase_v<index>>(_items))>;
@@ -179,13 +179,13 @@ namespace lovela
 		constexpr size_t get_index(std::u8string_view name) const { return detail::to_index(name, get_size()); }
 
 		template <size_t index, typename Item> constexpr void get_item(Item& item) { item = detail::checked_tuple_get<index, Item, tuple_t>(_items); };
-		template <typename Item> constexpr void get_item(size_t index, Item& item) { visit<Item>(index, [&](Item& elem) { item = elem; }); }
+		template <typename Item> constexpr void get_item(size_t index, Item& item) { detail::visit<Item, tuple_t>(_items, index, [&](Item& elem) { item = elem; }); }
 		template <typename Item> void get_item(std::u8string_view name, Item& item) { get_item(get_index(name), item); }
 
 		template <size_t index, typename Item> constexpr void set_item(const Item& item) { detail::checked_tuple_get<index, Item, tuple_t>(_items) = item; };
 		template <size_t index, typename Item> constexpr void set_item(Item&& item) { detail::checked_tuple_get<index, Item, tuple_t>(_items) = std::move(item); };
-		template <typename Item> constexpr void set_item(size_t index, const Item& item) { visit<Item>(index, [&](Item& elem) { elem = item; }); }
-		template <typename Item> constexpr void set_item(size_t index, Item&& item) { visit<Item>(index, [&](Item& elem) { elem = std::move(item); }); }
+		template <typename Item> constexpr void set_item(size_t index, const Item& item) { detail::visit<Item, tuple_t>(_items, index, [&](Item& elem) { elem = item; }); }
+		template <typename Item> constexpr void set_item(size_t index, Item&& item) { detail::visit<Item, tuple_t>(_items, index, [&](Item& elem) { elem = std::move(item); }); }
 		template <typename Item> void set_item(std::u8string_view name, const Item& item) { set_item(get_index(name), item); }
 		template <typename Item> void set_item(std::u8string_view name, Item&& item) { set_item(get_index(name), std::move(item)); }
 
