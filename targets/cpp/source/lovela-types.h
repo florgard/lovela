@@ -28,6 +28,15 @@ namespace lovela
 			return index - 1;
 		}
 
+		template <size_t index, typename Item, typename Tuple>
+		[[nodiscard]] constexpr auto& checked_tuple_get(Tuple& tuple)
+		{
+			static constexpr size_t rebased = detail::rebase_v<index>;
+			static_assert(rebased < std::tuple_size_v<Tuple>, "index out of bounds");
+			static_assert(detail::is_same_tuple_element<Item, Tuple, rebased>, "invalid access type");
+			return std::get<rebased>(tuple);
+		};
+
 		[[nodiscard]] inline size_t to_size(std::u8string_view str)
 		{
 			return std::stoi(std::string(reinterpret_cast<const char*>(str.data()), str.size()));
@@ -161,15 +170,6 @@ namespace lovela
 			}
 		}
 
-		template <size_t index, typename Item>
-		constexpr auto& checked_get()
-		{
-			static constexpr size_t rebased = detail::rebase_v<index>;
-			static_assert(rebased < _size, "index out of bounds");
-			static_assert(detail::is_same_tuple_element<Item, tuple_t, rebased>, "invalid access type");
-			return std::get<rebased>(_items);
-		};
-
 	public:
 		template <size_t index>
 		using item_type = std::remove_reference_t<decltype(std::get<detail::rebase_v<index>>(_items))>;
@@ -178,12 +178,12 @@ namespace lovela
 		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("an indexed tuple cannot be resized"); } }
 		constexpr size_t get_index(std::u8string_view name) const { return detail::to_index(name, get_size()); }
 
-		template <size_t index, typename Item> constexpr void get_item(Item& item) { item = checked_get<index, Item>(); };
+		template <size_t index, typename Item> constexpr void get_item(Item& item) { item = detail::checked_tuple_get<index, Item, tuple_t>(_items); };
 		template <typename Item> constexpr void get_item(size_t index, Item& item) { visit<Item>(index, [&](Item& elem) { item = elem; }); }
 		template <typename Item> void get_item(std::u8string_view name, Item& item) { get_item(get_index(name), item); }
 
-		template <size_t index, typename Item> constexpr void set_item(const Item& item) { checked_get<index, Item>() = item; };
-		template <size_t index, typename Item> constexpr void set_item(Item&& item) { checked_get<index, Item>() = std::move(item); };
+		template <size_t index, typename Item> constexpr void set_item(const Item& item) { detail::checked_tuple_get<index, Item, tuple_t>(_items) = item; };
+		template <size_t index, typename Item> constexpr void set_item(Item&& item) { detail::checked_tuple_get<index, Item, tuple_t>(_items) = std::move(item); };
 		template <typename Item> constexpr void set_item(size_t index, const Item& item) { visit<Item>(index, [&](Item& elem) { elem = item; }); }
 		template <typename Item> constexpr void set_item(size_t index, Item&& item) { visit<Item>(index, [&](Item& elem) { elem = std::move(item); }); }
 		template <typename Item> void set_item(std::u8string_view name, const Item& item) { set_item(get_index(name), item); }
