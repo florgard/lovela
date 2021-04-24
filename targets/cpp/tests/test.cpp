@@ -474,12 +474,12 @@ TEST(FixedTuple, Combine) {
 	using v2_t = lovela::fixed_tuple<std::tuple<double, double, double>>;
 	v2_t v2{ {7.75, 1.25, 0.1} };
 
-	using v3_t = lovela::fixed_tuple<std::tuple<v2_t::item_type<1>, v1_t::item_type<1>, v1_t::item_type<3>>>;
-	v3_t v3{ { v2.get_item<1>(), v1.get_item<1>(), v1.get_item<3>()} };
+	using v3_t = lovela::fixed_tuple<std::tuple<v2_t::item_type<1>, v1_t::item_type<3>, v1_t::item_type<1>>>;
+	v3_t v3{ { v2.get_item<1>(), v1.get_item<3>(), v1.get_item<1>()} };
 
 	EXPECT_EQ(v3.get_item<1>(), 7.75);
-	EXPECT_EQ(v3.get_item<2>(), 10);
-	EXPECT_EQ(v3.get_item<3>(), "Boots");
+	EXPECT_EQ(v3.get_item<2>(), "Boots");
+	EXPECT_EQ(v3.get_item<3>(), 10);
 }
 
 struct l_tuple_names_combined
@@ -493,12 +493,12 @@ TEST(NamedTuple, Combine) {
 	using v2_t = lovela::fixed_tuple<std::tuple<double, double, double>>;
 	v2_t v2{ {7.75, 1.25, 0.1} };
 
-	using v3_t = lovela::named_tuple<std::tuple<v2_t::item_type<1>, v1_t::item_type<1>, v1_t::item_type<3>>, l_tuple_names_combined>;
-	v3_t v3{ { v2.get_item<1>(), v1.get_item<1>(), v1.get_item<3>()} };
+	using v3_t = lovela::named_tuple<std::tuple<v2_t::item_type<1>, v1_t::item_type<3>, v1_t::item_type<1>>, l_tuple_names_combined>;
+	v3_t v3{ { v2.get_item<1>(), v1.get_item<3>(), v1.get_item<1>()} };
 
 	EXPECT_EQ(v3.get_item<1>(), 7.75);
-	EXPECT_EQ(v3.get_item<2>(), 10);
-	EXPECT_EQ(v3.get_item<3>(), "Boots");
+	EXPECT_EQ(v3.get_item<2>(), "Boots");
+	EXPECT_EQ(v3.get_item<3>(), 10);
 }
 
 TEST(Streams, SimpleOut) {
