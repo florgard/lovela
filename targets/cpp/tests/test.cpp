@@ -469,15 +469,17 @@ TEST(NamedTuple, Concatenate) {
 }
 
 TEST(FixedTuple, Combine) {
-	lovela::fixed_tuple<std::tuple<int, double, std::string>> obj1{ {10, 5.25, "Boots"} };
-	lovela::fixed_tuple<std::tuple<double, double, double>> obj2{ {7.75, 1.25, 0.1} };
+	using v1_t = lovela::fixed_tuple<std::tuple<int, double, std::string>>;
+	v1_t v1{ {10, 5.25, "Boots"} };
+	using v2_t = lovela::fixed_tuple<std::tuple<double, double, double>>;
+	v2_t v2{ {7.75, 1.25, 0.1} };
 
-	using combined_type = decltype(std::make_tuple(obj2.get_item<1>(), obj1.get_item<1>(), obj1.get_item<3>()));
-	lovela::fixed_tuple<combined_type> obj3{ std::make_tuple(obj2.get_item<1>(), obj1.get_item<1>(), obj1.get_item<3>()) };
+	using v3_t = lovela::fixed_tuple<std::tuple<v2_t::item_type<1>, v1_t::item_type<1>, v1_t::item_type<3>>>;
+	v3_t v3{ { v2.get_item<1>(), v1.get_item<1>(), v1.get_item<3>()} };
 
-	double v1{};
-	EXPECT_NO_THROW(obj3.get_item(1, v1));
-	EXPECT_EQ(v1, 7.75);
+	EXPECT_EQ(v3.get_item<1>(), 7.75);
+	EXPECT_EQ(v3.get_item<2>(), 10);
+	EXPECT_EQ(v3.get_item<3>(), "Boots");
 }
 
 struct l_tuple_names_combined
@@ -486,15 +488,17 @@ struct l_tuple_names_combined
 };
 
 TEST(NamedTuple, Combine) {
-	lovela::named_tuple<std::tuple<int, double, std::string>, l_tuple_names_1> obj1{ {10, 5.25, "Boots"} };
-	lovela::named_tuple<std::tuple<double, double, double>, l_tuple_names_2> obj2{ {7.75, 1.25, 0.1} };
+	using v1_t = lovela::fixed_tuple<std::tuple<int, double, std::string>>;
+	v1_t v1{ {10, 5.25, "Boots"} };
+	using v2_t = lovela::fixed_tuple<std::tuple<double, double, double>>;
+	v2_t v2{ {7.75, 1.25, 0.1} };
 
-	using combined_type = decltype(std::make_tuple(obj2.get_item<1>(), obj1.get_item<1>(), obj1.get_item<3>()));
-	lovela::named_tuple<combined_type, l_tuple_names_combined> obj3{ std::make_tuple(obj2.get_item<1>(), obj1.get_item<1>(), obj1.get_item<3>()) };
+	using v3_t = lovela::named_tuple<std::tuple<v2_t::item_type<1>, v1_t::item_type<1>, v1_t::item_type<3>>, l_tuple_names_combined>;
+	v3_t v3{ { v2.get_item<1>(), v1.get_item<1>(), v1.get_item<3>()} };
 
-	double v1{};
-	EXPECT_NO_THROW(obj3.get_item(u8"Price", v1));
-	EXPECT_EQ(v1, 7.75);
+	EXPECT_EQ(v3.get_item<1>(), 7.75);
+	EXPECT_EQ(v3.get_item<2>(), 10);
+	EXPECT_EQ(v3.get_item<3>(), "Boots");
 }
 
 TEST(Streams, SimpleOut) {
