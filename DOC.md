@@ -40,7 +40,7 @@ std::tuple
 Associative, fixed-size (static) heterogeneous (multi-type) tuple.
 
 C++ equivalent:
-std::tuple with std::array of names.
+std::tuple with compile-time defined std::array of names.
 
 ## Dynamic tuple
 Possibly TODO.
