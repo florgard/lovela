@@ -6,7 +6,6 @@
 #include <map>
 #include <algorithm>
 #include <exception>
-#include "utfcpp/utf8.h"
 
 namespace lovela
 {
