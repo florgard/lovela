@@ -4,6 +4,76 @@
 #pragma warning(push)
 #pragma warning(disable:4834)
 
+TEST(Variable, SetGetSize) {
+	lovela::variable<int> obj1;
+	EXPECT_NO_THROW(obj1.set_size(1));
+	EXPECT_THROW(obj1.set_size(2), std::out_of_range);
+	EXPECT_EQ(obj1.get_size(), 1);
+}
+
+TEST(Variable, Types) {
+	lovela::variable<std::string> obj1;
+	lovela::variable<int> obj2;
+
+	std::string r1;
+	EXPECT_NO_THROW(obj1.set_item<1>("aaa"));
+	EXPECT_NO_THROW(obj1.get_item<1>(r1));
+	EXPECT_EQ(r1, "aaa");
+
+	int r2{};
+	EXPECT_NO_THROW(obj2.set_item<1>(123));
+	EXPECT_NO_THROW(obj2.get_item<1>(r2));
+	EXPECT_EQ(r2, 123);
+}
+
+TEST(Variable, SetGetAddRange) {
+	lovela::variable<std::string> obj1;
+
+	std::string r1;
+	EXPECT_NO_THROW(obj1.set_item<1>("aaa"));
+	EXPECT_EQ(obj1.get_item<1>(), "aaa");
+	EXPECT_NO_THROW(obj1.get_item<1>(r1));
+	EXPECT_EQ(r1, "aaa");
+	EXPECT_NO_THROW(obj1.get_item(1, r1));
+	EXPECT_EQ(r1, "aaa");
+	EXPECT_NO_THROW(obj1.get_item(u8"1", r1));
+	EXPECT_EQ(r1, "aaa");
+
+	EXPECT_NO_THROW(obj1.set_item(1, "bbb"));
+	EXPECT_EQ(obj1.get_item<1>(), "bbb");
+	EXPECT_NO_THROW(obj1.get_item<1>(r1));
+	EXPECT_EQ(r1, "bbb");
+	EXPECT_NO_THROW(obj1.get_item(1, r1));
+	EXPECT_EQ(r1, "bbb");
+	EXPECT_NO_THROW(obj1.get_item(u8"1", r1));
+	EXPECT_EQ(r1, "bbb");
+
+	EXPECT_NO_THROW(obj1.set_item(u8"1", "ccc"));
+	EXPECT_EQ(obj1.get_item<1>(), "ccc");
+	EXPECT_NO_THROW(obj1.get_item<1>(r1));
+	EXPECT_EQ(r1, "ccc");
+	EXPECT_NO_THROW(obj1.get_item(1, r1));
+	EXPECT_EQ(r1, "ccc");
+	EXPECT_NO_THROW(obj1.get_item(u8"1", r1));
+	EXPECT_EQ(r1, "ccc");
+
+	EXPECT_THROW(obj1.get_item(0, r1), std::out_of_range);
+	EXPECT_THROW(obj1.set_item(2, "cde"), std::out_of_range);
+
+	EXPECT_THROW(obj1.add_item("cde"), std::out_of_range);
+	EXPECT_EQ(obj1.get_size(), 1);
+}
+
+TEST(Variable, GetIndex) {
+	lovela::variable<std::string> obj1;
+
+	EXPECT_EQ(obj1.get_index(u8"1"), 1);
+	EXPECT_THROW(obj1.get_index(u8""), std::invalid_argument);
+	EXPECT_THROW(obj1.get_index(u8"null"), std::invalid_argument);
+	EXPECT_THROW(obj1.get_index(u8"0"), std::out_of_range);
+	EXPECT_THROW(obj1.get_index(u8"2"), std::out_of_range);
+}
+
 struct l_tuple_names_1
 {
 	static constexpr auto values = std::array<std::u8string_view, 3>{ u8"Pcs", u8"Price", u8"Name" };
