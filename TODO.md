@@ -29,9 +29,6 @@
 * Type system
 * Built-in data structures
   * Variable
-  * Fixed array: [type]#size
-  * Dynamic array: [type]#
-  * Fixed tuple
-  * Named tuple
+  * Dynamic named array
   * Dynamic tuple
   * Dynamic named tuple
