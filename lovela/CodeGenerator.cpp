@@ -107,7 +107,7 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 		parameters.emplace_back(std::make_pair(TypeName(inType.name), L"in"));
 	}
 
-	int index = 0;
+	size_t index = 0;
 	for (auto& parameter : node.parameters)
 	{
 		index++;
@@ -244,7 +244,7 @@ std::wstring CodeGenerator::TypeName(const std::wstring& name)
 	return L"t_" + name;
 }
 
-std::wstring CodeGenerator::TypeName(const std::wstring& name, int index)
+std::wstring CodeGenerator::TypeName(const std::wstring& name, size_t index)
 {
 	if (name.empty())
 	{
@@ -261,7 +261,7 @@ std::wstring CodeGenerator::ParameterName(const std::wstring& name)
 	return L"p_" + name;
 }
 
-std::wstring CodeGenerator::ParameterName(const std::wstring& name, int index)
+std::wstring CodeGenerator::ParameterName(const std::wstring& name, size_t index)
 {
 	if (name.empty())
 	{
@@ -317,7 +317,7 @@ void CodeGenerator::ExportedFunctionDeclaration(Node& node, Context&)
 
 	// Verify and convert the parameter types
 
-	int index = 0;
+	size_t index = 0;
 	for (auto& parameter : node.parameters)
 	{
 		index++;
@@ -460,7 +460,7 @@ void CodeGenerator::ImportedFunctionDeclaration(Node& node, Context&)
 
 	// Verify and convert the parameter types
 
-	int index = 0;
+	size_t index = 0;
 	for (auto& parameter : node.parameters)
 	{
 		index++;
@@ -564,7 +564,7 @@ void CodeGenerator::ImportedFunctionBody(Node& node, Context&, const std::vector
 
 	stream << node.value << '(';
 
-	int index = 0;
+	size_t index = 0;
 	for (auto& parameter : parameters)
 	{
 		stream << (index++ ? ", " : "");

@@ -21,7 +21,7 @@ public:
 private:
 	struct Context
 	{
-		int variableIndex{};
+		size_t variableIndex{};
 		bool inner{};
 	};
 
@@ -51,9 +51,9 @@ private:
 	void EndAssign(Context& context, bool reset);
 
 	std::wstring TypeName(const std::wstring& name);
-	std::wstring TypeName(const std::wstring& name, int index);
+	std::wstring TypeName(const std::wstring& name, size_t index);
 	static std::wstring ParameterName(const std::wstring& name);
-	static std::wstring ParameterName(const std::wstring& name, int index);
+	static std::wstring ParameterName(const std::wstring& name, size_t index);
 	static std::wstring FunctionName(const std::wstring& name);
 	static std::wstring RefVar(wchar_t prefix, size_t index);
 
