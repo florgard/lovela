@@ -278,6 +278,11 @@ std::wstring CodeGenerator::FunctionName(const std::wstring& name)
 	return L"f_" + name;
 }
 
+std::wstring CodeGenerator::RefVar(wchar_t prefix, size_t index)
+{
+	return std::wstring(L"static_cast<void>(") + prefix + to_wstring(index) + L')';
+}
+
 void CodeGenerator::ExportedFunctionDeclaration(Node& node, Context&)
 {
 	auto inType = node.inType;
@@ -521,7 +526,7 @@ void CodeGenerator::FunctionBody(Node& node, Context& context)
 		stream << Indent() << "context;\n";
 
 		// Make an indexed reference to the input object and avoid a warning if it's unreferenced.
-		stream << Indent() << "auto& " << LocalVar << ++context.variableIndex << " = in; " << LocalVar << context.variableIndex << ";\n";
+		stream << Indent() << "auto& " << LocalVar << ++context.variableIndex << " = in; " << RefVar(LocalVar, context.variableIndex) << ";\n";
 
 		Visit(*node.left, context);
 
@@ -689,7 +694,7 @@ void CodeGenerator::EndAssign(Context& context)
 {
 	if (!context.inner)
 	{
-		stream << "; " << LocalVar << context.variableIndex << ";\n";
+		stream << "; " << RefVar(LocalVar, context.variableIndex) << ";\n";
 	}
 }
 

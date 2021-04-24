@@ -55,6 +55,7 @@ private:
 	static std::wstring ParameterName(const std::wstring& name);
 	static std::wstring ParameterName(const std::wstring& name, int index);
 	static std::wstring FunctionName(const std::wstring& name);
+	static std::wstring RefVar(wchar_t prefix, size_t index);
 
 	bool CheckExportType(TypeSpec& type);
 	bool ConvertPrimitiveType(std::wstring& name);

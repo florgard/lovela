@@ -483,17 +483,17 @@ void Testing::RunCodeGeneratorTests()
 	TestCodeGenerator("trivial function", L"func: + 1.", LR"code(
 template <typename In>
 auto f_func(lovela::context& context, In in)
-{ context; auto& v1 = in; v1; const auto v2 = v1 + 1; v2; return v2; }
+{ context; auto& v1 = in; static_cast<void>(v1); const auto v2 = v1 + 1; static_cast<void>(v2); return v2; }
 )code");
 
 	TestCodeGenerator("function call", L"[#8] func [#8]: f(1, 'a', g).", LR"code(
 l_i8 f_func(lovela::context& context, l_i8 in)
-{ context; auto& v1 = in; v1; const auto v2 = f_f(context, v1, 1, "a", f_g(context, v1)); v2; return v2; }
+{ context; auto& v1 = in; static_cast<void>(v1); const auto v2 = f_f(context, v1, 1, "a", f_g(context, v1)); static_cast<void>(v2); return v2; }
 )code");
 
 	TestCodeGenerator("exported function none -> none", L"<- [()] ex [()]:.", LR"code(
 lovela::None f_ex(lovela::context& context, lovela::None in)
-{ context; auto& v1 = in; v1; return {}; }
+{ context; auto& v1 = in; static_cast<void>(v1); return {}; }
 void ex()
 { lovela::context context; lovela::None in; f_ex(context, in); }
 )code");
@@ -501,7 +501,7 @@ void ex()
 	TestCodeGenerator("exported function any -> any", L"<- ex: + 1.", LR"code(
 template <typename In>
 auto f_ex(lovela::context& context, In in)
-{ context; auto& v1 = in; v1; const auto v2 = v1 + 1; v2; return v2; }
+{ context; auto& v1 = in; static_cast<void>(v1); const auto v2 = v1 + 1; static_cast<void>(v2); return v2; }
 void* ex(void* in)
 { lovela::context context; return f_ex(context, in); }
 )code");
@@ -525,8 +525,8 @@ void* ex(void* in)
 l_i32 f_ex(lovela::context& context, l_i32 in)
 {
 	context;
-	auto& v1 = in; v1;
-	const auto v2 = v1 + 1; v2;
+	auto& v1 = in; static_cast<void>(v1);
+	const auto v2 = v1 + 1; static_cast<void>(v2);
 	return v2;
 }
 
@@ -539,8 +539,8 @@ l_i32 ex(l_i32 in)
 lovela::None lovela::main(lovela::context& context, lovela::None in)
 {
 	context;
-	auto& v1 = in; v1;
-	const auto v2 = f_ex(context, 1); v2;
+	auto& v1 = in; static_cast<void>(v1);
+	const auto v2 = f_ex(context, 1); static_cast<void>(v2);
 	return {};
 }
 )code");
@@ -555,8 +555,8 @@ l_i32 f_puts(lovela::context& context, l_cstr in)
 lovela::None lovela::main(lovela::context& context, lovela::None in)
 {
         context;
-        auto& v1 = in; v1;
-        const auto v2 = f_puts(context, "Hello, Wordl!"); v2;
+        auto& v1 = in; static_cast<void>(v1);
+        const auto v2 = f_puts(context, "Hello, Wordl!"); static_cast<void>(v2);
         return {};
 }
 )code");
@@ -572,8 +572,8 @@ auto f_puts(lovela::context& context, In in)
 lovela::None lovela::main(lovela::context& context, lovela::None in)
 {
 	context;
-	auto& v1 = in; v1;
-	const auto v2 = f_puts(context, "Hello, Wordl!"); v2;
+	auto& v1 = in; static_cast<void>(v1);
+	const auto v2 = f_puts(context, "Hello, Wordl!"); static_cast<void>(v2);
 	return {};
 }
 )code");
