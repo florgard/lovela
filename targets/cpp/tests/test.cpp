@@ -40,50 +40,50 @@ TEST(FixedTuple, SetGet) {
 	EXPECT_NO_THROW(obj1.set_item<2>(456.789));
 	EXPECT_NO_THROW(obj1.set_item<3>(std::string("abc")));
 
-	int v1{};
+	int r1{};
 	EXPECT_EQ(obj1.get_item<1>(), 123);
-	EXPECT_NO_THROW(obj1.get_item<1>(v1));
-	EXPECT_EQ(v1, 123);
+	EXPECT_NO_THROW(obj1.get_item<1>(r1));
+	EXPECT_EQ(r1, 123);
 	EXPECT_EQ(obj1.get_item<int>(1), 123);
-	EXPECT_NO_THROW(obj1.get_item(1, v1));
-	EXPECT_EQ(v1, 123);
+	EXPECT_NO_THROW(obj1.get_item(1, r1));
+	EXPECT_EQ(r1, 123);
 	EXPECT_EQ(obj1.get_item<int>(u8"1"), 123);
-	EXPECT_NO_THROW(obj1.get_item(u8"1", v1));
-	EXPECT_EQ(v1, 123);
+	EXPECT_NO_THROW(obj1.get_item(u8"1", r1));
+	EXPECT_EQ(r1, 123);
 
-	double v2{};
+	double r2{};
 	EXPECT_EQ(obj1.get_item<2>(), 456.789);
-	EXPECT_NO_THROW(obj1.get_item<2>(v2));
-	EXPECT_EQ(v2, 456.789);
+	EXPECT_NO_THROW(obj1.get_item<2>(r2));
+	EXPECT_EQ(r2, 456.789);
 	EXPECT_EQ(obj1.get_item<double>(2), 456.789);
-	EXPECT_NO_THROW(obj1.get_item(2, v2));
-	EXPECT_EQ(v2, 456.789);
+	EXPECT_NO_THROW(obj1.get_item(2, r2));
+	EXPECT_EQ(r2, 456.789);
 	EXPECT_EQ(obj1.get_item<double>(u8"2"), 456.789);
-	EXPECT_NO_THROW(obj1.get_item(u8"2", v2));
-	EXPECT_EQ(v2, 456.789);
+	EXPECT_NO_THROW(obj1.get_item(u8"2", r2));
+	EXPECT_EQ(r2, 456.789);
 
-	std::string v3{};
+	std::string r3{};
 	EXPECT_EQ(obj1.get_item<3>(), "abc");
-	EXPECT_NO_THROW(obj1.get_item<3>(v3));
-	EXPECT_EQ(v3, "abc");
+	EXPECT_NO_THROW(obj1.get_item<3>(r3));
+	EXPECT_EQ(r3, "abc");
 	EXPECT_EQ(obj1.get_item<std::string>(3), "abc");
-	EXPECT_NO_THROW(obj1.get_item(3, v3));
-	EXPECT_EQ(v3, "abc");
+	EXPECT_NO_THROW(obj1.get_item(3, r3));
+	EXPECT_EQ(r3, "abc");
 	EXPECT_EQ(obj1.get_item<std::string>(u8"3"), "abc");
-	EXPECT_NO_THROW(obj1.get_item(u8"3", v3));
-	EXPECT_EQ(v3, "abc");
+	EXPECT_NO_THROW(obj1.get_item(u8"3", r3));
+	EXPECT_EQ(r3, "abc");
 }
 
 TEST(FixedTuple, Range) {
 	lovela::fixed_tuple<std::tuple<int, double, std::string>> obj1;
-	int v1{};
-	EXPECT_THROW(obj1.get_item(3, v1), std::invalid_argument);
-	EXPECT_THROW(obj1.get_item(0, v1), std::out_of_range);
-	EXPECT_THROW(obj1.get_item(4, v1), std::out_of_range);
-	EXPECT_THROW(obj1.get_item(u8"", v1), std::invalid_argument);
-	EXPECT_THROW(obj1.get_item(u8"null", v1), std::invalid_argument);
-	EXPECT_THROW(obj1.get_item(u8"0", v1), std::out_of_range);
-	EXPECT_THROW(obj1.get_item(u8"4", v1), std::out_of_range);
+	int r1{};
+	EXPECT_THROW(obj1.get_item(3, r1), std::invalid_argument);
+	EXPECT_THROW(obj1.get_item(0, r1), std::out_of_range);
+	EXPECT_THROW(obj1.get_item(4, r1), std::out_of_range);
+	EXPECT_THROW(obj1.get_item(u8"", r1), std::invalid_argument);
+	EXPECT_THROW(obj1.get_item(u8"null", r1), std::invalid_argument);
+	EXPECT_THROW(obj1.get_item(u8"0", r1), std::out_of_range);
+	EXPECT_THROW(obj1.get_item(u8"4", r1), std::out_of_range);
 }
 
 TEST(FixedTuple, GetIndex) {
@@ -109,50 +109,50 @@ TEST(NamedTuple, SetGet) {
 	EXPECT_NO_THROW(obj1.set_item<2>(456.789));
 	EXPECT_NO_THROW(obj1.set_item<3>(std::string("abc")));
 
-	int v1{};
+	int r1{};
 	EXPECT_EQ(obj1.get_item<1>(), 123);
-	EXPECT_NO_THROW(obj1.get_item<1>(v1));
-	EXPECT_EQ(v1, 123);
+	EXPECT_NO_THROW(obj1.get_item<1>(r1));
+	EXPECT_EQ(r1, 123);
 	EXPECT_EQ(obj1.get_item<int>(1), 123);
-	EXPECT_NO_THROW(obj1.get_item(1, v1));
-	EXPECT_EQ(v1, 123);
+	EXPECT_NO_THROW(obj1.get_item(1, r1));
+	EXPECT_EQ(r1, 123);
 	EXPECT_EQ(obj1.get_item<int>(u8"1"), 123);
-	EXPECT_NO_THROW(obj1.get_item(u8"1", v1));
-	EXPECT_EQ(v1, 123);
+	EXPECT_NO_THROW(obj1.get_item(u8"1", r1));
+	EXPECT_EQ(r1, 123);
 
-	double v2{};
+	double r2{};
 	EXPECT_EQ(obj1.get_item<2>(), 456.789);
-	EXPECT_NO_THROW(obj1.get_item<2>(v2));
-	EXPECT_EQ(v2, 456.789);
+	EXPECT_NO_THROW(obj1.get_item<2>(r2));
+	EXPECT_EQ(r2, 456.789);
 	EXPECT_EQ(obj1.get_item<double>(2), 456.789);
-	EXPECT_NO_THROW(obj1.get_item(2, v2));
-	EXPECT_EQ(v2, 456.789);
+	EXPECT_NO_THROW(obj1.get_item(2, r2));
+	EXPECT_EQ(r2, 456.789);
 	EXPECT_EQ(obj1.get_item<double>(u8"2"), 456.789);
-	EXPECT_NO_THROW(obj1.get_item(u8"2", v2));
-	EXPECT_EQ(v2, 456.789);
+	EXPECT_NO_THROW(obj1.get_item(u8"2", r2));
+	EXPECT_EQ(r2, 456.789);
 
-	std::string v3{};
+	std::string r3{};
 	EXPECT_EQ(obj1.get_item<3>(), "abc");
-	EXPECT_NO_THROW(obj1.get_item<3>(v3));
-	EXPECT_EQ(v3, "abc");
+	EXPECT_NO_THROW(obj1.get_item<3>(r3));
+	EXPECT_EQ(r3, "abc");
 	EXPECT_EQ(obj1.get_item<std::string>(3), "abc");
-	EXPECT_NO_THROW(obj1.get_item(3, v3));
-	EXPECT_EQ(v3, "abc");
+	EXPECT_NO_THROW(obj1.get_item(3, r3));
+	EXPECT_EQ(r3, "abc");
 	EXPECT_EQ(obj1.get_item<std::string>(u8"3"), "abc");
-	EXPECT_NO_THROW(obj1.get_item(u8"3", v3));
-	EXPECT_EQ(v3, "abc");
+	EXPECT_NO_THROW(obj1.get_item(u8"3", r3));
+	EXPECT_EQ(r3, "abc");
 }
 
 TEST(NamedTuple, Range) {
 	lovela::named_tuple<std::tuple<int, double, std::string>, l_tuple_names_1> obj1;
-	int v1{};
-	EXPECT_THROW(obj1.get_item(3, v1), std::invalid_argument);
-	EXPECT_THROW(obj1.get_item(0, v1), std::out_of_range);
-	EXPECT_THROW(obj1.get_item(4, v1), std::out_of_range);
-	EXPECT_THROW(obj1.get_item(u8"", v1), std::invalid_argument);
-	EXPECT_THROW(obj1.get_item(u8"null", v1), std::invalid_argument);
-	EXPECT_THROW(obj1.get_item(u8"0", v1), std::out_of_range);
-	EXPECT_THROW(obj1.get_item(u8"4", v1), std::out_of_range);
+	int r1{};
+	EXPECT_THROW(obj1.get_item(3, r1), std::invalid_argument);
+	EXPECT_THROW(obj1.get_item(0, r1), std::out_of_range);
+	EXPECT_THROW(obj1.get_item(4, r1), std::out_of_range);
+	EXPECT_THROW(obj1.get_item(u8"", r1), std::invalid_argument);
+	EXPECT_THROW(obj1.get_item(u8"null", r1), std::invalid_argument);
+	EXPECT_THROW(obj1.get_item(u8"0", r1), std::out_of_range);
+	EXPECT_THROW(obj1.get_item(u8"4", r1), std::out_of_range);
 }
 
 TEST(NamedTuple, GetIndex) {
@@ -171,14 +171,14 @@ TEST(NamedTuple, SetGetRuntimeName) {
 	EXPECT_NO_THROW(obj1.set_item(u8"Name", std::string("abc")));
 	EXPECT_THROW(obj1.set_item(u8"Type", 123), std::invalid_argument);
 
-	int v1{}; double v2{}; std::string v3;
-	EXPECT_NO_THROW(obj1.get_item(u8"Pcs", v1));
-	EXPECT_NO_THROW(obj1.get_item(u8"Price", v2));
-	EXPECT_NO_THROW(obj1.get_item(u8"Name", v3));
-	EXPECT_THROW(obj1.get_item(u8"Type", v1), std::invalid_argument);
-	EXPECT_EQ(v1, 123);
-	EXPECT_EQ(v2, 123.456);
-	EXPECT_EQ(v3, std::string("abc"));
+	int r1{}; double r2{}; std::string r3;
+	EXPECT_NO_THROW(obj1.get_item(u8"Pcs", r1));
+	EXPECT_NO_THROW(obj1.get_item(u8"Price", r2));
+	EXPECT_NO_THROW(obj1.get_item(u8"Name", r3));
+	EXPECT_THROW(obj1.get_item(u8"Type", r1), std::invalid_argument);
+	EXPECT_EQ(r1, 123);
+	EXPECT_EQ(r2, 123.456);
+	EXPECT_EQ(r3, std::string("abc"));
 }
 
 TEST(NamedTuple, GetRuntimeRandomAccess) {
@@ -191,22 +191,22 @@ TEST(NamedTuple, GetRuntimeRandomAccess) {
 	auto val = l_tuple_names_1::values[rnd];
 	std::u8string name(val.data(), val.size());
 
-	int v1{}; double v2{}; std::string v3;
+	int r1{}; double r2{}; std::string r3;
 	switch (rnd)
 	{
 	case 0:
-		EXPECT_NO_THROW(obj1.get_item(name, v1));
-		EXPECT_EQ(v1, 123);
+		EXPECT_NO_THROW(obj1.get_item(name, r1));
+		EXPECT_EQ(r1, 123);
 		break;
 
 	case 1:
-		EXPECT_NO_THROW(obj1.get_item(name, v2));
-		EXPECT_EQ(v2, 123.456);
+		EXPECT_NO_THROW(obj1.get_item(name, r2));
+		EXPECT_EQ(r2, 123.456);
 		break;
 
 	case 2:
-		EXPECT_NO_THROW(obj1.get_item(name, v3));
-		EXPECT_EQ(v3, std::string("abc"));
+		EXPECT_NO_THROW(obj1.get_item(name, r3));
+		EXPECT_EQ(r3, std::string("abc"));
 		break;
 
 	default:
@@ -234,24 +234,24 @@ TEST(NamedTuple, CoexistingTuples) {
 	EXPECT_NO_THROW(restTotal.set_item(u8"Total", 222));
 	EXPECT_NO_THROW(restTotal.set_item(u8"Rest", 200));
 
-	int v1{};
-	EXPECT_NO_THROW(totalRest.get_item(u8"Total", v1));
-	EXPECT_EQ(v1, 111);
-	EXPECT_NO_THROW(totalRest.get_item(u8"Rest", v1));
-	EXPECT_EQ(v1, 100);
-	EXPECT_NO_THROW(restTotal.get_item(u8"Total", v1));
-	EXPECT_EQ(v1, 222);
-	EXPECT_NO_THROW(restTotal.get_item(u8"Rest", v1));
-	EXPECT_EQ(v1, 200);
+	int r1{};
+	EXPECT_NO_THROW(totalRest.get_item(u8"Total", r1));
+	EXPECT_EQ(r1, 111);
+	EXPECT_NO_THROW(totalRest.get_item(u8"Rest", r1));
+	EXPECT_EQ(r1, 100);
+	EXPECT_NO_THROW(restTotal.get_item(u8"Total", r1));
+	EXPECT_EQ(r1, 222);
+	EXPECT_NO_THROW(restTotal.get_item(u8"Rest", r1));
+	EXPECT_EQ(r1, 200);
 
-	EXPECT_NO_THROW(totalRest.get_item(1, v1));
-	EXPECT_EQ(v1, 111);
-	EXPECT_NO_THROW(totalRest.get_item(2, v1));
-	EXPECT_EQ(v1, 100);
-	EXPECT_NO_THROW(restTotal.get_item(2, v1));
-	EXPECT_EQ(v1, 222);
-	EXPECT_NO_THROW(restTotal.get_item(1, v1));
-	EXPECT_EQ(v1, 200);
+	EXPECT_NO_THROW(totalRest.get_item(1, r1));
+	EXPECT_EQ(r1, 111);
+	EXPECT_NO_THROW(totalRest.get_item(2, r1));
+	EXPECT_EQ(r1, 100);
+	EXPECT_NO_THROW(restTotal.get_item(2, r1));
+	EXPECT_EQ(r1, 222);
+	EXPECT_NO_THROW(restTotal.get_item(1, r1));
+	EXPECT_EQ(r1, 200);
 }
 
 TEST(DynamicArray, SetGetSize) {
@@ -268,15 +268,15 @@ TEST(DynamicArray, Types) {
 	EXPECT_NO_THROW(obj1.set_size(20));
 	EXPECT_NO_THROW(obj2.set_size(20));
 
-	std::string v1;
+	std::string r1;
 	EXPECT_NO_THROW(obj1.set_item<10>("aaa"));
-	EXPECT_NO_THROW(obj1.get_item<10>(v1));
-	EXPECT_EQ(v1, "aaa");
+	EXPECT_NO_THROW(obj1.get_item<10>(r1));
+	EXPECT_EQ(r1, "aaa");
 
-	int v2{};
+	int r2{};
 	EXPECT_NO_THROW(obj2.set_item<10>(123));
-	EXPECT_NO_THROW(obj2.get_item<10>(v2));
-	EXPECT_EQ(v2, 123);
+	EXPECT_NO_THROW(obj2.get_item<10>(r2));
+	EXPECT_EQ(r2, 123);
 }
 
 TEST(DynamicArray, SetGetAddRange) {
@@ -284,44 +284,44 @@ TEST(DynamicArray, SetGetAddRange) {
 
 	EXPECT_NO_THROW(obj1.set_size(20));
 
-	std::string v1;
+	std::string r1;
 	EXPECT_NO_THROW(obj1.set_item<1>("aaa"));
 	EXPECT_EQ(obj1.get_item<1>(), "aaa");
-	EXPECT_NO_THROW(obj1.get_item<1>(v1));
-	EXPECT_EQ(v1, "aaa");
-	EXPECT_NO_THROW(obj1.get_item(1, v1));
-	EXPECT_EQ(v1, "aaa");
-	EXPECT_NO_THROW(obj1.get_item(u8"1", v1));
-	EXPECT_EQ(v1, "aaa");
+	EXPECT_NO_THROW(obj1.get_item<1>(r1));
+	EXPECT_EQ(r1, "aaa");
+	EXPECT_NO_THROW(obj1.get_item(1, r1));
+	EXPECT_EQ(r1, "aaa");
+	EXPECT_NO_THROW(obj1.get_item(u8"1", r1));
+	EXPECT_EQ(r1, "aaa");
 
 	EXPECT_NO_THROW(obj1.set_item(1, "bbb"));
 	EXPECT_EQ(obj1.get_item<1>(), "bbb");
-	EXPECT_NO_THROW(obj1.get_item<1>(v1));
-	EXPECT_EQ(v1, "bbb");
-	EXPECT_NO_THROW(obj1.get_item(1, v1));
-	EXPECT_EQ(v1, "bbb");
-	EXPECT_NO_THROW(obj1.get_item(u8"1", v1));
-	EXPECT_EQ(v1, "bbb");
+	EXPECT_NO_THROW(obj1.get_item<1>(r1));
+	EXPECT_EQ(r1, "bbb");
+	EXPECT_NO_THROW(obj1.get_item(1, r1));
+	EXPECT_EQ(r1, "bbb");
+	EXPECT_NO_THROW(obj1.get_item(u8"1", r1));
+	EXPECT_EQ(r1, "bbb");
 
 	EXPECT_NO_THROW(obj1.set_item(u8"1", "ccc"));
 	EXPECT_EQ(obj1.get_item<1>(), "ccc");
-	EXPECT_NO_THROW(obj1.get_item<1>(v1));
-	EXPECT_EQ(v1, "ccc");
-	EXPECT_NO_THROW(obj1.get_item(1, v1));
-	EXPECT_EQ(v1, "ccc");
-	EXPECT_NO_THROW(obj1.get_item(u8"1", v1));
-	EXPECT_EQ(v1, "ccc");
+	EXPECT_NO_THROW(obj1.get_item<1>(r1));
+	EXPECT_EQ(r1, "ccc");
+	EXPECT_NO_THROW(obj1.get_item(1, r1));
+	EXPECT_EQ(r1, "ccc");
+	EXPECT_NO_THROW(obj1.get_item(u8"1", r1));
+	EXPECT_EQ(r1, "ccc");
 
 	EXPECT_NO_THROW(obj1.set_item(20, "bcd"));
-	EXPECT_NO_THROW(obj1.get_item(20, v1));
-	EXPECT_EQ(v1, "bcd");
+	EXPECT_NO_THROW(obj1.get_item(20, r1));
+	EXPECT_EQ(r1, "bcd");
 
-	EXPECT_THROW(obj1.get_item(0, v1), std::out_of_range);
+	EXPECT_THROW(obj1.get_item(0, r1), std::out_of_range);
 	EXPECT_THROW(obj1.set_item(21, "cde"), std::out_of_range);
 
 	EXPECT_NO_THROW(obj1.add_item("def"));
-	EXPECT_NO_THROW(obj1.get_item(21, v1));
-	EXPECT_EQ(v1, "def");
+	EXPECT_NO_THROW(obj1.get_item(21, r1));
+	EXPECT_EQ(r1, "def");
 	EXPECT_EQ(obj1.get_size(), 21);
 }
 
@@ -351,15 +351,15 @@ TEST(FixedArray, Types) {
 	EXPECT_NO_THROW(obj1.set_size(20));
 	EXPECT_NO_THROW(obj2.set_size(20));
 
-	std::string v1;
+	std::string r1;
 	EXPECT_NO_THROW(obj1.set_item<10>("aaa"));
-	EXPECT_NO_THROW(obj1.get_item<10>(v1));
-	EXPECT_EQ(v1, "aaa");
+	EXPECT_NO_THROW(obj1.get_item<10>(r1));
+	EXPECT_EQ(r1, "aaa");
 
-	int v2{};
+	int r2{};
 	EXPECT_NO_THROW(obj2.set_item<10>(123));
-	EXPECT_NO_THROW(obj2.get_item<10>(v2));
-	EXPECT_EQ(v2, 123);
+	EXPECT_NO_THROW(obj2.get_item<10>(r2));
+	EXPECT_EQ(r2, 123);
 }
 
 TEST(FixedArray, SetGetAddRange) {
@@ -367,39 +367,39 @@ TEST(FixedArray, SetGetAddRange) {
 
 	EXPECT_NO_THROW(obj1.set_size(20));
 
-	std::string v1;
+	std::string r1;
 	EXPECT_NO_THROW(obj1.set_item<1>("aaa"));
 	EXPECT_EQ(obj1.get_item<1>(), "aaa");
-	EXPECT_NO_THROW(obj1.get_item<1>(v1));
-	EXPECT_EQ(v1, "aaa");
-	EXPECT_NO_THROW(obj1.get_item(1, v1));
-	EXPECT_EQ(v1, "aaa");
-	EXPECT_NO_THROW(obj1.get_item(u8"1", v1));
-	EXPECT_EQ(v1, "aaa");
+	EXPECT_NO_THROW(obj1.get_item<1>(r1));
+	EXPECT_EQ(r1, "aaa");
+	EXPECT_NO_THROW(obj1.get_item(1, r1));
+	EXPECT_EQ(r1, "aaa");
+	EXPECT_NO_THROW(obj1.get_item(u8"1", r1));
+	EXPECT_EQ(r1, "aaa");
 
 	EXPECT_NO_THROW(obj1.set_item(1, "bbb"));
 	EXPECT_EQ(obj1.get_item<1>(), "bbb");
-	EXPECT_NO_THROW(obj1.get_item<1>(v1));
-	EXPECT_EQ(v1, "bbb");
-	EXPECT_NO_THROW(obj1.get_item(1, v1));
-	EXPECT_EQ(v1, "bbb");
-	EXPECT_NO_THROW(obj1.get_item(u8"1", v1));
-	EXPECT_EQ(v1, "bbb");
+	EXPECT_NO_THROW(obj1.get_item<1>(r1));
+	EXPECT_EQ(r1, "bbb");
+	EXPECT_NO_THROW(obj1.get_item(1, r1));
+	EXPECT_EQ(r1, "bbb");
+	EXPECT_NO_THROW(obj1.get_item(u8"1", r1));
+	EXPECT_EQ(r1, "bbb");
 
 	EXPECT_NO_THROW(obj1.set_item(u8"1", "ccc"));
 	EXPECT_EQ(obj1.get_item<1>(), "ccc");
-	EXPECT_NO_THROW(obj1.get_item<1>(v1));
-	EXPECT_EQ(v1, "ccc");
-	EXPECT_NO_THROW(obj1.get_item(1, v1));
-	EXPECT_EQ(v1, "ccc");
-	EXPECT_NO_THROW(obj1.get_item(u8"1", v1));
-	EXPECT_EQ(v1, "ccc");
+	EXPECT_NO_THROW(obj1.get_item<1>(r1));
+	EXPECT_EQ(r1, "ccc");
+	EXPECT_NO_THROW(obj1.get_item(1, r1));
+	EXPECT_EQ(r1, "ccc");
+	EXPECT_NO_THROW(obj1.get_item(u8"1", r1));
+	EXPECT_EQ(r1, "ccc");
 
 	EXPECT_NO_THROW(obj1.set_item(20, "bcd"));
-	EXPECT_NO_THROW(obj1.get_item(20, v1));
-	EXPECT_EQ(v1, "bcd");
+	EXPECT_NO_THROW(obj1.get_item(20, r1));
+	EXPECT_EQ(r1, "bcd");
 
-	EXPECT_THROW(obj1.get_item(0, v1), std::out_of_range);
+	EXPECT_THROW(obj1.get_item(0, r1), std::out_of_range);
 	EXPECT_THROW(obj1.set_item(21, "cde"), std::out_of_range);
 
 	EXPECT_THROW(obj1.add_item("cde"), std::out_of_range);
@@ -427,27 +427,27 @@ TEST(Convert, ArrayToTuple) {
 }
 
 TEST(Convert, ToFixedTuple) {
-	int v1{};
-	lovela::to_fixed_tuple(6).get_item<1>(v1);
-	EXPECT_EQ(v1, 6);
-	lovela::to_fixed_tuple(6, 23).get_item<2>(v1);
-	EXPECT_EQ(v1, 23);
+	int r1{};
+	lovela::to_fixed_tuple(6).get_item<1>(r1);
+	EXPECT_EQ(r1, 6);
+	lovela::to_fixed_tuple(6, 23).get_item<2>(r1);
+	EXPECT_EQ(r1, 23);
 
-	double v2{};
-	EXPECT_NO_THROW(lovela::to_fixed_tuple(6, 23.5).get_item(2, v2));
-	EXPECT_EQ(v2, 23.5);
+	double r2{};
+	EXPECT_NO_THROW(lovela::to_fixed_tuple(6, 23.5).get_item(2, r2));
+	EXPECT_EQ(r2, 23.5);
 
 	auto t = std::make_tuple(12.3, 45);
-	EXPECT_NO_THROW(lovela::to_fixed_tuple(std::move(t)).get_item(2, v1));
-	EXPECT_EQ(v1, 45);
+	EXPECT_NO_THROW(lovela::to_fixed_tuple(std::move(t)).get_item(2, r1));
+	EXPECT_EQ(r1, 45);
 
 	auto ft = lovela::to_fixed_tuple(6, 1.5);
-	EXPECT_NO_THROW(lovela::to_fixed_tuple(std::move(ft)).get_item(2, v2));
-	EXPECT_EQ(v2, 1.5);
+	EXPECT_NO_THROW(lovela::to_fixed_tuple(std::move(ft)).get_item(2, r2));
+	EXPECT_EQ(r2, 1.5);
 
 	lovela::named_tuple<std::tuple<int, double, std::string>, l_tuple_names_1> nt{ {10, 5.25, "Boots"} };
-	EXPECT_NO_THROW(lovela::to_fixed_tuple(std::move(nt)).get_item(2, v2));
-	EXPECT_EQ(v2, 5.25);
+	EXPECT_NO_THROW(lovela::to_fixed_tuple(std::move(nt)).get_item(2, r2));
+	EXPECT_EQ(r2, 5.25);
 }
 
 TEST(NamedTuple, Concatenate) {
@@ -457,15 +457,15 @@ TEST(NamedTuple, Concatenate) {
 	auto cat = std::tuple_cat(obj1.as_tuple(), obj2.as_tuple());
 	lovela::named_tuple<decltype(cat), l_tuple_names_12> obj12{ {std::move(cat)} };
 
-	double v1{};
-	EXPECT_NO_THROW(obj12.get_item(2, v1));
-	EXPECT_EQ(v1, 5.25);
-	EXPECT_NO_THROW(obj12.get_item(5, v1));
-	EXPECT_EQ(v1, 1.25);
-	EXPECT_NO_THROW(obj12.get_item(u8"Price", v1));
-	EXPECT_EQ(v1, 5.25);
-	EXPECT_NO_THROW(obj12.get_item(u8"Tax", v1));
-	EXPECT_EQ(v1, 1.25);
+	double r1{};
+	EXPECT_NO_THROW(obj12.get_item(2, r1));
+	EXPECT_EQ(r1, 5.25);
+	EXPECT_NO_THROW(obj12.get_item(5, r1));
+	EXPECT_EQ(r1, 1.25);
+	EXPECT_NO_THROW(obj12.get_item(u8"Price", r1));
+	EXPECT_EQ(r1, 5.25);
+	EXPECT_NO_THROW(obj12.get_item(u8"Tax", r1));
+	EXPECT_EQ(r1, 1.25);
 }
 
 TEST(FixedTuple, Combine) {
@@ -502,20 +502,20 @@ TEST(NamedTuple, Combine) {
 }
 
 TEST(Streams, SimpleOut) {
-	std::wostringstream v1;
-	auto* buf = std::wcout.rdbuf(v1.rdbuf());
+	std::wostringstream r1;
+	auto* buf = std::wcout.rdbuf(r1.rdbuf());
 	lovela::streams streams;
 	streams.select(2).write("abc");
-	EXPECT_STREQ(v1.str().c_str(), L"abc");
+	EXPECT_STREQ(r1.str().c_str(), L"abc");
 	std::wcout.rdbuf(buf);
 }
 
 TEST(Streams, Utf8Out) {
-	std::wostringstream v1;
-	auto* buf = std::wcout.rdbuf(v1.rdbuf());
+	std::wostringstream r1;
+	auto* buf = std::wcout.rdbuf(r1.rdbuf());
 	lovela::streams streams;
 	streams.select(2).write("100\xE2\x82\xAC");
-	EXPECT_STREQ(v1.str().c_str(), L"100€");
+	EXPECT_STREQ(r1.str().c_str(), L"100€");
 	std::wcout.rdbuf(buf);
 }
 
