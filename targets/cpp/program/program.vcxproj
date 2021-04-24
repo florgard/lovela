@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\source\lovela-types.h" />
     <ClInclude Include="..\source\lovela.h" />
     <ClInclude Include="lovela-api.h" />
     <ClInclude Include="lovela-exports.h" />

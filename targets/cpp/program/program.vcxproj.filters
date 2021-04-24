@@ -14,6 +14,9 @@
     <ClInclude Include="lovela-api.h" />
     <ClInclude Include="lovela-imports.h" />
     <ClInclude Include="user-imports.h" />
+    <ClInclude Include="..\source\lovela-types.h">
+      <Filter>lovela</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\lovela-main.cpp">
