@@ -1,6 +1,10 @@
 # Built-in data structures
 
 ## Variable
+Single variable type.
+
+Syntax:
+type
 
 ## Fixed array
 Fixed-size (static) homogeneous (single-type) array.

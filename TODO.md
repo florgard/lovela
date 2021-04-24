@@ -28,7 +28,6 @@
 
 * Type system
 * Built-in data structures
-  * Variable
   * Dynamic named array
   * Dynamic tuple
   * Dynamic named tuple
