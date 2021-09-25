@@ -45,7 +45,7 @@ public:
 	constexpr Api() noexcept = default;
 	constexpr Api(int flags) noexcept : flags(flags) {}
 
-	constexpr auto operator<=>(const Api& rhs) const noexcept = default;
+	[[nodiscard]] constexpr auto operator<=>(const Api& rhs) const noexcept = default;
 	
 	constexpr void Set(int flag)
 	{

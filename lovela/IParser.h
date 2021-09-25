@@ -15,7 +15,7 @@ public:
 		std::wstring message;
 		Token token;
 
-		constexpr bool operator<=>(const Error& rhs) const noexcept = default;
+		[[nodiscard]] constexpr auto operator<=>(const Error& rhs) const noexcept = default;
 	};
 
 	[[nodiscard]] virtual std::unique_ptr<Node> Parse() noexcept = 0;
