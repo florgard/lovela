@@ -1,7 +1,11 @@
-#include "pch.h"
-#include "CodeGenerator.h"
-#include "StandardCDeclarations.h"
-#include "StandardCppDeclarations.h"
+import CodeGenerator.Cpp;
+import Node;
+import Utility;
+import <string>;
+import <map>;
+import <iostream>;
+import <sstream>;
+import <regex>;
 
 std::map<Node::Type, CodeGenerator::Visitor> CodeGenerator::visitors
 {

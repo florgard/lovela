@@ -5,7 +5,7 @@
 // | |  | | (_| | (_| | | (__  | |____| | | | |_| | | | | | | | |____|_|   |_|
 // |_|  |_|\__,_|\__, |_|\___| |______|_| |_|\__,_|_| |_| |_|  \_____|
 //                __/ | https://github.com/Neargye/magic_enum
-//               |___/  version 0.7.2
+//               |___/  version 0.7.3
 //
 // Licensed under the MIT License <http://opensource.org/licenses/MIT>.
 // SPDX-License-Identifier: MIT
@@ -34,7 +34,7 @@
 
 #define MAGIC_ENUM_VERSION_MAJOR 0
 #define MAGIC_ENUM_VERSION_MINOR 7
-#define MAGIC_ENUM_VERSION_PATCH 2
+#define MAGIC_ENUM_VERSION_PATCH 3
 
 #include <array>
 #include <cassert>
@@ -44,6 +44,10 @@
 #include <limits>
 #include <type_traits>
 #include <utility>
+
+#if defined(MAGIC_ENUM_CONFIG_FILE)
+#include MAGIC_ENUM_CONFIG_FILE
+#endif
 
 #if !defined(MAGIC_ENUM_USING_ALIAS_OPTIONAL)
 #include <optional>
@@ -97,22 +101,21 @@ namespace magic_enum {
 #if defined(MAGIC_ENUM_USING_ALIAS_OPTIONAL)
 MAGIC_ENUM_USING_ALIAS_OPTIONAL
 #else
-template <typename T>
-using optional = std::optional<T>;
+using std::optional;
 #endif
 
 // If need another string_view type, define the macro MAGIC_ENUM_USING_ALIAS_STRING_VIEW.
 #if defined(MAGIC_ENUM_USING_ALIAS_STRING_VIEW)
 MAGIC_ENUM_USING_ALIAS_STRING_VIEW
 #else
-using string_view = std::string_view;
+using std::string_view;
 #endif
 
 // If need another string type, define the macro MAGIC_ENUM_USING_ALIAS_STRING.
 #if defined(MAGIC_ENUM_USING_ALIAS_STRING)
 MAGIC_ENUM_USING_ALIAS_STRING
 #else
-using string = std::string;
+using std::string;
 #endif
 
 namespace customize {
@@ -136,7 +139,7 @@ static_assert(MAGIC_ENUM_RANGE_MAX < (std::numeric_limits<std::int16_t>::max)(),
 
 static_assert(MAGIC_ENUM_RANGE_MAX > MAGIC_ENUM_RANGE_MIN, "MAGIC_ENUM_RANGE_MAX must be greater than MAGIC_ENUM_RANGE_MIN.");
 
-// If need cunstom names for enum, add specialization enum_name for necessary enum type.
+// If need custom names for enum, add specialization enum_name for necessary enum type.
 template <typename E>
 constexpr string_view enum_name(E) noexcept {
   static_assert(std::is_enum_v<E>, "magic_enum::customize::enum_name requires enum type.");
@@ -169,7 +172,7 @@ class static_string {
     assert(str.size() == N);
   }
 
-  constexpr const char* data() const noexcept { return chars_.data(); }
+  constexpr const char* data() const noexcept { return chars_; }
 
   constexpr std::size_t size() const noexcept { return N; }
 
@@ -177,9 +180,9 @@ class static_string {
 
  private:
   template <std::size_t... I>
-  constexpr static_string(string_view str, std::index_sequence<I...>) noexcept : chars_{{str[I]..., '\0'}} {}
+  constexpr static_string(string_view str, std::index_sequence<I...>) noexcept : chars_{str[I]..., '\0'} {}
 
-  const std::array<char, N + 1> chars_;
+  char chars_[N + 1];
 };
 
 template <>
@@ -233,6 +236,11 @@ constexpr std::size_t find(string_view str, char c) noexcept {
   } else {
     return str.find_first_of(c);
   }
+}
+
+template <typename T, std::size_t N, std::size_t... I>
+constexpr std::array<std::remove_cv_t<T>, N> to_array(T (&a)[N], std::index_sequence<I...>) {
+  return {{a[I]...}};
 }
 
 template <typename BinaryPredicate>
@@ -353,6 +361,17 @@ constexpr bool is_valid() noexcept {
   return n<E, static_cast<E>(V)>().size() != 0;
 }
 
+template <typename E, int O, bool IsFlags = false, typename U = std::underlying_type_t<E>>
+constexpr E value(std::size_t i) noexcept {
+  static_assert(is_enum_v<E>, "magic_enum::detail::value requires enum type.");
+
+  if constexpr (IsFlags) {
+    return static_cast<E>(U{1} << static_cast<U>(static_cast<int>(i) + O));
+  } else {
+    return static_cast<E>(static_cast<int>(i) + O);
+  }
+}
+
 template <typename E, bool IsFlags, typename U = std::underlying_type_t<E>>
 constexpr int reflected_min() noexcept {
   static_assert(is_enum_v<E>, "magic_enum::detail::reflected_min requires enum type.");
@@ -367,6 +386,7 @@ constexpr int reflected_min() noexcept {
     if constexpr (cmp_less(lhs, rhs)) {
       return rhs;
     } else {
+      static_assert(!is_valid<E, value<E, lhs - 1, IsFlags>(0)>(), "magic_enum::enum_range detects enum value smaller than min range size.");
       return lhs;
     }
   }
@@ -384,6 +404,7 @@ constexpr int reflected_max() noexcept {
     constexpr auto rhs = (std::numeric_limits<U>::max)();
 
     if constexpr (cmp_less(lhs, rhs)) {
+      static_assert(!is_valid<E, value<E, lhs + 1, IsFlags>(0)>(), "magic_enum::enum_range detects enum value larger than max range size.");
       return lhs;
     } else {
       return rhs;
@@ -397,21 +418,10 @@ inline constexpr auto reflected_min_v = reflected_min<E, IsFlags>();
 template <typename E, bool IsFlags = false>
 inline constexpr auto reflected_max_v = reflected_max<E, IsFlags>();
 
-template <typename E, int O, bool IsFlags = false, typename U = std::underlying_type_t<E>>
-constexpr E value(std::size_t i) noexcept {
-  static_assert(is_enum_v<E>, "magic_enum::detail::value requires enum type.");
-
-  if constexpr (IsFlags) {
-    return static_cast<E>(U{1} << static_cast<U>(static_cast<int>(i) + O));
-  } else {
-    return static_cast<E>(static_cast<int>(i) + O);
-  }
-}
-
 template <std::size_t N>
-constexpr std::size_t values_count(const std::array<bool, N>& valid) noexcept {
+constexpr std::size_t values_count(const bool (&valid)[N]) noexcept {
   auto count = std::size_t{0};
-  for (std::size_t i = 0; i < valid.size(); ++i) {
+  for (std::size_t i = 0; i < N; ++i) {
     if (valid[i]) {
       ++count;
     }
@@ -423,17 +433,21 @@ constexpr std::size_t values_count(const std::array<bool, N>& valid) noexcept {
 template <typename E, bool IsFlags, int Min, std::size_t... I>
 constexpr auto values(std::index_sequence<I...>) noexcept {
   static_assert(is_enum_v<E>, "magic_enum::detail::values requires enum type.");
-  constexpr std::array<bool, sizeof...(I)> valid{{is_valid<E, value<E, Min, IsFlags>(I)>()...}};
+  constexpr bool valid[sizeof...(I)] = {is_valid<E, value<E, Min, IsFlags>(I)>()...};
   constexpr std::size_t count = values_count(valid);
 
-  std::array<E, count> values{};
-  for (std::size_t i = 0, v = 0; v < count; ++i) {
-    if (valid[i]) {
-      values[v++] = value<E, Min, IsFlags>(i);
+  if constexpr (count > 0) {
+    E values[count] = {};
+    for (std::size_t i = 0, v = 0; v < count; ++i) {
+      if (valid[i]) {
+        values[v++] = value<E, Min, IsFlags>(i);
+      }
     }
-  }
 
-  return values;
+    return to_array(values, std::make_index_sequence<count>{});
+  } else {
+    return std::array<E, 0>{};
+  }
 }
 
 template <typename E, bool IsFlags, typename U = std::underlying_type_t<E>>
@@ -444,12 +458,6 @@ constexpr auto values() noexcept {
   constexpr auto range_size = max - min + 1;
   static_assert(range_size > 0, "magic_enum::enum_range requires valid size.");
   static_assert(range_size < (std::numeric_limits<std::uint16_t>::max)(), "magic_enum::enum_range requires valid size.");
-  if constexpr (cmp_less((std::numeric_limits<U>::min)(), min) && !IsFlags) {
-    static_assert(!is_valid<E, value<E, min - 1, IsFlags>(0)>(), "magic_enum::enum_range detects enum value smaller than min range size.");
-  }
-  if constexpr (cmp_less(range_size, (std::numeric_limits<U>::max)()) && !IsFlags) {
-    static_assert(!is_valid<E, value<E, min, IsFlags>(range_size + 1)>(), "magic_enum::enum_range detects enum value larger than max range size.");
-  }
 
   return values<E, IsFlags, reflected_min_v<E, IsFlags>>(std::make_index_sequence<range_size>{});
 }
@@ -464,10 +472,10 @@ template <typename E, bool IsFlags = false>
 inline constexpr auto count_v = values_v<E, IsFlags>.size();
 
 template <typename E, bool IsFlags = false, typename U = std::underlying_type_t<E>>
-inline constexpr auto min_v = static_cast<U>(values_v<E, IsFlags>.front());
+inline constexpr auto min_v = (count_v<E, IsFlags> > 0) ? static_cast<U>(values_v<E, IsFlags>.front()) : U{0};
 
 template <typename E, bool IsFlags = false, typename U = std::underlying_type_t<E>>
-inline constexpr auto max_v = static_cast<U>(values_v<E, IsFlags>.back());
+inline constexpr auto max_v = (count_v<E, IsFlags> > 0) ? static_cast<U>(values_v<E, IsFlags>.back()) : U{0};
 
 template <typename E, bool IsFlags, typename U = std::underlying_type_t<E>>
 constexpr std::size_t range_size() noexcept {

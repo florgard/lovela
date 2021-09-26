@@ -1,8 +1,17 @@
-#pragma once
-#include "ILexer.h"
-#include "IParser.h"
+export module TestingBase;
 
-class TestingBase
+import Token;
+import Node;
+import ILexer;
+import LexerBase;
+import IParser;
+import Utility;
+import <string>;
+import <string_view>;
+import <sstream>;
+import <vector>;
+
+export class TestingBase
 {
 protected:
 	void TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors = {});

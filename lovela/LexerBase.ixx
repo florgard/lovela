@@ -1,7 +1,19 @@
-#pragma once
-#include "ILexer.h"
+export module LexerBase;
 
-class LexerBase : public ILexer
+import ILexer;
+import <string>;
+import <string_view>;
+import <iostream>;
+import <sstream>;
+import <vector>;
+import <array>;
+import <set>;
+import <map>;
+import <deque>;
+import <functional>;
+import <algorithm>;
+
+export class LexerBase : public ILexer
 {
 public:
 	[[nodiscard]] const std::vector<Error>& GetErrors() noexcept override

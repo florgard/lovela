@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{451648c3-767b-4937-a51b-756a99d6d2aa}</ProjectGuid>
-    <RootNamespace>lovela</RootNamespace>
+    <ProjectGuid>{c73492e8-38ea-48af-a603-c78acad61d06}</ProjectGuid>
+    <RootNamespace>loveladependencies</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -40,13 +40,13 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -84,62 +84,55 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies />
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <DisableLanguageExtensions>true</DisableLanguageExtensions>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies />
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <ScanSourceForModuleDependencies>true</ScanSourceForModuleDependencies>
       <DisableLanguageExtensions>true</DisableLanguageExtensions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies />
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <ScanSourceForModuleDependencies>true</ScanSourceForModuleDependencies>
       <DisableLanguageExtensions>true</DisableLanguageExtensions>
     </ClCompile>
     <Link>
@@ -147,82 +140,10 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies />
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CodeGenerator.cpp" />
-    <ClCompile Include="DataType.cpp" />
-    <ClCompile Include="Lexer.cpp" />
-    <ClCompile Include="LexerBase.cpp" />
-    <ClCompile Include="lovela.cpp" />
-    <ClCompile Include="Node.cpp" />
-    <ClCompile Include="ParseException.cpp" />
-    <ClCompile Include="Parser.cpp" />
-    <ClCompile Include="ParserBase.cpp" />
-    <ClCompile Include="StandardCDeclarations.cpp" />
-    <ClCompile Include="StandardCppDeclarations.cpp" />
-    <ClCompile Include="Testing.cpp" />
-    <ClCompile Include="TestingBase.cpp" />
-    <ClCompile Include="Token.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="CodeGenerator.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="DataType.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="ILexer.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="IParser.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="Lexer.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="LexerBase.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="Node.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="ParseException.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="Parser.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="ParserBase.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="StandardCDeclarations.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="StandardCppDeclarations.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="StaticMap.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="Testing.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="TestingBase.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="Token.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="Utility.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\lovela-dependencies\lovela-dependencies.vcxproj">
-      <Project>{c73492e8-38ea-48af-a603-c78acad61d06}</Project>
-    </ProjectReference>
+    <ClCompile Include="lovela-dependencies.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

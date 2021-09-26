@@ -1,7 +1,8 @@
-#pragma once
-#include "TestingBase.h"
+export module Testing;
 
-class Testing : public TestingBase
+import TestingBase;
+
+export class Testing : public TestingBase
 {
 public:
 	void RunTests();

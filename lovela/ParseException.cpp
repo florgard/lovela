@@ -1,5 +1,8 @@
-#include "pch.h"
-#include "ParseException.h"
+import ParseException;
+import Token;
+import Utility;
+import <string_view>;
+import <sstream>;
 
 ParseException::ParseException(const Token& token) : token(token)
 {

@@ -1,5 +1,12 @@
-#include "pch.h"
-#include "Lexer.h"
+import Token;
+import ILexer;
+import Lexer;
+import <string>;
+import <vector>;
+import <array>;
+import <iostream>;
+import <regex>;
+import <memory>;
 
 static const std::wregex separator{ LR"([\(\)\[\]\{\}\.,:;\!\?\|#])" };
 static const std::wregex whitespace{ LR"(\s)" };
@@ -133,7 +140,12 @@ bool Lexer::Accept(wchar_t character) noexcept
 
 bool Lexer::Accept(const std::wregex& regex, size_t length) noexcept
 {
-	assert(length > 0 && length <= characters.size() - Next);
+	if (!(length > 0 && length <= characters.size() - Next))
+	{
+		AddError(Error::Code::InternalError, L"Regex match out of bounds.");
+		return false;
+	}
+
 	const auto* str = &characters[Next];
 	if (std::regex_match(str, str + length, regex))
 	{

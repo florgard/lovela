@@ -1,11 +1,22 @@
-#pragma once
+export module Utility.StaticMap;
+
+import <string>;
+import <string_view>;
+import <iostream>;
+import <sstream>;
+import <vector>;
+import <array>;
+import <set>;
+import <map>;
+import <functional>;
+import <algorithm>;
 
 // Clone of Jason Turner's constexpr map: https://www.youtube.com/watch?v=INn3xa4pMfg
 // Usage:
 // static constexpr std::array<std::pair<int, double>, 2> values{ { {1, 1.1}, {2, 2.2} } };
 // static constexpr auto map = StaticMap<int, double, values.size()>{ {values} };
 // static_assert(map.at(2) == 2.2);
-template <typename Key, typename Value, std::size_t Size>
+export template <typename Key, typename Value, std::size_t Size>
 struct StaticMap
 {
     std::array<std::pair<Key, Value>, Size> data;

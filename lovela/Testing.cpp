@@ -1,8 +1,19 @@
-#include "pch.h"
-#include "Lexer.h"
-#include "Parser.h"
-#include "CodeGenerator.h"
-#include "Testing.h"
+import Testing;
+import Token;
+import Node;
+import Lexer;
+import LexerBase;
+import Parser;
+import CodeGenerator.Cpp;
+import Utility;
+import Utility.StaticMap;
+import <string>;
+import <array>;
+import <memory>;
+import <iostream>;
+import <fstream>;
+import <sstream>;
+import <cassert>;
 
 void Testing::RunTests()
 {

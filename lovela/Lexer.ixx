@@ -1,7 +1,15 @@
-#pragma once
-#include "LexerBase.h"
+export module Lexer;
 
-class Lexer : public LexerBase
+import Token;
+import ILexer;
+import LexerBase;
+import <string>;
+import <iostream>;
+import <vector>;
+import <array>;
+import <regex>;
+
+export class Lexer : public LexerBase
 {
 public:
 	Lexer(std::wistream& charStream) noexcept;

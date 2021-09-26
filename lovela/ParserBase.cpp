@@ -1,7 +1,10 @@
-#include "pch.h"
-#include "Lexer.h"
-#include "ParseException.h"
-#include "ParserBase.h"
+import ParserBase;
+import ILexer;
+import Token;
+import ParseException;
+import <vector>;
+import <set>;
+import <algorithm>;
 
 ParserBase::ParserBase(TokenGenerator&& tokenGenerator) noexcept : tokenGenerator(std::move(tokenGenerator))
 {
@@ -13,7 +16,7 @@ void ParserBase::Expect(Token::Type type)
 {
 	if (!Accept(type))
 	{
-		throw UnexpectedTokenException(*tokenIterator, type);
+		throw UnexpectedTokenException(*GetTokenIterator(), type);
 	}
 }
 
@@ -23,7 +26,7 @@ void ParserBase::Expect(const std::set<Token::Type>& types)
 {
 	if (!Accept(types))
 	{
-		throw UnexpectedTokenException(*tokenIterator, types);
+		throw UnexpectedTokenException(*GetTokenIterator(), types);
 	}
 }
 
@@ -51,8 +54,8 @@ bool ParserBase::Accept(const std::set<Token::Type>& types)
 // Skips the current token and sets the next token as current token.
 void ParserBase::Skip()
 {
-	currentToken = *tokenIterator;
-	tokenIterator++;
+	currentToken = *GetTokenIterator();
+	GetTokenIterator()++;
 }
 
 // Skips the current token and sets the next token as current token, if the next token is of the given type.
@@ -103,7 +106,7 @@ void ParserBase::Assert(const std::set<Token::Type>& types)
 // Returns true if there's a token, false otherwise.
 bool ParserBase::Peek()
 {
-	return tokenIterator != tokenGenerator.end();
+	return !GetTokenIterator().empty();
 }
 
 // Checks whether the next token is of the given type.
@@ -115,7 +118,7 @@ bool ParserBase::Peek(Token::Type type)
 		return false;
 	}
 
-	const auto nextType = tokenIterator->type;
+	const auto nextType = GetTokenIterator()->type;
 	return type == nextType;
 }
 
@@ -128,7 +131,7 @@ bool ParserBase::Peek(const std::set<Token::Type>& types)
 		return false;
 	}
 
-	const auto nextType = tokenIterator->type;
+	const auto nextType = GetTokenIterator()->type;
 	return types.contains(nextType);
 }
 

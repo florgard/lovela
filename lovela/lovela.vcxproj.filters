@@ -9,32 +9,28 @@
     <ClCompile Include="ParseException.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="ParserBase.cpp" />
-    <ClCompile Include="pch.cpp" />
     <ClCompile Include="Token.cpp" />
     <ClCompile Include="TestingBase.cpp" />
     <ClCompile Include="CodeGenerator.cpp" />
     <ClCompile Include="DataType.cpp" />
     <ClCompile Include="StandardCDeclarations.cpp" />
     <ClCompile Include="StandardCppDeclarations.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Lexer.h" />
-    <ClInclude Include="Token.h" />
-    <ClInclude Include="Testing.h" />
-    <ClInclude Include="ILexer.h" />
-    <ClInclude Include="Parser.h" />
-    <ClInclude Include="LexerBase.h" />
-    <ClInclude Include="StaticMap.h" />
-    <ClInclude Include="Utility.h" />
-    <ClInclude Include="ParseException.h" />
-    <ClInclude Include="IParser.h" />
-    <ClInclude Include="Node.h" />
-    <ClInclude Include="ParserBase.h" />
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="TestingBase.h" />
-    <ClInclude Include="CodeGenerator.h" />
-    <ClInclude Include="DataType.h" />
-    <ClInclude Include="StandardCDeclarations.h" />
-    <ClInclude Include="StandardCppDeclarations.h" />
+    <ClCompile Include="CodeGenerator.ixx" />
+    <ClCompile Include="DataType.ixx" />
+    <ClCompile Include="ILexer.ixx" />
+    <ClCompile Include="IParser.ixx" />
+    <ClCompile Include="Lexer.ixx" />
+    <ClCompile Include="LexerBase.ixx" />
+    <ClCompile Include="Node.ixx" />
+    <ClCompile Include="ParseException.ixx" />
+    <ClCompile Include="Parser.ixx" />
+    <ClCompile Include="ParserBase.ixx" />
+    <ClCompile Include="StandardCDeclarations.ixx" />
+    <ClCompile Include="StandardCppDeclarations.ixx" />
+    <ClCompile Include="StaticMap.ixx" />
+    <ClCompile Include="Testing.ixx" />
+    <ClCompile Include="TestingBase.ixx" />
+    <ClCompile Include="Token.ixx" />
+    <ClCompile Include="Utility.ixx" />
   </ItemGroup>
 </Project>

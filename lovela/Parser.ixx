@@ -1,8 +1,19 @@
-#pragma once
-#include "ParserBase.h"
-#include "ILexer.h"
+export module Parser;
 
-class Parser : public ParserBase
+import ILexer;
+import ParserBase;
+import <string>;
+import <string_view>;
+import <iostream>;
+import <sstream>;
+import <vector>;
+import <array>;
+import <set>;
+import <map>;
+import <functional>;
+import <algorithm>;
+
+export class Parser : public ParserBase
 {
 public:
 	Parser(TokenGenerator&& tokenGenerator) noexcept;

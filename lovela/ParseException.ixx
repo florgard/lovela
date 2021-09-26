@@ -1,7 +1,18 @@
-#pragma once
-#include "Token.h"
+export module ParseException;
 
-struct ParseException
+export import Token;
+import <string>;
+import <string_view>;
+import <iostream>;
+import <sstream>;
+import <vector>;
+import <array>;
+import <set>;
+import <map>;
+import <functional>;
+import <algorithm>;
+
+export struct ParseException
 {
 	std::wstring message;
 	Token token;
@@ -11,14 +22,14 @@ struct ParseException
 	ParseException(const Token& token, std::wstring_view message);
 };
 
-struct UnexpectedTokenException : public ParseException
+export struct UnexpectedTokenException : public ParseException
 {
 	UnexpectedTokenException(const Token& token);
 	UnexpectedTokenException(const Token& token, Token::Type expected);
 	UnexpectedTokenException(const Token& token, const std::set<Token::Type>& expected);
 };
 
-struct InvalidCurrentTokenException : public ParseException
+export struct InvalidCurrentTokenException : public ParseException
 {
 	InvalidCurrentTokenException(const Token& token);
 };

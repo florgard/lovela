@@ -1,5 +1,4 @@
-#include "pch.h"
-#include "Testing.h"
+import Testing;
 
 int main()
 {

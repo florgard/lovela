@@ -1,6 +1,15 @@
-#include "pch.h"
-#include "ParseException.h"
-#include "Parser.h"
+import Token;
+import Node;
+import ILexer;
+import Parser;
+import ParserBase;
+import ParseException;
+import Utility;
+import <string>;
+import <vector>;
+import <set>;
+import <memory>;
+import <experimental/generator>;
 
 static const std::set<Token::Type> functionDeclarationTokens
 {
@@ -78,6 +87,42 @@ static const std::set<Node::Type> operatorNodes
 {
 	Node::Type::FunctionCall,
 	Node::Type::BinaryOperation,
+};
+
+struct TokenIteratorImpl : public ParserBase::TokenIterator
+{
+	TokenGenerator::iterator iter;
+
+	TokenIteratorImpl(TokenGenerator::iterator iter) : iter(iter)
+	{
+	}
+
+	[[nodiscard]] const Token& operator*() const noexcept override
+	{
+		return iter.operator*();
+	}
+
+	[[nodiscard]] const Token* operator->() const noexcept override
+	{
+		return iter.operator->();
+	}
+
+	ParserBase::TokenIterator& operator++() override
+	{
+		iter.operator++();
+		return *this;
+	}
+
+	ParserBase::TokenIterator& operator++(int) override
+	{
+		iter.operator++(0);
+		return *this;
+	}
+
+	[[nodiscard]] bool empty() const noexcept override
+	{
+		return iter == TokenGenerator::iterator{};
+	}
 };
 
 bool Parser::Context::HasFunctionSymbol(const std::wstring& symbol) const
@@ -168,8 +213,9 @@ std::unique_ptr<Node> Parser::Parse() noexcept
 	// Use a list of top-level nodes to be able to continue parsing after an error.
 	std::vector<std::unique_ptr<Node>> nodes;
 
-	tokenIterator = tokenGenerator.begin();
-	while (tokenIterator != tokenGenerator.end())
+	SetTokenIterator(std::make_unique<TokenIteratorImpl>(tokenGenerator.begin()));
+
+	while (!GetTokenIterator().empty())
 	{
 		try
 		{
@@ -181,12 +227,12 @@ std::unique_ptr<Node> Parser::Parse() noexcept
 			{
 				if (Peek())
 				{
-					throw UnexpectedTokenException(*tokenIterator);
+					throw UnexpectedTokenException(*GetTokenIterator());
 				}
 			}
 			else if (Peek())
 			{
-				throw UnexpectedTokenException(*tokenIterator);
+				throw UnexpectedTokenException(*GetTokenIterator());
 			}
 			else
 			{
@@ -266,7 +312,7 @@ TypeSpec Parser::ParseTypeSpec()
 	}
 	else
 	{
-		throw UnexpectedTokenException(*tokenIterator);
+		throw UnexpectedTokenException(*GetTokenIterator());
 	}
 
 	return typeSpec;
@@ -361,7 +407,8 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 			};
 
 			auto apiTokens = split(currentToken.value, L' ');
-			for (auto value : apiTokens())
+			//for (auto value : apiTokens())
+			for (auto value : apiTokens)
 			{
 				if (validApiTokens.contains(value))
 				{
@@ -487,7 +534,7 @@ std::unique_ptr<Node> Parser::ParseCompoundExpression(std::shared_ptr<Context> c
 
 std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 {
-	auto firstToken = *tokenIterator;
+	auto firstToken = *GetTokenIterator();
 
 	const auto& inType = context->inType;
 	auto innerContext = make<Context>::shared({ .parent = context, .inType = inType });
@@ -522,7 +569,7 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		}
 		else
 		{
-			throw UnexpectedTokenException(*tokenIterator);
+			throw UnexpectedTokenException(*GetTokenIterator());
 		}
 	}
 

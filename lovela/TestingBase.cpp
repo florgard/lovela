@@ -1,8 +1,15 @@
-#include "pch.h"
-#include "Lexer.h"
-#include "Parser.h"
-#include "TestingBase.h"
-#include "CodeGenerator.h"
+import TestingBase;
+import CodeGenerator.Cpp;
+import Lexer;
+import Parser;
+import Utility;
+import <string>;
+import <string_view>;
+import <vector>;
+import <array>;
+import <iostream>;
+import <sstream>;
+import <algorithm>;
 
 void TestingBase::TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
 {
