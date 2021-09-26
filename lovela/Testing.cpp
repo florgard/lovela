@@ -1,8 +1,8 @@
 import Testing;
 import LexerFactory;
-import LexerBase;
 import ParserFactory;
-import CodeGenerator.Cpp;
+import CodeGeneratorFactory;
+import LexerBase;
 import Utility;
 import Utility.StaticMap;
 import <string>;
@@ -622,10 +622,10 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 
 	std::wstringstream stream;
 
-	CodeGenerator gen(stream);
-	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { gen.Visit(node); });
+	auto codeGen = CodeGeneratorFactory::Create(stream);
+	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { codeGen->Visit(node); });
 
-	for (auto& error : gen.GetErrors())
+	for (auto& error : codeGen->GetErrors())
 	{
 		std::wcerr << error << '\n';
 	}
@@ -634,16 +634,16 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 	std::wcout << genCode;
 
 	std::wofstream program(R"(..\targets\cpp\program\lovela-program.cpp)");
-	CodeGenerator::BeginProgramSourceFile(program);
+	CodeGeneratorCpp::BeginProgramSourceFile(program);
 	program << genCode;
-	CodeGenerator::EndProgramSourceFile(program);
+	CodeGeneratorCpp::EndProgramSourceFile(program);
 	program.close();
 
 	std::wofstream imports(R"(..\targets\cpp\program\lovela-imports.h)");
-	gen.GenerateImportsHeaderFile(imports);
+	codeGen->GenerateImportsHeaderFile(imports);
 	imports.close();
 
 	std::wofstream exports(R"(..\targets\cpp\program\lovela-exports.h)");
-	gen.GenerateExportsHeaderFile(exports);
+	codeGen->GenerateExportsHeaderFile(exports);
 	exports.close();
 }

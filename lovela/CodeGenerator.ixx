@@ -1,8 +1,9 @@
 export module CodeGenerator.Cpp;
 
+export import ICodeGenerator;
 export import :StandardCDeclarations;
 export import :StandardCppDeclarations;
-export import Parser.Node;
+import Parser.Node;
 import <string>;
 import <string_view>;
 import <iostream>;
@@ -10,19 +11,22 @@ import <vector>;
 import <map>;
 import <functional>;
 
-export class CodeGenerator
+export class CodeGeneratorCpp : public ICodeGenerator
 {
+	friend class CodeGeneratorFactory;
+
+protected:
+	CodeGeneratorCpp(std::wostream& stream);
+
 public:
-	CodeGenerator(std::wostream& stream);
+	[[nodiscard]] const std::vector<std::wstring>& GetErrors() const noexcept override { return errors; }
+	[[nodiscard]] const std::vector<std::wstring>& GetHeaders() const noexcept override { return headers; }
+	[[nodiscard]] const std::vector<std::wstring>& GetExports() const noexcept override { return exports; }
 
-	const std::vector<std::wstring>& GetErrors() const { return errors; }
-	const std::vector<std::wstring>& GetHeaders() const { return headers; }
-	const std::vector<std::wstring>& GetExports() const { return exports; }
+	void Visit(Node& node) override;
 
-	void Visit(Node& node);
-
-	void GenerateImportsHeaderFile(std::wostream& file);
-	void GenerateExportsHeaderFile(std::wostream& file);
+	void GenerateImportsHeaderFile(std::wostream& file) const noexcept override;
+	void GenerateExportsHeaderFile(std::wostream& file) const noexcept override;
 
 	static void BeginProgramSourceFile(std::wostream& file);
 	static void EndProgramSourceFile(std::wostream& file);
@@ -74,7 +78,7 @@ private:
 	std::vector<std::wstring> errors;
 	std::vector<std::wstring> headers;
 	std::vector<std::wstring> exports;
-	using Visitor = std::function<void(CodeGenerator*, Node&, CodeGenerator::Context&)>;
+	using Visitor = std::function<void(CodeGeneratorCpp*, Node&, CodeGeneratorCpp::Context&)>;
 	static std::map<Node::Type, Visitor> visitors;
 	static std::map<Node::Type, Visitor> internalVisitors;
 

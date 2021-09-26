@@ -1,6 +1,6 @@
 import LexerFactory;
 import ParserFactory;
-import CodeGenerator.Cpp;
+import CodeGeneratorFactory;
 import TestingBase;
 import Utility;
 import <string>;
@@ -169,8 +169,8 @@ void TestingBase::TestCodeGenerator(const char* name, std::wstring_view code, st
 	auto tree = parser->Parse();
 
 	std::wostringstream output;
-	CodeGenerator gen(output);
-	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { gen.Visit(node); });
+	auto codeGen = CodeGeneratorFactory::Create(output);
+	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { codeGen->Visit(node); });
 
 	auto generatedCode = output.str();
 	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"^\\s+" }, L"");
@@ -193,13 +193,13 @@ void TestingBase::TestCodeGenerator(const char* name, std::wstring_view code, st
 		assert(success);
 	}
 
-	success = gen.GetErrors().size() == expectedErrors;
+	success = codeGen->GetErrors().size() == expectedErrors;
 
 	if (!success)
 	{
 		std::wcerr << "Code generator test \"" << name << "\" error: The error count differs from the expected count.\nError messages:\n";
 
-		for (auto& error : gen.GetErrors())
+		for (auto& error : codeGen->GetErrors())
 		{
 			std::wcerr << error << '\n';
 		}
@@ -216,10 +216,10 @@ void TestingBase::TestCodeGeneratorImport(const char* name, std::wstring_view co
 	auto tree = parser->Parse();
 
 	std::wostringstream output;
-	CodeGenerator gen(output);
-	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { gen.Visit(node); });
+	auto codeGen = CodeGeneratorFactory::Create(output);
+	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { codeGen->Visit(node); });
 
-	bool success = gen.GetHeaders().size() == 1 || gen.GetHeaders().empty() && cppCode.empty();
+	bool success = codeGen->GetHeaders().size() == 1 || codeGen->GetHeaders().empty() && cppCode.empty();
 
 	if (!success)
 	{
@@ -229,7 +229,7 @@ void TestingBase::TestCodeGeneratorImport(const char* name, std::wstring_view co
 		return;
 	}
 
-	auto generatedCode = gen.GetHeaders().front();
+	auto generatedCode = codeGen->GetHeaders().front();
 	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"^\\s+" }, L"");
 	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"\\s+$" }, L"");
 	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"\\s+" }, L" ");
@@ -248,13 +248,13 @@ void TestingBase::TestCodeGeneratorImport(const char* name, std::wstring_view co
 		assert(success);
 	}
 
-	success = gen.GetErrors().size() == expectedErrors;
+	success = codeGen->GetErrors().size() == expectedErrors;
 
 	if (!success)
 	{
 		std::wcerr << "Code generator import test \"" << name << "\" error: The error count differs from the expected count.\nError messages:\n";
 
-		for (auto& error : gen.GetErrors())
+		for (auto& error : codeGen->GetErrors())
 		{
 			std::wcerr << error << '\n';
 		}
@@ -271,10 +271,10 @@ void TestingBase::TestCodeGeneratorExport(const char* name, std::wstring_view co
 	auto tree = parser->Parse();
 
 	std::wostringstream output;
-	CodeGenerator gen(output);
-	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { gen.Visit(node); });
+	auto codeGen = CodeGeneratorFactory::Create(output);
+	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { codeGen->Visit(node); });
 
-	bool success = gen.GetExports().size() == 1 || gen.GetExports().empty() && cppCode.empty();
+	bool success = codeGen->GetExports().size() == 1 || codeGen->GetExports().empty() && cppCode.empty();
 
 	if (!success)
 	{
@@ -284,7 +284,7 @@ void TestingBase::TestCodeGeneratorExport(const char* name, std::wstring_view co
 		return;
 	}
 
-	auto generatedCode = gen.GetExports().front();
+	auto generatedCode = codeGen->GetExports().front();
 	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"^\\s+" }, L"");
 	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"\\s+$" }, L"");
 	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"\\s+" }, L" ");
@@ -303,13 +303,13 @@ void TestingBase::TestCodeGeneratorExport(const char* name, std::wstring_view co
 		assert(success);
 	}
 
-	success = gen.GetErrors().size() == expectedErrors;
+	success = codeGen->GetErrors().size() == expectedErrors;
 
 	if (!success)
 	{
 		std::wcerr << "Code generator export test \"" << name << "\" error: The error count differs from the expected count.\nError messages:\n";
 
-		for (auto& error : gen.GetErrors())
+		for (auto& error : codeGen->GetErrors())
 		{
 			std::wcerr << error << '\n';
 		}

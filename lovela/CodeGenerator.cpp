@@ -6,31 +6,31 @@ import <iostream>;
 import <sstream>;
 import <regex>;
 
-std::map<Node::Type, CodeGenerator::Visitor> CodeGenerator::visitors
+std::map<Node::Type, CodeGeneratorCpp::Visitor> CodeGeneratorCpp::visitors
 {
-	{Node::Type::FunctionDeclaration, &CodeGenerator::FunctionDeclaration}
+	{Node::Type::FunctionDeclaration, &CodeGeneratorCpp::FunctionDeclaration}
 };
 
-std::map<Node::Type, CodeGenerator::Visitor> CodeGenerator::internalVisitors
+std::map<Node::Type, CodeGeneratorCpp::Visitor> CodeGeneratorCpp::internalVisitors
 {
-	{Node::Type::Expression, &CodeGenerator::Expression},
-	{Node::Type::ExpressionInput, &CodeGenerator::ExpressionInput},
-	{Node::Type::FunctionCall, &CodeGenerator::FunctionCall},
-	{Node::Type::BinaryOperation, &CodeGenerator::BinaryOperation},
-	{Node::Type::Literal, &CodeGenerator::Literal},
-	{Node::Type::Tuple, &CodeGenerator::Tuple},
-	{Node::Type::VariableReference, &CodeGenerator::VariableReference},
+	{Node::Type::Expression, &CodeGeneratorCpp::Expression},
+	{Node::Type::ExpressionInput, &CodeGeneratorCpp::ExpressionInput},
+	{Node::Type::FunctionCall, &CodeGeneratorCpp::FunctionCall},
+	{Node::Type::BinaryOperation, &CodeGeneratorCpp::BinaryOperation},
+	{Node::Type::Literal, &CodeGeneratorCpp::Literal},
+	{Node::Type::Tuple, &CodeGeneratorCpp::Tuple},
+	{Node::Type::VariableReference, &CodeGeneratorCpp::VariableReference},
 };
 
-const TypeSpec CodeGenerator::NoneType{ .name = L"lovela::None" };
-const TypeSpec CodeGenerator::VoidType{ .name = L"void" };
-const TypeSpec CodeGenerator::VoidPtrType{ .name = L"void*" };
+const TypeSpec CodeGeneratorCpp::NoneType{ .name = L"lovela::None" };
+const TypeSpec CodeGeneratorCpp::VoidType{ .name = L"void" };
+const TypeSpec CodeGeneratorCpp::VoidPtrType{ .name = L"void*" };
 
-CodeGenerator::CodeGenerator(std::wostream& stream) : stream(stream)
+CodeGeneratorCpp::CodeGeneratorCpp(std::wostream& stream) : stream(stream)
 {
 }
 
-void CodeGenerator::Visit(Node& node)
+void CodeGeneratorCpp::Visit(Node& node)
 {
 	auto iter = visitors.find(node.type);
 	if (iter != visitors.end())
@@ -40,7 +40,7 @@ void CodeGenerator::Visit(Node& node)
 	}
 }
 
-void CodeGenerator::Visit(Node& node, Context& context)
+void CodeGeneratorCpp::Visit(Node& node, Context& context)
 {
 	auto iter = internalVisitors.find(node.type);
 	if (iter != internalVisitors.end())
@@ -49,13 +49,13 @@ void CodeGenerator::Visit(Node& node, Context& context)
 	}
 }
 
-void CodeGenerator::BeginScope()
+void CodeGeneratorCpp::BeginScope()
 {
 	stream << Indent() << "{\n";
 	indent += '\t';
 }
 
-void CodeGenerator::EndScope()
+void CodeGeneratorCpp::EndScope()
 {
 	if (indent.empty())
 	{
@@ -66,7 +66,7 @@ void CodeGenerator::EndScope()
 	stream << Indent() << "}\n";
 }
 
-void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
+void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
 {
 	if (node.value.empty())
 	{
@@ -167,7 +167,7 @@ void CodeGenerator::FunctionDeclaration(Node& node, Context& context)
 	}
 }
 
-void CodeGenerator::MainFunctionDeclaration(Node& node, Context& context)
+void CodeGeneratorCpp::MainFunctionDeclaration(Node& node, Context& context)
 {
 	if (!node.outType.None())
 	{
@@ -180,7 +180,7 @@ void CodeGenerator::MainFunctionDeclaration(Node& node, Context& context)
 	stream << '\n';
 }
 
-bool CodeGenerator::CheckExportType(TypeSpec& type)
+bool CodeGeneratorCpp::CheckExportType(TypeSpec& type)
 {
 	if (type.Any())
 	{
@@ -195,7 +195,7 @@ bool CodeGenerator::CheckExportType(TypeSpec& type)
 	return true;
 }
 
-bool CodeGenerator::ConvertPrimitiveType(std::wstring& name)
+bool CodeGeneratorCpp::ConvertPrimitiveType(std::wstring& name)
 {
 	static std::map<std::wstring, std::wstring> types{
 		{L"#8#", L"l_cstr"},
@@ -233,7 +233,7 @@ bool CodeGenerator::ConvertPrimitiveType(std::wstring& name)
 	return true;
 }
 
-std::wstring CodeGenerator::TypeName(const std::wstring& name)
+std::wstring CodeGeneratorCpp::TypeName(const std::wstring& name)
 {
 	if (name.front() == '#')
 	{
@@ -247,7 +247,7 @@ std::wstring CodeGenerator::TypeName(const std::wstring& name)
 	return L"t_" + name;
 }
 
-std::wstring CodeGenerator::TypeName(const std::wstring& name, size_t index)
+std::wstring CodeGeneratorCpp::TypeName(const std::wstring& name, size_t index)
 {
 	if (name.empty())
 	{
@@ -259,12 +259,12 @@ std::wstring CodeGenerator::TypeName(const std::wstring& name, size_t index)
 	}
 }
 
-std::wstring CodeGenerator::ParameterName(const std::wstring& name)
+std::wstring CodeGeneratorCpp::ParameterName(const std::wstring& name)
 {
 	return L"p_" + name;
 }
 
-std::wstring CodeGenerator::ParameterName(const std::wstring& name, size_t index)
+std::wstring CodeGeneratorCpp::ParameterName(const std::wstring& name, size_t index)
 {
 	if (name.empty())
 	{
@@ -276,17 +276,17 @@ std::wstring CodeGenerator::ParameterName(const std::wstring& name, size_t index
 	}
 }
 
-std::wstring CodeGenerator::FunctionName(const std::wstring& name)
+std::wstring CodeGeneratorCpp::FunctionName(const std::wstring& name)
 {
 	return L"f_" + name;
 }
 
-std::wstring CodeGenerator::RefVar(wchar_t prefix, size_t index)
+std::wstring CodeGeneratorCpp::RefVar(wchar_t prefix, size_t index)
 {
 	return std::wstring(L"static_cast<void>(") + prefix + to_wstring(index) + L')';
 }
 
-void CodeGenerator::ExportedFunctionDeclaration(Node& node, Context&)
+void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
 {
 	auto inType = node.inType;
 	auto outType = node.outType;
@@ -406,7 +406,7 @@ void CodeGenerator::ExportedFunctionDeclaration(Node& node, Context&)
 	stream << '\n';
 }
 
-void CodeGenerator::ImportedFunctionDeclaration(Node& node, Context&)
+void CodeGeneratorCpp::ImportedFunctionDeclaration(Node& node, Context&)
 {
 	if (node.api.Is(Api::Standard))
 	{
@@ -518,7 +518,7 @@ void CodeGenerator::ImportedFunctionDeclaration(Node& node, Context&)
 	stream << '\n';
 }
 
-void CodeGenerator::FunctionBody(Node& node, Context& context)
+void CodeGeneratorCpp::FunctionBody(Node& node, Context& context)
 {
 	if (node.left)
 	{
@@ -550,7 +550,7 @@ void CodeGenerator::FunctionBody(Node& node, Context& context)
 	}
 }
 
-void CodeGenerator::ImportedFunctionBody(Node& node, Context&, const std::vector<std::pair<std::wstring, std::wstring>>& parameters)
+void CodeGeneratorCpp::ImportedFunctionBody(Node& node, Context&, const std::vector<std::pair<std::wstring, std::wstring>>& parameters)
 {
 	stream << '\n';
 
@@ -584,7 +584,7 @@ void CodeGenerator::ImportedFunctionBody(Node& node, Context&, const std::vector
 	EndScope();
 }
 
-void CodeGenerator::Expression(Node& node, Context& context)
+void CodeGeneratorCpp::Expression(Node& node, Context& context)
 {
 	if (node.left)
 	{
@@ -599,13 +599,13 @@ void CodeGenerator::Expression(Node& node, Context& context)
 	}
 }
 
-void CodeGenerator::ExpressionInput(Node&, Context& context)
+void CodeGeneratorCpp::ExpressionInput(Node&, Context& context)
 {
 	// The input of an expression is the output of the previous expression.
 	stream << LocalVar << (context.variableIndex - 1);
 }
 
-void CodeGenerator::FunctionCall(Node& node, Context& context)
+void CodeGeneratorCpp::FunctionCall(Node& node, Context& context)
 {
 	const auto reset = BeginAssign(context, true);
 
@@ -628,7 +628,7 @@ void CodeGenerator::FunctionCall(Node& node, Context& context)
 	EndAssign(context, reset);
 }
 
-void CodeGenerator::BinaryOperation(Node& node, Context& context)
+void CodeGeneratorCpp::BinaryOperation(Node& node, Context& context)
 {
 	if (!node.left || !node.right)
 	{
@@ -645,14 +645,14 @@ void CodeGenerator::BinaryOperation(Node& node, Context& context)
 	EndAssign(context, reset);
 }
 
-void CodeGenerator::Literal(Node& node, Context& context)
+void CodeGeneratorCpp::Literal(Node& node, Context& context)
 {
 	BeginAssign(context);
 	stream << (node.token.type == Token::Type::LiteralString ? double_quote(node.value) : node.value);
 	EndAssign(context);
 }
 
-void CodeGenerator::Tuple(Node& node, Context& context)
+void CodeGeneratorCpp::Tuple(Node& node, Context& context)
 {
 	const bool hasLeft = !!node.left;
 	if (hasLeft)
@@ -671,12 +671,12 @@ void CodeGenerator::Tuple(Node& node, Context& context)
 	}
 }
 
-void CodeGenerator::VariableReference(Node& node, Context&)
+void CodeGeneratorCpp::VariableReference(Node& node, Context&)
 {
 	stream << ParameterName(node.value);
 }
 
-void CodeGenerator::BeginAssign(Context& context)
+void CodeGeneratorCpp::BeginAssign(Context& context)
 {
 	if (!context.inner)
 	{
@@ -684,7 +684,7 @@ void CodeGenerator::BeginAssign(Context& context)
 	}
 }
 
-bool CodeGenerator::BeginAssign(Context& context, bool inner)
+bool CodeGeneratorCpp::BeginAssign(Context& context, bool inner)
 {
 	BeginAssign(context);
 
@@ -693,7 +693,7 @@ bool CodeGenerator::BeginAssign(Context& context, bool inner)
 	return reset;
 }
 
-void CodeGenerator::EndAssign(Context& context)
+void CodeGeneratorCpp::EndAssign(Context& context)
 {
 	if (!context.inner)
 	{
@@ -701,14 +701,14 @@ void CodeGenerator::EndAssign(Context& context)
 	}
 }
 
-void CodeGenerator::EndAssign(Context& context, bool reset)
+void CodeGeneratorCpp::EndAssign(Context& context, bool reset)
 {
 	context.inner = reset;
 
 	EndAssign(context);
 }
 
-void CodeGenerator::GenerateImportsHeaderFile(std::wostream& file)
+void CodeGeneratorCpp::GenerateImportsHeaderFile(std::wostream& file) const noexcept
 {
 	file << "#ifndef LOVELA_IMPORTS\n#define LOVELA_IMPORTS\n\n";
 
@@ -721,7 +721,7 @@ void CodeGenerator::GenerateImportsHeaderFile(std::wostream& file)
 }
 
 
-void CodeGenerator::GenerateExportsHeaderFile(std::wostream& file)
+void CodeGeneratorCpp::GenerateExportsHeaderFile(std::wostream& file) const noexcept
 {
 	file << "#ifndef LOVELA_EXPORTS\n#define LOVELA_EXPORTS\n\n";
 
@@ -733,11 +733,11 @@ void CodeGenerator::GenerateExportsHeaderFile(std::wostream& file)
 	file << "\n#endif\n";
 }
 
-void CodeGenerator::BeginProgramSourceFile(std::wostream& file)
+void CodeGeneratorCpp::BeginProgramSourceFile(std::wostream& file)
 {
 	file << "#include \"lovela-program.h\"\n\n";
 }
 
-void CodeGenerator::EndProgramSourceFile(std::wostream&)
+void CodeGeneratorCpp::EndProgramSourceFile(std::wostream&)
 {
 }

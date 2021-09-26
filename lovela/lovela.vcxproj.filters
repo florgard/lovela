@@ -32,5 +32,7 @@
     <ClCompile Include="Utility.ixx" />
     <ClCompile Include="LexerFactory.ixx" />
     <ClCompile Include="ParserFactory.ixx" />
+    <ClCompile Include="CodeGeneratorFactory.ixx" />
+    <ClCompile Include="ICodeGenerator.ixx" />
   </ItemGroup>
 </Project>

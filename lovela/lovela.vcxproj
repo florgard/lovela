@@ -152,6 +152,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CodeGenerator.cpp" />
+    <ClCompile Include="CodeGeneratorFactory.ixx" />
+    <ClCompile Include="ICodeGenerator.ixx" />
     <ClCompile Include="Lexer.cpp" />
     <ClCompile Include="LexerBase.cpp" />
     <ClCompile Include="LexerFactory.ixx" />
