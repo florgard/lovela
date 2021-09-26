@@ -622,7 +622,7 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 
 	std::wstringstream stream;
 
-	auto codeGen = CodeGeneratorFactory::Create(stream);
+	auto codeGen = CodeGeneratorFactory::Create(stream, "Cpp");
 	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { codeGen->Visit(node); });
 
 	for (auto& error : codeGen->GetErrors())

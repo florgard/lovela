@@ -169,7 +169,7 @@ void TestingBase::TestCodeGenerator(const char* name, std::wstring_view code, st
 	auto tree = parser->Parse();
 
 	std::wostringstream output;
-	auto codeGen = CodeGeneratorFactory::Create(output);
+	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
 	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { codeGen->Visit(node); });
 
 	auto generatedCode = output.str();
@@ -216,7 +216,7 @@ void TestingBase::TestCodeGeneratorImport(const char* name, std::wstring_view co
 	auto tree = parser->Parse();
 
 	std::wostringstream output;
-	auto codeGen = CodeGeneratorFactory::Create(output);
+	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
 	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { codeGen->Visit(node); });
 
 	bool success = codeGen->GetHeaders().size() == 1 || codeGen->GetHeaders().empty() && cppCode.empty();
@@ -271,7 +271,7 @@ void TestingBase::TestCodeGeneratorExport(const char* name, std::wstring_view co
 	auto tree = parser->Parse();
 
 	std::wostringstream output;
-	auto codeGen = CodeGeneratorFactory::Create(output);
+	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
 	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { codeGen->Visit(node); });
 
 	bool success = codeGen->GetExports().size() == 1 || codeGen->GetExports().empty() && cppCode.empty();
