@@ -1,6 +1,5 @@
 export module Parser;
 
-import ILexer;
 import ParserBase;
 import <string>;
 import <map>;

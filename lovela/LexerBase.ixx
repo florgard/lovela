@@ -1,6 +1,6 @@
 export module LexerBase;
 
-import ILexer;
+export import ILexer;
 import <string>;
 import <string_view>;
 import <vector>;

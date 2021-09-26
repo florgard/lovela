@@ -1,7 +1,5 @@
 export module Lexer;
 
-import Lexer.Token;
-import ILexer;
 import LexerBase;
 import <string>;
 import <iostream>;

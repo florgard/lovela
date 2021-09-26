@@ -2,7 +2,7 @@ export module CodeGenerator.Cpp;
 
 export import :StandardCDeclarations;
 export import :StandardCppDeclarations;
-import Parser.Node;
+export import Parser.Node;
 import <string>;
 import <string_view>;
 import <iostream>;

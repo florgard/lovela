@@ -1,6 +1,6 @@
 export module ILexer;
 
-import Lexer.Token;
+export import Lexer.Token;
 import <string>;
 import <vector>;
 import <memory>;
