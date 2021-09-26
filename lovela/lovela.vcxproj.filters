@@ -30,5 +30,6 @@
     <ClCompile Include="TestingBase.ixx" />
     <ClCompile Include="Token.ixx" />
     <ClCompile Include="Utility.ixx" />
+    <ClCompile Include="LexerFactory.ixx" />
   </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 import Testing;
-import Lexer;
+import LexerFactory;
 import LexerBase;
 import Parser;
 import CodeGenerator.Cpp;
@@ -604,13 +604,13 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 	std::wcout << code << '\n';
 
 	std::wistringstream input(code);
-	Lexer lexer(input);
-	for (auto& error : lexer.GetErrors())
+	auto lexer = LexerFactory::Create(input, nullptr);
+	for (auto& error : lexer->GetErrors())
 	{
 		std::wcerr << error.message << '\n';
 	}
 
-	Parser parser(lexer.Lex());
+	Parser parser(lexer->Lex());
 	auto tree = parser.Parse();
 	for (auto& error : parser.GetErrors())
 	{

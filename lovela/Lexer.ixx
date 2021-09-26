@@ -1,17 +1,20 @@
 export module Lexer;
 
 import LexerBase;
+import <array>;
 import <string>;
 import <iostream>;
 import <vector>;
-import <array>;
 import <regex>;
 
 export class Lexer : public LexerBase
 {
-public:
+	friend class LexerFactory;
+
+protected:
 	Lexer(std::wistream& charStream) noexcept;
 
+public:
 	[[nodiscard]] TokenGenerator Lex() noexcept override;
 
 private:

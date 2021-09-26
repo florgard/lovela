@@ -154,6 +154,7 @@
     <ClCompile Include="CodeGenerator.cpp" />
     <ClCompile Include="Lexer.cpp" />
     <ClCompile Include="LexerBase.cpp" />
+    <ClCompile Include="LexerFactory.ixx" />
     <ClCompile Include="lovela.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="ParseException.cpp" />

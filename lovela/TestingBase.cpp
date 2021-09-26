@@ -1,4 +1,4 @@
-import Lexer;
+import LexerFactory;
 import Parser;
 import CodeGenerator.Cpp;
 import TestingBase;
@@ -10,12 +10,13 @@ import <array>;
 import <iostream>;
 import <sstream>;
 import <algorithm>;
+import <regex>;
 
 void TestingBase::TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
 {
 	std::wistringstream input(std::wstring(code.data(), code.size()));
-	Lexer lexer(input);
-	auto tokenGenerator = lexer.Lex();
+	auto lexer = LexerFactory::Create(input, nullptr);
+	auto tokenGenerator = lexer->Lex();
 	auto tokens = std::vector<Token>(tokenGenerator.begin(), tokenGenerator.end());
 
 	bool success = true;
@@ -35,7 +36,7 @@ void TestingBase::TestLexer(const char* name, std::wstring_view code, const std:
 		}
 	}
 
-	auto& errors = lexer.GetErrors();
+	auto& errors = lexer->GetErrors();
 
 	actualCount = errors.size();
 	expectedCount = expectedErrors.size();
@@ -62,8 +63,8 @@ void TestingBase::TestLexer(const char* name, std::wstring_view code, const std:
 std::unique_ptr<Node> TestingBase::TestParser(const char* name, std::wstring_view code, const Node& expectedTree, const std::vector<IParser::Error>& expectedErrors)
 {
 	std::wistringstream input(std::wstring(code.data(), code.size()));
-	Lexer lexer(input);
-	Parser parser(lexer.Lex());
+	auto lexer = LexerFactory::Create(input, nullptr);
+	Parser parser(lexer->Lex());
 	auto tree = parser.Parse();
 
 	bool success = !!tree;
@@ -163,8 +164,8 @@ void TestingBase::PrintTree(int& index, const Node& tree, std::wstring indent)
 void TestingBase::TestCodeGenerator(const char* name, std::wstring_view code, std::wstring_view cppCode, int expectedErrors)
 {
 	std::wistringstream input(std::wstring(code.data(), code.size()));
-	Lexer lexer(input);
-	Parser parser(lexer.Lex());
+	auto lexer = LexerFactory::Create(input, nullptr);
+	Parser parser(lexer->Lex());
 	auto tree = parser.Parse();
 
 	std::wostringstream output;
@@ -210,8 +211,8 @@ void TestingBase::TestCodeGenerator(const char* name, std::wstring_view code, st
 void TestingBase::TestCodeGeneratorImport(const char* name, std::wstring_view code, std::wstring_view cppCode, int expectedErrors)
 {
 	std::wistringstream input(std::wstring(code.data(), code.size()));
-	Lexer lexer(input);
-	Parser parser(lexer.Lex());
+	auto lexer = LexerFactory::Create(input, nullptr);
+	Parser parser(lexer->Lex());
 	auto tree = parser.Parse();
 
 	std::wostringstream output;
@@ -265,8 +266,8 @@ void TestingBase::TestCodeGeneratorImport(const char* name, std::wstring_view co
 void TestingBase::TestCodeGeneratorExport(const char* name, std::wstring_view code, std::wstring_view cppCode, int expectedErrors)
 {
 	std::wistringstream input(std::wstring(code.data(), code.size()));
-	Lexer lexer(input);
-	Parser parser(lexer.Lex());
+	auto lexer = LexerFactory::Create(input, nullptr);
+	Parser parser(lexer->Lex());
 	auto tree = parser.Parse();
 
 	std::wostringstream output;
