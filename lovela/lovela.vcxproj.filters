@@ -9,10 +9,8 @@
     <ClCompile Include="ParseException.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="ParserBase.cpp" />
-    <ClCompile Include="Token.cpp" />
     <ClCompile Include="TestingBase.cpp" />
     <ClCompile Include="CodeGenerator.cpp" />
-    <ClCompile Include="DataType.cpp" />
     <ClCompile Include="StandardCDeclarations.cpp" />
     <ClCompile Include="StandardCppDeclarations.cpp" />
     <ClCompile Include="CodeGenerator.ixx" />

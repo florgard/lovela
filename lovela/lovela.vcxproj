@@ -152,7 +152,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CodeGenerator.cpp" />
-    <ClCompile Include="DataType.cpp" />
     <ClCompile Include="Lexer.cpp" />
     <ClCompile Include="LexerBase.cpp" />
     <ClCompile Include="lovela.cpp" />
@@ -164,7 +163,6 @@
     <ClCompile Include="StandardCppDeclarations.cpp" />
     <ClCompile Include="Testing.cpp" />
     <ClCompile Include="TestingBase.cpp" />
-    <ClCompile Include="Token.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CodeGenerator.ixx">

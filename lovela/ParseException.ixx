@@ -3,14 +3,7 @@ export module ParseException;
 export import Token;
 import <string>;
 import <string_view>;
-import <iostream>;
-import <sstream>;
-import <vector>;
-import <array>;
 import <set>;
-import <map>;
-import <functional>;
-import <algorithm>;
 
 export struct ParseException
 {

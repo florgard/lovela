@@ -1,15 +1,7 @@
 export module Utility.StaticMap;
 
-import <string>;
-import <string_view>;
-import <iostream>;
-import <sstream>;
-import <vector>;
-import <array>;
-import <set>;
-import <map>;
-import <functional>;
 import <algorithm>;
+import <stdexcept>;
 
 // Clone of Jason Turner's constexpr map: https://www.youtube.com/watch?v=INn3xa4pMfg
 // Usage:

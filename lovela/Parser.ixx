@@ -3,15 +3,9 @@ export module Parser;
 import ILexer;
 import ParserBase;
 import <string>;
-import <string_view>;
-import <iostream>;
-import <sstream>;
-import <vector>;
-import <array>;
-import <set>;
 import <map>;
 import <functional>;
-import <algorithm>;
+import <memory>;
 
 export class Parser : public ParserBase
 {
