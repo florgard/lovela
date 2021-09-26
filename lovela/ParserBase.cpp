@@ -1,6 +1,6 @@
 import ParserBase;
 import ILexer;
-import Token;
+import Lexer.Token;
 import ParseException;
 import <vector>;
 import <set>;

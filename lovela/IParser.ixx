@@ -1,7 +1,7 @@
 export module IParser;
 
-import Token;
-import Node;
+import Lexer.Token;
+import Parser.Node;
 import <string>;
 import <vector>;
 import <memory>;

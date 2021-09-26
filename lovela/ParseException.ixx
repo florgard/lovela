@@ -1,6 +1,6 @@
 export module ParseException;
 
-export import Token;
+import Lexer.Token;
 import <string>;
 import <string_view>;
 import <set>;

@@ -1,4 +1,4 @@
-export module Token;
+export module Lexer.Token;
 
 import <string>;
 

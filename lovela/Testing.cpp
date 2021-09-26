@@ -1,6 +1,6 @@
 import Testing;
-import Token;
-import Node;
+import Lexer.Token;
+import Parser.Node;
 import Lexer;
 import LexerBase;
 import Parser;

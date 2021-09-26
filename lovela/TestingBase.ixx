@@ -1,7 +1,7 @@
 export module TestingBase;
 
-import Token;
-import Node;
+import Lexer.Token;
+import Parser.Node;
 import ILexer;
 import LexerBase;
 import IParser;

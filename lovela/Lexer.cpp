@@ -1,4 +1,4 @@
-import Token;
+import Lexer.Token;
 import ILexer;
 import Lexer;
 import <string>;

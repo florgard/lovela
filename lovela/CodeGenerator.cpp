@@ -1,5 +1,5 @@
 import CodeGenerator.Cpp;
-import Node;
+import Parser.Node;
 import Utility;
 import <string>;
 import <map>;

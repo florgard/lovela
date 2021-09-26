@@ -1,5 +1,5 @@
 import ParseException;
-import Token;
+import Lexer.Token;
 import Utility;
 import <string_view>;
 import <sstream>;

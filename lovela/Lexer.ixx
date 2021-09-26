@@ -1,6 +1,6 @@
 export module Lexer;
 
-import Token;
+import Lexer.Token;
 import ILexer;
 import LexerBase;
 import <string>;

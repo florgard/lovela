@@ -1,6 +1,6 @@
 export module ParserBase;
 
-import Token;
+import Lexer.Token;
 import ILexer;
 import IParser;
 import <vector>;

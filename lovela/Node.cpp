@@ -1,4 +1,4 @@
-import Node;
+import Parser.Node;
 import <string>;
 import <sstream>;
 import <algorithm>;

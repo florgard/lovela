@@ -1,6 +1,6 @@
-export module Node;
+export module Parser.Node;
 
-import Token;
+import Lexer.Token;
 import <string>;
 import <memory>;
 import <vector>;
