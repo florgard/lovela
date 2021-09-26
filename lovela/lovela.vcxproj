@@ -160,6 +160,7 @@
     <ClCompile Include="ParseException.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="ParserBase.cpp" />
+    <ClCompile Include="ParserFactory.ixx" />
     <ClCompile Include="StandardCDeclarations.cpp" />
     <ClCompile Include="StandardCppDeclarations.cpp" />
     <ClCompile Include="Testing.cpp" />

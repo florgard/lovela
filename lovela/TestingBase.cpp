@@ -1,5 +1,5 @@
 import LexerFactory;
-import Parser;
+import ParserFactory;
 import CodeGenerator.Cpp;
 import TestingBase;
 import Utility;
@@ -15,7 +15,7 @@ import <regex>;
 void TestingBase::TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
 {
 	std::wistringstream input(std::wstring(code.data(), code.size()));
-	auto lexer = LexerFactory::Create(input, nullptr);
+	auto lexer = LexerFactory::Create(input);
 	auto tokenGenerator = lexer->Lex();
 	auto tokens = std::vector<Token>(tokenGenerator.begin(), tokenGenerator.end());
 
@@ -63,9 +63,9 @@ void TestingBase::TestLexer(const char* name, std::wstring_view code, const std:
 std::unique_ptr<Node> TestingBase::TestParser(const char* name, std::wstring_view code, const Node& expectedTree, const std::vector<IParser::Error>& expectedErrors)
 {
 	std::wistringstream input(std::wstring(code.data(), code.size()));
-	auto lexer = LexerFactory::Create(input, nullptr);
-	Parser parser(lexer->Lex());
-	auto tree = parser.Parse();
+	auto lexer = LexerFactory::Create(input);
+	auto parser = ParserFactory::Create(lexer->Lex());
+	auto tree = parser->Parse();
 
 	bool success = !!tree;
 
@@ -88,7 +88,7 @@ std::unique_ptr<Node> TestingBase::TestParser(const char* name, std::wstring_vie
 		}
 	}
 
-	auto& errors = parser.GetErrors();
+	auto& errors = parser->GetErrors();
 	const auto actualCount = errors.size();
 	const auto expectedCount = expectedErrors.size();
 	const auto count = std::max(actualCount, expectedCount);
@@ -164,9 +164,9 @@ void TestingBase::PrintTree(int& index, const Node& tree, std::wstring indent)
 void TestingBase::TestCodeGenerator(const char* name, std::wstring_view code, std::wstring_view cppCode, int expectedErrors)
 {
 	std::wistringstream input(std::wstring(code.data(), code.size()));
-	auto lexer = LexerFactory::Create(input, nullptr);
-	Parser parser(lexer->Lex());
-	auto tree = parser.Parse();
+	auto lexer = LexerFactory::Create(input);
+	auto parser = ParserFactory::Create(lexer->Lex());
+	auto tree = parser->Parse();
 
 	std::wostringstream output;
 	CodeGenerator gen(output);
@@ -211,9 +211,9 @@ void TestingBase::TestCodeGenerator(const char* name, std::wstring_view code, st
 void TestingBase::TestCodeGeneratorImport(const char* name, std::wstring_view code, std::wstring_view cppCode, int expectedErrors)
 {
 	std::wistringstream input(std::wstring(code.data(), code.size()));
-	auto lexer = LexerFactory::Create(input, nullptr);
-	Parser parser(lexer->Lex());
-	auto tree = parser.Parse();
+	auto lexer = LexerFactory::Create(input);
+	auto parser = ParserFactory::Create(lexer->Lex());
+	auto tree = parser->Parse();
 
 	std::wostringstream output;
 	CodeGenerator gen(output);
@@ -266,9 +266,9 @@ void TestingBase::TestCodeGeneratorImport(const char* name, std::wstring_view co
 void TestingBase::TestCodeGeneratorExport(const char* name, std::wstring_view code, std::wstring_view cppCode, int expectedErrors)
 {
 	std::wistringstream input(std::wstring(code.data(), code.size()));
-	auto lexer = LexerFactory::Create(input, nullptr);
-	Parser parser(lexer->Lex());
-	auto tree = parser.Parse();
+	auto lexer = LexerFactory::Create(input);
+	auto parser = ParserFactory::Create(lexer->Lex());
+	auto tree = parser->Parse();
 
 	std::wostringstream output;
 	CodeGenerator gen(output);

@@ -8,9 +8,12 @@ import <memory>;
 
 export class Parser : public ParserBase
 {
-public:
+	friend class ParserFactory;
+
+protected:
 	Parser(TokenGenerator&& tokenGenerator) noexcept;
 
+public:
 	[[nodiscard]] std::unique_ptr<Node> Parse() noexcept override;
 
 	static void TraverseDepthFirstPreorder(Node& tree, std::function<void(Node& node)> visitor) noexcept;

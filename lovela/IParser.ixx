@@ -22,6 +22,8 @@ public:
 		[[nodiscard]] constexpr auto operator<=>(const Error& rhs) const noexcept = default;
 	};
 
+	virtual ~IParser() = default;
+
 	[[nodiscard]] virtual std::unique_ptr<Node> Parse() noexcept = 0;
 	[[nodiscard]] virtual const std::vector<Error>& GetErrors() noexcept = 0;
 };

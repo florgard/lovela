@@ -31,5 +31,6 @@
     <ClCompile Include="Token.ixx" />
     <ClCompile Include="Utility.ixx" />
     <ClCompile Include="LexerFactory.ixx" />
+    <ClCompile Include="ParserFactory.ixx" />
   </ItemGroup>
 </Project>

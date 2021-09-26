@@ -8,7 +8,7 @@ import <memory>;
 export class LexerFactory
 {
 public:
-	static std::unique_ptr<ILexer> Create(std::wistream& charStream, const char* id) noexcept
+	static std::unique_ptr<ILexer> Create(std::wistream& charStream, const char* id = nullptr) noexcept
 	{
 		static_cast<void>(id);
 		return std::unique_ptr<Lexer>(new Lexer(charStream));
