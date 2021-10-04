@@ -10,10 +10,10 @@
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="ParserBase.cpp" />
     <ClCompile Include="TestingBase.cpp" />
-    <ClCompile Include="CodeGenerator.cpp" />
+    <ClCompile Include="CodeGeneratorCpp.cpp" />
     <ClCompile Include="StandardCDeclarations.cpp" />
     <ClCompile Include="StandardCppDeclarations.cpp" />
-    <ClCompile Include="CodeGenerator.ixx" />
+    <ClCompile Include="CodeGeneratorCpp.ixx" />
     <ClCompile Include="DataType.ixx" />
     <ClCompile Include="ILexer.ixx" />
     <ClCompile Include="IParser.ixx" />

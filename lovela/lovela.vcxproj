@@ -151,7 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CodeGenerator.cpp" />
+    <ClCompile Include="CodeGeneratorCpp.cpp" />
     <ClCompile Include="CodeGeneratorFactory.ixx" />
     <ClCompile Include="ICodeGenerator.ixx" />
     <ClCompile Include="Lexer.cpp" />
@@ -169,7 +169,7 @@
     <ClCompile Include="TestingBase.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CodeGenerator.ixx">
+    <ClCompile Include="CodeGeneratorCpp.ixx">
       <FileType>Document</FileType>
     </ClCompile>
     <ClCompile Include="DataType.ixx">
