@@ -20,13 +20,13 @@ protected:
 
 public:
 	[[nodiscard]] const std::vector<std::wstring>& GetErrors() const noexcept override { return errors; }
-	[[nodiscard]] const std::vector<std::wstring>& GetHeaders() const noexcept override { return headers; }
+	[[nodiscard]] const std::vector<std::wstring>& GetImports() const noexcept override { return headers; }
 	[[nodiscard]] const std::vector<std::wstring>& GetExports() const noexcept override { return exports; }
 
 	void Visit(Node& node) override;
 
-	void GenerateImportsHeaderFile(std::wostream& file) const noexcept override;
-	void GenerateExportsHeaderFile(std::wostream& file) const noexcept override;
+	void GenerateImportsFile(std::wostream& file) const noexcept override;
+	void GenerateExportsFile(std::wostream& file) const noexcept override;
 
 	static void BeginProgramSourceFile(std::wostream& file);
 	static void EndProgramSourceFile(std::wostream& file);

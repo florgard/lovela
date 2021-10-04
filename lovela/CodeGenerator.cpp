@@ -708,11 +708,11 @@ void CodeGeneratorCpp::EndAssign(Context& context, bool reset)
 	EndAssign(context);
 }
 
-void CodeGeneratorCpp::GenerateImportsHeaderFile(std::wostream& file) const noexcept
+void CodeGeneratorCpp::GenerateImportsFile(std::wostream& file) const noexcept
 {
 	file << "#ifndef LOVELA_IMPORTS\n#define LOVELA_IMPORTS\n\n";
 
-	for (auto& header : GetHeaders())
+	for (auto& header : GetImports())
 	{
 		file << "#include <" << header << ">\n";
 	}
@@ -720,8 +720,7 @@ void CodeGeneratorCpp::GenerateImportsHeaderFile(std::wostream& file) const noex
 	file << "\n#endif\n";
 }
 
-
-void CodeGeneratorCpp::GenerateExportsHeaderFile(std::wostream& file) const noexcept
+void CodeGeneratorCpp::GenerateExportsFile(std::wostream& file) const noexcept
 {
 	file << "#ifndef LOVELA_EXPORTS\n#define LOVELA_EXPORTS\n\n";
 

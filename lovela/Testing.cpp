@@ -640,10 +640,10 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 	program.close();
 
 	std::wofstream imports(R"(..\targets\cpp\program\lovela-imports.h)");
-	codeGen->GenerateImportsHeaderFile(imports);
+	codeGen->GenerateImportsFile(imports);
 	imports.close();
 
 	std::wofstream exports(R"(..\targets\cpp\program\lovela-exports.h)");
-	codeGen->GenerateExportsHeaderFile(exports);
+	codeGen->GenerateExportsFile(exports);
 	exports.close();
 }

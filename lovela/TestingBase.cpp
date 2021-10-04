@@ -219,7 +219,7 @@ void TestingBase::TestCodeGeneratorImport(const char* name, std::wstring_view co
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
 	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { codeGen->Visit(node); });
 
-	bool success = codeGen->GetHeaders().size() == 1 || codeGen->GetHeaders().empty() && cppCode.empty();
+	bool success = codeGen->GetImports().size() == 1 || codeGen->GetImports().empty() && cppCode.empty();
 
 	if (!success)
 	{
@@ -229,7 +229,7 @@ void TestingBase::TestCodeGeneratorImport(const char* name, std::wstring_view co
 		return;
 	}
 
-	auto generatedCode = codeGen->GetHeaders().front();
+	auto generatedCode = codeGen->GetImports().front();
 	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"^\\s+" }, L"");
 	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"\\s+$" }, L"");
 	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"\\s+" }, L" ");
