@@ -10,10 +10,6 @@
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="ParserBase.cpp" />
     <ClCompile Include="TestingBase.cpp" />
-    <ClCompile Include="CodeGeneratorCpp.cpp" />
-    <ClCompile Include="StandardCDeclarations.cpp" />
-    <ClCompile Include="StandardCppDeclarations.cpp" />
-    <ClCompile Include="CodeGeneratorCpp.ixx" />
     <ClCompile Include="DataType.ixx" />
     <ClCompile Include="ILexer.ixx" />
     <ClCompile Include="IParser.ixx" />
@@ -23,8 +19,6 @@
     <ClCompile Include="ParseException.ixx" />
     <ClCompile Include="Parser.ixx" />
     <ClCompile Include="ParserBase.ixx" />
-    <ClCompile Include="StandardCDeclarations.ixx" />
-    <ClCompile Include="StandardCppDeclarations.ixx" />
     <ClCompile Include="StaticMap.ixx" />
     <ClCompile Include="Testing.ixx" />
     <ClCompile Include="TestingBase.ixx" />
@@ -34,5 +28,28 @@
     <ClCompile Include="ParserFactory.ixx" />
     <ClCompile Include="CodeGeneratorFactory.ixx" />
     <ClCompile Include="ICodeGenerator.ixx" />
+    <ClCompile Include="CodeGeneratorCpp.cpp">
+      <Filter>CodeGeneratorCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="CodeGeneratorCpp.ixx">
+      <Filter>CodeGeneratorCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="StandardCDeclarations.cpp">
+      <Filter>CodeGeneratorCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="StandardCDeclarations.ixx">
+      <Filter>CodeGeneratorCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="StandardCppDeclarations.cpp">
+      <Filter>CodeGeneratorCpp</Filter>
+    </ClCompile>
+    <ClCompile Include="StandardCppDeclarations.ixx">
+      <Filter>CodeGeneratorCpp</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CodeGeneratorCpp">
+      <UniqueIdentifier>{271e455b-01c2-4c47-9076-26af72095ad5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
