@@ -837,7 +837,7 @@ TEST(ReturnValueTest, WithMidErrorHandlerOnSuccess) {
 
 lovela::None lovela::main(lovela::context& context, lovela::None in)
 {
-	context;
+	static_cast<void>(context);
 	auto& v1 = in; static_cast<void>(v1);
 	return {};
 }
