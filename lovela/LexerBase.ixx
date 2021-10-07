@@ -1,10 +1,12 @@
 export module LexerBase;
 
-export import ILexer;
+import <array>;
 import <string>;
 import <string_view>;
 import <vector>;
 import <deque>;
+export import Utility.StaticMap;
+export import ILexer;
 
 export class LexerBase : public ILexer
 {
@@ -27,8 +29,41 @@ public:
 		return input.substr(start, end - start + 1);
 	}
 
-	[[nodiscard]] static Token::Type GetTokenType(wchar_t lexeme) noexcept;
-	[[nodiscard]] static std::wstring_view GetStringField(wchar_t code) noexcept;
+	[[nodiscard]] static constexpr Token::Type GetTokenType(wchar_t lexeme) noexcept
+	{
+		constexpr std::array<std::pair<wchar_t, Token::Type>, 13> values
+		{ {
+			{'(', Token::Type::ParenRoundOpen },
+			{')', Token::Type::ParenRoundClose },
+			{'[', Token::Type::ParenSquareOpen },
+			{']', Token::Type::ParenSquareClose },
+			{'{', Token::Type::ParenCurlyOpen },
+			{'}', Token::Type::ParenCurlyClose },
+			{'.', Token::Type::SeparatorDot },
+			{',', Token::Type::SeparatorComma },
+			{'!', Token::Type::SeparatorExclamation },
+			{'?', Token::Type::SeparatorQuestion },
+			{'|', Token::Type::SeparatorVerticalLine },
+			{':', Token::Type::SeparatorColon },
+			{'#', Token::Type::SeparatorHash },
+		} };
+
+		constexpr auto map = StaticMap<wchar_t, Token::Type, values.size()>{ {values} };
+		return map.at_or(lexeme, Token::Type::Empty);
+	}
+
+	[[nodiscard]] constexpr static std::wstring_view GetStringField(wchar_t code) noexcept
+	{
+		constexpr std::array<std::pair<wchar_t, std::wstring_view>, 3> values
+		{ {
+			{'t', L"\t"},
+			{'n', L"\n"},
+			{'r', L"\r"},
+		} };
+
+		constexpr auto map = StaticMap<wchar_t, std::wstring_view, values.size()>{ {values} };
+		return map.at_or(code, {});
+	}
 
 protected:
 	[[nodiscard]] Token GetToken(wchar_t lexeme) noexcept;

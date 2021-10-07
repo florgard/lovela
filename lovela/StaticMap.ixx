@@ -1,5 +1,6 @@
 export module Utility.StaticMap;
 
+import <array>;
 import <algorithm>;
 import <stdexcept>;
 
