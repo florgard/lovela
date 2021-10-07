@@ -1,7 +1,22 @@
-#include "pch.h"
+import boost.ut;
+import Lexer.Token;
+import ILexer;
+import LexerBase;
+import LexerFactory;
+import Parser.Node;
+import IParser;
+import ParserFactory;
+import CodeGeneratorFactory;
+import Utility;
+import Utility.StaticMap;
 
-TEST(TypeTests, TestName) {
-	//EXPECT_EQ(LexerBase::GetTokenType('('), Token::Type::ParenRoundOpen);
+using namespace boost::ut;
 
-	EXPECT_TRUE(true);
+int main()
+{
+	expect(true);
+
+	//Token::Type a = LexerBase::GetTokenType('(');
+	auto b = Token::Type::ParenRoundOpen;
+	//EXPECT_EQ(a, b);
 }
