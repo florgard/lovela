@@ -8,7 +8,6 @@ public:
 	void RunTests();
 
 private:
-	void RunTypeTests();
 	void RunLexerTests();
 	void RunParserTests();
 	void RunCodeGeneratorTests();

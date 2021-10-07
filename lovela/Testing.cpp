@@ -15,40 +15,9 @@ import <cassert>;
 
 void Testing::RunTests()
 {
-	RunTypeTests();
 	RunLexerTests();
 	RunParserTests();
 	RunCodeGeneratorTests();
-}
-
-void Testing::RunTypeTests()
-{
-	assert(LexerBase::GetTokenType('(') == Token::Type::ParenRoundOpen);
-	assert(LexerBase::GetTokenType('.') == Token::Type::SeparatorDot);
-	assert(LexerBase::GetTokenType(' ') == Token::Type::Empty);
-
-	assert((Token{} == Token{}));
-	assert((Token{ Token::Type::Identifier } != Token{}));
-	assert((Token{ {}, L"a" } != Token{}));
-	assert((Token{ Token::Type::Identifier, L"a" } == Token{ Token::Type::Identifier, L"a" }));
-	assert((Token{ Token::Type::Identifier, L"a" } != Token{ Token::Type::Identifier, L"b" }));
-	assert((Token{ Token::Type::Identifier, L"a" } != Token{ Token::Type::LiteralString, L"a" }));
-	assert((Token{} == false));
-	assert((Token{ {}, L"a" } == false));
-	assert((Token{ Token::Type::Identifier } == true));
-
-	static constexpr std::array<std::pair<int, double>, 2> values{ { {1, 1.1}, {2, 2.2} } };
-	static constexpr auto map = StaticMap<int, double, values.size()>{{values}};
-	static_assert(map.at(1) == 1.1);
-	static_assert(map.at(2) == 2.2);
-	static_assert(map.at_or(2, 1.1) == 2.2);
-	static_assert(map.at_or(3, 1.1) == 1.1);
-	try {
-		// Must throw
-		if (map.at(3) == 3.3) {}
-		assert(false);
-	}
-	catch (...) {}
 }
 
 void Testing::RunLexerTests()
