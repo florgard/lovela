@@ -157,7 +157,6 @@
     <ClCompile Include="Lexer.cpp" />
     <ClCompile Include="LexerBase.cpp" />
     <ClCompile Include="LexerFactory.ixx" />
-    <ClCompile Include="lovela.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="ParseException.cpp" />
     <ClCompile Include="Parser.cpp" />
@@ -165,8 +164,6 @@
     <ClCompile Include="ParserFactory.ixx" />
     <ClCompile Include="StandardCDeclarations.cpp" />
     <ClCompile Include="StandardCppDeclarations.cpp" />
-    <ClCompile Include="Testing.cpp" />
-    <ClCompile Include="TestingBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CodeGeneratorCpp.ixx">
@@ -206,12 +203,6 @@
       <FileType>Document</FileType>
     </ClCompile>
     <ClCompile Include="StaticMap.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="Testing.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="TestingBase.ixx">
       <FileType>Document</FileType>
     </ClCompile>
     <ClCompile Include="Token.ixx">

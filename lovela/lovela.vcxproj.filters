@@ -2,14 +2,11 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="Lexer.cpp" />
-    <ClCompile Include="lovela.cpp" />
-    <ClCompile Include="Testing.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="LexerBase.cpp" />
     <ClCompile Include="ParseException.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="ParserBase.cpp" />
-    <ClCompile Include="TestingBase.cpp" />
     <ClCompile Include="DataType.ixx" />
     <ClCompile Include="ILexer.ixx" />
     <ClCompile Include="IParser.ixx" />
@@ -20,8 +17,6 @@
     <ClCompile Include="Parser.ixx" />
     <ClCompile Include="ParserBase.ixx" />
     <ClCompile Include="StaticMap.ixx" />
-    <ClCompile Include="Testing.ixx" />
-    <ClCompile Include="TestingBase.ixx" />
     <ClCompile Include="Token.ixx" />
     <ClCompile Include="Utility.ixx" />
     <ClCompile Include="LexerFactory.ixx" />

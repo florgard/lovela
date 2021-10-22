@@ -141,6 +141,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Testing.cpp" />
+    <ClCompile Include="Testing.ixx" />
+    <ClCompile Include="TestingBase.cpp" />
+    <ClCompile Include="TestingBase.ixx" />
     <ClCompile Include="tests.cpp" />
     <ClCompile Include="Token.cpp" />
   </ItemGroup>

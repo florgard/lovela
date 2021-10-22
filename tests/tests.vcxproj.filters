@@ -3,6 +3,10 @@
   <ItemGroup>
     <ClCompile Include="tests.cpp" />
     <ClCompile Include="Token.cpp" />
+    <ClCompile Include="Testing.cpp" />
+    <ClCompile Include="Testing.ixx" />
+    <ClCompile Include="TestingBase.cpp" />
+    <ClCompile Include="TestingBase.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ut.hpp" />
