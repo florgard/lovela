@@ -1,22 +1,7 @@
-import Testing;
 import Utility.StaticMap;
-//import LexerFactory;
-//import Parser.Node;
-//import IParser;
-//import ParserFactory;
-//import CodeGeneratorFactory;
-//import Utility;
-//import Utility.StaticMap;
-import <utility>;
-import <string>;
-import <string_view>;
-import <array>;
-import <vector>;
-import <regex>;
 
 #define BOOST_UT_DISABLE_MODULE
 #include "ut.hpp"
-
 using namespace boost::ut;
 
 suite static_map = [] {

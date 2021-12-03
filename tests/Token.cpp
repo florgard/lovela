@@ -1,14 +1,7 @@
 import LexerBase;
-import <utility>;
-import <string>;
-import <string_view>;
-import <array>;
-import <vector>;
-import <regex>;
 
 #define BOOST_UT_DISABLE_MODULE
 #include "ut.hpp"
-
 using namespace boost::ut;
 
 suite tokens = [] {
