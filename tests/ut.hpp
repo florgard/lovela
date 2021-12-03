@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2019-2020 Kris Jusiak (kris at jusiak dot net)
+// Copyright (c) 2019-2021 Kris Jusiak (kris at jusiak dot net)
 //
 // Distributed under the Boost Software License, Version 1.0.
 // (See accompanying file LICENSE_1_0.txt or copy at
@@ -12,8 +12,8 @@ export import std;
 #pragma once
 #endif
 
-#if defined(_MSC_VER)
-#include <ciso646>  // and, or, not
+#if __has_include(<ios646.h>)
+#include <iso646.h>  // and, or, not, ...
 #endif
 
 #if not defined(__cpp_rvalue_references)
@@ -71,14 +71,9 @@ export import std;
 #endif
 
 #if defined(__cpp_modules) && !defined(BOOST_UT_DISABLE_MODULE)
-export namespace boost::inline ext::ut {
-#else
-namespace boost {
-inline namespace ext {
-namespace ut {
+export
 #endif
-
-inline namespace v1_1_8 {
+namespace boost::inline ext::ut::inline v1_1_8{
 namespace utility {
 template <class>
 class function;
@@ -120,8 +115,8 @@ class function<R(TArgs...)> {
     delete static_cast<T*>(data);
   }
 
-  R (*invoke_)(void*, TArgs...){};
-  void (*destroy_)(void*){};
+  R(*invoke_)(void*, TArgs...) {};
+  void (*destroy_)(void*) {};
   void* data_{};
 };
 
@@ -174,20 +169,22 @@ template <class TPattern, class TStr>
     if (pattern[pi] == '\'' and str[si] == '\'' and pattern[pi + 1] == '{') {
       ++si;
       matcher('\'', '}');
-    } else if (pattern[pi] == '{') {
-      matcher(' ', '}', ',');
-    } else if (pattern[pi] != str[si]) {
-      return {};
     }
-    ++pi;
-    ++si;
-  }
+ else if (pattern[pi] == '{') {
+matcher(' ', '}', ',');
+}
+else if (pattern[pi] != str[si]) {
+return {};
+}
+++pi;
+++si;
+}
 
-  if (si < str.size() or pi < std::size(pattern)) {
-    return {};
-  }
+if (si < str.size() or pi < std::size(pattern)) {
+  return {};
+}
 
-  return groups;
+return groups;
 }
 
 template <class T = std::string_view, class TDelim>
@@ -336,7 +333,7 @@ template <class T>
 struct function_traits : function_traits<decltype(&T::operator())> {};
 
 template <class R, class... TArgs>
-struct function_traits<R (*)(TArgs...)> {
+struct function_traits<R(*)(TArgs...)> {
   using result_type = R;
   using args = list<TArgs...>;
 };
@@ -348,13 +345,13 @@ struct function_traits<R(TArgs...)> {
 };
 
 template <class R, class T, class... TArgs>
-struct function_traits<R (T::*)(TArgs...)> {
+struct function_traits<R(T::*)(TArgs...)> {
   using result_type = R;
   using args = list<TArgs...>;
 };
 
 template <class R, class T, class... TArgs>
-struct function_traits<R (T::*)(TArgs...) const> {
+struct function_traits<R(T::*)(TArgs...) const> {
   using result_type = R;
   using args = list<TArgs...>;
 };
@@ -454,13 +451,13 @@ struct test {
 
   template <class T>
   static constexpr auto run_impl(T test, const TArg&)
-      -> decltype(test.template operator()<TArg>(), void()) {
-    test.template operator()<TArg>();
+      -> decltype(test.template operator() < TArg > (), void()) {
+    test.template operator() < TArg > ();
   }
 };
 template <class Test, class TArg>
 test(std::string_view, std::string_view, std::string_view,
-     reflection::source_location, TArg, Test) -> test<Test, TArg>;
+     reflection::source_location, TArg, Test)->test<Test, TArg>;
 template <class TSuite>
 struct suite {
   TSuite run{};
@@ -468,7 +465,7 @@ struct suite {
   constexpr auto operator()() const { run(); }
 };
 template <class TSuite>
-suite(TSuite) -> suite<TSuite>;
+suite(TSuite)->suite<TSuite>;
 struct test_run {
   std::string_view type{};
   std::string_view name{};
@@ -480,7 +477,7 @@ struct skip {
   TArg arg{};
 };
 template <class TArg>
-skip(std::string_view, std::string_view, TArg) -> skip<TArg>;
+skip(std::string_view, std::string_view, TArg)->skip<TArg>;
 struct test_skip {
   std::string_view type{};
   std::string_view name{};
@@ -491,21 +488,21 @@ struct assertion {
   reflection::source_location location{};
 };
 template <class TExpr>
-assertion(TExpr, reflection::source_location) -> assertion<TExpr>;
+assertion(TExpr, reflection::source_location)->assertion<TExpr>;
 template <class TExpr>
 struct assertion_pass {
   TExpr expr{};
   reflection::source_location location{};
 };
 template <class TExpr>
-assertion_pass(TExpr) -> assertion_pass<TExpr>;
+assertion_pass(TExpr)->assertion_pass<TExpr>;
 template <class TExpr>
 struct assertion_fail {
   TExpr expr{};
   reflection::source_location location{};
 };
 template <class TExpr>
-assertion_fail(TExpr) -> assertion_fail<TExpr>;
+assertion_fail(TExpr)->assertion_fail<TExpr>;
 struct test_end {
   std::string_view type{};
   std::string_view name{};
@@ -515,7 +512,7 @@ struct log {
   TMsg msg{};
 };
 template <class TMsg = std::string_view>
-log(TMsg) -> log<TMsg>;
+log(TMsg)->log<TMsg>;
 struct fatal_assertion {};
 struct exception {
   const char* msg{};
@@ -656,26 +653,30 @@ struct eq_ : op {
           if constexpr (type_traits::has_value_v<TLhs> and
                         type_traits::has_value_v<TRhs>) {
             return TLhs::value == TRhs::value;
-          } else if constexpr (type_traits::has_epsilon_v<TLhs> and
-                               type_traits::has_epsilon_v<TRhs>) {
-            return math::abs(get(lhs) - get(rhs)) <
-                   math::min_value(TLhs::epsilon, TRhs::epsilon);
-          } else if constexpr (type_traits::has_epsilon_v<TLhs>) {
-            return math::abs(get(lhs) - get(rhs)) < TLhs::epsilon;
-          } else if constexpr (type_traits::has_epsilon_v<TRhs>) {
-            return math::abs(get(lhs) - get(rhs)) < TRhs::epsilon;
-          } else {
-            return get(lhs) == get(rhs);
           }
-        }()} {}
+ else if constexpr (type_traits::has_epsilon_v<TLhs> and
+                   type_traits::has_epsilon_v<TRhs>) {
+return math::abs(get(lhs) - get(rhs)) <
+       math::min_value(TLhs::epsilon, TRhs::epsilon);
+}
+else if constexpr (type_traits::has_epsilon_v<TLhs>) {
+return math::abs(get(lhs) - get(rhs)) < TLhs::epsilon;
+}
+else if constexpr (type_traits::has_epsilon_v<TRhs>) {
+return math::abs(get(lhs) - get(rhs)) < TRhs::epsilon;
+}
+else {
+return get(lhs) == get(rhs);
+}
+}()} {}
 
-  [[nodiscard]] constexpr operator bool() const { return value_; }
-  [[nodiscard]] constexpr auto lhs() const { return get(lhs_); }
-  [[nodiscard]] constexpr auto rhs() const { return get(rhs_); }
+[[nodiscard]] constexpr operator bool() const { return value_; }
+[[nodiscard]] constexpr auto lhs() const { return get(lhs_); }
+[[nodiscard]] constexpr auto rhs() const { return get(rhs_); }
 
-  const TLhs lhs_{};
-  const TRhs rhs_{};
-  const bool value_{};
+const TLhs lhs_{};
+const TRhs rhs_{};
+const bool value_{};
 };
 
 template <class TLhs, class TRhs>
@@ -689,26 +690,30 @@ struct neq_ : op {
           if constexpr (type_traits::has_value_v<TLhs> and
                         type_traits::has_value_v<TRhs>) {
             return TLhs::value != TRhs::value;
-          } else if constexpr (type_traits::has_epsilon_v<TLhs> and
-                               type_traits::has_epsilon_v<TRhs>) {
-            return math::abs(get(lhs_) - get(rhs_)) >
-                   math::min_value(TLhs::epsilon, TRhs::epsilon);
-          } else if constexpr (type_traits::has_epsilon_v<TLhs>) {
-            return math::abs(get(lhs_) - get(rhs_)) > TLhs::epsilon;
-          } else if constexpr (type_traits::has_epsilon_v<TRhs>) {
-            return math::abs(get(lhs_) - get(rhs_)) > TRhs::epsilon;
-          } else {
-            return get(lhs_) != get(rhs_);
           }
-        }()} {}
+ else if constexpr (type_traits::has_epsilon_v<TLhs> and
+                   type_traits::has_epsilon_v<TRhs>) {
+return math::abs(get(lhs_) - get(rhs_)) >
+       math::min_value(TLhs::epsilon, TRhs::epsilon);
+}
+else if constexpr (type_traits::has_epsilon_v<TLhs>) {
+return math::abs(get(lhs_) - get(rhs_)) > TLhs::epsilon;
+}
+else if constexpr (type_traits::has_epsilon_v<TRhs>) {
+return math::abs(get(lhs_) - get(rhs_)) > TRhs::epsilon;
+}
+else {
+return get(lhs_) != get(rhs_);
+}
+}()} {}
 
-  [[nodiscard]] constexpr operator bool() const { return value_; }
-  [[nodiscard]] constexpr auto lhs() const { return get(lhs_); }
-  [[nodiscard]] constexpr auto rhs() const { return get(rhs_); }
+[[nodiscard]] constexpr operator bool() const { return value_; }
+[[nodiscard]] constexpr auto lhs() const { return get(lhs_); }
+[[nodiscard]] constexpr auto rhs() const { return get(rhs_); }
 
-  const TLhs lhs_{};
-  const TRhs rhs_{};
-  const bool value_{};
+const TLhs lhs_{};
+const TRhs rhs_{};
+const bool value_{};
 };
 
 template <class TLhs, class TRhs>
@@ -720,18 +725,19 @@ struct gt_ : op {
           if constexpr (type_traits::has_value_v<TLhs> and
                         type_traits::has_value_v<TRhs>) {
             return TLhs::value > TRhs::value;
-          } else {
-            return get(lhs_) > get(rhs_);
           }
-        }()} {}
+ else {
+return get(lhs_) > get(rhs_);
+}
+}()} {}
 
-  [[nodiscard]] constexpr operator bool() const { return value_; }
-  [[nodiscard]] constexpr auto lhs() const { return get(lhs_); }
-  [[nodiscard]] constexpr auto rhs() const { return get(rhs_); }
+[[nodiscard]] constexpr operator bool() const { return value_; }
+[[nodiscard]] constexpr auto lhs() const { return get(lhs_); }
+[[nodiscard]] constexpr auto rhs() const { return get(rhs_); }
 
-  const TLhs lhs_{};
-  const TRhs rhs_{};
-  const bool value_{};
+const TLhs lhs_{};
+const TRhs rhs_{};
+const bool value_{};
 };
 
 template <class TLhs, class TRhs>
@@ -743,18 +749,19 @@ struct ge_ : op {
           if constexpr (type_traits::has_value_v<TLhs> and
                         type_traits::has_value_v<TRhs>) {
             return TLhs::value >= TRhs::value;
-          } else {
-            return get(lhs_) >= get(rhs_);
           }
-        }()} {}
+ else {
+return get(lhs_) >= get(rhs_);
+}
+}()} {}
 
-  [[nodiscard]] constexpr operator bool() const { return value_; }
-  [[nodiscard]] constexpr auto lhs() const { return get(lhs_); }
-  [[nodiscard]] constexpr auto rhs() const { return get(rhs_); }
+[[nodiscard]] constexpr operator bool() const { return value_; }
+[[nodiscard]] constexpr auto lhs() const { return get(lhs_); }
+[[nodiscard]] constexpr auto rhs() const { return get(rhs_); }
 
-  const TLhs lhs_{};
-  const TRhs rhs_{};
-  const bool value_{};
+const TLhs lhs_{};
+const TRhs rhs_{};
+const bool value_{};
 };
 
 template <class TLhs, class TRhs>
@@ -766,19 +773,20 @@ struct lt_ : op {
           if constexpr (type_traits::has_value_v<TLhs> and
                         type_traits::has_value_v<TRhs>) {
             return TLhs::value < TRhs::value;
-          } else {
-            return get(lhs_) < get(rhs_);
           }
-        }()} {}
+ else {
+return get(lhs_) < get(rhs_);
+}
+}()} {}
 
-  [[nodiscard]] constexpr operator bool() const { return value_; }
-  [[nodiscard]] constexpr auto lhs() const { return get(lhs_); }
-  [[nodiscard]] constexpr auto rhs() const { return get(rhs_); }
+[[nodiscard]] constexpr operator bool() const { return value_; }
+[[nodiscard]] constexpr auto lhs() const { return get(lhs_); }
+[[nodiscard]] constexpr auto rhs() const { return get(rhs_); }
 
- private:
-  const TLhs lhs_{};
-  const TRhs rhs_{};
-  const bool value_{};
+private:
+ const TLhs lhs_{};
+ const TRhs rhs_{};
+ const bool value_{};
 };
 
 template <class TLhs, class TRhs>
@@ -790,18 +798,19 @@ struct le_ : op {
           if constexpr (type_traits::has_value_v<TLhs> and
                         type_traits::has_value_v<TRhs>) {
             return TLhs::value <= TRhs::value;
-          } else {
-            return get(lhs_) <= get(rhs_);
           }
-        }()} {}
+ else {
+return get(lhs_) <= get(rhs_);
+}
+}()} {}
 
-  [[nodiscard]] constexpr operator bool() const { return value_; }
-  [[nodiscard]] constexpr auto lhs() const { return get(lhs_); }
-  [[nodiscard]] constexpr auto rhs() const { return get(rhs_); }
+[[nodiscard]] constexpr operator bool() const { return value_; }
+[[nodiscard]] constexpr auto lhs() const { return get(lhs_); }
+[[nodiscard]] constexpr auto rhs() const { return get(rhs_); }
 
-  const TLhs lhs_{};
-  const TRhs rhs_{};
-  const bool value_{};
+const TLhs lhs_{};
+const TRhs rhs_{};
+const bool value_{};
 };
 
 template <class TLhs, class TRhs>
@@ -858,17 +867,19 @@ struct throws_ : op {
       : value_{[&expr] {
           try {
             expr();
-          } catch (const TException&) {
-            return true;
-          } catch (...) {
-            return false;
           }
-          return false;
-        }()} {}
+ catch (const TException&) {
+return true;
+}
+catch (...) {
+return false;
+}
+return false;
+}()} {}
 
-  [[nodiscard]] constexpr operator bool() const { return value_; }
+[[nodiscard]] constexpr operator bool() const { return value_; }
 
-  const bool value_{};
+const bool value_{};
 };
 
 template <class TExpr>
@@ -877,15 +888,16 @@ struct throws_<TExpr, void> : op {
       : value_{[&expr] {
           try {
             expr();
-          } catch (...) {
-            return true;
           }
-          return false;
-        }()} {}
+ catch (...) {
+return true;
+}
+return false;
+}()} {}
 
-  [[nodiscard]] constexpr operator bool() const { return value_; }
+[[nodiscard]] constexpr operator bool() const { return value_; }
 
-  const bool value_{};
+const bool value_{};
 };
 
 template <class TExpr>
@@ -894,15 +906,16 @@ struct nothrow_ : op {
       : value_{[&expr] {
           try {
             expr();
-          } catch (...) {
-            return false;
           }
-          return true;
-        }()} {}
+ catch (...) {
+return false;
+}
+return true;
+}()} {}
 
-  [[nodiscard]] constexpr operator bool() const { return value_; }
+[[nodiscard]] constexpr operator bool() const { return value_; }
 
-  const bool value_{};
+const bool value_{};
 };
 #endif
 
@@ -1096,89 +1109,91 @@ class reporter {
       printer_ << '\n'
                << printer_.colors().fail << "FAILED" << printer_.colors().none
                << '\n';
-    } else {
-      ++tests_.pass;
-      printer_ << printer_.colors().pass << "PASSED" << printer_.colors().none
-               << '\n';
     }
-  }
+ else {
+++tests_.pass;
+printer_ << printer_.colors().pass << "PASSED" << printer_.colors().none
+         << '\n';
+}
+}
 
-  template <class TMsg>
-  auto on(events::log<TMsg> l) -> void {
-    printer_ << l.msg;
-  }
+template <class TMsg>
+auto on(events::log<TMsg> l) -> void {
+  printer_ << l.msg;
+}
 
-  auto on(events::exception exception) -> void {
-    printer_ << "\n  " << printer_.colors().fail
-             << "Unexpected exception with message:\n"
-             << exception.what() << printer_.colors().none;
-    ++asserts_.fail;
-  }
+auto on(events::exception exception) -> void {
+  printer_ << "\n  " << printer_.colors().fail
+           << "Unexpected exception with message:\n"
+           << exception.what() << printer_.colors().none;
+  ++asserts_.fail;
+}
 
-  template <class TExpr>
-  auto on(events::assertion_pass<TExpr>) -> void {
-    ++asserts_.pass;
-  }
+template <class TExpr>
+auto on(events::assertion_pass<TExpr>) -> void {
+  ++asserts_.pass;
+}
 
-  template <class TExpr>
-  auto on(events::assertion_fail<TExpr> assertion) -> void {
-    constexpr auto short_name = [](std::string_view name) {
-      return name.rfind('/') != std::string_view::npos
-                 ? name.substr(name.rfind('/') + 1)
-                 : name;
-    };
-    printer_ << "\n  " << short_name(assertion.location.file_name()) << ':'
-             << assertion.location.line() << ':' << printer_.colors().fail
-             << "FAILED" << printer_.colors().none << " [" << std::boolalpha
-             << assertion.expr << printer_.colors().none << ']';
-    ++asserts_.fail;
-  }
+template <class TExpr>
+auto on(events::assertion_fail<TExpr> assertion) -> void {
+  constexpr auto short_name = [](std::string_view name) {
+    return name.rfind('/') != std::string_view::npos
+               ? name.substr(name.rfind('/') + 1)
+               : name;
+  };
+  printer_ << "\n  " << short_name(assertion.location.file_name()) << ':'
+           << assertion.location.line() << ':' << printer_.colors().fail
+           << "FAILED" << printer_.colors().none << " [" << std::boolalpha
+           << assertion.expr << printer_.colors().none << ']';
+  ++asserts_.fail;
+}
 
-  auto on(events::fatal_assertion) -> void {}
+auto on(events::fatal_assertion) -> void {}
 
-  auto on(events::summary) -> void {
-    if (static auto once = true; once) {
-      once = false;
-      if (tests_.fail or asserts_.fail) {
-        printer_ << "\n========================================================"
-                    "=======================\n"
-                 << "tests:   " << (tests_.pass + tests_.fail) << " | "
-                 << printer_.colors().fail << tests_.fail << " failed"
-                 << printer_.colors().none << '\n'
-                 << "asserts: " << (asserts_.pass + asserts_.fail) << " | "
-                 << asserts_.pass << " passed"
-                 << " | " << printer_.colors().fail << asserts_.fail
-                 << " failed" << printer_.colors().none << '\n';
-        std::cerr << printer_.str() << std::endl;
-      } else {
-        std::cout << printer_.colors().pass << "All tests passed"
-                  << printer_.colors().none << " (" << asserts_.pass
-                  << " asserts in " << tests_.pass << " tests)\n";
-
-        if (tests_.skip) {
-          std::cout << tests_.skip << " tests skipped\n";
-        }
-
-        std::cout.flush();
-      }
+auto on(events::summary) -> void {
+  if (static auto once = true; once) {
+    once = false;
+    if (tests_.fail or asserts_.fail) {
+      printer_ << "\n========================================================"
+                  "=======================\n"
+               << "tests:   " << (tests_.pass + tests_.fail) << " | "
+               << printer_.colors().fail << tests_.fail << " failed"
+               << printer_.colors().none << '\n'
+               << "asserts: " << (asserts_.pass + asserts_.fail) << " | "
+               << asserts_.pass << " passed"
+               << " | " << printer_.colors().fail << asserts_.fail
+               << " failed" << printer_.colors().none << '\n';
+      std::cerr << printer_.str() << std::endl;
     }
-  }
+else {
+std::cout << printer_.colors().pass << "All tests passed"
+          << printer_.colors().none << " (" << asserts_.pass
+          << " asserts in " << tests_.pass << " tests)\n";
 
- protected:
-  struct {
-    std::size_t pass{};
-    std::size_t fail{};
-    std::size_t skip{};
-  } tests_{};
+if (tests_.skip) {
+  std::cout << tests_.skip << " tests skipped\n";
+}
 
-  struct {
-    std::size_t pass{};
-    std::size_t fail{};
-  } asserts_{};
+std::cout.flush();
+}
+}
+}
 
-  std::size_t fails_{};
+protected:
+ struct {
+   std::size_t pass{};
+   std::size_t fail{};
+   std::size_t skip{};
+ } tests_{};
 
-  TPrinter printer_{};
+ struct {
+   std::size_t pass{};
+   std::size_t fail{};
+ } asserts_{};
+
+ std::size_t fails_{};
+
+ TPrinter printer_{};
 };
 
 struct options {
@@ -1277,30 +1292,34 @@ class runner {
       if (not level_++) {
         reporter_.on(events::test_begin{
             .type = test.type, .name = test.name, .location = test.location});
-      } else {
-        reporter_.on(events::test_run{.type = test.type, .name = test.name});
       }
+ else {
+reporter_.on(events::test_run{.type = test.type, .name = test.name});
+}
 
-      if (dry_run_) {
-        for (auto i = 0u; i < level_; ++i) {
-          std::cout << (i ? "." : "") << path_[i];
-        }
-        std::cout << '\n';
-      }
+if (dry_run_) {
+  for (auto i = 0u; i < level_; ++i) {
+    std::cout << (i ? "." : "") << path_[i];
+  }
+  std::cout << '\n';
+}
 
 #if defined(__cpp_exceptions)
       try {
 #endif
         test();
 #if defined(__cpp_exceptions)
-      } catch (const events::fatal_assertion&) {
-      } catch (const std::exception& exception) {
-        ++fails_;
-        reporter_.on(events::exception{exception.what()});
-      } catch (...) {
-        ++fails_;
-        reporter_.on(events::exception{"Unknown exception"});
       }
+ catch (const events::fatal_assertion&) {
+}
+catch (const std::exception& exception) {
+++fails_;
+reporter_.on(events::exception{exception.what()});
+}
+catch (...) {
+++fails_;
+reporter_.on(events::exception{"Unknown exception"});
+}
 #endif
 
       if (not --level_) {
@@ -1477,18 +1496,19 @@ class terse_ {
   ~terse_() noexcept(false) {
     if (static auto once = true; once and not cfg::wip) {
       once = {};
-    } else {
-      return;
     }
+ else {
+return;
+}
 
-    cfg::wip = true;
+cfg::wip = true;
 
-    void(detail::on<TExpr>(
-        events::assertion<TExpr>{.expr = expr_, .location = cfg::location}));
-  }
+void(detail::on<TExpr>(
+    events::assertion<TExpr>{.expr = expr_, .location = cfg::location}));
+}
 
- private:
-  const TExpr& expr_;
+private:
+ const TExpr& expr_;
 };
 
 struct that_ {
@@ -1551,18 +1571,19 @@ struct fatal_ : op {
 
   [[nodiscard]] constexpr operator bool() const {
     if (static_cast<bool>(expr_)) {
-    } else {
-      cfg::wip = true;
-      void(on<TExpr>(
-          events::assertion<TExpr>{.expr = expr_, .location = cfg::location}));
-      on<TExpr>(events::fatal_assertion{});
     }
-    return static_cast<bool>(expr_);
-  }
+ else {
+cfg::wip = true;
+void(on<TExpr>(
+    events::assertion<TExpr>{.expr = expr_, .location = cfg::location}));
+on<TExpr>(events::fatal_assertion{});
+}
+return static_cast<bool>(expr_);
+}
 
-  [[nodiscard]] constexpr decltype(auto) get() const { return expr_; }
+[[nodiscard]] constexpr decltype(auto) get() const { return expr_; }
 
-  TExpr expr_{};
+TExpr expr_{};
 };
 
 template <class T>
@@ -2191,8 +2212,8 @@ class steps {
       }
 
       steps_.call_steps().emplace_back(
-          pattern_, [expr, pattern = pattern_](const auto&_step) {
-            [=]<class... TArgs>(type_traits::list<TArgs...>) {
+          pattern_, [expr, pattern = pattern_](const auto& _step) {
+            [=] <class... TArgs>(type_traits::list<TArgs...>) {
               log << _step;
               auto i = 0u;
               const auto& ms = utility::match(pattern, _step);
@@ -2208,84 +2229,89 @@ class steps {
       T t{};
       std::istringstream iss{};
       iss.str(str);
-      iss >> t;
-      return t;
-    }
-
-    steps& steps_;
-    std::string pattern_{};
-  };
-
- public:
-  template <class TSteps>
-  constexpr /*explicit(false)*/ steps(const TSteps& _steps) : steps_{_steps} {}
-
-  template <class TGherkin>
-  auto operator|(const TGherkin& gherkin) {
-    gherkin_ = utility::split<std::string>(gherkin, '\n');
-    for (auto&_step : gherkin_) {
-		_step.erase(0, _step.find_first_not_of(" \t"));
-    }
-
-    return [this] {
-      step_ = {};
-      steps_(*this);
-    };
-  }
-  auto feature(const std::string& pattern) {
-    return step{*this, "Feature: " + pattern};
-  }
-  auto scenario(const std::string& pattern) {
-    return step{*this, "Scenario: " + pattern};
-  }
-  auto given(const std::string& pattern) {
-    return step{*this, "Given " + pattern};
-  }
-  auto when(const std::string& pattern) {
-    return step{*this, "When " + pattern};
-  }
-  auto then(const std::string& pattern) {
-    return step{*this, "Then " + pattern};
-  }
-
- private:
-  template <class TPattern>
-  auto next(const TPattern& pattern) -> void {
-    const auto is_scenario = [&pattern](const auto& _step) {
-      constexpr auto scenario = "Scenario";
-      return pattern.find(scenario) == std::string::npos and
-             _step.find(scenario) != std::string::npos;
-    };
-
-    const auto call_steps = [this, is_scenario](const auto&_step,
-                                                const auto i) {
-      for (const auto& [name, call] : call_steps_) {
-        if (is_scenario(_step)) {
-          break;
-        }
-
-        if (utility::is_match(_step, name) or
-            not std::empty(utility::match(name, _step))) {
-          step_ = i;
-          call(_step);
-        }
+      if constexpr (std::is_same_v<T, std::string>) {
+        t = iss.str();
       }
-    };
+ else {
+iss >> t;
+}
+return t;
+}
 
-    decltype(step_) i{};
-    for (const auto&_step : gherkin_) {
-      if (i++ == step_) {
-        call_steps(_step, i);
-      }
-    }
-  }
+steps& steps_;
+std::string pattern_{};
+};
 
-  auto call_steps() -> call_steps_t& { return call_steps_; }
+public:
+ template <class TSteps>
+ constexpr /*explicit(false)*/ steps(const TSteps& _steps) : steps_{_steps} {}
 
-  steps_t steps_{};
-  gherkin_t gherkin_{};
-  call_steps_t call_steps_{};
-  decltype(sizeof("")) step_{};
+ template <class TGherkin>
+ auto operator|(const TGherkin& gherkin) {
+   gherkin_ = utility::split<std::string>(gherkin, '\n');
+   for (auto& _step : gherkin_) {
+       _step.erase(0, _step.find_first_not_of(" \t"));
+   }
+
+   return [this] {
+     step_ = {};
+     steps_(*this);
+   };
+ }
+ auto feature(const std::string& pattern) {
+   return step{*this, "Feature: " + pattern};
+ }
+ auto scenario(const std::string& pattern) {
+   return step{*this, "Scenario: " + pattern};
+ }
+ auto given(const std::string& pattern) {
+   return step{*this, "Given " + pattern};
+ }
+ auto when(const std::string& pattern) {
+   return step{*this, "When " + pattern};
+ }
+ auto then(const std::string& pattern) {
+   return step{*this, "Then " + pattern};
+ }
+
+private:
+ template <class TPattern>
+ auto next(const TPattern& pattern) -> void {
+   const auto is_scenario = [&pattern](const auto& _step) {
+     constexpr auto scenario = "Scenario";
+     return pattern.find(scenario) == std::string::npos and
+            _step.find(scenario) != std::string::npos;
+   };
+
+   const auto call_steps = [this, is_scenario](const auto& _step,
+                                               const auto i) {
+     for (const auto& [name, call] : call_steps_) {
+       if (is_scenario(_step)) {
+         break;
+       }
+
+       if (utility::is_match(_step, name) or
+           not std::empty(utility::match(name, _step))) {
+         step_ = i;
+         call(_step);
+       }
+     }
+   };
+
+   decltype(step_) i{};
+   for (const auto& _step : gherkin_) {
+     if (i++ == step_) {
+       call_steps(_step, i);
+     }
+   }
+ }
+
+ auto call_steps() -> call_steps_t& { return call_steps_; }
+
+ steps_t steps_{};
+ gherkin_t gherkin_{};
+ call_steps_t call_steps_{};
+ decltype(sizeof("")) step_{};
 };
 }  // namespace gherkin
 }  // namespace bdd
@@ -2329,10 +2355,5 @@ using operators::operator not;
 using operators::operator|;
 using operators::operator/;
 using operators::operator>>;
-}  // namespace v1_1_8
-}  // namespace ut
-#if !defined(__cpp_modules) || defined(BOOST_UT_DISABLE_MODULE)
-}  // namespace inline ext
-}  // namespace boost
-#endif
+}  // namespace boost::ext::ut::v1_1_8
 #endif
