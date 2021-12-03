@@ -2,7 +2,7 @@ export module Utility.StaticMap;
 
 import <array>;
 import <algorithm>;
-import <stdexcept>;
+export import <stdexcept>;
 
 // Clone of Jason Turner's constexpr map: https://www.youtube.com/watch?v=INn3xa4pMfg
 // Usage:

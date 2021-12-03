@@ -5,6 +5,7 @@ import <string>;
 import <string_view>;
 import <vector>;
 import <deque>;
+export import <regex>;
 export import Utility.StaticMap;
 export import ILexer;
 

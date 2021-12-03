@@ -5,7 +5,6 @@ import Utility.StaticMap;
 import <string>;
 import <string_view>;
 import <array>;
-import <regex>;
 
 using namespace std::literals::string_view_literals;
 
