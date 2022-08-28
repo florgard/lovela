@@ -18,25 +18,6 @@ void Testing::RunLexerTests()
 	static const Token endToken{ .type = Token::Type::End };
 	static constexpr auto ident = Token::Type::Identifier;
 
-	TestLexer("integer literal", L"123", { {.type = Token::Type::LiteralInteger, .value = L"123" }, endToken });
-	TestLexer("integer literal and full stop", L"123.", {
-		{.type = Token::Type::LiteralInteger, .value = L"123"},
-		{.type = Token::Type::SeparatorDot, .value = L"."},
-		endToken
-		});
-	TestLexer("decimal literal", L"123.456", { {.type = Token::Type::LiteralDecimal, .value = L"123.456" }, endToken });
-	TestLexer("decimal literal and full stop", L"123.456.", {
-		{.type = Token::Type::LiteralDecimal, .value = L"123.456"},
-		{.type = Token::Type::SeparatorDot, .value = L"."},
-		endToken
-		});
-	TestLexer("decimal literal, full stop, digit", L"123.456.7", {
-		{.type = Token::Type::LiteralDecimal, .value = L"123.456"},
-		{.type = Token::Type::SeparatorDot, .value = L"."},
-		{.type = Token::Type::LiteralInteger, .value = L"7"},
-		endToken
-		});
-
 	TestLexer("empty string literal", L"''", { {.type = Token::Type::LiteralString, .value = L"" }, endToken });
 	TestLexer("single escaped quotation mark", L"''''", { {.type = Token::Type::LiteralString, .value = L"'" }, endToken });
 	TestLexer("simple string literal", L"'abc'", { {.type = Token::Type::LiteralString, .value = L"abc" }, endToken });
