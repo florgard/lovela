@@ -14,7 +14,7 @@ suite static_map_tests = [] {
 	static_assert(map.at_or(3, 1.1) == 1.1);
 
 	"Out of bounds"_test = [] {
-		expect(throws([] { if (map.at(3) == 3.3) {} }));
+		expect(throws([] { auto x = map.at(3); x; }));
 	};
 };
 
