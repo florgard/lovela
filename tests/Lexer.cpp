@@ -6,7 +6,7 @@ static constexpr auto ident = Token::Type::Identifier;
 
 suite lexer_rudimental_tests = [] {
 	"empty expression"_test = [] {
-		expect(TestingBase::TestLexer("empty expression",
+		expect(LexerTest::Success("empty expression",
 			L"",
 			{
 				endToken
@@ -14,7 +14,7 @@ suite lexer_rudimental_tests = [] {
 		));
 	};
 	"single character"_test = [] {
-		expect(TestingBase::TestLexer("single character",
+		expect(LexerTest::Success("single character",
 			L".",
 			{
 				{.type = Token::Type::SeparatorDot, .value = L"." },
@@ -26,7 +26,7 @@ suite lexer_rudimental_tests = [] {
 
 suite lexer_identifier_tests = [] {
 	"simple identifier"_test = [] { 
-		expect(TestingBase::TestLexer("simple identifier",
+		expect(LexerTest::Success("simple identifier",
 			L"abc",
 			{
 				{.type = ident, .value = L"abc" },
@@ -35,7 +35,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"two identifiers"_test = [] {
-		expect(TestingBase::TestLexer("two identifiers",
+		expect(LexerTest::Success("two identifiers",
 			L"abc def",
 			{
 				{.type = ident, .value = L"abc" },
@@ -45,7 +45,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"alphanumerical identifier"_test = [] {
-		expect(TestingBase::TestLexer("alphanumerical identifier",
+		expect(LexerTest::Success("alphanumerical identifier",
 			L"abc123",
 			{
 				{.type = ident, .value = L"abc123" },
@@ -54,7 +54,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"kebab case identifier"_test = [] {
-		expect(TestingBase::TestLexer("kebab case identifier",
+		expect(LexerTest::Success("kebab case identifier",
 			L"abc-123",
 			{
 				{.type = ident, .value = L"abc-123" },
@@ -63,7 +63,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"snake case identifier"_test = [] {
-		expect(TestingBase::TestLexer("snake case identifier",
+		expect(LexerTest::Success("snake case identifier",
 			L"abc_123",
 			{
 				{.type = ident, .value = L"abc_123" },
@@ -71,7 +71,7 @@ suite lexer_identifier_tests = [] {
 			}));
 	};
 	"operator character identifier"_test = [] {
-		expect(TestingBase::TestLexer("operator character identifier",
+		expect(LexerTest::Success("operator character identifier",
 			L"abc>=123",
 			{
 				{.type = ident, .value = L"abc>=123" },
@@ -80,7 +80,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"Unicode identifier"_test = [] {
-		expect(TestingBase::TestLexer("Unicode identifier",
+		expect(LexerTest::Success("Unicode identifier",
 			L"\u65E5\u672C",
 			{
 				{.type = ident, .value = L"\u65E5\u672C" },
@@ -89,7 +89,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"Unicode combining mark identifier"_test = [] {
-		expect(TestingBase::TestLexer("Unicode combining mark identifier",
+		expect(LexerTest::Success("Unicode combining mark identifier",
 			L"a\u0300",
 			{
 				{.type = ident, .value = L"a\u0300" },
@@ -98,7 +98,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"invalid identifier 1"_test = [] {
-		expect(TestingBase::TestLexer("invalid identifier 1",
+		expect(LexerTest::Failure("invalid identifier 1",
 			L"1abc",
 			{
 				endToken
@@ -109,7 +109,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"invalid identifier 2"_test = [] {
-		expect(TestingBase::TestLexer("invalid identifier 2",
+		expect(LexerTest::Failure("invalid identifier 2",
 			L"=abc",
 			{
 				endToken
@@ -123,7 +123,7 @@ suite lexer_identifier_tests = [] {
 
 suite lexer_numeric_literals_tests = [] {
 	"integer literal"_test = [] {
-		expect(TestingBase::TestLexer("integer literal",
+		expect(LexerTest::Success("integer literal",
 			L"123",
 			{
 				{.type = Token::Type::LiteralInteger, .value = L"123" },
@@ -132,7 +132,7 @@ suite lexer_numeric_literals_tests = [] {
 		));
 	};
 	"integer literal and full stop"_test = [] {
-		expect(TestingBase::TestLexer("integer literal and full stop",
+		expect(LexerTest::Success("integer literal and full stop",
 			L"123.",
 			{
 				{.type = Token::Type::LiteralInteger, .value = L"123"},
@@ -142,7 +142,7 @@ suite lexer_numeric_literals_tests = [] {
 		));
 	};
 	"decimal literal"_test = [] {
-		expect(TestingBase::TestLexer("decimal literal",
+		expect(LexerTest::Success("decimal literal",
 			L"123.456",
 			{
 				{.type = Token::Type::LiteralDecimal, .value = L"123.456" },
@@ -151,7 +151,7 @@ suite lexer_numeric_literals_tests = [] {
 		));
 	};
 	"decimal literal and full stop"_test = [] {
-		expect(TestingBase::TestLexer("decimal literal and full stop",
+		expect(LexerTest::Success("decimal literal and full stop",
 			L"123.456.",
 			{
 				{.type = Token::Type::LiteralDecimal, .value = L"123.456"},
@@ -161,7 +161,7 @@ suite lexer_numeric_literals_tests = [] {
 		));
 	};
 	"decimal literal, full stop, digit"_test = [] {
-		expect(TestingBase::TestLexer("decimal literal, full stop, digit",
+		expect(LexerTest::Success("decimal literal, full stop, digit",
 			L"123.456.7",
 			{
 				{.type = Token::Type::LiteralDecimal, .value = L"123.456"},

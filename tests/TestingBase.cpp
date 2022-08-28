@@ -5,6 +5,16 @@
 #include "../lovela/CodeGeneratorFactory.h"
 #include "../lovela/Algorithm.h"
 
+bool LexerTest::Success(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens)
+{
+	return TestingBase::TestLexer(name, code, expectedTokens, {});
+}
+
+bool LexerTest::Failure(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
+{
+	return TestingBase::TestLexer(name, code, expectedTokens, expectedErrors);
+}
+
 bool TestingBase::TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
 {
 	std::wistringstream input(std::wstring(code.data(), code.size()));

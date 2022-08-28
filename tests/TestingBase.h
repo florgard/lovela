@@ -13,7 +13,7 @@ public:
 
 	static void PrintTree(const Node& tree) { int i{}; PrintTree(i, tree, {}); }
 
-private:
+protected:
 	static bool TestAST(int& index, const char* name, const Node& tree, const Node& expectedTree);
 	static void PrintTree(int& index, const Node& tree, std::wstring indent);
 
@@ -41,4 +41,11 @@ private:
 			<< '(' << error.token.line << ':' << error.token.column << ") \"..." << error.token.code << "\" <-- At this place" << '\n';
 		return s.str();
 	}
+};
+
+class LexerTest : public TestingBase
+{
+public:
+	static bool Success(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens);
+	static bool Failure(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors);
 };
