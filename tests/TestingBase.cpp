@@ -5,7 +5,7 @@
 #include "../lovela/CodeGeneratorFactory.h"
 #include "../lovela/Algorithm.h"
 
-void TestingBase::TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
+bool TestingBase::TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
 {
 	std::wistringstream input(std::wstring(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
@@ -51,6 +51,7 @@ void TestingBase::TestLexer(const char* name, std::wstring_view code, const std:
 	}
 
 	assert(success);
+	return success;
 }
 
 std::unique_ptr<Node> TestingBase::TestParser(const char* name, std::wstring_view code, const Node& expectedTree, const std::vector<IParser::Error>& expectedErrors)

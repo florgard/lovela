@@ -18,9 +18,6 @@ void Testing::RunLexerTests()
 	static const Token endToken{ .type = Token::Type::End };
 	static constexpr auto ident = Token::Type::Identifier;
 
-	TestLexer("empty expression", L"", { endToken });
-	TestLexer("single character", L".", { {.type = Token::Type::SeparatorDot, .value = L"." }, endToken });
-
 	TestLexer("simple identifier", L"abc", { {.type = ident, .value = L"abc" }, endToken });
 	TestLexer("two identifiers", L"abc def", { {.type = ident, .value = L"abc" }, {.type = ident, .value = L"def" }, endToken });
 	TestLexer("alphanumerical identifier", L"abc123", { {.type = ident, .value = L"abc123" }, endToken });
