@@ -18,17 +18,6 @@ void Testing::RunLexerTests()
 	static const Token endToken{ .type = Token::Type::End };
 	static constexpr auto ident = Token::Type::Identifier;
 
-	TestLexer("simple identifier", L"abc", { {.type = ident, .value = L"abc" }, endToken });
-	TestLexer("two identifiers", L"abc def", { {.type = ident, .value = L"abc" }, {.type = ident, .value = L"def" }, endToken });
-	TestLexer("alphanumerical identifier", L"abc123", { {.type = ident, .value = L"abc123" }, endToken });
-	TestLexer("kebab case identifier", L"abc-123", { {.type = ident, .value = L"abc-123" }, endToken });
-	TestLexer("snake case identifier", L"abc_123", { {.type = ident, .value = L"abc_123" }, endToken });
-	TestLexer("operator character identifier", L"abc>=123", { {.type = ident, .value = L"abc>=123" }, endToken });
-	TestLexer("Unicode identifier", L"\u65E5\u672C", { {.type = ident, .value = L"\u65E5\u672C" }, endToken });
-	TestLexer("Unicode combining mark identifier", L"a\u0300", { { .type = ident, .value = L"a\u0300" }, endToken });
-	TestLexer("invalid identifier 1", L"1abc", { endToken }, { {.code = ILexer::Error::Code::SyntaxError} });
-	TestLexer("invalid identifier 2", L"=abc", { endToken }, { {.code = ILexer::Error::Code::SyntaxError} });
-
 	TestLexer("integer literal", L"123", { {.type = Token::Type::LiteralInteger, .value = L"123" }, endToken });
 	TestLexer("integer literal and full stop", L"123.", {
 		{.type = Token::Type::LiteralInteger, .value = L"123"},

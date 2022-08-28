@@ -50,7 +50,6 @@ bool TestingBase::TestLexer(const char* name, std::wstring_view code, const std:
 		}
 	}
 
-	assert(success);
 	return success;
 }
 
