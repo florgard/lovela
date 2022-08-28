@@ -41,7 +41,7 @@ public:
 			{'#', Token::Type::SeparatorHash },
 		} };
 
-		constexpr auto map = StaticMap<wchar_t, Token::Type, values.size()>{ {values} };
+		constexpr auto map = static_map<wchar_t, Token::Type, values.size()>{ {values} };
 		return map.at_or(lexeme, Token::Type::Empty);
 	}
 
@@ -54,7 +54,7 @@ public:
 			{'r', L"\r"},
 		} };
 
-		constexpr auto map = StaticMap<wchar_t, std::wstring_view, values.size()>{ {values} };
+		constexpr auto map = static_map<wchar_t, std::wstring_view, values.size()>{ {values} };
 		return map.at_or(code, {});
 	}
 

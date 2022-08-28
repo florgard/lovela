@@ -24,5 +24,4 @@
 #include <cassert>
 #include <stdexcept>
 #include <experimental/generator>
-#include "..\lovela\StaticMap.h"
-#include "..\lovela\Utility.h"
+#include "../lovela/Utility.h"

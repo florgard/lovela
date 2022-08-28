@@ -24,5 +24,4 @@
 #include <cassert>
 #include <stdexcept>
 #include <experimental/generator>
-#include "StaticMap.h"
 #include "Utility.h"
