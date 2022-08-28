@@ -1,23 +1,16 @@
-export module Parser;
+#pragma once
+#include "ParserBase.h"
 
-import ParserBase;
-import <string>;
-import <map>;
-import <functional>;
-import <memory>;
-
-export class Parser : public ParserBase
+class Parser : public ParserBase
 {
 	friend class ParserFactory;
 
 protected:
-	Parser(TokenGenerator&& tokenGenerator) noexcept;
+	Parser(std::unique_ptr<ITokenIterator> tokenIterator) noexcept;
 
 public:
 	[[nodiscard]] std::unique_ptr<Node> Parse() noexcept override;
 
-	static void TraverseDepthFirstPreorder(Node& tree, std::function<void(Node& node)> visitor) noexcept;
-	static void TraverseDepthFirstPostorder(Node& tree, std::function<void(Node& node)> visitor) noexcept;
 
 private:
 	struct Context

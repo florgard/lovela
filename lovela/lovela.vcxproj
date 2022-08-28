@@ -124,6 +124,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
       <DisableLanguageExtensions>true</DisableLanguageExtensions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,6 +143,8 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <TreatWarningAsError>true</TreatWarningAsError>
       <DisableLanguageExtensions>true</DisableLanguageExtensions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,71 +155,50 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Algorithm.cpp" />
     <ClCompile Include="CodeGeneratorCpp.cpp" />
-    <ClCompile Include="CodeGeneratorFactory.ixx" />
-    <ClCompile Include="ICodeGenerator.ixx" />
+    <ClCompile Include="CodeGeneratorFactory.cpp" />
     <ClCompile Include="Lexer.cpp" />
     <ClCompile Include="LexerBase.cpp" />
-    <ClCompile Include="LexerFactory.ixx" />
+    <ClCompile Include="LexerFactory.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="ParseException.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="ParserBase.cpp" />
-    <ClCompile Include="ParserFactory.ixx" />
+    <ClCompile Include="ParserFactory.cpp" />
+    <ClCompile Include="pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="StandardCDeclarations.cpp" />
     <ClCompile Include="StandardCppDeclarations.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CodeGeneratorCpp.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="DataType.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="ILexer.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="IParser.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="Lexer.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="LexerBase.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="Node.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="ParseException.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="Parser.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="ParserBase.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="StandardCDeclarations.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="StandardCppDeclarations.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="StaticMap.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="Token.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-    <ClCompile Include="Utility.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\lovela-dependencies\lovela-dependencies.vcxproj">
-      <Project>{c73492e8-38ea-48af-a603-c78acad61d06}</Project>
-    </ProjectReference>
+    <ClInclude Include="Algorithm.h" />
+    <ClInclude Include="CodeGeneratorCpp.h" />
+    <ClInclude Include="CodeGeneratorFactory.h" />
+    <ClInclude Include="DataType.h" />
+    <ClInclude Include="ICodeGenerator.h" />
+    <ClInclude Include="ILexer.h" />
+    <ClInclude Include="IParser.h" />
+    <ClInclude Include="ITokenGenerator.h" />
+    <ClInclude Include="ITokenIterator.h" />
+    <ClInclude Include="Lexer.h" />
+    <ClInclude Include="LexerBase.h" />
+    <ClInclude Include="LexerFactory.h" />
+    <ClInclude Include="magic_enum.hpp" />
+    <ClInclude Include="Node.h" />
+    <ClInclude Include="ParseException.h" />
+    <ClInclude Include="Parser.h" />
+    <ClInclude Include="ParserBase.h" />
+    <ClInclude Include="ParserFactory.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="StandardCDeclarations.h" />
+    <ClInclude Include="StandardCppDeclarations.h" />
+    <ClInclude Include="StaticMap.h" />
+    <ClInclude Include="Token.h" />
+    <ClInclude Include="TokenIterator.h" />
+    <ClInclude Include="Utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

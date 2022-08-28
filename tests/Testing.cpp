@@ -1,17 +1,10 @@
-import Testing;
-import LexerFactory;
-import ParserFactory;
-import CodeGeneratorFactory;
-import LexerBase;
-import Utility;
-import Utility.StaticMap;
-import <string>;
-import <array>;
-import <memory>;
-import <iostream>;
-import <fstream>;
-import <sstream>;
-import <cassert>;
+#include "pch.h"
+#include "Testing.h"
+#include "../lovela/LexerFactory.h"
+#include "../lovela/ParserFactory.h"
+#include "../lovela/CodeGeneratorFactory.h"
+#include "../lovela/LexerBase.h"
+#include "../lovela/Algorithm.h"
 
 void Testing::RunTests()
 {
@@ -592,7 +585,7 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 	std::wstringstream stream;
 
 	auto codeGen = CodeGeneratorFactory::Create(stream, "Cpp");
-	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { codeGen->Visit(node); });
+	Traverse::DepthFirstPostorder(*tree, [&](Node& node) { codeGen->Visit(node); });
 
 	for (auto& error : codeGen->GetErrors())
 	{
@@ -603,9 +596,7 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 	std::wcout << genCode;
 
 	std::wofstream program(R"(..\targets\cpp\program\lovela-program.cpp)");
-	CodeGeneratorCpp::BeginProgramSourceFile(program);
-	program << genCode;
-	CodeGeneratorCpp::EndProgramSourceFile(program);
+	codeGen->GenerateProgramFile(program);
 	program.close();
 
 	std::wofstream imports(R"(..\targets\cpp\program\lovela-imports.h)");

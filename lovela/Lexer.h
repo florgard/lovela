@@ -1,13 +1,7 @@
-export module Lexer;
+#pragma once
+#include "LexerBase.h"
 
-import LexerBase;
-import <array>;
-import <string>;
-import <iostream>;
-import <vector>;
-import <regex>;
-
-export class Lexer : public LexerBase
+class Lexer : public LexerBase
 {
 	friend class LexerFactory;
 
@@ -15,7 +9,7 @@ protected:
 	Lexer(std::wistream& charStream) noexcept;
 
 public:
-	[[nodiscard]] TokenGenerator Lex() noexcept override;
+	[[nodiscard]] ITokenGenerator Lex() noexcept override;
 
 private:
 	[[nodiscard]] Token GetCurrenToken();

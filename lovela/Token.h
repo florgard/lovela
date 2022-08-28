@@ -1,8 +1,6 @@
-export module Lexer.Token;
+#pragma once
 
-import <string>;
-
-export struct Token
+struct Token
 {
 	enum class Type
 	{

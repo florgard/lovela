@@ -1,7 +1,5 @@
-import Parser.Node;
-import <string>;
-import <sstream>;
-import <algorithm>;
+#include "pch.h"
+#include "Node.h"
 
 bool Node::operator==(const Node& rhs) const noexcept
 {

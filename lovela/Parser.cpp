@@ -1,12 +1,6 @@
-import Parser;
-import ParserBase;
-import ParseException;
-import Utility;
-import <string>;
-import <vector>;
-import <set>;
-import <memory>;
-import <experimental/generator>;
+#include "pch.h"
+#include "Parser.h"
+#include "ParseException.h"
 
 static const std::set<Token::Type> functionDeclarationTokens
 {
@@ -86,41 +80,7 @@ static const std::set<Node::Type> operatorNodes
 	Node::Type::BinaryOperation,
 };
 
-struct TokenIteratorImpl : public ParserBase::TokenIterator
-{
-	TokenGenerator::iterator iter;
 
-	TokenIteratorImpl(TokenGenerator::iterator iter) : iter(iter)
-	{
-	}
-
-	[[nodiscard]] const Token& operator*() const noexcept override
-	{
-		return iter.operator*();
-	}
-
-	[[nodiscard]] const Token* operator->() const noexcept override
-	{
-		return iter.operator->();
-	}
-
-	ParserBase::TokenIterator& operator++() override
-	{
-		iter.operator++();
-		return *this;
-	}
-
-	ParserBase::TokenIterator& operator++(int) override
-	{
-		iter.operator++(0);
-		return *this;
-	}
-
-	[[nodiscard]] bool empty() const noexcept override
-	{
-		return iter == TokenGenerator::iterator{};
-	}
-};
 
 bool Parser::Context::HasFunctionSymbol(const std::wstring& symbol) const
 {
@@ -170,36 +130,8 @@ void Parser::Context::AddVariableSymbol(std::shared_ptr<VariableDeclaration> dec
 	}
 }
 
-Parser::Parser(TokenGenerator&& tokenGenerator) noexcept : ParserBase(std::move(tokenGenerator))
+Parser::Parser(std::unique_ptr<ITokenIterator> tokenIterator) noexcept : ParserBase(std::move(tokenIterator))
 {
-}
-
-void Parser::TraverseDepthFirstPreorder(Node& tree, std::function<void(Node& node)> visitor) noexcept
-{
-	visitor(tree);
-
-	if (tree.left)
-	{
-		TraverseDepthFirstPreorder(*tree.left, visitor);
-	}
-	if (tree.right)
-	{
-		TraverseDepthFirstPreorder(*tree.right, visitor);
-	}
-}
-
-void Parser::TraverseDepthFirstPostorder(Node& tree, std::function<void(Node& node)> visitor) noexcept
-{
-	if (tree.left)
-	{
-		TraverseDepthFirstPostorder(*tree.left, visitor);
-	}
-	if (tree.right)
-	{
-		TraverseDepthFirstPostorder(*tree.right, visitor);
-	}
-
-	visitor(tree);
 }
 
 std::unique_ptr<Node> Parser::Parse() noexcept
@@ -209,8 +141,6 @@ std::unique_ptr<Node> Parser::Parse() noexcept
 
 	// Use a list of top-level nodes to be able to continue parsing after an error.
 	std::vector<std::unique_ptr<Node>> nodes;
-
-	SetTokenIterator(std::make_unique<TokenIteratorImpl>(tokenGenerator.begin()));
 
 	while (!GetTokenIterator().empty())
 	{

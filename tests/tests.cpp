@@ -1,13 +1,10 @@
-import Utility.StaticMap;
-import <string>;
-import <array>;
-import <vector>;
+#include "pch.h"
 
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#define DOCTEST_CONFIG_USE_STD_HEADERS
-#include "doctest.h"
+#define BOOST_UT_DISABLE_MODULE
+#include "ut.hpp"
+using namespace boost::ut;
 
-TEST_CASE("test StaticMap") {
+suite static_map = [] {
 	static constexpr std::array<std::pair<int, double>, 2> values{ { {1, 1.1}, {2, 2.2} } };
 	static constexpr auto map = StaticMap<int, double, values.size()>{ {values} };
 
@@ -16,7 +13,11 @@ TEST_CASE("test StaticMap") {
 	static_assert(map.at_or(2, 1.1) == 2.2);
 	static_assert(map.at_or(3, 1.1) == 1.1);
 
-	SUBCASE("Out of bounds") {
-		CHECK_THROWS(map.at(3) == 3.3);
+	"Out of bounds"_test = [] {
+		expect(throws([] { if (map.at(3) == 3.3) {} }));
 	};
+};
+
+int main()
+{
 }

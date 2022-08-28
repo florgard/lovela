@@ -1,16 +1,9 @@
-import LexerFactory;
-import ParserFactory;
-import CodeGeneratorFactory;
-import TestingBase;
-import Utility;
-import <string>;
-import <string_view>;
-import <vector>;
-import <array>;
-import <iostream>;
-import <sstream>;
-import <algorithm>;
-import <regex>;
+#include "pch.h"
+#include "TestingBase.h"
+#include "../lovela/LexerFactory.h"
+#include "../lovela/ParserFactory.h"
+#include "../lovela/CodeGeneratorFactory.h"
+#include "../lovela/Algorithm.h"
 
 void TestingBase::TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
 {
@@ -170,7 +163,7 @@ void TestingBase::TestCodeGenerator(const char* name, std::wstring_view code, st
 
 	std::wostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
-	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { codeGen->Visit(node); });
+	Traverse::DepthFirstPostorder(*tree, [&](Node& node) { codeGen->Visit(node); });
 
 	auto generatedCode = output.str();
 	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"^\\s+" }, L"");
@@ -217,7 +210,7 @@ void TestingBase::TestCodeGeneratorImport(const char* name, std::wstring_view co
 
 	std::wostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
-	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { codeGen->Visit(node); });
+	Traverse::DepthFirstPostorder(*tree, [&](Node& node) { codeGen->Visit(node); });
 
 	bool success = codeGen->GetImports().size() == 1 || codeGen->GetImports().empty() && cppCode.empty();
 
@@ -272,7 +265,7 @@ void TestingBase::TestCodeGeneratorExport(const char* name, std::wstring_view co
 
 	std::wostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
-	Parser::TraverseDepthFirstPostorder(*tree, [&](Node& node) { codeGen->Visit(node); });
+	Traverse::DepthFirstPostorder(*tree, [&](Node& node) { codeGen->Visit(node); });
 
 	bool success = codeGen->GetExports().size() == 1 || codeGen->GetExports().empty() && cppCode.empty();
 

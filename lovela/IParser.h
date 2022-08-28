@@ -1,11 +1,7 @@
-export module IParser;
+#pragma once
+#include "Node.h"
 
-export import Parser.Node;
-import <string>;
-import <vector>;
-import <memory>;
-
-export class IParser
+class IParser
 {
 public:
 	struct Error

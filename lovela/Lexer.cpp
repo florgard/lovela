@@ -1,10 +1,5 @@
-import Lexer;
-import <string>;
-import <vector>;
-import <array>;
-import <iostream>;
-import <regex>;
-import <memory>;
+#include "pch.h"
+#include "Lexer.h"
 
 static const std::wregex separator{ LR"([\(\)\[\]\{\}\.,:;\!\?\|#])" };
 static const std::wregex whitespace{ LR"(\s)" };
@@ -36,7 +31,7 @@ Token Lexer::DecorateToken(Token token) const
 	return token;
 }
 
-TokenGenerator Lexer::Lex() noexcept
+ITokenGenerator Lexer::Lex() noexcept
 {
 	// Populate next and next after characters.
 	GetNextCharacter();

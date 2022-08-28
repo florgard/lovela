@@ -1,17 +1,8 @@
-export module TestingBase;
+#pragma once
+#include "../lovela/ILexer.h"
+#include "../lovela/IParser.h"
 
-import Lexer.Token;
-import Parser.Node;
-import ILexer;
-import LexerBase;
-import IParser;
-import Utility;
-import <string>;
-import <string_view>;
-import <sstream>;
-import <vector>;
-
-export class TestingBase
+class TestingBase
 {
 protected:
 	void TestLexer(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors = {});

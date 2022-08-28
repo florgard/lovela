@@ -1,11 +1,7 @@
-export module ICodeGenerator;
+#pragma once
+#include "Node.h"
 
-export import Parser.Node;
-import <string>;
-import <vector>;
-import <iostream>;
-
-export class ICodeGenerator
+class ICodeGenerator
 {
 public:
 	virtual ~ICodeGenerator() = default;
@@ -16,6 +12,7 @@ public:
 	virtual [[nodiscard]] const std::vector<std::wstring>& GetImports() const noexcept = 0;
 	virtual [[nodiscard]] const std::vector<std::wstring>& GetExports() const noexcept = 0;
 
-	virtual void GenerateImportsFile(std::wostream& file) const noexcept = 0;
-	virtual void GenerateExportsFile(std::wostream& file) const noexcept = 0;
+	virtual void GenerateProgramFile(std::wostream& file) const = 0;
+	virtual void GenerateImportsFile(std::wostream& file) const = 0;
+	virtual void GenerateExportsFile(std::wostream& file) const = 0;
 };

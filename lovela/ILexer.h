@@ -1,15 +1,7 @@
-export module ILexer;
+#pragma once
+#include "ITokenGenerator.h"
 
-export import Lexer.Token;
-import <string>;
-import <vector>;
-import <memory>;
-import <experimental\generator>;
-
-export using TokenGenerator = std::experimental::generator<Token>;
-//export using TokenIterator = std::experimental::generator<Token>::iterator;
-
-export class ILexer
+class ILexer
 {
 public:
 	struct Error
@@ -34,6 +26,6 @@ public:
 
 	virtual ~ILexer() = default;
 
-	[[nodiscard]] virtual TokenGenerator Lex() noexcept = 0;
+	[[nodiscard]] virtual ITokenGenerator Lex() noexcept = 0;
 	[[nodiscard]] virtual const std::vector<Error>& GetErrors() noexcept = 0;
 };

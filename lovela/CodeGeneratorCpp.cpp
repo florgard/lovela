@@ -1,10 +1,7 @@
-import CodeGenerator.Cpp;
-import Utility;
-import <string>;
-import <map>;
-import <iostream>;
-import <sstream>;
-import <regex>;
+#include "pch.h"
+#include "CodeGeneratorCpp.h"
+#include "StandardCDeclarations.h"
+#include "StandardCppDeclarations.h"
 
 std::map<Node::Type, CodeGeneratorCpp::Visitor> CodeGeneratorCpp::visitors
 {
@@ -708,7 +705,7 @@ void CodeGeneratorCpp::EndAssign(Context& context, bool reset)
 	EndAssign(context);
 }
 
-void CodeGeneratorCpp::GenerateImportsFile(std::wostream& file) const noexcept
+void CodeGeneratorCpp::GenerateImportsFile(std::wostream& file) const
 {
 	file << "#ifndef LOVELA_IMPORTS\n#define LOVELA_IMPORTS\n\n";
 
@@ -720,7 +717,7 @@ void CodeGeneratorCpp::GenerateImportsFile(std::wostream& file) const noexcept
 	file << "\n#endif\n";
 }
 
-void CodeGeneratorCpp::GenerateExportsFile(std::wostream& file) const noexcept
+void CodeGeneratorCpp::GenerateExportsFile(std::wostream& file) const
 {
 	file << "#ifndef LOVELA_EXPORTS\n#define LOVELA_EXPORTS\n\n";
 
@@ -732,11 +729,8 @@ void CodeGeneratorCpp::GenerateExportsFile(std::wostream& file) const noexcept
 	file << "\n#endif\n";
 }
 
-void CodeGeneratorCpp::BeginProgramSourceFile(std::wostream& file)
+void CodeGeneratorCpp::GenerateProgramFile(std::wostream& file) const
 {
 	file << "#include \"lovela-program.h\"\n\n";
-}
-
-void CodeGeneratorCpp::EndProgramSourceFile(std::wostream&)
-{
+	file << stream.rdbuf();
 }

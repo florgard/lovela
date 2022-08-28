@@ -1,10 +1,5 @@
-import LexerBase;
-import Lexer;
-import Utility;
-import Utility.StaticMap;
-import <string>;
-import <string_view>;
-import <array>;
+#include "pch.h"
+#include "LexerBase.h"
 
 using namespace std::literals::string_view_literals;
 

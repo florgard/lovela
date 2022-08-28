@@ -1,8 +1,6 @@
-export module Parser.DataType;
+#pragma once
 
-import <string>;
-
-export struct DataType
+struct DataType
 {
 	std::wstring name;
 

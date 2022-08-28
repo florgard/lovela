@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31005.135
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32819.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lovela", "lovela\lovela.vcxproj", "{451648C3-767B-4937-A51B-756A99D6D2AA}"
 EndProject
@@ -23,8 +23,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "source", "targets\cpp\source\source.vcxitems", "{534C2B31-8971-4797-93F5-1D4538CA84E4}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "program", "targets\cpp\program\program.vcxproj", "{D58A3804-5E3E-4034-BEC4-6D0D1BD7FA64}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lovela-dependencies", "lovela-dependencies\lovela-dependencies.vcxproj", "{C73492E8-38EA-48AF-A603-C78ACAD61D06}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tests", "tests\tests.vcxproj", "{A1C44B36-4549-4EB3-BE6B-1865B090A1FD}"
 EndProject
@@ -60,14 +58,6 @@ Global
 		{D58A3804-5E3E-4034-BEC4-6D0D1BD7FA64}.Release|x64.Build.0 = Release|x64
 		{D58A3804-5E3E-4034-BEC4-6D0D1BD7FA64}.Release|x86.ActiveCfg = Release|Win32
 		{D58A3804-5E3E-4034-BEC4-6D0D1BD7FA64}.Release|x86.Build.0 = Release|Win32
-		{C73492E8-38EA-48AF-A603-C78ACAD61D06}.Debug|x64.ActiveCfg = Debug|x64
-		{C73492E8-38EA-48AF-A603-C78ACAD61D06}.Debug|x64.Build.0 = Debug|x64
-		{C73492E8-38EA-48AF-A603-C78ACAD61D06}.Debug|x86.ActiveCfg = Debug|Win32
-		{C73492E8-38EA-48AF-A603-C78ACAD61D06}.Debug|x86.Build.0 = Debug|Win32
-		{C73492E8-38EA-48AF-A603-C78ACAD61D06}.Release|x64.ActiveCfg = Release|x64
-		{C73492E8-38EA-48AF-A603-C78ACAD61D06}.Release|x64.Build.0 = Release|x64
-		{C73492E8-38EA-48AF-A603-C78ACAD61D06}.Release|x86.ActiveCfg = Release|Win32
-		{C73492E8-38EA-48AF-A603-C78ACAD61D06}.Release|x86.Build.0 = Release|Win32
 		{A1C44B36-4549-4EB3-BE6B-1865B090A1FD}.Debug|x64.ActiveCfg = Debug|x64
 		{A1C44B36-4549-4EB3-BE6B-1865B090A1FD}.Debug|x64.Build.0 = Debug|x64
 		{A1C44B36-4549-4EB3-BE6B-1865B090A1FD}.Debug|x86.ActiveCfg = Debug|Win32

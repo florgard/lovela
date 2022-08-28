@@ -7,44 +7,57 @@
     <ClCompile Include="ParseException.cpp" />
     <ClCompile Include="Node.cpp" />
     <ClCompile Include="ParserBase.cpp" />
-    <ClCompile Include="DataType.ixx" />
-    <ClCompile Include="ILexer.ixx" />
-    <ClCompile Include="IParser.ixx" />
-    <ClCompile Include="Lexer.ixx" />
-    <ClCompile Include="LexerBase.ixx" />
-    <ClCompile Include="Node.ixx" />
-    <ClCompile Include="ParseException.ixx" />
-    <ClCompile Include="Parser.ixx" />
-    <ClCompile Include="ParserBase.ixx" />
-    <ClCompile Include="StaticMap.ixx" />
-    <ClCompile Include="Token.ixx" />
-    <ClCompile Include="Utility.ixx" />
-    <ClCompile Include="LexerFactory.ixx" />
-    <ClCompile Include="ParserFactory.ixx" />
-    <ClCompile Include="CodeGeneratorFactory.ixx" />
-    <ClCompile Include="ICodeGenerator.ixx" />
     <ClCompile Include="CodeGeneratorCpp.cpp">
-      <Filter>CodeGeneratorCpp</Filter>
-    </ClCompile>
-    <ClCompile Include="CodeGeneratorCpp.ixx">
       <Filter>CodeGeneratorCpp</Filter>
     </ClCompile>
     <ClCompile Include="StandardCDeclarations.cpp">
       <Filter>CodeGeneratorCpp</Filter>
     </ClCompile>
-    <ClCompile Include="StandardCDeclarations.ixx">
-      <Filter>CodeGeneratorCpp</Filter>
-    </ClCompile>
     <ClCompile Include="StandardCppDeclarations.cpp">
       <Filter>CodeGeneratorCpp</Filter>
     </ClCompile>
-    <ClCompile Include="StandardCppDeclarations.ixx">
-      <Filter>CodeGeneratorCpp</Filter>
-    </ClCompile>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="CodeGeneratorFactory.cpp" />
+    <ClCompile Include="ParserFactory.cpp" />
+    <ClCompile Include="LexerFactory.cpp" />
+    <ClCompile Include="Algorithm.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CodeGeneratorCpp">
       <UniqueIdentifier>{271e455b-01c2-4c47-9076-26af72095ad5}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CodeGeneratorFactory.h" />
+    <ClInclude Include="DataType.h" />
+    <ClInclude Include="ICodeGenerator.h" />
+    <ClInclude Include="ILexer.h" />
+    <ClInclude Include="IParser.h" />
+    <ClInclude Include="Lexer.h" />
+    <ClInclude Include="LexerBase.h" />
+    <ClInclude Include="LexerFactory.h" />
+    <ClInclude Include="Node.h" />
+    <ClInclude Include="ParseException.h" />
+    <ClInclude Include="Parser.h" />
+    <ClInclude Include="ParserBase.h" />
+    <ClInclude Include="ParserFactory.h" />
+    <ClInclude Include="StaticMap.h" />
+    <ClInclude Include="Token.h" />
+    <ClInclude Include="Utility.h" />
+    <ClInclude Include="CodeGeneratorCpp.h">
+      <Filter>CodeGeneratorCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="StandardCDeclarations.h">
+      <Filter>CodeGeneratorCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="StandardCppDeclarations.h">
+      <Filter>CodeGeneratorCpp</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="magic_enum.hpp" />
+    <ClInclude Include="ITokenIterator.h" />
+    <ClInclude Include="TokenIterator.h" />
+    <ClInclude Include="ITokenGenerator.h" />
+    <ClInclude Include="Algorithm.h" />
   </ItemGroup>
 </Project>

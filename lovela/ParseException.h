@@ -1,11 +1,7 @@
-export module ParseException;
+#pragma once
+#include "Token.h"
 
-export import Lexer.Token;
-import <string>;
-import <string_view>;
-import <set>;
-
-export struct ParseException
+struct ParseException
 {
 	std::wstring message;
 	Token token;
@@ -15,14 +11,14 @@ export struct ParseException
 	ParseException(const Token& token, std::wstring_view message);
 };
 
-export struct UnexpectedTokenException : public ParseException
+struct UnexpectedTokenException : public ParseException
 {
 	UnexpectedTokenException(const Token& token);
 	UnexpectedTokenException(const Token& token, Token::Type expected);
 	UnexpectedTokenException(const Token& token, const std::set<Token::Type>& expected);
 };
 
-export struct InvalidCurrentTokenException : public ParseException
+struct InvalidCurrentTokenException : public ParseException
 {
 	InvalidCurrentTokenException(const Token& token);
 };

@@ -1,54 +1,56 @@
-import LexerBase;
+#include "pch.h"
+#include "../lovela/LexerBase.h"
 
-#define DOCTEST_CONFIG_USE_STD_HEADERS
-#include "doctest.h"
+#define BOOST_UT_DISABLE_MODULE
+#include "ut.hpp"
+using namespace boost::ut;
 
-TEST_CASE("test tokens") {
-	SUBTEST("ParenRoundOpen type") {
-		CHECK(LexerBase::GetTokenType('(') == Token::Type::ParenRoundOpen);
-	}
+suite tokens = [] {
+	"ParenRoundOpen type"_test = [] {
+		expect(LexerBase::GetTokenType('(') == Token::Type::ParenRoundOpen);
+	};
 
-	SUBTEST("SeparatorDot type") {
-		CHECK(LexerBase::GetTokenType('.') == Token::Type::SeparatorDot);
-	}
+	"SeparatorDot type"_test = [] {
+		expect(LexerBase::GetTokenType('.') == Token::Type::SeparatorDot);
+	};
 
-	SUBTEST("Empty type") {
-		CHECK(LexerBase::GetTokenType(' ') == Token::Type::Empty);
-	}
+	"Empty type"_test = [] {
+		expect(LexerBase::GetTokenType(' ') == Token::Type::Empty);
+	};
 
-	SUBTEST("Compare empty") {
-		CHECK(Token{} == Token{});
-	}
+	"Compare empty"_test = [] {
+		expect(Token{} == Token{});
+	};
 
-	SUBTEST("Non-empty type") {
-		CHECK(Token{ Token::Type::Identifier } != Token{});
-	}
+	"Non-empty type"_test = [] {
+		expect(Token{ Token::Type::Identifier } != Token{});
+	};
 
-	SUBTEST("Named empty") {
-		CHECK(Token{ {}, L"a" } != Token{});
-	}
+	"Named empty"_test = [] {
+		expect(Token{ {}, L"a" } != Token{});
+	};
 
-	SUBTEST("Equals") {
-		CHECK(Token{ Token::Type::Identifier, L"a" } == Token{ Token::Type::Identifier, L"a" });
-	}
+	"Equals"_test = [] {
+		expect(Token{ Token::Type::Identifier, L"a" } == Token{ Token::Type::Identifier, L"a" });
+	};
 
-	SUBTEST("Unequal type") {
-		CHECK(Token{ Token::Type::Identifier, L"a" } != Token{ Token::Type::LiteralString, L"a" });
-	}
+	"Unequal type"_test = [] {
+		expect(Token{ Token::Type::Identifier, L"a" } != Token{ Token::Type::LiteralString, L"a" });
+	};
 
-	SUBTEST("Unequal name") {
-		CHECK(Token{ Token::Type::Identifier, L"a" } != Token{ Token::Type::Identifier, L"b" });
-	}
+	"Unequal name"_test = [] {
+		expect(Token{ Token::Type::Identifier, L"a" } != Token{ Token::Type::Identifier, L"b" });
+	};
 
-	SUBTEST("Compare empty to false") {
-		CHECK(Token{} == false);
-	}
+	"Compare empty to false"_test = [] {
+		expect(Token{} == false);
+	};
 
-	SUBTEST("Compare named empty to false") {
-		CHECK(Token{ {}, L"a" } == false);
-	}
+	"Compare named empty to false"_test = [] {
+		expect(Token{ {}, L"a" } == false);
+	};
 
-	SUBTEST("Compare non-empty to true") {
-		CHECK(Token{ Token::Type::Identifier } == true);
-	}
-}
+	"Compare non-empty to true"_test = [] {
+		expect(Token{ Token::Type::Identifier } == true);
+	};
+};

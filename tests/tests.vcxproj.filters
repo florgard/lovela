@@ -4,12 +4,13 @@
     <ClCompile Include="tests.cpp" />
     <ClCompile Include="Token.cpp" />
     <ClCompile Include="Testing.cpp" />
-    <ClCompile Include="Testing.ixx" />
     <ClCompile Include="TestingBase.cpp" />
-    <ClCompile Include="TestingBase.ixx" />
+    <ClCompile Include="pch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ut.hpp" />
-    <ClInclude Include="doctest.h" />
+    <ClInclude Include="Testing.h" />
+    <ClInclude Include="TestingBase.h" />
+    <ClInclude Include="pch.h" />
   </ItemGroup>
 </Project>

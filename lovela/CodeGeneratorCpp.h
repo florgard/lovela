@@ -1,17 +1,7 @@
-export module CodeGenerator.Cpp;
+#pragma once
+#include "ICodeGenerator.h"
 
-export import ICodeGenerator;
-export import :StandardCDeclarations;
-export import :StandardCppDeclarations;
-import Parser.Node;
-import <string>;
-import <string_view>;
-import <iostream>;
-import <vector>;
-import <map>;
-import <functional>;
-
-export class CodeGeneratorCpp : public ICodeGenerator
+class CodeGeneratorCpp : public ICodeGenerator
 {
 	friend class CodeGeneratorFactory;
 
@@ -25,11 +15,9 @@ public:
 
 	void Visit(Node& node) override;
 
-	void GenerateImportsFile(std::wostream& file) const noexcept override;
-	void GenerateExportsFile(std::wostream& file) const noexcept override;
-
-	static void BeginProgramSourceFile(std::wostream& file);
-	static void EndProgramSourceFile(std::wostream& file);
+	void GenerateProgramFile(std::wostream& file) const override;
+	void GenerateImportsFile(std::wostream& file) const override;
+	void GenerateExportsFile(std::wostream& file) const override;
 
 private:
 	struct Context

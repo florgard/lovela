@@ -1,10 +1,5 @@
-import CodeGenerator.Cpp;
-import Utility;
-import <string>;
-import <string_view>;
-import <vector>;
-import <map>;
-import <algorithm>;
+#include "pch.h"
+#include "StandardCppDeclarations.h"
 
 void StandardCppDeclarations::GetHeader(std::vector<std::wstring>& headers, std::wstring_view function)
 {

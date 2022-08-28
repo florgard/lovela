@@ -1,10 +1,8 @@
-import ParserBase;
-import ParseException;
-import <vector>;
-import <set>;
-import <algorithm>;
+#include "pch.h"
+#include "ParserBase.h"
+#include "ParseException.h"
 
-ParserBase::ParserBase(TokenGenerator&& tokenGenerator) noexcept : tokenGenerator(std::move(tokenGenerator))
+ParserBase::ParserBase(std::unique_ptr<ITokenIterator> tokenIterator) noexcept : tokenIterator(std::move(tokenIterator))
 {
 }
 
