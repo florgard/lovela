@@ -1,17 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="tests.cpp" />
     <ClCompile Include="Token.cpp" />
     <ClCompile Include="Testing.cpp" />
     <ClCompile Include="TestingBase.cpp" />
-    <ClCompile Include="pch.cpp" />
     <ClCompile Include="Utility.cpp" />
+    <ClCompile Include="pch.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="tests.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ut.hpp" />
     <ClInclude Include="Testing.h" />
     <ClInclude Include="TestingBase.h" />
-    <ClInclude Include="pch.h" />
+    <ClInclude Include="pch.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="ut.hpp">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Main">
+      <UniqueIdentifier>{d9699098-d91b-4c40-8a9d-60d9555790ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries">
+      <UniqueIdentifier>{47026ae1-62f2-4b79-8d4b-744a763eb883}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

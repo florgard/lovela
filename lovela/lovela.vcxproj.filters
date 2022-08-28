@@ -16,15 +16,23 @@
     <ClCompile Include="StandardCppDeclarations.cpp">
       <Filter>CodeGeneratorCpp</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp" />
     <ClCompile Include="CodeGeneratorFactory.cpp" />
     <ClCompile Include="ParserFactory.cpp" />
     <ClCompile Include="LexerFactory.cpp" />
     <ClCompile Include="Algorithm.cpp" />
+    <ClCompile Include="pch.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CodeGeneratorCpp">
       <UniqueIdentifier>{271e455b-01c2-4c47-9076-26af72095ad5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{2cff5842-59be-40fa-a640-3f33a5962767}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries">
+      <UniqueIdentifier>{916b1182-43b4-4794-ae5d-e111aa89074b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -52,11 +60,15 @@
     <ClInclude Include="StandardCppDeclarations.h">
       <Filter>CodeGeneratorCpp</Filter>
     </ClInclude>
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="magic_enum.hpp" />
     <ClInclude Include="ITokenIterator.h" />
     <ClInclude Include="TokenIterator.h" />
     <ClInclude Include="ITokenGenerator.h" />
     <ClInclude Include="Algorithm.h" />
+    <ClInclude Include="pch.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum.hpp">
+      <Filter>Libraries</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
