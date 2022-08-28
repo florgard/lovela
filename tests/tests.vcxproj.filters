@@ -6,6 +6,7 @@
     <ClCompile Include="Testing.cpp" />
     <ClCompile Include="TestingBase.cpp" />
     <ClCompile Include="pch.cpp" />
+    <ClCompile Include="Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ut.hpp" />

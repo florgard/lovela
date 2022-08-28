@@ -155,6 +155,7 @@
     <ClCompile Include="TestingBase.cpp" />
     <ClCompile Include="tests.cpp" />
     <ClCompile Include="Token.cpp" />
+    <ClCompile Include="Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

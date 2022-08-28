@@ -25,3 +25,7 @@
 #include <stdexcept>
 #include <experimental/generator>
 #include "../lovela/Utility.h"
+
+#define BOOST_UT_DISABLE_MODULE
+#include "ut.hpp"
+using namespace boost::ut;
