@@ -10,5 +10,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ut.hpp" />
+    <ClInclude Include="doctest.h" />
   </ItemGroup>
 </Project>
