@@ -11,7 +11,7 @@
     <ClCompile Include="tests.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="Lexer.cpp" />
+    <ClCompile Include="LexerTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Testing.h" />
