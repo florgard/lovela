@@ -1,5 +1,65 @@
 #include "pch.h"
 #include "TestingBase.h"
+#include "../lovela/LexerFactory.h"
+
+class LexerTest : public TestingBase
+{
+public:
+	static bool Success(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens)
+	{
+		return Failure(name, code, expectedTokens, {});
+	}
+
+	static bool Failure(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors);
+};
+
+bool LexerTest::Failure(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
+{
+	std::wistringstream input(std::wstring(code.data(), code.size()));
+	auto lexer = LexerFactory::Create(input);
+	auto tokenGenerator = lexer->Lex();
+	auto tokens = std::vector<Token>(tokenGenerator.begin(), tokenGenerator.end());
+
+	bool success = true;
+
+	auto actualCount = tokens.size();
+	auto expectedCount = expectedTokens.size();
+	auto count = std::max(actualCount, expectedCount);
+	for (int i = 0; i < count; i++)
+	{
+		const auto actual = i < actualCount ? tokens[i] : Token{};
+		const auto expected = i < expectedCount ? expectedTokens[i] : Token{};
+		if (actual != expected)
+		{
+			success = false;
+			std::wcerr << "Lexer test \"" << name << "\" error: Token " << i + 1 << " is " << to_wstring(actual.type) << " \"" << actual.value
+				<< "\", expected " << to_wstring(expected.type) << " \"" << expected.value << "\".\n";
+		}
+	}
+
+	auto& errors = lexer->GetErrors();
+
+	actualCount = errors.size();
+	expectedCount = expectedErrors.size();
+	count = std::max(actualCount, expectedCount);
+	for (int i = 0; i < count; i++)
+	{
+		const auto actual = i < actualCount ? errors[i] : ILexer::Error{};
+		const auto expected = i < expectedCount ? expectedErrors[i] : ILexer::Error{};
+		if (actual.code != expected.code)
+		{
+			success = false;
+			std::wcerr << GetIncorrectErrorCodeMessage("Lexer", name, i, actual.code, expected.code) << GetErrorMessage(actual);
+		}
+		else if (expected.token.line && actual.token.line != expected.token.line)
+		{
+			success = false;
+			std::wcerr << GetIncorrectErrorLineMessage("Lexer", name, i, actual.token.line, expected.token.line) << GetErrorMessage(actual);
+		}
+	}
+
+	return success;
+}
 
 static const Token endToken{ .type = Token::Type::End };
 static constexpr auto ident = Token::Type::Identifier;

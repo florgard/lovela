@@ -41,10 +41,3 @@ protected:
 		return s.str();
 	}
 };
-
-class LexerTest : public TestingBase
-{
-public:
-	static bool Success(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens);
-	static bool Failure(const char* name, std::wstring_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors);
-};
