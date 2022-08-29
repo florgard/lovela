@@ -6,20 +6,6 @@
 #include "../lovela/LexerBase.h"
 #include "../lovela/Algorithm.h"
 
-void Testing::RunTests()
-{
-	RunLexerTests();
-	RunParserTests();
-	RunCodeGeneratorTests();
-}
-
-void Testing::RunLexerTests()
-{
-	static const Token endToken{ .type = Token::Type::End };
-	static constexpr auto ident = Token::Type::Identifier;
-
-}
-
 void Testing::RunParserTests()
 {
 	TestParser("trivial function declaration", L"func",
