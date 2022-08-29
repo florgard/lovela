@@ -18,41 +18,6 @@ void Testing::RunLexerTests()
 	static const Token endToken{ .type = Token::Type::End };
 	static constexpr auto ident = Token::Type::Identifier;
 
-	TestLexer("unindexed string interpolation", L"'{}'", {
-		{.type = Token::Type::LiteralString, .value = L"" },
-		{.type = Token::Type::LiteralStringInterpolation, .value = L"1" },
-		{.type = Token::Type::LiteralString, .value = L"" },
-		endToken
-		});
-	TestLexer("embedded unindexed string interpolation", L"'abc{}'", {
-		{.type = Token::Type::LiteralString, .value = L"abc" },
-		{.type = Token::Type::LiteralStringInterpolation, .value = L"1" },
-		{.type = Token::Type::LiteralString, .value = L"" },
-		endToken
-		});
-	TestLexer("unindexed string interpolations", L"'abc{}{}'", {
-		{.type = Token::Type::LiteralString, .value = L"abc" },
-		{.type = Token::Type::LiteralStringInterpolation, .value = L"1" },
-		{.type = Token::Type::LiteralString, .value = L"" },
-		{.type = Token::Type::LiteralStringInterpolation, .value = L"2" },
-		{.type = Token::Type::LiteralString, .value = L"" },
-		endToken
-		});
-	TestLexer("unindexed string interpolation", L"'{2}'", {
-		{.type = Token::Type::LiteralString, .value = L"" },
-		{.type = Token::Type::LiteralStringInterpolation, .value = L"2" },
-		{.type = Token::Type::LiteralString, .value = L"" },
-		endToken
-		});
-	TestLexer("unindexed string interpolations", L"'abc{4}{1}'", {
-		{.type = Token::Type::LiteralString, .value = L"abc" },
-		{.type = Token::Type::LiteralStringInterpolation, .value = L"4" },
-		{.type = Token::Type::LiteralString, .value = L"" },
-		{.type = Token::Type::LiteralStringInterpolation, .value = L"1" },
-		{.type = Token::Type::LiteralString, .value = L"" },
-		endToken
-		});
-
 	TestLexer("trivial function declaration", L"func", {
 		{.type = ident, .value = L"func"},
 		endToken

@@ -395,3 +395,65 @@ suite lexer_string_field_tests = [] {
 			));
 	};
 };
+
+suite lexer_string_interpolation_tests = [] {
+	"unindexed string interpolation"_test = [] {
+		expect(LexerTest::Success("unindexed string interpolation",
+			L"'{}'",
+			{
+				{.type = Token::Type::LiteralString, .value = L"" },
+				{.type = Token::Type::LiteralStringInterpolation, .value = L"1" },
+				{.type = Token::Type::LiteralString, .value = L"" },
+				endToken
+			}
+		));
+	};
+	"embedded unindexed string interpolation"_test = [] {
+		expect(LexerTest::Success("embedded unindexed string interpolation",
+			L"'abc{}'",
+			{
+				{.type = Token::Type::LiteralString, .value = L"abc" },
+				{.type = Token::Type::LiteralStringInterpolation, .value = L"1" },
+				{.type = Token::Type::LiteralString, .value = L"" },
+				endToken
+			}
+		));
+	};
+	"unindexed string interpolations"_test = [] {
+		expect(LexerTest::Success("unindexed string interpolations",
+			L"'abc{}{}'",
+			{
+				{.type = Token::Type::LiteralString, .value = L"abc" },
+				{.type = Token::Type::LiteralStringInterpolation, .value = L"1" },
+				{.type = Token::Type::LiteralString, .value = L"" },
+				{.type = Token::Type::LiteralStringInterpolation, .value = L"2" },
+				{.type = Token::Type::LiteralString, .value = L"" },
+				endToken
+			}
+		));
+	};
+	"indexed string interpolation"_test = [] {
+		expect(LexerTest::Success("indexed string interpolation",
+			L"'{2}'",
+			{
+				{.type = Token::Type::LiteralString, .value = L"" },
+				{.type = Token::Type::LiteralStringInterpolation, .value = L"2" },
+				{.type = Token::Type::LiteralString, .value = L"" },
+				endToken
+			}
+		));
+	};
+	"indexed string interpolations"_test = [] {
+		expect(LexerTest::Success("indexed string interpolations",
+			L"'abc{4}{1}'",
+			{
+				{.type = Token::Type::LiteralString, .value = L"abc" },
+				{.type = Token::Type::LiteralStringInterpolation, .value = L"4" },
+				{.type = Token::Type::LiteralString, .value = L"" },
+				{.type = Token::Type::LiteralStringInterpolation, .value = L"1" },
+				{.type = Token::Type::LiteralString, .value = L"" },
+				endToken
+			}
+		));
+	};
+};
