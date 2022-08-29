@@ -25,7 +25,7 @@ suite lexer_rudimental_tests = [] {
 };
 
 suite lexer_identifier_tests = [] {
-	"simple identifier"_test = [] { 
+	"simple identifier"_test = [] {
 		expect(LexerTest::Success("simple identifier",
 			L"abc",
 			{
@@ -106,7 +106,7 @@ suite lexer_identifier_tests = [] {
 			{
 				{.code = ILexer::Error::Code::SyntaxError}
 			}
-		));
+			));
 	};
 	"invalid identifier 2"_test = [] {
 		expect(LexerTest::Failure("invalid identifier 2",
@@ -117,7 +117,7 @@ suite lexer_identifier_tests = [] {
 			{
 				{.code = ILexer::Error::Code::SyntaxError}
 			}
-		));
+			));
 	};
 };
 
