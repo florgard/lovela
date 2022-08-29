@@ -19,32 +19,6 @@ void Testing::RunLexerTests()
 	static constexpr auto ident = Token::Type::Identifier;
 
 
-	TestLexer("mixed character identifier", L"ident123.", {
-		{.type = ident, .value = L"ident123"},
-		{.type = Token::Type::SeparatorDot, .value = L"."},
-		endToken
-		});
-	TestLexer("commented out identifier", L"<< ident123. >>", { endToken });
-	TestLexer("commented out identifier and whitespace", L"<<\r\nident123.\r\n>>", { endToken });
-	TestLexer("commented and non-commented identifier", L"<< ident123. >> ident456.", {
-		{.type = ident, .value = L"ident456"},
-		{.type = Token::Type::SeparatorDot, .value = L"."},
-		endToken
-		});
-	TestLexer("nested comments", L"<<<< 123 << 456 >>>>.>> ident456.", {
-		{.type = ident, .value = L"ident456"},
-		{.type = Token::Type::SeparatorDot, .value = L"."},
-		endToken
-		});
-	TestLexer("multiple comments", L"<<<<123>>ident234<<<<123<<456>>>:>>.", {
-		{.type = ident, .value = L"ident234"},
-		{.type = Token::Type::SeparatorDot, .value = L"."},
-		endToken
-		});
-	TestLexer("non-closed comment", L"<<<<123>>ident234<<<<123<<456>>>:>.", {
-		{.type = ident, .value = L"ident234"},
-		endToken
-		}, { {.code = ILexer::Error::Code::CommentOpen, .token{.line = 1}} });
 	TestLexer("comparison operator", L"1 < 2", {
 		{.type = Token::Type::LiteralInteger, .value = L"1"},
 		{.type = Token::Type::OperatorComparison, .value = L"<"},

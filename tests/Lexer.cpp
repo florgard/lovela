@@ -68,7 +68,8 @@ suite lexer_identifier_tests = [] {
 			{
 				{.type = ident, .value = L"abc_123" },
 				endToken
-			}));
+			}
+		));
 	};
 	"operator character identifier"_test = [] {
 		expect(LexerTest::Success("operator character identifier",
@@ -106,7 +107,7 @@ suite lexer_identifier_tests = [] {
 			{
 				{.code = ILexer::Error::Code::SyntaxError}
 			}
-			));
+		));
 	};
 	"invalid identifier 2"_test = [] {
 		expect(LexerTest::Failure("invalid identifier 2",
@@ -117,7 +118,7 @@ suite lexer_identifier_tests = [] {
 			{
 				{.code = ILexer::Error::Code::SyntaxError}
 			}
-			));
+		));
 	};
 };
 
@@ -247,7 +248,7 @@ suite lexer_string_literal_tests = [] {
 			{
 				{.code = ILexer::Error::Code::StringLiteralOpen }
 			}
-			));
+		));
 	};
 	"non-closed string literal on line 1"_test = [] {
 		expect(LexerTest::Failure("non-closed string literal on line 1",
@@ -258,7 +259,7 @@ suite lexer_string_literal_tests = [] {
 			{
 				{.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 1} }
 			}
-			));
+		));
 	};
 	"non-closed string literal on line 2"_test = [] {
 		expect(LexerTest::Failure("non-closed string literal on line 2",
@@ -269,7 +270,7 @@ suite lexer_string_literal_tests = [] {
 			{
 				{.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 2} }
 			}
-			));
+		));
 	};
 	"non-closed string literal on line 2"_test = [] {
 		expect(LexerTest::Failure("non-closed string literal on line 2", L"\n'abc",
@@ -279,7 +280,7 @@ suite lexer_string_literal_tests = [] {
 			{
 				{.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 2} }
 			}
-			));
+		));
 	};
 	"non-closed string literal on line 1"_test = [] {
 		expect(LexerTest::Failure("non-closed string literal on line 1",
@@ -290,7 +291,7 @@ suite lexer_string_literal_tests = [] {
 			{
 				{.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 1} }
 			}
-			));
+		));
 	};
 	"whitespace outside and within string literal"_test = [] {
 		expect(LexerTest::Success("whitespace outside and within string literal",
@@ -368,7 +369,7 @@ suite lexer_string_field_tests = [] {
 			{
 				{.code = ILexer::Error::Code::StringFieldIllformed}
 			}
-			));
+		));
 	};
 	"ill-formed string field"_test = [] {
 		expect(LexerTest::Failure("ill-formed string field",
@@ -380,7 +381,7 @@ suite lexer_string_field_tests = [] {
 			{
 				{.code = ILexer::Error::Code::StringFieldIllformed}
 			}
-			));
+		));
 	};
 	"unknown string field"_test = [] {
 		expect(LexerTest::Failure("unknown string field",
@@ -392,7 +393,7 @@ suite lexer_string_field_tests = [] {
 			{
 				{.code = ILexer::Error::Code::StringFieldUnknown}
 			}
-			));
+		));
 	};
 };
 
@@ -536,6 +537,77 @@ suite lexer_function_declarations_tests = [] {
 				{.type = Token::Type::SeparatorVerticalLine, .value = L"|"},
 				{.type = ident, .value = L"func"},
 				endToken
+			}
+		));
+	};
+};
+
+suite lexer_comment_tests = [] {
+	"mixed character identifier"_test = [] {
+		expect(LexerTest::Success("mixed character identifier",
+			L"ident123.",
+			{
+		{.type = ident, .value = L"ident123"},
+		{.type = Token::Type::SeparatorDot, .value = L"."},
+		endToken
+			}
+		));
+	};
+	"commented out identifier"_test = [] {
+		expect(LexerTest::Success("commented out identifier",
+			L"<< ident123. >>",
+			{
+				endToken
+			}
+		));
+	};
+	"commented out identifier and whitespace"_test = [] {
+		expect(LexerTest::Success("commented out identifier and whitespace",
+			L"<<\r\nident123.\r\n>>",
+			{
+				endToken
+			}
+		));
+	};
+	"commented and non-commented identifier"_test = [] {
+		expect(LexerTest::Success("commented and non-commented identifier",
+			L"<< ident123. >> ident456.",
+			{
+				{.type = ident, .value = L"ident456"},
+				{.type = Token::Type::SeparatorDot, .value = L"."},
+				endToken
+			}
+		));
+	};
+	"nested comments"_test = [] {
+		expect(LexerTest::Success("nested comments",
+			L"<<<< 123 << 456 >>>>.>> ident456.",
+			{
+				{.type = ident, .value = L"ident456"},
+				{.type = Token::Type::SeparatorDot, .value = L"."},
+				endToken
+			}
+		));
+	};
+	"multiple comments"_test = [] {
+		expect(LexerTest::Success("multiple comments",
+			L"<<<<123>>ident234<<<<123<<456>>>:>>.",
+			{
+				{.type = ident, .value = L"ident234"},
+				{.type = Token::Type::SeparatorDot, .value = L"."},
+				endToken
+			}
+		));
+	};
+	"non-closed comment"_test = [] {
+		expect(LexerTest::Failure("non-closed comment",
+			L"<<<<123>>ident234<<<<123<<456>>>:>.",
+			{
+				{.type = ident, .value = L"ident234"},
+				endToken
+			},
+			{
+				{.code = ILexer::Error::Code::CommentOpen, .token{.line = 1}}
 			}
 		));
 	};
