@@ -303,3 +303,95 @@ suite lexer_string_literal_tests = [] {
 	};
 };
 
+suite lexer_string_field_tests = [] {
+	"escaped curly bracket"_test = [] {
+		expect(LexerTest::Success("escaped curly bracket",
+			L"'{{'",
+			{
+				{.type = Token::Type::LiteralString, .value = L"{" },
+				endToken
+			}
+		));
+	};
+	"escaped curly bracket"_test = [] {
+		expect(LexerTest::Success("escaped curly bracket",
+			L"'{{}'",
+			{
+				{.type = Token::Type::LiteralString, .value = L"{}" },
+				endToken
+			}
+		));
+	};
+	"single closing curly bracket"_test = [] {
+		expect(LexerTest::Success("single closing curly bracket",
+			L"'}'",
+			{
+				{.type = Token::Type::LiteralString, .value = L"}" },
+				endToken
+			}
+		));
+	};
+	"string field"_test = [] {
+		expect(LexerTest::Success("string field",
+			L"'{n}'",
+			{
+				{.type = Token::Type::LiteralString, .value = L"\n" },
+				endToken
+			}
+		));
+	};
+	"string fields"_test = [] {
+		expect(LexerTest::Success("string fields",
+			L"'{t}{n}{r}'",
+			{
+				{.type = Token::Type::LiteralString, .value = L"\t\n\r" },
+				endToken
+			}
+		));
+	};
+	"embedded string fields"_test = [] {
+		expect(LexerTest::Success("embedded string fields",
+			L"'abc{r}{n}def'",
+			{
+				{.type = Token::Type::LiteralString, .value = L"abc\r\ndef" },
+				endToken
+			}
+		));
+	};
+	"non-closed string field"_test = [] {
+		expect(LexerTest::Failure("non-closed string field",
+			L"'{n'",
+			{
+				{.type = Token::Type::LiteralString},
+				endToken
+			},
+			{
+				{.code = ILexer::Error::Code::StringFieldIllformed}
+			}
+			));
+	};
+	"ill-formed string field"_test = [] {
+		expect(LexerTest::Failure("ill-formed string field",
+			L"'{nn}'",
+			{
+				{.type = Token::Type::LiteralString, .value = L"n}"},
+				endToken
+			},
+			{
+				{.code = ILexer::Error::Code::StringFieldIllformed}
+			}
+			));
+	};
+	"unknown string field"_test = [] {
+		expect(LexerTest::Failure("unknown string field",
+			L"'{m}'",
+			{
+				{.type = Token::Type::LiteralString, .value = L"m}"},
+				endToken
+			},
+			{
+				{.code = ILexer::Error::Code::StringFieldUnknown}
+			}
+			));
+	};
+};

@@ -18,16 +18,6 @@ void Testing::RunLexerTests()
 	static const Token endToken{ .type = Token::Type::End };
 	static constexpr auto ident = Token::Type::Identifier;
 
-	TestLexer("escaped curly bracket", L"'{{'", { {.type = Token::Type::LiteralString, .value = L"{" }, endToken });
-	TestLexer("escaped curly bracket", L"'{{}'", { {.type = Token::Type::LiteralString, .value = L"{}" }, endToken });
-	TestLexer("single closing curly bracket", L"'}'", { {.type = Token::Type::LiteralString, .value = L"}" }, endToken });
-	TestLexer("string field", L"'{n}'", { {.type = Token::Type::LiteralString, .value = L"\n" }, endToken });
-	TestLexer("string fields", L"'{t}{n}{r}'", { {.type = Token::Type::LiteralString, .value = L"\t\n\r" }, endToken });
-	TestLexer("embedded string fields", L"'abc{r}{n}def'", { {.type = Token::Type::LiteralString, .value = L"abc\r\ndef" }, endToken });
-	TestLexer("non-closed string field", L"'{n'", { {.type = Token::Type::LiteralString}, endToken }, { {.code = ILexer::Error::Code::StringFieldIllformed} });
-	TestLexer("ill-formed string field", L"'{nn}'", { {.type = Token::Type::LiteralString, .value = L"n}"}, endToken }, { {.code = ILexer::Error::Code::StringFieldIllformed} });
-	TestLexer("unknown string field", L"'{m}'", { {.type = Token::Type::LiteralString, .value = L"m}"}, endToken }, { {.code = ILexer::Error::Code::StringFieldUnknown} });
-
 	TestLexer("unindexed string interpolation", L"'{}'", {
 		{.type = Token::Type::LiteralString, .value = L"" },
 		{.type = Token::Type::LiteralStringInterpolation, .value = L"1" },
