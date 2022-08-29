@@ -172,3 +172,134 @@ suite lexer_numeric_literals_tests = [] {
 		));
 	};
 };
+
+suite lexer_string_literal_tests = [] {
+	"empty string literal"_test = [] {
+		expect(LexerTest::Success("empty string literal",
+			L"''",
+			{
+				{.type = Token::Type::LiteralString, .value = L"" },
+				endToken
+			}
+		));
+	};
+	"single escaped quotation mark"_test = [] {
+		expect(LexerTest::Success("single escaped quotation mark",
+			L"''''",
+			{
+				{.type = Token::Type::LiteralString, .value = L"'" },
+				endToken
+			}
+		));
+	};
+	"simple string literal"_test = [] {
+		expect(LexerTest::Success("simple string literal",
+			L"'abc'",
+			{
+				{.type = Token::Type::LiteralString, .value = L"abc" },
+				endToken
+			}
+		));
+	};
+	"string literal with whitespace"_test = [] {
+		expect(LexerTest::Success("string literal with whitespace",
+			L"'ab c'",
+			{
+				{.type = Token::Type::LiteralString, .value = L"ab c" },
+				endToken
+			}
+		));
+	};
+	"string literal with escaped quotation mark"_test = [] {
+		expect(LexerTest::Success("string literal with escaped quotation mark",
+			L"'ab''c'",
+			{
+				{.type = Token::Type::LiteralString, .value = L"ab'c" },
+				endToken
+			}
+		));
+	};
+	"separated string literals"_test = [] {
+		expect(LexerTest::Success("separated string literals",
+			L"'ab' 'c'",
+			{
+				{.type = Token::Type::LiteralString, .value = L"ab"},
+				{.type = Token::Type::LiteralString, .value = L"c"},
+				endToken
+			}
+		));
+	};
+	"comment in string literal"_test = [] {
+		expect(LexerTest::Success("comment in string literal",
+			L"'<< abc >>'",
+			{
+				{.type = Token::Type::LiteralString, .value = L"<< abc >>" },
+				endToken
+			}
+		));
+	};
+	"non-closed string literal"_test = [] {
+		expect(LexerTest::Failure("non-closed string literal",
+			L"'",
+			{
+				endToken
+			},
+			{
+				{.code = ILexer::Error::Code::StringLiteralOpen }
+			}
+			));
+	};
+	"non-closed string literal on line 1"_test = [] {
+		expect(LexerTest::Failure("non-closed string literal on line 1",
+			L"'abc",
+			{
+				endToken
+			},
+			{
+				{.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 1} }
+			}
+			));
+	};
+	"non-closed string literal on line 2"_test = [] {
+		expect(LexerTest::Failure("non-closed string literal on line 2",
+			L"\r\n'abc",
+			{
+				endToken
+			},
+			{
+				{.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 2} }
+			}
+			));
+	};
+	"non-closed string literal on line 2"_test = [] {
+		expect(LexerTest::Failure("non-closed string literal on line 2", L"\n'abc",
+			{
+				endToken
+			},
+			{
+				{.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 2} }
+			}
+			));
+	};
+	"non-closed string literal on line 1"_test = [] {
+		expect(LexerTest::Failure("non-closed string literal on line 1",
+			L"\r'abc",
+			{
+				endToken
+			},
+			{
+				{.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 1} }
+			}
+			));
+	};
+	"whitespace outside and within string literal"_test = [] {
+		expect(LexerTest::Success("whitespace outside and within string literal",
+			L"\t'ab\r\n\tc'\r\n",
+			{
+				{.type = Token::Type::LiteralString, .value = L"ab\r\n\tc" },
+				endToken
+			}
+		));
+	};
+};
+

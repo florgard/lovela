@@ -18,24 +18,6 @@ void Testing::RunLexerTests()
 	static const Token endToken{ .type = Token::Type::End };
 	static constexpr auto ident = Token::Type::Identifier;
 
-	TestLexer("empty string literal", L"''", { {.type = Token::Type::LiteralString, .value = L"" }, endToken });
-	TestLexer("single escaped quotation mark", L"''''", { {.type = Token::Type::LiteralString, .value = L"'" }, endToken });
-	TestLexer("simple string literal", L"'abc'", { {.type = Token::Type::LiteralString, .value = L"abc" }, endToken });
-	TestLexer("string literal with whitespace", L"'ab c'", { {.type = Token::Type::LiteralString, .value = L"ab c" }, endToken });
-	TestLexer("string literal with escaped quotation mark", L"'ab''c'", { {.type = Token::Type::LiteralString, .value = L"ab'c" }, endToken });
-	TestLexer("separated string literals", L"'ab' 'c'", {
-		{.type = Token::Type::LiteralString, .value = L"ab"},
-		{.type = Token::Type::LiteralString, .value = L"c"},
-		endToken
-		});
-	TestLexer("comment in string literal", L"'<< abc >>'", { {.type = Token::Type::LiteralString, .value = L"<< abc >>" }, endToken });
-	TestLexer("non-closed string literal", L"'", { endToken }, { {.code = ILexer::Error::Code::StringLiteralOpen } });
-	TestLexer("non-closed string literal on line 1", L"'abc", { endToken }, { {.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 1} } });
-	TestLexer("non-closed string literal on line 2", L"\r\n'abc", { endToken }, { {.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 2} } });
-	TestLexer("non-closed string literal on line 2", L"\n'abc", { endToken }, { {.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 2} } });
-	TestLexer("non-closed string literal on line 1", L"\r'abc", { endToken }, { {.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 1} } });
-	TestLexer("whitespace outside and within string literal", L"\t'ab\r\n\tc'\r\n", { {.type = Token::Type::LiteralString, .value = L"ab\r\n\tc" }, endToken });
-
 	TestLexer("escaped curly bracket", L"'{{'", { {.type = Token::Type::LiteralString, .value = L"{" }, endToken });
 	TestLexer("escaped curly bracket", L"'{{}'", { {.type = Token::Type::LiteralString, .value = L"{}" }, endToken });
 	TestLexer("single closing curly bracket", L"'}'", { {.type = Token::Type::LiteralString, .value = L"}" }, endToken });
