@@ -612,3 +612,95 @@ suite lexer_comment_tests = [] {
 		));
 	};
 };
+
+suite lexer_comparison_tests = [] {
+	"comparison operator"_test = [] {
+		expect(LexerTest::Success("comparison operator",
+			L"1 < 2",
+			{
+				{.type = Token::Type::LiteralInteger, .value = L"1"},
+				{.type = Token::Type::OperatorComparison, .value = L"<"},
+				{.type = Token::Type::LiteralInteger, .value = L"2"},
+				endToken
+			}
+		));
+	};
+	"comparison declaration"_test = [] {
+		expect(LexerTest::Success("comparison declaration",
+			L"<(operand)",
+			{
+				{.type = Token::Type::OperatorComparison, .value = L"<"},
+				{.type = Token::Type::ParenRoundOpen, .value = L"("},
+				{.type = ident, .value = L"operand"},
+				{.type = Token::Type::ParenRoundClose, .value = L")"},
+				endToken
+			}
+		));
+	};
+};
+
+suite lexer_primitive_types_tests = [] {
+	"primitive type, int32"_test = [] {
+		expect(LexerTest::Success("primitive type, int32",
+			L"#32",
+			{
+				{.type = Token::Type::PrimitiveType, .value = L"#32"},
+				endToken
+			}
+		));
+	};
+	"primitive type, uint32"_test = [] {
+		expect(LexerTest::Success("primitive type, uint32",
+			L"#+32",
+			{
+				{.type = Token::Type::PrimitiveType, .value = L"#+32"},
+				endToken
+			}
+		));
+	};
+	"primitive type, int8"_test = [] {
+		expect(LexerTest::Success("primitive type, int8",
+			L"#8",
+			{
+				{.type = Token::Type::PrimitiveType, .value = L"#8"},
+				endToken
+			}
+		));
+	};
+	"primitive type, double"_test = [] {
+		expect(LexerTest::Success("primitive type, double",
+			L"#.64",
+			{
+				{.type = Token::Type::PrimitiveType, .value = L"#.64"},
+				endToken
+			}
+		));
+	};
+	"primitive type, int8 array"_test = [] {
+		expect(LexerTest::Success("primitive type, int8 array",
+			L"#8#",
+			{
+				{.type = Token::Type::PrimitiveType, .value = L"#8#"},
+				endToken
+			}
+		));
+	};
+	"primitive type, int8 array of arrays"_test = [] {
+		expect(LexerTest::Success("primitive type, int8 array of arrays",
+			L"#8##",
+			{
+				{.type = Token::Type::PrimitiveType, .value = L"#8##"},
+				endToken
+			}
+		));
+	};
+	"primitive type, int32 array size 8"_test = [] {
+		expect(LexerTest::Success("primitive type, int32 array size 8",
+			L"#32#8",
+			{
+				{.type = Token::Type::PrimitiveType, .value = L"#32#8"},
+				endToken
+			}
+		));
+	};
+};

@@ -18,50 +18,6 @@ void Testing::RunLexerTests()
 	static const Token endToken{ .type = Token::Type::End };
 	static constexpr auto ident = Token::Type::Identifier;
 
-
-	TestLexer("comparison operator", L"1 < 2", {
-		{.type = Token::Type::LiteralInteger, .value = L"1"},
-		{.type = Token::Type::OperatorComparison, .value = L"<"},
-		{.type = Token::Type::LiteralInteger, .value = L"2"},
-		endToken
-		});
-
-	TestLexer("comparison declaration", L"<(operand)", {
-		{.type = Token::Type::OperatorComparison, .value = L"<"},
-		{.type = Token::Type::ParenRoundOpen, .value = L"("},
-		{.type = ident, .value = L"operand"},
-		{.type = Token::Type::ParenRoundClose, .value = L")"},
-		endToken
-		});
-
-	TestLexer("primitive type, int32", L"#32", {
-		{.type = Token::Type::PrimitiveType, .value = L"#32"},
-		endToken
-		});
-	TestLexer("primitive type, uint32", L"#+32", {
-		{.type = Token::Type::PrimitiveType, .value = L"#+32"},
-		endToken
-		});
-	TestLexer("primitive type, int8 ", L"#8", {
-		{.type = Token::Type::PrimitiveType, .value = L"#8"},
-		endToken
-		});
-	TestLexer("primitive type, double", L"#.64", {
-		{.type = Token::Type::PrimitiveType, .value = L"#.64"},
-		endToken
-		});
-	TestLexer("primitive type, int8 array", L"#8#", {
-		{.type = Token::Type::PrimitiveType, .value = L"#8#"},
-		endToken
-		});
-	TestLexer("primitive type, int8 array of arrays", L"#8##", {
-		{.type = Token::Type::PrimitiveType, .value = L"#8##"},
-		endToken
-		});
-	TestLexer("primitive type, int32 array size 8", L"#32#8", {
-		{.type = Token::Type::PrimitiveType, .value = L"#32#8"},
-		endToken
-		});
 }
 
 void Testing::RunParserTests()
