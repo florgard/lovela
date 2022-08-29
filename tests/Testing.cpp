@@ -18,51 +18,6 @@ void Testing::RunLexerTests()
 	static const Token endToken{ .type = Token::Type::End };
 	static constexpr auto ident = Token::Type::Identifier;
 
-	TestLexer("trivial function declaration", L"func", {
-		{.type = ident, .value = L"func"},
-		endToken
-		});
-	TestLexer("trivial integer function", L"func: 123.", {
-		{.type = ident, .value = L"func"},
-		{.type = Token::Type::SeparatorColon, .value = L":"},
-		{.type = Token::Type::LiteralInteger, .value = L"123"},
-		{.type = Token::Type::SeparatorDot, .value = L"."},
-		endToken
-		});
-	TestLexer("trivial decimal function with whitespace", L"func : 123.4.", {
-		{.type = ident, .value = L"func"},
-		{.type = Token::Type::SeparatorColon, .value = L":"},
-		{.type = Token::Type::LiteralDecimal, .value = L"123.4"},
-		{.type = Token::Type::SeparatorDot, .value = L"."},
-		endToken
-		});
-	TestLexer("trivial decimal function with mixed name and group", L"\r\nfunc44: (123.4).", {
-		{.type = ident, .value = L"func44"},
-		{.type = Token::Type::SeparatorColon, .value = L":"},
-		{.type = Token::Type::ParenRoundOpen, .value = L"("},
-		{.type = Token::Type::LiteralDecimal, .value = L"123.4"},
-		{.type = Token::Type::ParenRoundClose, .value = L")"},
-		{.type = Token::Type::SeparatorDot, .value = L"."},
-		endToken
-		});
-	TestLexer("imported function", L"-> func", {
-		{.type = Token::Type::OperatorArrow, .value = L"->"},
-		{.type = ident, .value = L"func"},
-		endToken
-		});
-	TestLexer("exported function", L"<- []func", {
-		{.type = Token::Type::OperatorArrow, .value = L"<-"},
-		{.type = Token::Type::ParenSquareOpen, .value = L"["},
-		{.type = Token::Type::ParenSquareClose, .value = L"]"},
-		{.type = ident, .value = L"func"},
-		endToken
-		});
-	TestLexer("function with namespace", L"namespace|func", {
-		{.type = ident, .value = L"namespace"},
-		{.type = Token::Type::SeparatorVerticalLine, .value = L"|"},
-		{.type = ident, .value = L"func"},
-		endToken
-		});
 
 	TestLexer("mixed character identifier", L"ident123.", {
 		{.type = ident, .value = L"ident123"},

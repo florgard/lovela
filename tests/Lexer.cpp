@@ -457,3 +457,86 @@ suite lexer_string_interpolation_tests = [] {
 		));
 	};
 };
+
+suite lexer_function_declarations_tests = [] {
+	"trivial function declaration"_test = [] {
+		expect(LexerTest::Success("trivial function declaration",
+			L"func",
+			{
+				{.type = ident, .value = L"func"},
+				endToken
+			}
+		));
+	};
+	"trivial integer function"_test = [] {
+		expect(LexerTest::Success("trivial integer function",
+			L"func: 123.",
+			{
+				{.type = ident, .value = L"func"},
+				{.type = Token::Type::SeparatorColon, .value = L":"},
+				{.type = Token::Type::LiteralInteger, .value = L"123"},
+				{.type = Token::Type::SeparatorDot, .value = L"."},
+				endToken
+			}
+		));
+	};
+	"trivial decimal function with whitespace"_test = [] {
+		expect(LexerTest::Success("trivial decimal function with whitespace",
+			L"func : 123.4.",
+			{
+				{.type = ident, .value = L"func"},
+				{.type = Token::Type::SeparatorColon, .value = L":"},
+				{.type = Token::Type::LiteralDecimal, .value = L"123.4"},
+				{.type = Token::Type::SeparatorDot, .value = L"."},
+				endToken
+			}
+		));
+	};
+	"trivial decimal function with mixed name and group"_test = [] {
+		expect(LexerTest::Success("trivial decimal function with mixed name and group",
+			L"\r\nfunc44: (123.4).",
+			{
+				{.type = ident, .value = L"func44"},
+				{.type = Token::Type::SeparatorColon, .value = L":"},
+				{.type = Token::Type::ParenRoundOpen, .value = L"("},
+				{.type = Token::Type::LiteralDecimal, .value = L"123.4"},
+				{.type = Token::Type::ParenRoundClose, .value = L")"},
+				{.type = Token::Type::SeparatorDot, .value = L"."},
+				endToken
+			}
+		));
+	};
+	"imported function"_test = [] {
+		expect(LexerTest::Success("imported function",
+			L"-> func",
+			{
+				{.type = Token::Type::OperatorArrow, .value = L"->"},
+				{.type = ident, .value = L"func"},
+				endToken
+			}
+		));
+	};
+	"exported function"_test = [] {
+		expect(LexerTest::Success("exported function",
+			L"<- []func",
+			{
+				{.type = Token::Type::OperatorArrow, .value = L"<-"},
+				{.type = Token::Type::ParenSquareOpen, .value = L"["},
+				{.type = Token::Type::ParenSquareClose, .value = L"]"},
+				{.type = ident, .value = L"func"},
+				endToken
+			}
+		));
+	};
+	"function with namespace"_test = [] {
+		expect(LexerTest::Success("function with namespace",
+			L"namespace|func",
+			{
+				{.type = ident, .value = L"namespace"},
+				{.type = Token::Type::SeparatorVerticalLine, .value = L"|"},
+				{.type = ident, .value = L"func"},
+				endToken
+			}
+		));
+	};
+};
