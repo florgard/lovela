@@ -8,22 +8,6 @@
 
 void Testing::RunParserTests()
 {
-	TestParser("imported function", L"-> func",
-		Node{.type = Node::Type::FunctionDeclaration, .value = L"func", .api = Api::Import}
-		);
-	TestParser("exported function", L"<- [] func",
-		Node{.type = Node::Type::FunctionDeclaration, .value = L"func", .api = Api::Export}
-		);
-	TestParser("imported C function", L"-> 'C' func",
-		Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .api = Api::Import | Api::C }
-	);
-	TestParser("imported dynamically linked C function", L"-> 'C Dynamic' func",
-		Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .api = Api::Import | Api::C | Api::Dynamic }
-	);
-	TestParser("imported standard C++ function", L"-> 'Standard C++' func",
-		Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .api = Api::Import | Api::Cpp | Api::Standard }
-	);
-
 	{
 		auto f = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .nameSpace{ L"namespace" } };
 		TestParser("function with 1 namespace", L"namespace|func", f);

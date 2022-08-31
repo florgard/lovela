@@ -169,3 +169,36 @@ suite parser_function_declaration_tests = [] {
 		));
 	};
 };
+
+suite parser_import_export_tests = [] {
+	"imported function"_test = [] {
+		expect(ParserTest::Success("imported function",
+			L"-> func",
+			Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .api = Api::Import }
+		));
+	};
+	"exported function"_test = [] {
+		expect(ParserTest::Success("exported function",
+			L"<- [] func",
+			Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .api = Api::Export }
+		));
+	};
+	"imported C function"_test = [] {
+		expect(ParserTest::Success("imported C function",
+			L"-> 'C' func",
+			Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .api = Api::Import | Api::C }
+		));
+	};
+	"imported dynamically linked C function"_test = [] {
+		expect(ParserTest::Success("imported dynamically linked C function",
+			L"-> 'C Dynamic' func",
+			Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .api = Api::Import | Api::C | Api::Dynamic }
+		));
+	};
+	"imported standard C++ function"_test = [] {
+		expect(ParserTest::Success("imported standard C++ function",
+			L"-> 'Standard C++' func",
+			Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .api = Api::Import | Api::Cpp | Api::Standard }
+		));
+	};
+};
