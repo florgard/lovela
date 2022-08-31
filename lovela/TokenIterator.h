@@ -5,17 +5,12 @@
 template <class TokenGenerator = ITokenGenerator, typename Iterator = TokenGenerator::iterator>
 class TokenIterator : public ITokenIterator
 {
-	TokenGenerator tokenGenerator;
+	TokenGenerator gen;
 	Iterator iter;
 
 public:
-	TokenIterator(TokenGenerator&& tokenGenerator) noexcept : tokenGenerator(std::move(tokenGenerator)), iter(tokenGenerator.begin())
+	TokenIterator(TokenGenerator&& tokenGenerator) noexcept : gen(std::move(tokenGenerator)), iter(gen.begin())
 	{
-	}
-
-	static auto Create(TokenGenerator&& tokenGenerator)
-	{
-		return std::make_unique<TokenIterator<>>(tokenGenerator);
 	}
 
 	[[nodiscard]] const Token& operator*() const noexcept override
