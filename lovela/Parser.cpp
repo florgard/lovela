@@ -4,7 +4,7 @@
 
 static const std::set<Token::Type>& GetFunctionDeclarationTokens()
 {
-	static const std::set<Token::Type> functionDeclarationTokens
+	static const std::set<Token::Type> tokens
 	{
 		Token::Type::ParenSquareOpen,
 		Token::Type::PrimitiveType,
@@ -16,47 +16,47 @@ static const std::set<Token::Type>& GetFunctionDeclarationTokens()
 		Token::Type::SeparatorColon,
 	};
 
-	return functionDeclarationTokens;
+	return tokens;
 }
 
 static const std::set<Token::Type>& GetTypeSpecTokens()
 {
-	static const std::set<Token::Type> typeSpecTokens
+	static const std::set<Token::Type> tokens
 	{
 		Token::Type::ParenSquareOpen,
 		Token::Type::PrimitiveType,
 	};
 
-	return typeSpecTokens;
+	return tokens;
 }
 
 static const std::set<Token::Type>& GetExternalFunctionDeclarationTokens()
 {
-	static const std::set<Token::Type> externalFunctionDeclarationTokens
+	static const std::set<Token::Type> tokens
 	{
 		Token::Type::ParenSquareOpen,
 		Token::Type::PrimitiveType,
 		Token::Type::Identifier,
 	};
 
-	return externalFunctionDeclarationTokens;
+	return tokens;
 }
 
 static const std::set<Token::Type>& GetLiteralTokens()
 {
-	static const std::set<Token::Type> literalTokens
+	static const std::set<Token::Type> tokens
 	{
 		Token::Type::LiteralInteger,
 		Token::Type::LiteralDecimal,
 		Token::Type::LiteralString,
 	};
 
-	return literalTokens;
+	return tokens;
 }
 
 static const std::set<Token::Type>& GetOperandTokens()
 {
-	static const std::set<Token::Type> operandTokens
+	static const std::set<Token::Type> tokens
 	{
 		Token::Type::ParenRoundOpen,
 		Token::Type::LiteralInteger,
@@ -64,24 +64,24 @@ static const std::set<Token::Type>& GetOperandTokens()
 		Token::Type::LiteralString,
 	};
 
-	return operandTokens;
+	return tokens;
 }
 
 static const std::set<Token::Type>& GetBinaryOperatorTokens()
 {
-	static const std::set<Token::Type> binaryOperatorTokens
+	static const std::set<Token::Type> tokens
 	{
 		Token::Type::OperatorArithmetic,
 		Token::Type::OperatorBitwise,
 		Token::Type::OperatorComparison,
 	};
 
-	return binaryOperatorTokens;
+	return tokens;
 }
 
 /*static*/ const std::set<Token::Type>& GetOperatorTokens()
 {
-	static const std::set<Token::Type> operatorTokens
+	static const std::set<Token::Type> tokens
 	{
 		Token::Type::Identifier,
 		Token::Type::OperatorArrow,
@@ -90,12 +90,12 @@ static const std::set<Token::Type>& GetBinaryOperatorTokens()
 		Token::Type::OperatorComparison,
 	};
 
-	return operatorTokens;
+	return tokens;
 }
 
 static const std::set<Token::Type>& GetExpressionTerminatorTokens()
 {
-	static const std::set<Token::Type> expressionTerminatorTokens
+	static const std::set<Token::Type> tokens
 	{
 		Token::Type::End,
 		Token::Type::SeparatorDot,
@@ -103,12 +103,12 @@ static const std::set<Token::Type>& GetExpressionTerminatorTokens()
 		Token::Type::ParenRoundClose,
 	};
 
-	return expressionTerminatorTokens;
+	return tokens;
 }
 
 static const std::set<Node::Type>& GetOperandNodes()
 {
-	static const std::set<Node::Type> operandNodes
+	static const std::set<Node::Type> nodes
 	{
 		Node::Type::Expression,
 		Node::Type::Tuple,
@@ -116,18 +116,18 @@ static const std::set<Node::Type>& GetOperandNodes()
 		Node::Type::VariableReference,
 	};
 
-	return operandNodes;
+	return nodes;
 }
 
 static const std::set<Node::Type>& GetOperatorNodes()
 {
-	static const std::set<Node::Type> operatorNodes
+	static const std::set<Node::Type> nodes
 	{
 		Node::Type::FunctionCall,
 		Node::Type::BinaryOperation,
 	};
 
-	return operatorNodes;
+	return nodes;
 }
 
 bool Parser::Context::HasFunctionSymbol(const std::wstring& symbol) const
