@@ -8,26 +8,6 @@
 
 void Testing::RunParserTests()
 {
-
-
-	{
-		auto f = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .parameters{
-				make<VariableDeclaration>::shared({.name = L"name_only"}),
-				make<VariableDeclaration>::shared({.name = L"name", .type{.name = L"type"}}),
-				make<VariableDeclaration>::shared({.type{.name = L"type_only"}})
-			} };
-		TestParser("function with parameters", L"func(name_only, name [type], [type_only])", f);
-	}
-
-	{
-		auto f = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .outType{.name = L"functionType"}, .inType{.name = L"inType"}, .parameters{
-				make<VariableDeclaration>::shared({.name = L"name_only"}),
-				make<VariableDeclaration>::shared({.name = L"name", .type{.name = L"type"}}),
-				make<VariableDeclaration>::shared({.type{.name = L"type_only"}})
-			} };
-		TestParser("complete function declaration", L"[inType] func (name_only, name [type], [type_only]) [functionType]", f);
-	}
-
 	TestParser("imported function", L"-> func",
 		Node{.type = Node::Type::FunctionDeclaration, .value = L"func", .api = Api::Import}
 		);

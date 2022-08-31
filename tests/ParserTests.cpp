@@ -148,4 +148,24 @@ suite parser_function_declaration_tests = [] {
 			}
 		));
 	};
+	"function with parameters"_test = [] {
+		expect(ParserTest::Success("function with parameters",
+			L"func(name_only, name [type], [type_only])",
+			Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .parameters{
+				make<VariableDeclaration>::shared({.name = L"name_only"}),
+				make<VariableDeclaration>::shared({.name = L"name", .type{.name = L"type"}}),
+				make<VariableDeclaration>::shared({.type{.name = L"type_only"}})
+			}}
+		));
+	};
+	"complete function declaration"_test = [] {
+		expect(ParserTest::Success("complete function declaration",
+			L"[inType] func (name_only, name [type], [type_only]) [functionType]",
+			Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .outType{.name = L"functionType"}, .inType{.name = L"inType"}, .parameters{
+				make<VariableDeclaration>::shared({.name = L"name_only"}),
+				make<VariableDeclaration>::shared({.name = L"name", .type{.name = L"type"}}),
+				make<VariableDeclaration>::shared({.type{.name = L"type_only"}})
+			}}
+		));
+	};
 };
