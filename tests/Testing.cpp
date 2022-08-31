@@ -8,47 +8,7 @@
 
 void Testing::RunParserTests()
 {
-	TestParser("trivial function declaration", L"func",
-		Node{.type = Node::Type::FunctionDeclaration, .value = L"func"}
-		);
-	TestParser("function with any in type", L"[] func",
-		Node{.type = Node::Type::FunctionDeclaration, .value = L"func"}
-		);
-	TestParser("function with given in type", L"[type] func",
-		Node{.type = Node::Type::FunctionDeclaration, .value = L"func", .inType{.name = L"type"}}
-		);
-	TestParser("function with empty in type", L"[()] func",
-		Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .inType = TypeSpec::NoneType() }
-		);
-	TestParser("function with out type", L"func [type]",
-		Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .outType{.name = L"type"} }
-	);
-	TestParser("function with in and out type", L"[in] func [out]",
-		Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .outType{.name = L"out"}, .inType{.name = L"in"} }
-	);
-	TestParser("function with primitive types", L"#8# func #32",
-		Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .outType{.name = L"#32"}, .inType{.name = L"#8#"} }
-	);
-	TestParser("function with primitive types in brackets", L"[#32] func [#8]",
-		Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .outType{.name = L"#8"}, .inType{.name = L"#32"} }
-	);
-	TestParser("anonymous function", L"[]()",
-		Node{.type = Node::Type::FunctionDeclaration}
-		);
-	TestParser("2 function declarations", L"func1\r\nfunc2",
-		Node{ .type = Node::Type::FunctionDeclaration, .value = L"func2", .right =
-			make<Node>::unique({ .type = Node::Type::FunctionDeclaration, .value = L"func1" })
-		});
-	TestParser("3 function declarations", L"func1\r\nfunc2 func3",
-		Node{ .type = Node::Type::FunctionDeclaration, .value = L"func3", .right =
-			make<Node>::unique(Node{ .type = Node::Type::FunctionDeclaration, .value = L"func2", .right =
-				make<Node>::unique({.type = Node::Type::FunctionDeclaration, .value = L"func1" })
-			})
-		});
-	TestParser("function with empty body", L"func:.",
-		Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left =
-			make<Node>::unique({.type = Node::Type::Empty})
-		});
+
 
 	{
 		auto f = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .parameters{
