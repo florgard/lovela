@@ -2,85 +2,133 @@
 #include "Parser.h"
 #include "ParseException.h"
 
-static const std::set<Token::Type> functionDeclarationTokens
+static const std::set<Token::Type>& GetFunctionDeclarationTokens()
 {
-	Token::Type::ParenSquareOpen,
-	Token::Type::PrimitiveType,
-	Token::Type::Identifier,
-	Token::Type::OperatorArrow,
-	Token::Type::OperatorArithmetic,
-	Token::Type::OperatorBitwise,
-	Token::Type::OperatorComparison,
-	Token::Type::SeparatorColon,
-};
+	static const std::set<Token::Type> functionDeclarationTokens
+	{
+		Token::Type::ParenSquareOpen,
+		Token::Type::PrimitiveType,
+		Token::Type::Identifier,
+		Token::Type::OperatorArrow,
+		Token::Type::OperatorArithmetic,
+		Token::Type::OperatorBitwise,
+		Token::Type::OperatorComparison,
+		Token::Type::SeparatorColon,
+	};
 
-static const std::set<Token::Type> typeSpecTokens
+	return functionDeclarationTokens;
+}
+
+static const std::set<Token::Type>& GetTypeSpecTokens()
 {
-	Token::Type::ParenSquareOpen,
-	Token::Type::PrimitiveType,
-};
+	static const std::set<Token::Type> typeSpecTokens
+	{
+		Token::Type::ParenSquareOpen,
+		Token::Type::PrimitiveType,
+	};
 
-static const std::set<Token::Type> externalFunctionDeclarationTokens
+	return typeSpecTokens;
+}
+
+static const std::set<Token::Type>& GetExternalFunctionDeclarationTokens()
 {
-	Token::Type::ParenSquareOpen,
-	Token::Type::PrimitiveType,
-	Token::Type::Identifier,
-};
+	static const std::set<Token::Type> externalFunctionDeclarationTokens
+	{
+		Token::Type::ParenSquareOpen,
+		Token::Type::PrimitiveType,
+		Token::Type::Identifier,
+	};
 
-static const std::set<Token::Type> literalTokens
+	return externalFunctionDeclarationTokens;
+}
+
+static const std::set<Token::Type>& GetLiteralTokens()
 {
-	Token::Type::LiteralInteger,
-	Token::Type::LiteralDecimal,
-	Token::Type::LiteralString,
-};
+	static const std::set<Token::Type> literalTokens
+	{
+		Token::Type::LiteralInteger,
+		Token::Type::LiteralDecimal,
+		Token::Type::LiteralString,
+	};
 
-static const std::set<Token::Type> operandTokens
+	return literalTokens;
+}
+
+static const std::set<Token::Type>& GetOperandTokens()
 {
-	Token::Type::ParenRoundOpen,
-	Token::Type::LiteralInteger,
-	Token::Type::LiteralDecimal,
-	Token::Type::LiteralString,
-};
+	static const std::set<Token::Type> operandTokens
+	{
+		Token::Type::ParenRoundOpen,
+		Token::Type::LiteralInteger,
+		Token::Type::LiteralDecimal,
+		Token::Type::LiteralString,
+	};
 
-static const std::set<Token::Type> binaryOperatorTokens
+	return operandTokens;
+}
+
+static const std::set<Token::Type>& GetBinaryOperatorTokens()
 {
-	Token::Type::OperatorArithmetic,
-	Token::Type::OperatorBitwise,
-	Token::Type::OperatorComparison,
-};
+	static const std::set<Token::Type> binaryOperatorTokens
+	{
+		Token::Type::OperatorArithmetic,
+		Token::Type::OperatorBitwise,
+		Token::Type::OperatorComparison,
+	};
 
-static const std::set<Token::Type> operatorTokens
+	return binaryOperatorTokens;
+}
+
+/*static*/ const std::set<Token::Type>& GetOperatorTokens()
 {
-	Token::Type::Identifier,
-	Token::Type::OperatorArrow,
-	Token::Type::OperatorArithmetic,
-	Token::Type::OperatorBitwise,
-	Token::Type::OperatorComparison,
-};
+	static const std::set<Token::Type> operatorTokens
+	{
+		Token::Type::Identifier,
+		Token::Type::OperatorArrow,
+		Token::Type::OperatorArithmetic,
+		Token::Type::OperatorBitwise,
+		Token::Type::OperatorComparison,
+	};
 
-static const std::set<Token::Type> expressionTerminatorTokens
+	return operatorTokens;
+}
+
+static const std::set<Token::Type>& GetExpressionTerminatorTokens()
 {
-	Token::Type::End,
-	Token::Type::SeparatorDot,
-	Token::Type::SeparatorComma,
-	Token::Type::ParenRoundClose,
-};
+	static const std::set<Token::Type> expressionTerminatorTokens
+	{
+		Token::Type::End,
+		Token::Type::SeparatorDot,
+		Token::Type::SeparatorComma,
+		Token::Type::ParenRoundClose,
+	};
 
-static const std::set<Node::Type> operandNodes
+	return expressionTerminatorTokens;
+}
+
+static const std::set<Node::Type>& GetOperandNodes()
 {
-	Node::Type::Expression,
-	Node::Type::Tuple,
-	Node::Type::Literal,
-	Node::Type::VariableReference,
-};
+	static const std::set<Node::Type> operandNodes
+	{
+		Node::Type::Expression,
+		Node::Type::Tuple,
+		Node::Type::Literal,
+		Node::Type::VariableReference,
+	};
 
-static const std::set<Node::Type> operatorNodes
+	return operandNodes;
+}
+
+static const std::set<Node::Type>& GetOperatorNodes()
 {
-	Node::Type::FunctionCall,
-	Node::Type::BinaryOperation,
-};
+	static const std::set<Node::Type> operatorNodes
+	{
+		Node::Type::FunctionCall,
+		Node::Type::BinaryOperation,
+	};
 
-
+	return operatorNodes;
+}
 
 bool Parser::Context::HasFunctionSymbol(const std::wstring& symbol) const
 {
@@ -146,7 +194,7 @@ std::unique_ptr<Node> Parser::Parse() noexcept
 	{
 		try
 		{
-			if (Accept(functionDeclarationTokens))
+			if (Accept(GetFunctionDeclarationTokens()))
 			{
 				nodes.emplace_back(ParseFunctionDeclaration(context));
 			}
@@ -205,7 +253,7 @@ std::unique_ptr<Node> Parser::Parse() noexcept
 
 TypeSpec Parser::ParseTypeSpec()
 {
-	Assert(typeSpecTokens);
+	Assert(GetTypeSpecTokens());
 
 	TypeSpec typeSpec;
 
@@ -270,7 +318,7 @@ ParameterList Parser::ParseParameterList()
 		}
 
 		// Optional type
-		if (Accept(typeSpecTokens))
+		if (Accept(GetTypeSpecTokens()))
 		{
 			parameter->type = ParseTypeSpec();
 			defined = true;
@@ -348,11 +396,11 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 			}
 		}
 
-		Expect(externalFunctionDeclarationTokens);
+		Expect(GetExternalFunctionDeclarationTokens());
 	}
 
 	// [inType]
-	if (IsToken(typeSpecTokens))
+	if (IsToken(GetTypeSpecTokens()))
 	{
 		node->inType = ParseTypeSpec();
 
@@ -376,7 +424,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 			node->nameSpace.emplace_back(name);
 
 			// binaryOperator
-			if (Accept(binaryOperatorTokens))
+			if (Accept(GetBinaryOperatorTokens()))
 			{
 				name = currentToken.value;
 				break;
@@ -395,7 +443,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 		context->AddFunctionSymbol(node->GetQualifiedName());
 	}
 	// binaryOperator
-	else if (IsToken(binaryOperatorTokens))
+	else if (IsToken(GetBinaryOperatorTokens()))
 	{
 		node->value = currentToken.value;
 	}
@@ -415,7 +463,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 	}
 
 	// identifier [outType]
-	if (Accept(typeSpecTokens))
+	if (Accept(GetTypeSpecTokens()))
 	{
 		node->outType = ParseTypeSpec();
 	}
@@ -451,7 +499,7 @@ std::unique_ptr<Node> Parser::ParseCompoundExpression(std::shared_ptr<Context> c
 {
 	auto node = ParseExpression(context);
 
-	if (!Peek(expressionTerminatorTokens))
+	if (!Peek(GetExpressionTerminatorTokens()))
 	{
 		node->right = ParseCompoundExpression(context);
 	}
@@ -470,7 +518,7 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 
 	for (;;)
 	{
-		if (Accept(operandTokens))
+		if (Accept(GetOperandTokens()))
 		{
 			nodes.emplace_back(ParseOperand(innerContext));
 		}
@@ -485,12 +533,12 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 				nodes.emplace_back(ParseFunctionCall(innerContext));
 			}
 		}
-		else if (Accept(binaryOperatorTokens))
+		else if (Accept(GetBinaryOperatorTokens()))
 		{
 			nodes.emplace_back(ParseBinaryOperation(innerContext));
 		}
 		// TODO: Selector, bind
-		else if (Accept(Token::Type::SeparatorDot) || Peek(expressionTerminatorTokens))
+		else if (Accept(Token::Type::SeparatorDot) || Peek(GetExpressionTerminatorTokens()))
 		{
 			break;
 		}
@@ -514,7 +562,7 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		auto node = std::move(nodes.back());
 		nodes.pop_back();
 
-		if (operandNodes.contains(node->type))
+		if (GetOperandNodes().contains(node->type))
 		{
 			if (right)
 			{
@@ -523,7 +571,7 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 
 			right = std::move(node);
 		}
-		else if (operatorNodes.contains(node->type))
+		else if (GetOperatorNodes().contains(node->type))
 		{
 			if (right)
 			{
@@ -631,7 +679,7 @@ std::unique_ptr<Node> Parser::ParseOperand(std::shared_ptr<Context> context)
 	{
 		node = ParseGroup(context);
 	}
-	else if (IsToken(literalTokens))
+	else if (IsToken(GetLiteralTokens()))
 	{
 		node = make<Node>::unique(
 			{
@@ -667,7 +715,7 @@ std::unique_ptr<Node> Parser::ParseFunctionCall(std::shared_ptr<Context> context
 
 std::unique_ptr<Node> Parser::ParseBinaryOperation(std::shared_ptr<Context> context)
 {
-	Assert(binaryOperatorTokens);
+	Assert(GetBinaryOperatorTokens());
 
 	return make<Node>::unique({ .type = Node::Type::BinaryOperation, .value = currentToken.value, .token = currentToken });
 }
