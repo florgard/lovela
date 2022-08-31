@@ -1,16 +1,65 @@
 #include "pch.h"
 #include "Lexer.h"
 
-static constexpr wchar_t const* const separatorPattern{ LR"([\(\)\[\]\{\}\.,:;\!\?\|#])" };
-static constexpr wchar_t const* const whitespacePattern{ LR"(\s)" };
-static constexpr wchar_t const* const literalNumberPattern{ LR"([\+\-]?\d+)" };
-static constexpr wchar_t const* const beginCommentPattern{ LR"(<<)" };
-static constexpr wchar_t const* const endCommentPattern{ LR"(>>)" };
-static constexpr wchar_t const* const digitPattern{ LR"(\d)" };
-static constexpr wchar_t const* const stringFieldPattern{ LR"([tnr])" };
-static constexpr wchar_t const* const decimalPartPattern{ LR"(\.\d)" };
-static constexpr wchar_t const* const firstCharPattern{ LR"([\d\+\.])" };
-static constexpr wchar_t const* const followingCharsPattern{ LR"([\d#])" };
+static const std::wregex& GetSeparatorRegex()
+{
+	static const std::wregex re{ LR"([\(\)\[\]\{\}\.,:;\!\?\|#])" };
+	return re;
+}
+
+static const std::wregex& GetWhitespaceRegex()
+{
+	static const std::wregex re{ LR"(\s)" };
+	return re;
+}
+
+static const std::wregex& GetLiteralNumberRegex()
+{
+	static const std::wregex re{ LR"([\+\-]?\d+)" };
+	return re;
+}
+
+static const std::wregex& GetBeginCommentRegex()
+{
+	static const std::wregex re{ LR"(<<)" };
+	return re;
+}
+
+static const std::wregex& GetEndCommentRegex()
+{
+	static const std::wregex re{ LR"(>>)" };
+	return re;
+}
+
+static const std::wregex& GetDigitRegex()
+{
+	static const std::wregex re{ LR"(\d)" };
+	return re;
+}
+
+static const std::wregex& GetStringFieldRegex()
+{
+	static const std::wregex re{ LR"([tnr])" };
+	return re;
+}
+
+static const std::wregex& GetDecimalPartRegex()
+{
+	static const std::wregex re{ LR"(\.\d)" };
+	return re;
+}
+
+static const std::wregex& GetFirstCharRegex()
+{
+	static const std::wregex re{ LR"([\d\+\.])" };
+	return re;
+}
+
+static const std::wregex& GetFollowingCharsRegex()
+{
+	static const std::wregex re{ LR"([\d#])" };
+	return re;
+}
 
 Lexer::Lexer(std::wistream& charStream) noexcept : charStream(charStream >> std::noskipws)
 {
@@ -43,15 +92,9 @@ ITokenGenerator Lexer::Lex() noexcept
 	std::vector<Token> tokens;
 	tokens.reserve(64);
 
-	static const std::wregex separator{ separatorPattern };
-	static const std::wregex whitespace{ whitespacePattern };
-	static const std::wregex literalNumber{ literalNumberPattern };
-	static const std::wregex beginComment{ beginCommentPattern };
-	static const std::wregex endComment{ endCommentPattern };
-
 	while (characters[Next])
 	{
-		if (Accept(beginComment, 2))
+		if (Accept(GetBeginCommentRegex(), 2))
 		{
 			LexComment(tokens);
 		}
@@ -59,7 +102,7 @@ ITokenGenerator Lexer::Lex() noexcept
 		{
 			LexLiteralString(tokens);
 		}
-		else if (AcceptBegin(literalNumber, 2))
+		else if (AcceptBegin(GetLiteralNumberRegex(), 2))
 		{
 			LexLiteralNumber(tokens);
 		}
@@ -67,11 +110,11 @@ ITokenGenerator Lexer::Lex() noexcept
 		{
 			LexPrimitiveType(tokens);
 		}
-		else if (Accept(separator, 1))
+		else if (Accept(GetSeparatorRegex(), 1))
 		{
 			LexSeparator(tokens);
 		}
-		else if (Accept(whitespace, 1))
+		else if (Accept(GetWhitespaceRegex(), 1))
 		{
 			LexWhitespace(tokens);
 		}
@@ -191,9 +234,6 @@ bool Lexer::Expect(const std::wregex& regex, size_t length) noexcept
 
 void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 {
-	static const std::wregex digit{ digitPattern };
-	static const std::wregex stringField{ stringFieldPattern };
-
 	std::wstring value;
 	wchar_t nextStringInterpolation = '1';
 
@@ -235,7 +275,7 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 					nextStringInterpolation++;
 				}
 			}
-			else if (Accept(digit, 1))
+			else if (Accept(GetDigitRegex(), 1))
 			{
 				wchar_t stringFieldCode = characters[Current];
 
@@ -252,7 +292,7 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 					AddError(Error::Code::StringFieldIllformed, std::wstring(L"Ill-formed string field \"") + stringFieldCode + L"\".");
 				}
 			}
-			else if (Accept(stringField, 1))
+			else if (Accept(GetStringFieldRegex(), 1))
 			{
 				wchar_t stringFieldCode = characters[Current];
 
@@ -286,25 +326,21 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 
 void Lexer::LexLiteralNumber(std::vector<Token>& tokens) noexcept
 {
-	static const std::wregex digit{ digitPattern };
-
 	std::wstring value;
 	value += characters[Current];
 
-	while (Accept(digit, 1))
+	while (Accept(GetDigitRegex(), 1))
 	{
 		value += characters[Current];
 	}
 
 	// Accept a single decimal point in numbers.
 
-	static const std::wregex decimalPart{ decimalPartPattern };
-
-	if (Accept(decimalPart, 2))
+	if (Accept(GetDecimalPartRegex(), 2))
 	{
 		value += characters[Current];
 
-		while (Accept(digit, 1))
+		while (Accept(GetDigitRegex(), 1))
 		{
 			value += characters[Current];
 		}
@@ -319,9 +355,6 @@ void Lexer::LexLiteralNumber(std::vector<Token>& tokens) noexcept
 
 void Lexer::LexComment(std::vector<Token>& tokens) noexcept
 {
-	static const std::wregex beginComment{ beginCommentPattern };
-	static const std::wregex endComment{ endCommentPattern };
-
 	// Add the token before the comment.
 	tokens.emplace_back(GetCurrenToken());
 
@@ -333,7 +366,7 @@ void Lexer::LexComment(std::vector<Token>& tokens) noexcept
 
 	for (;;)
 	{
-		if (Accept(endComment, 2))
+		if (Accept(GetEndCommentRegex(), 2))
 		{
 			while (Accept('>'))
 			{
@@ -346,7 +379,7 @@ void Lexer::LexComment(std::vector<Token>& tokens) noexcept
 				return;
 			}
 		}
-		else if (Accept(beginComment, 2))
+		else if (Accept(GetBeginCommentRegex(), 2))
 		{
 			// Nested comment.
 
@@ -392,13 +425,10 @@ void Lexer::LexWhitespace(std::vector<Token>& tokens) noexcept
 
 void Lexer::LexPrimitiveType(std::vector<Token>& tokens) noexcept
 {
-	static const std::wregex firstChar{ firstCharPattern };
-	static const std::wregex followingChars{ followingCharsPattern };
-
 	std::wstring lexeme;
 	lexeme += characters[Current];
 
-	if (!Expect(firstChar, 1))
+	if (!Expect(GetFirstCharRegex(), 1))
 	{
 		AddError(Error::Code::SyntaxError, L"Invalid primitive type.");
 		return;
@@ -406,7 +436,7 @@ void Lexer::LexPrimitiveType(std::vector<Token>& tokens) noexcept
 
 	lexeme += characters[Current];
 
-	while (Accept(followingChars, 1))
+	while (Accept(GetFollowingCharsRegex(), 1))
 	{
 		lexeme += characters[Current];
 	}
