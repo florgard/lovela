@@ -1,6 +1,5 @@
 #pragma once
-#include "../lovela/ILexer.h"
-#include "../lovela/IParser.h"
+#include "../lovela/Node.h"
 
 class TestingBase
 {

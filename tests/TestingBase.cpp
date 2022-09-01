@@ -1,9 +1,5 @@
 #include "pch.h"
 #include "TestingBase.h"
-#include "../lovela/LexerFactory.h"
-#include "../lovela/ParserFactory.h"
-#include "../lovela/CodeGeneratorFactory.h"
-#include "../lovela/Algorithm.h"
 
 bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const Node& expectedTree)
 {

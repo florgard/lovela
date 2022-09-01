@@ -547,7 +547,7 @@ void CodeGeneratorCpp::FunctionBody(Node& node, Context& context)
 
 		BeginScope();
 
-		stream << Indent() << "context;\n";
+		stream << Indent() << "static_cast<void>(context);\n";
 
 		// Make an indexed reference to the input object and avoid a warning if it's unreferenced.
 		stream << Indent() << "auto& " << LocalVar << ++context.variableIndex << " = in; " << RefVar(LocalVar, context.variableIndex) << ";\n";
@@ -577,7 +577,7 @@ void CodeGeneratorCpp::ImportedFunctionBody(Node& node, Context&, const std::vec
 
 	BeginScope();
 
-	stream << Indent() << "context;\n";;
+	stream << Indent() << "static_cast<void>(context);\n";;
 
 	stream << Indent();
 
