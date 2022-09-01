@@ -189,7 +189,7 @@ bool CodeGenTest::ExportFailure(const char* name, std::wstring_view code, std::w
 	return true;
 }
 
-suite CodeGeneratorCpp_tests = [] {
+suite CodeGeneratorCpp_type_tests = [] {
 	"l_i1"_test = [] { expect(CodeGenTest::Success("l_i1", L"#1 f", L"auto f_f(lovela::context& context, l_i1 in);")); };
 	"l_i8"_test = [] { expect(CodeGenTest::Success("l_i8", L"#8 f", L"auto f_f(lovela::context& context, l_i8 in);")); };
 	"l_i16"_test = [] { expect(CodeGenTest::Success("l_i16", L"#16 f", L"auto f_f(lovela::context& context, l_i16 in);")); };
@@ -203,7 +203,9 @@ suite CodeGeneratorCpp_tests = [] {
 	"l_f16 error"_test = [] { expect(CodeGenTest::Failure("l_f16 error", L"#.16 f", L"auto f_f(lovela::context& context, t_#.16 in);", 1)); };
 	"l_f32"_test = [] { expect(CodeGenTest::Success("l_f32", L"#.32 f", L"auto f_f(lovela::context& context, l_f32 in);")); };
 	"l_f64"_test = [] { expect(CodeGenTest::Success("l_f64", L"#.64 f", L"auto f_f(lovela::context& context, l_f64 in);")); };
+};
 
+suite CodeGeneratorCpp_function_declaration_tests = [] {
 	"trivial function"_test = [] { expect(CodeGenTest::Success("trivial function", L"func",
 		L"template <typename In> auto f_func(lovela::context& context, In in);")); };
 
@@ -224,12 +226,16 @@ template <typename In>
 auto f_func(lovela::context& context, In in)
 { context; auto& v1 = in; static_cast<void>(v1); const auto v2 = v1 + 1; static_cast<void>(v2); return v2; }
 )code")); };
+};
 
+suite CodeGeneratorCpp_function_call_tests = [] {
 	"function call"_test = [] { expect(CodeGenTest::Success("function call", L"[#8] func [#8]: f(1, 'a', g).", LR"code(
 l_i8 f_func(lovela::context& context, l_i8 in)
 { context; auto& v1 = in; static_cast<void>(v1); const auto v2 = f_f(context, v1, 1, "a", f_g(context, v1)); static_cast<void>(v2); return v2; }
 )code")); };
+};
 
+suite CodeGeneratorCpp_exported_functions_tests = [] {
 	"exported function none -> none"_test = [] { expect(CodeGenTest::Success("exported function none -> none", L"<- [()] ex [()]:.", LR"code(
 lovela::None f_ex(lovela::context& context, lovela::None in)
 { context; auto& v1 = in; static_cast<void>(v1); return {}; }
@@ -248,7 +254,10 @@ void* ex(void* in)
 	"exported function C"_test = [] { expect(CodeGenTest::ExportSuccess("exported function C", L"<- 'C' #32 ex #32", L"LOVELA_API_C l_i32 ex(l_i32 in)")); };
 	"exported function C++"_test = [] { expect(CodeGenTest::ExportSuccess("exported function C++", L"<- 'C++' #32 ex #32", L"LOVELA_API_CPP l_i32 ex(l_i32 in)")); };
 	"exported function C Dynamic"_test = [] { expect(CodeGenTest::ExportSuccess("exported function C Dynamic", L"<- 'C Dynamic' #32 ex #32", L"LOVELA_API_C LOVELA_API_DYNAMIC_EXPORT l_i32 ex(l_i32 in)")); };
-	"imported functio"_test = [] { expect(CodeGenTest::Success("imported function", L"-> im", L"template <typename In> auto f_im(lovela::context& context, In in) { context; return im(in); }")); };
+};
+
+suite CodeGeneratorCpp_imported_functions_tests = [] {
+	"imported function"_test = [] { expect(CodeGenTest::Success("imported function", L"-> im", L"template <typename In> auto f_im(lovela::context& context, In in) { context; return im(in); }")); };
 	"imported function C"_test = [] { expect(CodeGenTest::Success("imported function C", L"-> 'C' #8 im #8", L"LOVELA_API_C l_i8 im(l_i8 in); l_i8 f_im(lovela::context& context, l_i8 in) { context; return im(in); }")); };
 	"imported function C Dynamic"_test = [] { expect(CodeGenTest::Success("imported function C Dynamic", L"-> 'C Dynamic' #8 im #8", L"LOVELA_API_C LOVELA_API_DYNAMIC_IMPORT l_i8 im(l_i8 in); l_i8 f_im(lovela::context& context, l_i8 in) { context; return im(in); }")); };
 	"imported function Standard C stdio"_test = [] { expect(CodeGenTest::ImportSuccess("imported function Standard C stdio", L"-> 'Standard C' puts", L"stdio.h")); };
@@ -259,7 +268,9 @@ void* ex(void* in)
 	"imported function Standard C++ cstlib"_test = [] { expect(CodeGenTest::ImportSuccess("imported function Standard C++ cstlib", L"-> 'Standard C++' std|atof", L"cstdlib")); };
 	"imported function Standard C++ cstring"_test = [] { expect(CodeGenTest::ImportSuccess("imported function Standard C++ cstring", L"-> 'Standard C++' std|strcpy", L"cstring")); };
 	"imported function Standard C++ cmath"_test = [] { expect(CodeGenTest::ImportSuccess("imported function Standard C++ cmath", L"-> 'Standard C++' std|sin", L"cmath")); };
+};
 
+suite CodeGeneratorCpp_main_function_tests = [] {
 	"main and export"_test = [] { expect(CodeGenTest::Success("main and export", L"<- [#32] ex [#32]: + 1. : 1 ex.", LR"code(
 l_i32 f_ex(lovela::context& context, l_i32 in)
 {
