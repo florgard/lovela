@@ -1,7 +1,0 @@
-#include "pch.h"
-#include "Testing.h"
-#include "../lovela/LexerFactory.h"
-#include "../lovela/ParserFactory.h"
-#include "../lovela/CodeGeneratorFactory.h"
-#include "../lovela/LexerBase.h"
-#include "../lovela/Algorithm.h"
