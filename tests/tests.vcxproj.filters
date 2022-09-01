@@ -13,6 +13,7 @@
     </ClCompile>
     <ClCompile Include="LexerTests.cpp" />
     <ClCompile Include="ParserTests.cpp" />
+    <ClCompile Include="CodeGeneratorCppTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Testing.h" />
