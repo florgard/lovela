@@ -61,17 +61,19 @@ private:
 	bool CheckExportType(TypeSpec& type);
 	bool ConvertPrimitiveType(std::wstring& name);
 
+	using Visitor = std::function<void(CodeGeneratorCpp*, Node&, Context&)>;
+	static std::map<Node::Type, Visitor>& GetVisitors();
+	static std::map<Node::Type, Visitor>& GetInternalVisitors();
+
+	static const TypeSpec& GetNoneType();
+	static const TypeSpec& GetVoidType();
+	static const TypeSpec& GetVoidPtrType();
+
 	std::wostream& stream;
 	std::wstring indent;
 	std::vector<std::wstring> errors;
 	std::vector<std::wstring> headers;
 	std::vector<std::wstring> exports;
-	using Visitor = std::function<void(CodeGeneratorCpp*, Node&, CodeGeneratorCpp::Context&)>;
-	static std::map<Node::Type, Visitor> visitors;
-	static std::map<Node::Type, Visitor> internalVisitors;
 
-	static const TypeSpec NoneType;
-	static const TypeSpec VoidType;
-	static const TypeSpec VoidPtrType;
 	static constexpr char LocalVar{ 'v' };
 };

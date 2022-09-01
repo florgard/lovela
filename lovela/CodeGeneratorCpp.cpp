@@ -3,25 +3,47 @@
 #include "StandardCDeclarations.h"
 #include "StandardCppDeclarations.h"
 
-std::map<Node::Type, CodeGeneratorCpp::Visitor> CodeGeneratorCpp::visitors
+std::map<Node::Type, CodeGeneratorCpp::Visitor>& CodeGeneratorCpp::GetVisitors()
 {
-	{Node::Type::FunctionDeclaration, &CodeGeneratorCpp::FunctionDeclaration}
-};
+	static std::map<Node::Type, Visitor> visitors {
+		{Node::Type::FunctionDeclaration, &CodeGeneratorCpp::FunctionDeclaration}
+	};
 
-std::map<Node::Type, CodeGeneratorCpp::Visitor> CodeGeneratorCpp::internalVisitors
+	return visitors;
+}
+
+std::map<Node::Type, CodeGeneratorCpp::Visitor>& CodeGeneratorCpp::GetInternalVisitors()
 {
-	{Node::Type::Expression, &CodeGeneratorCpp::Expression},
-	{Node::Type::ExpressionInput, &CodeGeneratorCpp::ExpressionInput},
-	{Node::Type::FunctionCall, &CodeGeneratorCpp::FunctionCall},
-	{Node::Type::BinaryOperation, &CodeGeneratorCpp::BinaryOperation},
-	{Node::Type::Literal, &CodeGeneratorCpp::Literal},
-	{Node::Type::Tuple, &CodeGeneratorCpp::Tuple},
-	{Node::Type::VariableReference, &CodeGeneratorCpp::VariableReference},
-};
+	static std::map<Node::Type, Visitor> visitors {
+		{Node::Type::Expression, &CodeGeneratorCpp::Expression},
+		{Node::Type::ExpressionInput, &CodeGeneratorCpp::ExpressionInput},
+		{Node::Type::FunctionCall, &CodeGeneratorCpp::FunctionCall},
+		{Node::Type::BinaryOperation, &CodeGeneratorCpp::BinaryOperation},
+		{Node::Type::Literal, &CodeGeneratorCpp::Literal},
+		{Node::Type::Tuple, &CodeGeneratorCpp::Tuple},
+		{Node::Type::VariableReference, &CodeGeneratorCpp::VariableReference},
+	};
 
-const TypeSpec CodeGeneratorCpp::NoneType{ .name = L"lovela::None" };
-const TypeSpec CodeGeneratorCpp::VoidType{ .name = L"void" };
-const TypeSpec CodeGeneratorCpp::VoidPtrType{ .name = L"void*" };
+	return visitors;
+}
+
+const TypeSpec& CodeGeneratorCpp::GetNoneType()
+{
+	static TypeSpec t{ .name = L"lovela::None" };
+	return t;
+}
+
+const TypeSpec& CodeGeneratorCpp::GetVoidType()
+{
+	static TypeSpec t{ .name = L"void" };
+	return t;
+}
+
+const TypeSpec& CodeGeneratorCpp::GetVoidPtrType()
+{
+	static TypeSpec t{ .name = L"void*" };
+	return t;
+}
 
 CodeGeneratorCpp::CodeGeneratorCpp(std::wostream& stream) : stream(stream)
 {
@@ -29,8 +51,9 @@ CodeGeneratorCpp::CodeGeneratorCpp(std::wostream& stream) : stream(stream)
 
 void CodeGeneratorCpp::Visit(Node& node)
 {
-	auto iter = visitors.find(node.type);
-	if (iter != visitors.end())
+	auto& v = GetVisitors();
+	auto iter = v.find(node.type);
+	if (iter != v.end())
 	{
 		Context context;
 		iter->second(this, node, context);
@@ -39,8 +62,9 @@ void CodeGeneratorCpp::Visit(Node& node)
 
 void CodeGeneratorCpp::Visit(Node& node, Context& context)
 {
-	auto iter = internalVisitors.find(node.type);
-	if (iter != internalVisitors.end())
+	auto& v = GetInternalVisitors();
+	auto iter = v.find(node.type);
+	if (iter != v.end())
 	{
 		iter->second(this, node, context);
 	}
@@ -86,7 +110,7 @@ void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
 	}
 	else if (node.outType.None())
 	{
-		outType = NoneType;
+		outType = GetNoneType();
 	}
 	else
 	{
@@ -100,7 +124,7 @@ void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
 	}
 	else if (inType.None())
 	{
-		parameters.emplace_back(std::make_pair(NoneType.name, L"in"));
+		parameters.emplace_back(std::make_pair(GetNoneType().name, L"in"));
 	}
 	else
 	{
@@ -172,7 +196,7 @@ void CodeGeneratorCpp::MainFunctionDeclaration(Node& node, Context& context)
 		node.outType.SetNone();
 	}
 
-	stream << NoneType.name << ' ' << "lovela::main(lovela::context& context, " << NoneType.name << " in)";
+	stream << GetNoneType().name << ' ' << "lovela::main(lovela::context& context, " << GetNoneType().name << " in)";
 	FunctionBody(node, context);
 	stream << '\n';
 }
@@ -181,7 +205,7 @@ bool CodeGeneratorCpp::CheckExportType(TypeSpec& type)
 {
 	if (type.Any())
 	{
-		type = VoidPtrType;
+		type = GetVoidPtrType();
 	}
 	else if (!ConvertPrimitiveType(type.name))
 	{
@@ -308,7 +332,7 @@ void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
 
 	if (outType.None())
 	{
-		outType = VoidType;
+		outType = GetVoidType();
 	}
 	else if (!CheckExportType(outType))
 	{
@@ -379,7 +403,7 @@ void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
 
 	if (inType.None())
 	{
-		stream << Indent() << NoneType.name << " in;\n";
+		stream << Indent() << GetNoneType().name << " in;\n";
 	}
 
 	// Call the actual function
@@ -451,7 +475,7 @@ void CodeGeneratorCpp::ImportedFunctionDeclaration(Node& node, Context&)
 
 	if (outType.None())
 	{
-		outType = VoidType;
+		outType = GetVoidType();
 	}
 	else if (!CheckExportType(outType))
 	{
