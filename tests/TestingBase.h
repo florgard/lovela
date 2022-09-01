@@ -5,10 +5,6 @@
 class TestingBase
 {
 public:
-	static void TestCodeGenerator(const char* name, std::wstring_view code, std::wstring_view cppCode, int expectedErrors = 0);
-	static void TestCodeGeneratorImport(const char* name, std::wstring_view code, std::wstring_view cppCode, int expectedErrors = 0);
-	static void TestCodeGeneratorExport(const char* name, std::wstring_view code, std::wstring_view cppCode, int expectedErrors = 0);
-
 	static void PrintTree(const Node& tree) { int i{}; PrintTree(i, tree, {}); }
 
 protected:
