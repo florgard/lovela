@@ -5,7 +5,6 @@
 class TestingBase
 {
 public:
-	static std::unique_ptr<Node> TestParser(const char* name, std::wstring_view code, const Node& expectedTree, const std::vector<IParser::Error>& expectedErrors = {});
 	static void TestCodeGenerator(const char* name, std::wstring_view code, std::wstring_view cppCode, int expectedErrors = 0);
 	static void TestCodeGeneratorImport(const char* name, std::wstring_view code, std::wstring_view cppCode, int expectedErrors = 0);
 	static void TestCodeGeneratorExport(const char* name, std::wstring_view code, std::wstring_view cppCode, int expectedErrors = 0);

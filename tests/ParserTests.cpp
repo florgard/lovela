@@ -202,3 +202,153 @@ suite parser_import_export_tests = [] {
 		));
 	};
 };
+
+suite parser_function_namespace_tests = [] {
+	"function with 1 namespace"_test = [] {
+		expect(ParserTest::Success("function with 1 namespace", 
+			L"namespace|func", 
+			Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .nameSpace{ L"namespace" } }));
+	};
+	"function with 2 namespaces"_test = [] {
+		expect(ParserTest::Success("function with 2 namespaces",
+			L"namespace1|namespaceN|func",
+			Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .nameSpace{ L"namespace1", L"namespaceN" } }));
+	};
+};
+
+suite parser_binary_operator_tests = [] {
+	"binary operator"_test = [] {
+		expect(ParserTest::Success("binary operator",
+			L"<(operand)",
+			Node{ .type = Node::Type::FunctionDeclaration, .value = L"<",
+			.parameters{make<VariableDeclaration>::shared({.name = L"operand"})}
+			}
+		));
+	};
+	"binary operator with namespace"_test = [] {
+		expect(ParserTest::Success("binary operator with namespace",
+			L"namespace|< (operand)",
+			Node{ .type = Node::Type::FunctionDeclaration, .value = L"<", .nameSpace{ L"namespace" },
+			.parameters{make<VariableDeclaration>::shared({.name = L"operand"})}
+			}
+		));
+	};
+	"invalid binary operator as namespace"_test = [] {
+		auto f2 = Node{ .type = Node::Type::FunctionDeclaration, .value = L"<", .nameSpace{ L"namespace1" } };
+		auto f1 = Node{ .type = Node::Type::FunctionDeclaration, .value = L"namespace2",
+			.parameters{make<VariableDeclaration>::shared({.name = L"operand"})},
+			.right = make<Node>::unique(f2)
+		};
+		expect(ParserTest::Failure("invalid binary operator as namespace",
+			L"namespace1|<|namespace2 (operand)",
+			f1,
+			{ IParser::Error{.code = IParser::Error::Code::ParseError } }
+		));
+	};
+};
+
+suite parser_function_body_tests = [] {
+	"function with trivial body"_test = [] {
+		auto fc = Node{ .type = Node::Type::FunctionCall, .value = L"body", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = make<Node>::unique(fc) };
+		expect(ParserTest::Success("function with trivial body",
+			L"func: body.",
+			fd));
+	};
+
+	"function with 2 chained calls"_test = [] {
+		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = L"inner", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = L"outer", .left = make<Node>::unique(fc2) };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = make<Node>::unique(fc1) };
+		expect(ParserTest::Success("function with 2 chained calls",
+			L"func: inner outer.",
+			fd));
+	};
+
+	"function with group"_test = [] {
+		auto fc = Node{ .type = Node::Type::FunctionCall, .value = L"body", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = make<Node>::unique(fc) };
+		expect(ParserTest::Success("function with group",
+			L"func: (body).",
+			fd));
+		expect(ParserTest::Success("function with group 2",
+			L"func: (body.).",
+			fd));
+			};
+
+	"function with compound expression"_test = [] {
+		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = L"expr2", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = L"expr1", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}), .right = make<Node>::unique(fc2) };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = make<Node>::unique(fc1) };
+		expect(ParserTest::Success("function with compound expression",
+			L"func: (expr1. expr2).",
+			fd));
+	};
+
+	"function with tuple"_test = [] {
+		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = L"expr2", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = L"expr1", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto t = Node{ .type = Node::Type::Tuple, .left = make<Node>::unique(fc1), .right = make<Node>::unique(fc2) };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = make<Node>::unique(t) };
+		expect(ParserTest::Success("function with tuple",
+			L"func: (expr1, expr2).",
+			fd));
+	};
+
+	"function with triple"_test = [] {
+		auto fc3 = Node{ .type = Node::Type::FunctionCall, .value = L"expr3", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = L"expr2", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto t2 = Node{ .type = Node::Type::Tuple, .left = make<Node>::unique(fc2), .right = make<Node>::unique(fc3) };
+		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = L"expr1", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto t1 = Node{ .type = Node::Type::Tuple, .left = make<Node>::unique(fc1), .right = make<Node>::unique(t2) };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = make<Node>::unique(t1) };
+		expect(ParserTest::Success("function with triple",
+			L"func: (expr1, expr2, expr3).",
+			fd));
+	};
+
+	"function with tuple and compound expression"_test = [] {
+		auto fc3 = Node{ .type = Node::Type::FunctionCall, .value = L"expr2b", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = L"expr2a", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}), .right = make<Node>::unique(fc3) };
+		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = L"expr1", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto t = Node{ .type = Node::Type::Tuple, .left = make<Node>::unique(fc1), .right = make<Node>::unique(fc2) };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = make<Node>::unique(t) };
+		expect(ParserTest::Success("function with tuple and compound expression",
+			L"func: (expr1, expr2a. expr2b).",
+			fd));
+	};
+
+	"function with parameters and body"_test = [] {
+		auto fc = Node{ .type = Node::Type::FunctionCall, .value = L"doWork", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .parameters{
+				make<VariableDeclaration>::shared({.name = L"name_only"}),
+				make<VariableDeclaration>::shared({.name = L"name", .type{.name = L"type"}}),
+				make<VariableDeclaration>::shared({.type{.name = L"type_only"}})
+			}, .left = make<Node>::unique(fc) };
+		expect(ParserTest::Success("function with parameters and body",
+			L"func(name_only, name [type], [type_only]): doWork.",
+			fd));
+	};
+
+	"function without object but with parameters and body"_test = [] {
+		auto fc = Node{ .type = Node::Type::FunctionCall, .value = L"doWork", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .inType = TypeSpec::NoneType(), .parameters{
+				make<VariableDeclaration>::shared({.name = L"name_only"}),
+				make<VariableDeclaration>::shared({.name = L"name", .type{.name = L"type"}}),
+				make<VariableDeclaration>::shared({.type{.name = L"type_only"}})
+			}, .left = make<Node>::unique(fc) };
+		expect(ParserTest::Success("function without object but with parameters and body",
+			L"[()] func(name_only, name [type], [type_only]): doWork.",
+			fd));
+	};
+
+	"binary operation with function call"_test = [] {
+		auto l = Node{ .type = Node::Type::Literal, .value = L"1", .outType{.name = L"#32"} };
+		auto fc = Node{ .type = Node::Type::FunctionCall, .value = L"call", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto bo = Node{ .type = Node::Type::BinaryOperation, .value = L"+", .left = make<Node>::unique(fc), .right = make<Node>::unique(l) };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .left = make<Node>::unique(bo) };
+		expect(ParserTest::Success("binary operation with function call",
+			L"func: call + 1.",
+			fd));
+	};
+};

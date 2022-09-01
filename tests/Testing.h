@@ -3,6 +3,5 @@
 
 class Testing : public TestingBase
 {
-	void RunParserTests();
 	void RunCodeGeneratorTests();
 };

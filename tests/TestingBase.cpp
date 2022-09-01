@@ -5,60 +5,6 @@
 #include "../lovela/CodeGeneratorFactory.h"
 #include "../lovela/Algorithm.h"
 
-std::unique_ptr<Node> TestingBase::TestParser(const char* name, std::wstring_view code, const Node& expectedTree, const std::vector<IParser::Error>& expectedErrors)
-{
-	std::wistringstream input(std::wstring(code.data(), code.size()));
-	auto lexer = LexerFactory::Create(input);
-	auto parser = ParserFactory::Create(lexer->Lex());
-	auto tree = parser->Parse();
-
-	bool success = !!tree;
-
-	if (!success)
-	{
-		std::wcerr << "Parser test \"" << name << "\" error: The parser didn't yield an AST.\n\nExpected:\n";
-		PrintTree(expectedTree);
-	}
-	else
-	{
-		int index = 0;
-		success = TestAST(index, name, *tree, expectedTree);
-
-		if (!success)
-		{
-			std::wcerr << "Parser test \"" << name << "\" error: AST mismatch.\n\nActual:\n";
-			PrintTree(*tree);
-			std::wcerr << "\nExpected:\n";
-			PrintTree(expectedTree);
-		}
-	}
-
-	auto& errors = parser->GetErrors();
-	const auto actualCount = errors.size();
-	const auto expectedCount = expectedErrors.size();
-	const auto count = std::max(actualCount, expectedCount);
-
-	for (int i = 0; i < count; i++)
-	{
-		const auto actual = i < actualCount ? errors[i] : IParser::Error{};
-		const auto expected = i < expectedCount ? expectedErrors[i] : IParser::Error{};
-		if (actual.code != expected.code)
-		{
-			success = false;
-			std::wcerr << GetIncorrectErrorCodeMessage("Parser", name, i, actual.code, expected.code) << GetErrorMessage(actual);
-		}
-		else if (expected.token.line && actual.token.line != expected.token.line)
-		{
-			success = false;
-			std::wcerr << GetIncorrectErrorLineMessage("Parser", name, i, actual.token.line, expected.token.line) << GetErrorMessage(actual);
-		}
-	}
-
-	assert(success);
-
-	return tree;
-}
-
 bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const Node& expectedTree)
 {
 	if (tree != expectedTree)
