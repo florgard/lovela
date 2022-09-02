@@ -12,10 +12,10 @@ namespace lovela
 	namespace detail
 	{
 		template <typename Item, typename Tuple, size_t index>
-		static constexpr bool is_same_tuple_element = std::is_same_v<Item, std::tuple_element<index, Tuple>::type>;
+		inline constexpr bool is_same_tuple_element = std::is_same_v<Item, std::tuple_element<index, Tuple>::type>;
 
 		template <size_t index>
-		static constexpr size_t rebase_v = index - 1;
+		inline constexpr size_t rebase_v = index - 1;
 
 		[[nodiscard]] constexpr size_t rebase(size_t index, size_t size)
 		{
