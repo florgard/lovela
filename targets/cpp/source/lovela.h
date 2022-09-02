@@ -176,7 +176,7 @@ namespace lovela
 			return error(ex.what(), typeid(T).name(), ex, code);
 		}
 
-		template <int index> auto& select() { static_assert(false, "invalid select index"); return *this; };
+		template <int index> auto& select() = delete;
 		template <> auto& select<1>() { return message; }
 		template <> auto& select<2>() { return type; }
 		template <> auto& select<3>() { return code; }
@@ -189,7 +189,7 @@ namespace lovela
 		streams streams;
 		std::vector<std::string> parameters;
 
-		template <int index> auto& select() { static_assert(false, "invalid select index"); return *this; };
+		template <int index> auto& select() = delete;
 		// Index 1 is reserved for function input.
 		template <> auto& select<2>() { return error; }
 		template <> auto& select<3>() { return streams; }
