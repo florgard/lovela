@@ -4,13 +4,6 @@
 #pragma warning(push)
 #pragma warning(disable:4834)
 
-TEST(Variable, SetGetSize) {
-	lovela::variable<int> obj1;
-	EXPECT_NO_THROW(obj1.set_size(1));
-	EXPECT_THROW(obj1.set_size(2), std::out_of_range);
-	EXPECT_EQ(obj1.get_size(), 1);
-}
-
 TEST(Variable, Types) {
 	lovela::variable<std::string> obj1;
 	lovela::variable<int> obj2;

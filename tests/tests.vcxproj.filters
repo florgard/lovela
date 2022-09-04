@@ -14,6 +14,7 @@
     <ClCompile Include="ParserTests.cpp" />
     <ClCompile Include="CodeGeneratorCppTests.cpp" />
     <ClCompile Include="CodeGeneratorCppProgramTests.cpp" />
+    <ClCompile Include="TargetsCppLovelaTypes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestingBase.h" />
