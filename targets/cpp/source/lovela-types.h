@@ -12,7 +12,7 @@ namespace lovela
 	namespace detail
 	{
 		template <typename Item, typename Tuple, size_t index>
-		inline constexpr bool is_same_tuple_element = std::is_same_v<Item, std::tuple_element<index, Tuple>::type>;
+		inline constexpr bool is_same_tuple_element = std::is_same_v<Item, std::tuple_element_t<index, Tuple>>;
 
 		template <size_t index>
 		inline constexpr size_t rebase_v = index - 1;
@@ -27,7 +27,7 @@ namespace lovela
 			return index - 1;
 		}
 
-		template <size_t index, typename Tuple, typename Item = std::tuple_element<rebase_v<index>, Tuple>::type>
+		template <size_t index, typename Tuple, typename Item = std::tuple_element_t<rebase_v<index>, Tuple>>
 		[[nodiscard]] constexpr auto& checked_tuple_get(Tuple& tuple)
 		{
 			static constexpr size_t rebased = rebase_v<index>;
@@ -215,7 +215,7 @@ namespace lovela
 
 	public:
 		template <size_t index>
-		using item_type = std::tuple_element<detail::rebase_v<index>, tuple_t>::type;
+		using item_type = std::tuple_element_t<detail::rebase_v<index>, tuple_t>;
 
 		[[nodiscard]] constexpr size_t get_size() const { return _size; }
 		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("a fixed tuple cannot be resized"); } }
@@ -255,7 +255,7 @@ namespace lovela
 
 	public:
 		template <size_t index>
-		using item_type = std::tuple_element<detail::rebase_v<index>, tuple_t>::type;
+		using item_type = std::tuple_element_t<detail::rebase_v<index>, tuple_t>;
 
 		[[nodiscard]] constexpr size_t get_size() const { return _size; }
 		constexpr void set_size(size_t size) { if (size != _size) { throw std::out_of_range("a named tuple cannot be resized"); } }
