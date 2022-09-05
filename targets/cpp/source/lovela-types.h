@@ -108,15 +108,15 @@ namespace lovela
 
 		template <size_t index> [[nodiscard]] constexpr auto& get_item() { return get_item(index); }
 		template <size_t index> constexpr void get_item(Item& item) { get_item(index, item); }
-		[[nodiscard]] constexpr auto& get_item(size_t index) { rebase(index); return _item; }
-		constexpr void get_item(size_t index, Item& item) { rebase(index); item = _item; }
+		[[nodiscard]] constexpr auto& get_item(size_t index) { static_cast<void>(rebase(index)); return _item; }
+		constexpr void get_item(size_t index, Item& item) { static_cast<void>(rebase(index)); item = _item; }
 		[[nodiscard]] constexpr auto& get_item(std::u8string_view name) { return get_item(get_index(name)); }
 		constexpr void get_item(std::u8string_view name, Item& item) { get_item(get_index(name), item); }
 
 		template <size_t index> constexpr void set_item(const Item& item) { set_item(index, item); }
 		template <size_t index> constexpr void set_item(Item&& item) { set_item(index, std::move(item)); }
-		constexpr void set_item(size_t index, const Item& item) { rebase(index); _item = item; }
-		constexpr void set_item(size_t index, Item&& item) { rebase(index); _item = std::move(item); }
+		constexpr void set_item(size_t index, const Item& item) { static_cast<void>(rebase(index)); _item = item; }
+		constexpr void set_item(size_t index, Item&& item) { static_cast<void>(rebase(index)); _item = std::move(item); }
 		constexpr void set_item(std::u8string_view name, const Item& item) { set_item(get_index(name), item); }
 		constexpr void set_item(std::u8string_view name, Item&& item) { set_item(get_index(name), std::move(item)); }
 
