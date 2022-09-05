@@ -7,6 +7,12 @@
   * Code generation on the fly? What about identifier and function signature validation?
 * Bind operator
 * Built-in comparison, arithmetic, bitwise operators
+* Standard library namespaces
+** mem
+** io
+** str
+** re
+** type
 
 ## Medium
 
@@ -31,3 +37,4 @@
   * Dynamic named array
   * Dynamic tuple
   * Dynamic named tuple
+* Standard library
