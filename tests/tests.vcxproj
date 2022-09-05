@@ -161,6 +161,7 @@
     <ClCompile Include="TargetsCppLovelaTypes.cpp" />
     <ClCompile Include="TargetsCppLovelaTypesArrays.cpp" />
     <ClCompile Include="TargetsCppLovelaTypesTuples.cpp" />
+    <ClCompile Include="TargetsCppMain.cpp" />
     <ClCompile Include="TestingBase.cpp" />
     <ClCompile Include="tests.cpp" />
     <ClCompile Include="TokenTests.cpp" />
