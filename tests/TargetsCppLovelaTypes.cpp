@@ -151,6 +151,28 @@ suite FixedTuple = [] {
 		expect(throws<std::out_of_range>([&] { static_cast<void>(obj1.get_index(u8"0")); }));
 		expect(throws<std::out_of_range>([&] { static_cast<void>(obj1.get_index(u8"4")); }));
 	};
+
+	"Combine"_test = [] {
+		using v1_t = lovela::fixed_tuple<std::tuple<int, double, std::string>>;
+		v1_t v1{ {10, 5.25, "Boots"} };
+		using v2_t = lovela::fixed_tuple<std::tuple<double, double, double>>;
+		v2_t v2{ {7.75, 1.25, 0.1} };
+
+		using v3_t = lovela::fixed_tuple<std::tuple<v2_t::item_type<1>, v1_t::item_type<3>, v1_t::item_type<1>>>;
+		v3_t v3{ { v2.get_item<1>(), v1.get_item<3>(), v1.get_item<1>()} };
+
+		expect(v3.get_item<1>() == 7.75);
+		expect(v3.get_item<2>() == "Boots");
+		expect(v3.get_item<3>() == 10);
+	};
+};
+
+suite Array = [] {
+	"ConvertArrayToTuple"_test = [] {
+		std::array<int, 3> obj1{ 5, 4, 10 };
+		auto obj2 = lovela::detail::as_tuple(std::move(obj1));
+		expect(std::get<1>(obj2) == 4);
+	};
 };
 
 struct l_tuple_names_1
@@ -363,5 +385,29 @@ suite NamedTuple = [] {
 		expect(v3.get_item<1>() == 7.75);
 		expect(v3.get_item<2>() == "Boots");
 		expect(v3.get_item<3>() == 10);
+	};
+
+	"ConvertToFixedTuple"_test =  [] {
+		int r1{};
+		lovela::to_fixed_tuple(6).get_item<1>(r1);
+		expect(r1 == 6);
+		lovela::to_fixed_tuple(6, 23).get_item<2>(r1);
+		expect(r1 == 23);
+
+		double r2{};
+		expect(nothrow([&] { static_cast<void>(lovela::to_fixed_tuple(6, 23.5).get_item(2, r2)); }));
+		expect(r2 == 23.5);
+
+		auto t = std::make_tuple(12.3, 45);
+		expect(nothrow([&] { static_cast<void>(lovela::to_fixed_tuple(std::move(t)).get_item(2, r1)); }));
+		expect(r1 == 45);
+
+		auto ft = lovela::to_fixed_tuple(6, 1.5);
+		expect(nothrow([&] { static_cast<void>(lovela::to_fixed_tuple(std::move(ft)).get_item(2, r2)); }));
+		expect(r2 == 1.5);
+
+		lovela::named_tuple<std::tuple<int, double, std::string>, l_tuple_names_1> nt{ {10, 5.25, "Boots"} };
+		expect(nothrow([&] { static_cast<void>(lovela::to_fixed_tuple(std::move(nt)).get_item(2, r2)); }));
+		expect(r2 == 5.25);
 	};
 };

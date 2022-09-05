@@ -170,50 +170,6 @@ TEST(FixedArray, GetIndex) {
 
 #pragma warning(pop) // 4834
 
-TEST(Convert, ArrayToTuple) {
-	std::array<int, 3> obj1{ 5, 4, 10 };
-	auto obj2 = lovela::detail::as_tuple(std::move(obj1));
-	EXPECT_EQ(std::get<1>(obj2), 4);
-}
-
-TEST(Convert, ToFixedTuple) {
-	int r1{};
-	lovela::to_fixed_tuple(6).get_item<1>(r1);
-	EXPECT_EQ(r1, 6);
-	lovela::to_fixed_tuple(6, 23).get_item<2>(r1);
-	EXPECT_EQ(r1, 23);
-
-	double r2{};
-	EXPECT_NO_THROW(lovela::to_fixed_tuple(6, 23.5).get_item(2, r2));
-	EXPECT_EQ(r2, 23.5);
-
-	auto t = std::make_tuple(12.3, 45);
-	EXPECT_NO_THROW(lovela::to_fixed_tuple(std::move(t)).get_item(2, r1));
-	EXPECT_EQ(r1, 45);
-
-	auto ft = lovela::to_fixed_tuple(6, 1.5);
-	EXPECT_NO_THROW(lovela::to_fixed_tuple(std::move(ft)).get_item(2, r2));
-	EXPECT_EQ(r2, 1.5);
-
-	lovela::named_tuple<std::tuple<int, double, std::string>, l_tuple_names_1> nt{ {10, 5.25, "Boots"} };
-	EXPECT_NO_THROW(lovela::to_fixed_tuple(std::move(nt)).get_item(2, r2));
-	EXPECT_EQ(r2, 5.25);
-}
-
-TEST(FixedTuple, Combine) {
-	using v1_t = lovela::fixed_tuple<std::tuple<int, double, std::string>>;
-	v1_t v1{ {10, 5.25, "Boots"} };
-	using v2_t = lovela::fixed_tuple<std::tuple<double, double, double>>;
-	v2_t v2{ {7.75, 1.25, 0.1} };
-
-	using v3_t = lovela::fixed_tuple<std::tuple<v2_t::item_type<1>, v1_t::item_type<3>, v1_t::item_type<1>>>;
-	v3_t v3{ { v2.get_item<1>(), v1.get_item<3>(), v1.get_item<1>()} };
-
-	EXPECT_EQ(v3.get_item<1>(), 7.75);
-	EXPECT_EQ(v3.get_item<2>(), "Boots");
-	EXPECT_EQ(v3.get_item<3>(), 10);
-}
-
 TEST(Streams, SimpleOut) {
 	std::wostringstream r1;
 	auto* buf = std::wcout.rdbuf(r1.rdbuf());
