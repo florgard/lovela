@@ -178,6 +178,11 @@ struct l_tuple_names_restTotal
 	static constexpr auto values = std::array<std::u8string_view, 2>{ u8"Rest", u8"Total" };
 };
 
+struct l_tuple_names_combined
+{
+	static constexpr auto values = std::array<std::u8string_view, 3>{ l_tuple_names_2::values[0], l_tuple_names_1::values[0], l_tuple_names_1::values[2] };
+};
+
 suite NamedTuple = [] {
 	"InitAndRange"_test = [] {
 		lovela::named_tuple<std::tuple<int, double, std::string>, l_tuple_names_1> obj1;
@@ -326,5 +331,37 @@ suite NamedTuple = [] {
 		expect(r1 == 222);
 		expect(nothrow([&] { static_cast<void>(restTotal.get_item(1, r1)); }));
 		expect(r1 == 200);
+	};
+
+	"Concatenate"_test = [] {
+		lovela::named_tuple<std::tuple<int, double, std::string>, l_tuple_names_1> obj1{ {10, 5.25, "Boots"} };
+		lovela::named_tuple<std::tuple<double, double, double>, l_tuple_names_2> obj2{ {7.75, 1.25, 0.1} };
+
+		auto cat = std::tuple_cat(obj1.as_tuple(), obj2.as_tuple());
+		lovela::named_tuple<decltype(cat), l_tuple_names_12> obj12{ {std::move(cat)} };
+
+		double r1{};
+		expect(nothrow([&] { static_cast<void>(obj12.get_item(2, r1)); }));
+		expect(r1 == 5.25);
+		expect(nothrow([&] { static_cast<void>(obj12.get_item(5, r1)); }));
+		expect(r1 == 1.25);
+		expect(nothrow([&] { static_cast<void>(obj12.get_item(u8"Price", r1)); }));
+		expect(r1 == 5.25);
+		expect(nothrow([&] { static_cast<void>(obj12.get_item(u8"Tax", r1)); }));
+		expect(r1 == 1.25);
+	};
+
+	"Combine"_test = [] {
+		using v1_t = lovela::fixed_tuple<std::tuple<int, double, std::string>>;
+		v1_t v1{ {10, 5.25, "Boots"} };
+		using v2_t = lovela::fixed_tuple<std::tuple<double, double, double>>;
+		v2_t v2{ {7.75, 1.25, 0.1} };
+
+		using v3_t = lovela::named_tuple<std::tuple<v2_t::item_type<1>, v1_t::item_type<3>, v1_t::item_type<1>>, l_tuple_names_combined>;
+		v3_t v3{ { v2.get_item<1>(), v1.get_item<3>(), v1.get_item<1>()} };
+
+		expect(v3.get_item<1>() == 7.75);
+		expect(v3.get_item<2>() == "Boots");
+		expect(v3.get_item<3>() == 10);
 	};
 };
