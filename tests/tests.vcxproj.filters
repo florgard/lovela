@@ -19,6 +19,7 @@
     <ClCompile Include="TargetsCppLovelaTypesArrays.cpp" />
     <ClCompile Include="TargetsCppLovela.cpp" />
     <ClCompile Include="TargetsCppErrorHandling.cpp" />
+    <ClCompile Include="TargetsCppFunctionCalls.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestingBase.h" />
