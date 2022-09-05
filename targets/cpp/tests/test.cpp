@@ -8,51 +8,7 @@
 
 #pragma warning(pop) // 4834
 
-TEST(Streams, SimpleOut) {
-	std::wostringstream r1;
-	auto* buf = std::wcout.rdbuf(r1.rdbuf());
-	lovela::streams streams;
-	streams.select(2).write("abc");
-	EXPECT_STREQ(r1.str().c_str(), L"abc");
-	std::wcout.rdbuf(buf);
-}
 
-TEST(Streams, Utf8Out) {
-	std::wostringstream r1;
-	auto* buf = std::wcout.rdbuf(r1.rdbuf());
-	lovela::streams streams;
-	streams.select(2).write("100\xE2\x82\xAC");
-	EXPECT_STREQ(r1.str().c_str(), L"100€");
-	std::wcout.rdbuf(buf);
-}
-
-TEST(LovelaDataStructures, Error) {
-	lovela::error e1("msg");
-	lovela::error e2("msg", 2);
-	lovela::error e3("msg", "type", 3);
-	std::runtime_error rte("rte");
-	lovela::error e4 = lovela::error::make_error(rte, 4);
-
-	EXPECT_EQ(e1.code, 0);
-	EXPECT_EQ(e1.message, "msg");
-	EXPECT_EQ(e2.code, 2);
-	EXPECT_EQ(e3.type, "type");
-	EXPECT_EQ(e3.code, 3);
-	EXPECT_EQ(e4.message, "rte");
-	EXPECT_EQ(e4.type, typeid(std::runtime_error).name());
-	EXPECT_EQ(e4.code, 4);
-	EXPECT_STREQ(e4.inner.what(), "rte");
-	EXPECT_EQ(e4.select<1>(), "rte");
-	EXPECT_EQ(e4.select<2>(), typeid(std::runtime_error).name());
-	EXPECT_EQ(e4.select<3>(), 4);
-	EXPECT_STREQ(e4.select<4>().what(), "rte");
-}
-
-TEST(LovelaDataStructures, Context) {
-	lovela::context context{ .error{"msg"}, .parameters{"param"} };
-	EXPECT_EQ(context.select<2>().select<1>(), "msg");
-	EXPECT_EQ(context.select<4>().front(), "param");
-}
 
 auto f_ReturnInput(lovela::context& context, const auto& in)
 {

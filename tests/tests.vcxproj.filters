@@ -17,6 +17,7 @@
     <ClCompile Include="TargetsCppLovelaTypes.cpp" />
     <ClCompile Include="TargetsCppLovelaTypesTuples.cpp" />
     <ClCompile Include="TargetsCppLovelaTypesArrays.cpp" />
+    <ClCompile Include="TargetsCppLovela.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestingBase.h" />
