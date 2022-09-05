@@ -72,3 +72,12 @@ suite Variable = [] {
 		expect(throws<std::out_of_range>([&] { static_cast<void>(obj1.get_index(u8"2")); }));
 	};
 };
+
+suite IndexRebase = [] {
+	"TestRebaseAndRange"_test = [] {
+		expect(lovela::detail::rebase(1, 10) == 0);
+		expect(lovela::detail::rebase(10, 10) == 9);
+		expect(throws<std::out_of_range>([&] { static_cast<void>(lovela::detail::rebase(0, 10)); }));
+		expect(throws<std::out_of_range>([&] { static_cast<void>(lovela::detail::rebase(11, 10)); }));
+	};
+};

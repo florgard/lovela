@@ -19,13 +19,6 @@ struct l_tuple_names_12
 	static constexpr auto values = lovela::detail::array_cat(l_tuple_names_1::values, l_tuple_names_2::values);
 };
 
-TEST(IndexRebase, TestRebaseAndRange) {
-	EXPECT_EQ(lovela::detail::rebase(1, 10), 0);
-	EXPECT_EQ(lovela::detail::rebase(10, 10), 9);
-	EXPECT_THROW(static_cast<void>(lovela::detail::rebase(0, 10)), std::out_of_range);
-	EXPECT_THROW(static_cast<void>(lovela::detail::rebase(11, 10)), std::out_of_range);
-}
-
 TEST(FixedTuple, InitAndRange) {
 	lovela::fixed_tuple<std::tuple<int, double, std::string>> obj1;
 	EXPECT_NO_THROW(obj1.set_size(3));
