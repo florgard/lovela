@@ -4,20 +4,26 @@
 ## Comments
 
 `<< this is a single line comment >>`
-`<<
+```
+<<
 this is a 
 multi line comment
->>`
-`<< comments
+>>
+```
+```
+<< comments
 << can << be >>
 nested
->>>>`
+>>>>
+```
 
 ## Strings
 
 `'strings are marked with single quotation marks'`
-`'strings can be 
-multi line'`
+```
+'strings can be 
+multi line'
+```
 `'quotation marks '' are escaped by having two in a row'`
 
 ## Integer types
@@ -39,12 +45,17 @@ For predefined numeric type names, see types in the standard library.
 `in_type function_name out_type : function_definition.`
 
 ## Main function
-### Syntax
-`: definition.`
-### Example
-`-> io/. << import io >>
-: io/print 'Hello, World!'.`
 
+### Syntax
+
+`: definition.`
+
+### Example
+
+```
+-> io/. << import io >>
+: io/print 'Hello, World!'.
+```
 
 # Standard library
 
@@ -94,7 +105,6 @@ Numberic types are implicitly cast if the source type fits in the target type.
 
 ## String
 
-
 # Built-in data structures
 
 ## Variable
@@ -111,7 +121,6 @@ Syntax:
 
 C++ equivalent:
 `std::array`
-
 
 ## Dynamic array
 Dynamic (resizable), homogeneous (single-type) array.
