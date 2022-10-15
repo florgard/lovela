@@ -189,7 +189,7 @@ bool CodeGenTest::ExportFailure(const char* name, std::wstring_view code, std::w
 	return true;
 }
 
-suite CodeGeneratorCpp_type_tests = [] {
+suite CodeGeneratorCpp_function_input_type_tests = [] {
 	"l_i1"_test = [] { 
 		expect(CodeGenTest::Success("l_i1",
 			L"#1 f", 
