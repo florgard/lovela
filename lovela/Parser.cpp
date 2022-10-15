@@ -2,108 +2,117 @@
 #include "Parser.h"
 #include "ParseException.h"
 
-static const std::set<Token::Type>& GetFunctionDeclarationTokens()
+static constexpr std::array<Token::Type, 8> s_FunctionDeclarationTokens
 {
-	static const std::set<Token::Type> tokens
-	{
-		Token::Type::ParenSquareOpen,
-		Token::Type::PrimitiveType,
-		Token::Type::Identifier,
-		Token::Type::OperatorArrow,
-		Token::Type::OperatorArithmetic,
-		Token::Type::OperatorBitwise,
-		Token::Type::OperatorComparison,
-		Token::Type::SeparatorColon,
-	};
+	Token::Type::ParenSquareOpen,
+	Token::Type::PrimitiveType,
+	Token::Type::Identifier,
+	Token::Type::OperatorArrow,
+	Token::Type::OperatorArithmetic,
+	Token::Type::OperatorBitwise,
+	Token::Type::OperatorComparison,
+	Token::Type::SeparatorColon,
+};
 
-	return tokens;
+static constexpr std::array<Token::Type, 2> s_TypeSpecTokens
+{
+	Token::Type::ParenSquareOpen,
+	Token::Type::PrimitiveType,
+};
+
+static constexpr std::array<Token::Type, 3> s_ExternalFunctionDeclarationTokens
+{
+	Token::Type::ParenSquareOpen,
+	Token::Type::PrimitiveType,
+	Token::Type::Identifier,
+};
+
+static constexpr std::array<Token::Type, 3> s_LiteralTokens
+{
+	Token::Type::LiteralInteger,
+	Token::Type::LiteralDecimal,
+	Token::Type::LiteralString,
+};
+
+static constexpr std::array<Token::Type, 4> s_OperandTokens
+{
+	Token::Type::ParenRoundOpen,
+	Token::Type::LiteralInteger,
+	Token::Type::LiteralDecimal,
+	Token::Type::LiteralString,
+};
+
+static constexpr std::array<Token::Type, 3> s_BinaryOperatorTokens
+{
+	Token::Type::OperatorArithmetic,
+	Token::Type::OperatorBitwise,
+	Token::Type::OperatorComparison,
+};
+
+static constexpr std::array<Token::Type, 5> s_OperatorTokens
+{
+	Token::Type::Identifier,
+	Token::Type::OperatorArrow,
+	Token::Type::OperatorArithmetic,
+	Token::Type::OperatorBitwise,
+	Token::Type::OperatorComparison,
+};
+
+static constexpr std::array<Token::Type, 4> s_ExpressionTerminatorTokens
+{
+	Token::Type::End,
+	Token::Type::SeparatorDot,
+	Token::Type::SeparatorComma,
+	Token::Type::ParenRoundClose,
+};
+
+static constexpr static_set<Token::Type, s_FunctionDeclarationTokens.size()> s_FunctionDeclarationTokenSet{ {s_FunctionDeclarationTokens} };
+static constexpr static_set<Token::Type, s_TypeSpecTokens.size()> s_TypeSpecTokenSet{ {s_TypeSpecTokens} };
+static constexpr static_set<Token::Type, s_ExternalFunctionDeclarationTokens.size()> s_ExternalFunctionDeclarationTokenSet{ {s_ExternalFunctionDeclarationTokens} };
+static constexpr static_set<Token::Type, s_LiteralTokens.size()> s_LiteralTokenSet{ {s_LiteralTokens} };
+static constexpr static_set<Token::Type, s_OperandTokens.size()> s_OperandTokenSet{ {s_OperandTokens} };
+static constexpr static_set<Token::Type, s_BinaryOperatorTokens.size()> s_BinaryOperatorTokenSet{ {s_BinaryOperatorTokens} };
+static constexpr static_set<Token::Type, s_OperatorTokens.size()> s_OperatorTokenSet{ {s_OperatorTokens} };
+static constexpr static_set<Token::Type, s_ExpressionTerminatorTokens.size()> s_ExpressionTerminatorTokenSet{ {s_ExpressionTerminatorTokens} };
+
+static constexpr auto& GetFunctionDeclarationTokens()
+{
+	return s_FunctionDeclarationTokenSet;
 }
 
-static const std::set<Token::Type>& GetTypeSpecTokens()
+static constexpr auto& GetTypeSpecTokens()
 {
-	static const std::set<Token::Type> tokens
-	{
-		Token::Type::ParenSquareOpen,
-		Token::Type::PrimitiveType,
-	};
-
-	return tokens;
+	return s_TypeSpecTokenSet;
 }
 
-static const std::set<Token::Type>& GetExternalFunctionDeclarationTokens()
+static constexpr auto& GetExternalFunctionDeclarationTokens()
 {
-	static const std::set<Token::Type> tokens
-	{
-		Token::Type::ParenSquareOpen,
-		Token::Type::PrimitiveType,
-		Token::Type::Identifier,
-	};
-
-	return tokens;
+	return s_ExternalFunctionDeclarationTokenSet;
 }
 
-static const std::set<Token::Type>& GetLiteralTokens()
+static constexpr auto& GetLiteralTokens()
 {
-	static const std::set<Token::Type> tokens
-	{
-		Token::Type::LiteralInteger,
-		Token::Type::LiteralDecimal,
-		Token::Type::LiteralString,
-	};
-
-	return tokens;
+	return s_LiteralTokenSet;
 }
 
-static const std::set<Token::Type>& GetOperandTokens()
+static constexpr auto& GetOperandTokens()
 {
-	static const std::set<Token::Type> tokens
-	{
-		Token::Type::ParenRoundOpen,
-		Token::Type::LiteralInteger,
-		Token::Type::LiteralDecimal,
-		Token::Type::LiteralString,
-	};
-
-	return tokens;
+	return s_OperandTokenSet;
 }
 
-static const std::set<Token::Type>& GetBinaryOperatorTokens()
+static constexpr auto& GetBinaryOperatorTokens()
 {
-	static const std::set<Token::Type> tokens
-	{
-		Token::Type::OperatorArithmetic,
-		Token::Type::OperatorBitwise,
-		Token::Type::OperatorComparison,
-	};
-
-	return tokens;
+	return s_BinaryOperatorTokenSet;
 }
 
-/*static*/ const std::set<Token::Type>& GetOperatorTokens()
+static constexpr auto& GetOperatorTokens()
 {
-	static const std::set<Token::Type> tokens
-	{
-		Token::Type::Identifier,
-		Token::Type::OperatorArrow,
-		Token::Type::OperatorArithmetic,
-		Token::Type::OperatorBitwise,
-		Token::Type::OperatorComparison,
-	};
-
-	return tokens;
+	return s_OperatorTokenSet;
 }
 
-static const std::set<Token::Type>& GetExpressionTerminatorTokens()
+static constexpr auto& GetExpressionTerminatorTokens()
 {
-	static const std::set<Token::Type> tokens
-	{
-		Token::Type::End,
-		Token::Type::SeparatorDot,
-		Token::Type::SeparatorComma,
-		Token::Type::ParenRoundClose,
-	};
-
-	return tokens;
+	return s_ExpressionTerminatorTokenSet;
 }
 
 static const std::set<Node::Type>& GetOperandNodes()

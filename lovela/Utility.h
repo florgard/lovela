@@ -141,3 +141,25 @@ struct static_map
 		return (itr != data.end()) ? itr->second : defaultValue;
 	}
 };
+
+// Usage:
+// static constexpr std::array<int>, 2> values{ 1, 3 };
+// static constexpr auto set = static_set<int, values.size()>{ {values} };
+// static_assert(map.contains(3));
+template <typename Key, std::size_t Size>
+struct static_set
+{
+	std::array<Key, Size> data;
+
+	[[nodiscard]] constexpr bool contains(const Key& key) const
+	{
+		const auto itr = std::find(data.begin(), data.end(), key);
+		return itr != data.end();
+	}
+
+	[[nodiscard]] constexpr bool contains_if(auto predicate) const
+	{
+		const auto itr = std::find_if(data.begin(), data.end(), [&](Key key) { return predicate(key); });
+		return itr != data.end();
+	}
+};
