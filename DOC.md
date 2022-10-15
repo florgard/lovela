@@ -3,7 +3,9 @@
 
 ## Comments
 
-`<< this is a single line comment >>`
+```
+<< this is a single line comment >>
+```
 ```
 <<
 this is a 
@@ -19,12 +21,16 @@ nested
 
 ## Strings
 
-`'strings are marked with single quotation marks'`
+```
+'strings are marked with single quotation marks'
+```
 ```
 'strings can be 
 multi line'
 ```
-`'quotation marks '' are escaped by having two in a row'`
+```
+'quotation marks '' are escaped by having two in a row'
+```
 
 ## Integer types
 
@@ -50,7 +56,21 @@ For predefined numeric type names, see types in the standard library.
 
 ## Syntax
 
-`in_type function_name out_type : function_definition.`
+`import_export in_type name parameter_list out_type definition`
+
+where
+
+`import_export` is an optional import `->` or export `<-` specifier.
+
+`in_type` is an optional input type (object type).
+
+`name` is an optional function name. Can be omitted for the main function `: definition.` and for anonymous functions `[]() : definition.`.
+
+`parameter_list` is an optional list of additional parameters `(param1 param1_type, ...)`.
+
+`out_type` is an optional output type (return type).
+
+`function_definition` is the optional function body ': << code goes here >>.`.
 
 ## Main function
 
@@ -65,13 +85,17 @@ For predefined numeric type names, see types in the standard library.
 : io/print 'Hello, World!'.
 ```
 
+## Imported functions
+
+## Exported functions
+
 # Standard library
 
 ## Types
 
 ### Numeric types
 
-#### Built-in numeric types
+#### Integer types
 
 `typ/int8` is the same as `#8`.
 
@@ -89,9 +113,11 @@ For predefined numeric type names, see types in the standard library.
 
 `typ/uint64` is the same as `#064`.
 
+#### Boolean type
 
 `typ/bool` is stored as `#1`. On initialization it will be set to 0 if the input is 0, or 1 otherwise.
 
+#### Floating point types
 
 `typ/float32` is the same as `#.32`.
 
@@ -103,13 +129,13 @@ For predefined numeric type names, see types in the standard library.
 
 Numberic types are implicitly cast if the source type fits in the target type.
 
-#### Examples of implicit casts
+##### Examples of implicit casts
 
 `#32` and `#032` can both be cast to `#64` or `#064`.
 
 `#32`and `#032` can both be cast to `#.64` but not to `#.32`.
 
-`#032`cannot be cast to `#32` nor can `#32`cannot be cast to `#032`.
+`#032`cannot be cast to `#32` nor can `#32` be cast to `#032`.
 
 #### Explicit casts
 
