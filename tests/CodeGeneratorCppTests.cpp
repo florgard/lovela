@@ -191,7 +191,8 @@ bool CodeGenTest::ExportFailure(const char* name, std::wstring_view code, std::w
 
 suite CodeGeneratorCpp_type_tests = [] {
 	"l_i1"_test = [] { 
-		expect(CodeGenTest::Success("l_i1", L"#1 f", 
+		expect(CodeGenTest::Success("l_i1",
+			L"#1 f", 
 			L"auto f_f(lovela::context& context, l_i1 in);"
 		));
 	};
