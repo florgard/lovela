@@ -75,6 +75,23 @@ static constexpr static_set<Token::Type, s_BinaryOperatorTokens.size()> s_Binary
 static constexpr static_set<Token::Type, s_OperatorTokens.size()> s_OperatorTokenSet{ {s_OperatorTokens} };
 static constexpr static_set<Token::Type, s_ExpressionTerminatorTokens.size()> s_ExpressionTerminatorTokenSet{ {s_ExpressionTerminatorTokens} };
 
+static constexpr std::array<Node::Type, 4> s_OperandNodes
+{
+	Node::Type::Expression,
+	Node::Type::Tuple,
+	Node::Type::Literal,
+	Node::Type::VariableReference,
+};
+
+static constexpr std::array<Node::Type, 2> s_OperatorNodes
+{
+	Node::Type::FunctionCall,
+	Node::Type::BinaryOperation,
+};
+
+static constexpr static_set<Node::Type, s_OperandNodes.size()> s_OperandNodeSet{ {s_OperandNodes} };
+static constexpr static_set<Node::Type, s_OperatorNodes.size()> s_OperatorNodeSet{ {s_OperatorNodes} };
+
 static constexpr auto& GetFunctionDeclarationTokens()
 {
 	return s_FunctionDeclarationTokenSet;
@@ -115,28 +132,14 @@ static constexpr auto& GetExpressionTerminatorTokens()
 	return s_ExpressionTerminatorTokenSet;
 }
 
-static const std::set<Node::Type>& GetOperandNodes()
+static constexpr auto& GetOperandNodes()
 {
-	static const std::set<Node::Type> nodes
-	{
-		Node::Type::Expression,
-		Node::Type::Tuple,
-		Node::Type::Literal,
-		Node::Type::VariableReference,
-	};
-
-	return nodes;
+	return s_OperandNodeSet;
 }
 
-static const std::set<Node::Type>& GetOperatorNodes()
+static constexpr auto& GetOperatorNodes()
 {
-	static const std::set<Node::Type> nodes
-	{
-		Node::Type::FunctionCall,
-		Node::Type::BinaryOperation,
-	};
-
-	return nodes;
+	return s_OperatorNodeSet;
 }
 
 bool Parser::Context::HasFunctionSymbol(const std::wstring& symbol) const
