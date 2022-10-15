@@ -54,6 +54,24 @@ For predefined numeric type names, see types in the standard library.
 
 # Functions
 
+## Exmple
+
+```
+-> io/print_line. << this is an imported function that prints a line of text >>
+
+print_message_1: io/print_line. << this function takes its input and passes it on to io/print_line >>
+
+[typ/string] print_message_2: io/print_line. << this function also explicitly states its input type >>
+
+print_three_messages: ( << this function contains multiple statements and thus needs parentheses for its definition >>
+	'First message' print_message_1. << the recommended way is to pass the input to a function in a fluent, left to right style >>
+	'Second message' print_message_2. << this function call works the same but here it's important that the input is a string >>
+	print_message_1 ('Third message'). << if the input is omitted it's possible to pass the input as the first parameter instead >> 
+).
+
+: print_three_messages. << this is the anonymous main function that simply calls another function >>
+```
+
 ## Syntax
 
 `import_export in_type name parameter_list out_type definition`
@@ -70,7 +88,7 @@ where
 
 `out_type` is an optional output type (return type).
 
-`function_definition` is the optional function body ': << code goes here >>.`.
+`definition` is the optional function body `: << code goes here >> .`.
 
 ## Main function
 
@@ -81,8 +99,8 @@ where
 ### Example
 
 ```
--> io/. << import io >>
-: io/print 'Hello, World!'.
+-> io/print_line. << import >>
+: io/print_line 'Hello, World!'.
 ```
 
 ## Imported functions
@@ -145,6 +163,7 @@ Numberic types are implicitly cast if the source type fits in the target type.
 
 ## I/O
 
+`io/print_line` prints a line of text to the standard output stream.
 `io/print` prints text to the standard output stream.
 
 ## Memory
