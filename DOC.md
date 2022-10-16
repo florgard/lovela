@@ -3,9 +3,9 @@
 1. lovela should be easy to use.
 2. lovela should be accessible regardless of the user's cultural background.
 3. lovela should be accessible and relevant regardless of the user's technical level.
-4. lovela shall yield safe and secure programs.
-5. lovela should yield efficient and performant programs.
-6. lovela should encourage a functional and fluent code style.
+4. lovela should look similar to a natural written language.
+5. lovela shall yield safe and secure programs.
+6. lovela should yield efficient and performant programs.
  
 ## lovela should be easy to use
 
@@ -21,6 +21,10 @@ lovela should encourage ease of use regardless of the user's cultural background
 Language features that benefit from having readable names are implemented in the standard library. 
 The standard library can then be translated to various languages.
 
+### Code can be arranged in left to right or right to left order
+
+If the language is 
+
 ### Other consequences
 
 Other principles should probably also be considered, but that's beyond my limited knowledge of non-western cultures.
@@ -33,13 +37,15 @@ lovela should be accessible for beginners and people without rigorous knowledge 
 
 In my opinion, many programming languages suffer from an over-engineered syntax that establishes a hotbed for elitism and exclusion.
 
+## lovela should look similar to a natural written language
+
+lovela should encourage a functional and fluent code style that is readable from start to end.
+
 ## lovela shall yield safe and secure programs
 
 ### lovela shall not have any undefined behaviour
 
 ## lovela should yield efficient and performant programs
-
-## lovela should encourage a functional and fluent code style
 
 # Common features
 
@@ -99,19 +105,30 @@ For predefined numeric type names, see types in the standard library.
 ## Exmple
 
 ```
--> io/print_line. << this is an imported function that prints a line of text >>
+<< this is an imported function that prints a line of text >>
+-> io/print_line.
 
-print_message_1: io/print_line. << this function takes its input and passes it on to io/print_line >>
+<< this function takes its input and passes it on to io/print_line >>
+print_message_1: io/print_line.
 
-[typ/string] print_message_2: io/print_line. << this function also explicitly states its input type >>
+<< this function also explicitly states its input type >>
+[typ/string] print_message_2: io/print_line.
 
-print_three_messages: ( << this function contains multiple statements and thus needs parentheses for its definition >>
-	'First message' print_message_1. << the recommended way is to pass the input to a function in a fluent, left to right style >>
-	'Second message' print_message_2. << this function call works the same but here it's important that the input is a string >>
-	print_message_1 ('Third message'). << if the input is omitted it's possible to pass the input as the first parameter instead >> 
+<< this function contains multiple statements and thus needs parentheses for its definition >>
+print_three_messages:
+(
+	<< the recommended way is to pass the input to a function in a fluent, left to right style (or right to left, if desired!) >>
+	'First message' print_message_1.
+
+	<< this function call works the same but here it's important that the input is a string >>
+	'Second message' print_message_2.
+
+	<< if the input is omitted it's possible to pass the input as the first parameter instead >> 
+	print_message_1 ('Third message').
 ).
 
-: print_three_messages. << this is the anonymous main function that simply calls another function >>
+<< this is the anonymous main function that simply calls another function >>
+: print_three_messages.
 ```
 
 ## Syntax
