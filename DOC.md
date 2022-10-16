@@ -7,12 +7,12 @@
 5. lovela shall yield safe and secure programs.
 6. lovela should yield efficient and performant programs.
  
-## lovela should be easy to use
+## Easy to use
 
 This fundamental principle should discourage complicated and inaccessible features. 
 It's still not easy to leverage considering the following principles.
 
-## lovela should be accessible regardless of the user's cultural background
+## Accessible regardless of the user's cultural background
 
 lovela should encourage ease of use regardless of the user's cultural background.
 
@@ -29,7 +29,7 @@ If the language is
 
 Other principles should probably also be considered, but that's beyond my limited knowledge of non-western cultures.
 
-## lovela should be accessible and relevant regardless of the user's technical level
+## Accessible and relevant regardless of the user's technical level
 
 lovela should be accessible for beginners and people without rigorous knowledge of programming.
 
@@ -37,15 +37,15 @@ lovela should be accessible for beginners and people without rigorous knowledge 
 
 In my opinion, many programming languages suffer from an over-engineered syntax that establishes a hotbed for elitism and exclusion.
 
-## lovela should look similar to a natural written language
+## Look similar to a natural written language
 
 lovela should encourage a functional and fluent code style that is readable from start to end.
 
-## lovela shall yield safe and secure programs
+## Safe and secure programs
 
-### lovela shall not have any undefined behaviour
+### No undefined behaviour
 
-## lovela should yield efficient and performant programs
+## Efficient and performant programs
 
 # Common features
 
