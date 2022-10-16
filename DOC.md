@@ -3,10 +3,9 @@
 1. lovela should be easy to use.
 2. lovela should be accessible regardless of the user's cultural background.
 3. lovela should be accessible and relevant regardless of the user's technical level.
-4. lovela shall not have any undefined behaviour.
-5. lovela shall yield safe and secure programs.
-6. lovela should yield efficient and performant programs.
-7. lovela should encourage a functional and fluent code style.
+4. lovela shall yield safe and secure programs.
+5. lovela should yield efficient and performant programs.
+6. lovela should encourage a functional and fluent code style.
  
 ## lovela should be easy to use
 
@@ -34,9 +33,9 @@ lovela should be accessible for beginners and people without rigorous knowledge 
 
 In my opinion, many programming languages suffer from an over-engineered syntax that establishes a hotbed for elitism and exclusion.
 
-## lovela shall not have any undefined behaviour
-
 ## lovela shall yield safe and secure programs
+
+### lovela shall not have any undefined behaviour
 
 ## lovela should yield efficient and performant programs
 
