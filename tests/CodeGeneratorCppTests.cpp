@@ -33,7 +33,8 @@ bool CodeGenTest::Failure(const char* name, std::wstring_view code, std::wstring
 	std::wistringstream input(std::wstring(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
 	auto parser = ParserFactory::Create(lexer->Lex());
-	auto tree = parser->Parse();
+	auto nodes = parser->Parse();
+	auto& tree = *nodes.begin();
 
 	std::wostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
@@ -82,7 +83,8 @@ bool CodeGenTest::ImportFailure(const char* name, std::wstring_view code, std::w
 	std::wistringstream input(std::wstring(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
 	auto parser = ParserFactory::Create(lexer->Lex());
-	auto tree = parser->Parse();
+	auto nodes = parser->Parse();
+	auto& tree = *nodes.begin();
 
 	std::wostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
@@ -138,7 +140,8 @@ bool CodeGenTest::ExportFailure(const char* name, std::wstring_view code, std::w
 	std::wistringstream input(std::wstring(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
 	auto parser = ParserFactory::Create(lexer->Lex());
-	auto tree = parser->Parse();
+	auto nodes = parser->Parse();
+	auto& tree = *nodes.begin();
 
 	std::wostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");

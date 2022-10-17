@@ -70,5 +70,6 @@
     <ClInclude Include="magic_enum.hpp">
       <Filter>Libraries</Filter>
     </ClInclude>
+    <ClInclude Include="INodeGenerator.h" />
   </ItemGroup>
 </Project>

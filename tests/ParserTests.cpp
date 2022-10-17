@@ -19,7 +19,8 @@ bool ParserTest::Failure(const char* name, std::wstring_view code, const Node& e
 	std::wistringstream input(std::wstring(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
 	auto parser = ParserFactory::Create(lexer->Lex());
-	auto tree = parser->Parse();
+	auto nodes = parser->Parse();
+	auto& tree = *nodes.begin();
 
 	bool success = !!tree;
 

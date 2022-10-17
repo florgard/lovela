@@ -1,5 +1,5 @@
 #pragma once
-#include "Node.h"
+#include "INodeGenerator.h"
 
 class IParser
 {
@@ -20,6 +20,6 @@ public:
 
 	virtual ~IParser() = default;
 
-	[[nodiscard]] virtual std::unique_ptr<Node> Parse() noexcept = 0;
+	[[nodiscard]] virtual INodeGenerator Parse() noexcept = 0;
 	[[nodiscard]] virtual const std::vector<Error>& GetErrors() noexcept = 0;
 };

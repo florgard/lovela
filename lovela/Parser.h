@@ -9,7 +9,7 @@ protected:
 	Parser(std::unique_ptr<ITokenIterator> tokenIterator) noexcept;
 
 public:
-	[[nodiscard]] std::unique_ptr<Node> Parse() noexcept override;
+	[[nodiscard]] INodeGenerator Parse() noexcept override;
 
 
 private:

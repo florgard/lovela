@@ -33,7 +33,8 @@ suite CodeGeneratorCpp_program_tests = [] {
 		expect(lexer->GetErrors().empty());
 
 		auto parser = ParserFactory::Create(lexer->Lex());
-		auto tree = parser->Parse();
+		auto nodes = parser->Parse();
+		auto& tree = *nodes.begin();
 		for (auto& error : parser->GetErrors())
 		{
 			std::wcerr << error.message << '\n';

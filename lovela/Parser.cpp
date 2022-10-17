@@ -194,7 +194,7 @@ Parser::Parser(std::unique_ptr<ITokenIterator> tokenIterator) noexcept : ParserB
 {
 }
 
-std::unique_ptr<Node> Parser::Parse() noexcept
+INodeGenerator Parser::Parse() noexcept
 {
 	auto context = make<Context>::shared();
 	// TODO: add built-in functions?
@@ -244,7 +244,7 @@ std::unique_ptr<Node> Parser::Parse() noexcept
 
 	if (nodes.empty())
 	{
-		return {};
+		co_yield {};
 	}
 
 	// Link the nodes together
@@ -260,7 +260,7 @@ std::unique_ptr<Node> Parser::Parse() noexcept
 		parent = parent->right.get();
 	}
 
-	return node;
+	co_yield node;
 }
 
 TypeSpec Parser::ParseTypeSpec()

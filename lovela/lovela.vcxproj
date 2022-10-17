@@ -180,6 +180,7 @@
     <ClInclude Include="DataType.h" />
     <ClInclude Include="ICodeGenerator.h" />
     <ClInclude Include="ILexer.h" />
+    <ClInclude Include="INodeGenerator.h" />
     <ClInclude Include="IParser.h" />
     <ClInclude Include="ITokenGenerator.h" />
     <ClInclude Include="ITokenIterator.h" />
