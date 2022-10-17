@@ -199,8 +199,7 @@ INodeGenerator Parser::Parse() noexcept
 	auto context = make<Context>::shared();
 	// TODO: add built-in functions?
 
-	// Use a list of top-level nodes to be able to continue parsing after an error.
-	std::vector<std::unique_ptr<Node>> nodes;
+	std::unique_ptr<Node> node;
 
 	while (!GetTokenIterator().empty())
 	{
@@ -208,7 +207,12 @@ INodeGenerator Parser::Parse() noexcept
 		{
 			if (Accept(GetFunctionDeclarationTokens()))
 			{
-				nodes.emplace_back(ParseFunctionDeclaration(context));
+				auto parent = ParseFunctionDeclaration(context);
+				if (node)
+				{
+					parent->right = std::move(node);
+				}
+				node = std::move(parent);
 			}
 			else if (Accept(Token::Type::End))
 			{
@@ -240,24 +244,6 @@ INodeGenerator Parser::Parse() noexcept
 			// Skip faulty token.
 			Skip();
 		}
-	}
-
-	if (nodes.empty())
-	{
-		co_yield {};
-	}
-
-	// Link the nodes together
-
-	auto node = std::move(nodes.back());
-	nodes.pop_back();
-	auto parent = node.get();
-
-	while (!nodes.empty())
-	{
-		parent->right = std::move(nodes.back());
-		nodes.pop_back();
-		parent = parent->right.get();
 	}
 
 	co_yield node;
