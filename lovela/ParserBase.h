@@ -162,8 +162,8 @@ protected:
 	std::vector<Error> errors;
 
 protected:
-	Token& NextToken() noexcept { return *_tokenIterator; }
-	const Token& NextToken() const noexcept { return *_tokenIterator; }
+	[[nodiscard]] Token& NextToken() noexcept { return *_tokenIterator; }
+	[[nodiscard]] const Token& NextToken() const noexcept { return *_tokenIterator; }
 
 private:
 	ITokenGenerator _tokenGenerator;
