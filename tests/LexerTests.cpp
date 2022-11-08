@@ -17,8 +17,7 @@ bool LexerTest::Failure(const char* name, std::wstring_view code, const std::vec
 {
 	std::wistringstream input(std::wstring(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
-	auto tokenGenerator = lexer->Lex();
-	auto tokens = std::vector<Token>(tokenGenerator.begin(), tokenGenerator.end());
+	auto tokens = to_vector(lexer->Lex());
 
 	bool success = true;
 
@@ -32,7 +31,7 @@ bool LexerTest::Failure(const char* name, std::wstring_view code, const std::vec
 		if (actual != expected)
 		{
 			success = false;
-			std::wcerr << "Lexer test \"" << name << "\" error: Token " << i + 1 << " is " << to_wstring(actual.type) << " \"" << actual.value
+			std::wcerr << "ERROR: Lexer test \"" << name << "\" error: Token " << i + 1 << " is " << to_wstring(actual.type) << " \"" << actual.value
 				<< "\", expected " << to_wstring(expected.type) << " \"" << expected.value << "\".\n";
 		}
 	}

@@ -8,38 +8,49 @@ class ParserTest : public TestingBase
 public:
 	static bool Success(const char* name, std::wstring_view code, const Node& expectedTree)
 	{
+		// Success is failure with no errors.
 		return Failure(name, code, expectedTree, {});
 	}
 
-	static bool Failure(const char* name, std::wstring_view code, const Node& expectedTree, const std::vector<IParser::Error>& expectedErrors);
+	static bool Failure(const char* name, std::wstring_view code, const Node& expectedTree, const std::vector<IParser::Error>& expectedErrors)
+	{
+		return Failure(name, code, std::initializer_list<std::reference_wrapper<const Node>> { expectedTree }, expectedErrors);
+	}
+
+	static bool Success(const char* name, std::wstring_view code, const std::ranges::range auto& expectedRange)
+	{
+		// Success is failure with no errors.
+		return Failure(name, code, expectedRange, {});
+	}
+
+	static bool Failure(const char* name, std::wstring_view code, const std::ranges::range auto& expectedRange, const std::vector<IParser::Error>& expectedErrors);
 };
 
-bool ParserTest::Failure(const char* name, std::wstring_view code, const Node& expectedTree, const std::vector<IParser::Error>& expectedErrors)
+bool ParserTest::Failure(const char* name, std::wstring_view code, const std::ranges::range auto& expectedRange, const std::vector<IParser::Error>& expectedErrors)
 {
 	std::wistringstream input(std::wstring(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
 	auto parser = ParserFactory::Create(lexer->Lex());
-	auto nodes = parser->Parse();
-	auto& tree = *nodes.begin();
+	auto nodes = to_vector(parser->Parse());
 
-	bool success = !!tree;
+	bool success = nodes.begin() != nodes.end();
 
 	if (!success)
 	{
-		std::wcerr << "Parser test \"" << name << "\" error: The parser didn't yield an AST.\n\nExpected:\n";
-		PrintTree(expectedTree);
+		std::wcerr << "ERROR: Parser test \"" << name << "\" error: The parser didn't yield an AST.\n\nExpected:\n";
+		PrintAST(expectedRange);
 	}
 	else
 	{
 		int index = 0;
-		success = TestAST(index, name, *tree, expectedTree);
+		success = TestAST(index, name, nodes, expectedRange);
 
 		if (!success)
 		{
-			std::wcerr << "Parser test \"" << name << "\" error: AST mismatch.\n\nActual:\n";
-			PrintTree(*tree);
+			std::wcerr << "ERROR: Parser test \"" << name << "\" error: AST mismatch.\n\nActual:\n";
+			PrintAST(nodes);
 			std::wcerr << "\nExpected:\n";
-			PrintTree(expectedTree);
+			PrintAST(expectedRange);
 		}
 	}
 
@@ -125,19 +136,19 @@ suite parser_function_declaration_tests = [] {
 	"2 function declarations"_test = [] {
 		expect(ParserTest::Success("2 function declarations",
 			L"func1\r\nfunc2",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = L"func2",
-			.right = make<Node>::unique({.type = Node::Type::FunctionDeclaration, .value = L"func1" })
+			std::array<Node, 2> {
+				Node{ .type = Node::Type::FunctionDeclaration, .value = L"func1" },
+				Node{ .type = Node::Type::FunctionDeclaration, .value = L"func2" }
 			}
 		));
 	};
 	"3 function declarations"_test = [] {
 		expect(ParserTest::Success("3 function declarations",
 			L"func1\r\nfunc2 func3",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = L"func3",
-			.right = make<Node>::unique(
-				Node{.type = Node::Type::FunctionDeclaration, .value = L"func2",
-				.right = make<Node>::unique({.type = Node::Type::FunctionDeclaration, .value = L"func1" })
-				})
+			std::array<Node, 3> {
+				Node{ .type = Node::Type::FunctionDeclaration, .value = L"func1" },
+				Node{ .type = Node::Type::FunctionDeclaration, .value = L"func2" },
+				Node{ .type = Node::Type::FunctionDeclaration, .value = L"func3" }
 			}
 		));
 	};
@@ -235,14 +246,12 @@ suite parser_binary_operator_tests = [] {
 		));
 	};
 	"invalid binary operator as namespace"_test = [] {
-		auto f2 = Node{ .type = Node::Type::FunctionDeclaration, .value = L"<", .nameSpace{ L"namespace1" } };
-		auto f1 = Node{ .type = Node::Type::FunctionDeclaration, .value = L"namespace2",
-			.parameters{make<VariableDeclaration>::shared({.name = L"operand"})},
-			.right = make<Node>::unique(f2)
-		};
 		expect(ParserTest::Failure("invalid binary operator as namespace",
 			L"namespace1|<|namespace2 (operand)",
-			f1,
+			std::array<Node, 2> {
+				Node{ .type = Node::Type::FunctionDeclaration, .value = L"<", .nameSpace{ L"namespace1" } },
+				Node{ .type = Node::Type::FunctionDeclaration, .value = L"namespace2", .parameters{make<VariableDeclaration>::shared({.name = L"operand"})} }
+			},
 			{ IParser::Error{.code = IParser::Error::Code::ParseError } }
 		));
 	};

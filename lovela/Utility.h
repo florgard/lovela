@@ -163,3 +163,15 @@ struct static_set
 		return itr != data.end();
 	}
 };
+
+auto to_vector(std::ranges::range auto&& range)
+{
+	std::vector<std::remove_reference_t<decltype(*range.begin())>> v;
+
+	for (auto&& item : range)
+	{
+		v.emplace_back(std::move(item));
+	}
+
+	return v;
+}

@@ -127,7 +127,8 @@ ITokenGenerator Lexer::Lex() noexcept
 		{
 			if (token)
 			{
-				co_yield DecorateToken(std::move(token));
+				auto t = DecorateToken(std::move(token));
+				co_yield t;
 			}
 		}
 
@@ -138,10 +139,12 @@ ITokenGenerator Lexer::Lex() noexcept
 	auto token = GetCurrenToken();
 	if (token)
 	{
-		co_yield DecorateToken(std::move(token));
+		auto t = DecorateToken(std::move(token));
+		co_yield t;
 	}
 
-	co_yield DecorateToken({ .type = Token::Type::End });
+	auto t = DecorateToken({ .type = Token::Type::End });
+	co_yield t;
 }
 
 void Lexer::GetNextCharacter() noexcept

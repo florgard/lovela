@@ -199,20 +199,15 @@ INodeGenerator Parser::Parse() noexcept
 	auto context = make<Context>::shared();
 	// TODO: add built-in functions?
 
-	std::unique_ptr<Node> node;
-
 	while (!GetTokenIterator().empty())
 	{
 		try
 		{
 			if (Accept(GetFunctionDeclarationTokens()))
 			{
-				auto parent = ParseFunctionDeclaration(context);
-				if (node)
-				{
-					parent->right = std::move(node);
-				}
-				node = std::move(parent);
+				auto p = ParseFunctionDeclaration(context);
+				Node n = std::move(*p);
+				co_yield n;
 			}
 			else if (Accept(Token::Type::End))
 			{
@@ -245,8 +240,6 @@ INodeGenerator Parser::Parse() noexcept
 			Skip();
 		}
 	}
-
-	co_yield node;
 }
 
 TypeSpec Parser::ParseTypeSpec()

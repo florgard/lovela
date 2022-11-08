@@ -33,12 +33,11 @@ bool CodeGenTest::Failure(const char* name, std::wstring_view code, std::wstring
 	std::wistringstream input(std::wstring(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
 	auto parser = ParserFactory::Create(lexer->Lex());
-	auto nodes = parser->Parse();
-	auto& tree = *nodes.begin();
+	auto nodes = to_vector(parser->Parse());
 
 	std::wostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
-	Traverse::DepthFirstPostorder(*tree, [&](Node& node) { codeGen->Visit(node); });
+	Traverse::DepthFirstPostorder(nodes, [&](Node& node) { codeGen->Visit(node); });
 
 	auto generatedCode = output.str();
 	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"^\\s+" }, L"");
@@ -56,7 +55,7 @@ bool CodeGenTest::Failure(const char* name, std::wstring_view code, std::wstring
 		std::wcerr << "Code generator test \"" << name << "\" error: The generated code differs from the expected code.\nGenerated:\n" << generatedCode
 			<< "\nExpected:\n" << expectedCode << "\n\nInput code:\n" << code << "\n\nAST:\n";
 
-		PrintTree(*tree);
+		PrintAST(nodes);
 
 		return false;
 	}
@@ -83,12 +82,11 @@ bool CodeGenTest::ImportFailure(const char* name, std::wstring_view code, std::w
 	std::wistringstream input(std::wstring(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
 	auto parser = ParserFactory::Create(lexer->Lex());
-	auto nodes = parser->Parse();
-	auto& tree = *nodes.begin();
+	auto nodes = to_vector(parser->Parse());
 
 	std::wostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
-	Traverse::DepthFirstPostorder(*tree, [&](Node& node) { codeGen->Visit(node); });
+	Traverse::DepthFirstPostorder(nodes, [&](Node& node) { codeGen->Visit(node); });
 
 	bool success = codeGen->GetImports().size() == 1 || codeGen->GetImports().empty() && cppCode.empty();
 
@@ -140,12 +138,11 @@ bool CodeGenTest::ExportFailure(const char* name, std::wstring_view code, std::w
 	std::wistringstream input(std::wstring(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
 	auto parser = ParserFactory::Create(lexer->Lex());
-	auto nodes = parser->Parse();
-	auto& tree = *nodes.begin();
+	auto nodes = to_vector(parser->Parse());
 
 	std::wostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
-	Traverse::DepthFirstPostorder(*tree, [&](Node& node) { codeGen->Visit(node); });
+	Traverse::DepthFirstPostorder(nodes, [&](Node& node) { codeGen->Visit(node); });
 
 	bool success = codeGen->GetExports().size() == 1 || codeGen->GetExports().empty() && cppCode.empty();
 

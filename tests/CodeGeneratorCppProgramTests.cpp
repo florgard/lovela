@@ -33,8 +33,8 @@ suite CodeGeneratorCpp_program_tests = [] {
 		expect(lexer->GetErrors().empty());
 
 		auto parser = ParserFactory::Create(lexer->Lex());
-		auto nodes = parser->Parse();
-		auto& tree = *nodes.begin();
+		auto nodes = to_vector(parser->Parse());
+
 		for (auto& error : parser->GetErrors())
 		{
 			std::wcerr << error.message << '\n';
@@ -42,13 +42,13 @@ suite CodeGeneratorCpp_program_tests = [] {
 
 		expect(parser->GetErrors().empty());
 
-		TestingBase::PrintTree(*tree);
+		TestingBase::PrintAST(nodes);
 		std::wcout << '\n';
 
 		std::wstringstream stream;
 
 		auto codeGen = CodeGeneratorFactory::Create(stream, "Cpp");
-		Traverse::DepthFirstPostorder(*tree, [&](Node& node) { codeGen->Visit(node); });
+		Traverse::DepthFirstPostorder(nodes, [&](Node& node) { codeGen->Visit(node); });
 
 		for (auto& error : codeGen->GetErrors())
 		{

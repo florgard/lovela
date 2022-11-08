@@ -20,7 +20,7 @@ public:
 
 	[[nodiscard]] const Token* operator->() const noexcept override
 	{
-		return iter.operator->();
+		return &iter.operator*();
 	}
 
 	ITokenIterator& operator++() override
@@ -37,6 +37,6 @@ public:
 
 	[[nodiscard]] bool empty() const noexcept override
 	{
-		return iter == Iterator{};
+		return iter == gen.end();
 	}
 };

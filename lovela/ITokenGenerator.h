@@ -1,4 +1,4 @@
 #pragma once
 #include "Token.h"
 
-using ITokenGenerator = std::experimental::generator<Token>;
+using ITokenGenerator = tl::generator<Token>;

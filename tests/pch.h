@@ -23,7 +23,7 @@
 #include <cwctype>
 #include <cassert>
 #include <stdexcept>
-#include <experimental/generator>
+#include "../lovela/generator.hpp"
 #include "../lovela/Utility.h"
 
 #define BOOST_UT_DISABLE_MODULE
