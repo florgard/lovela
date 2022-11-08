@@ -1,5 +1,7 @@
 #pragma once
-#include "TokenGenerator.h"
+#include "Token.h"
+
+using TokenGenerator = tl::generator<Token>;
 
 class ILexer
 {

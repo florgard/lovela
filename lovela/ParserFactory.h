@@ -1,6 +1,6 @@
 #pragma once
+#include "ILexer.h"
 #include "IParser.h"
-#include "TokenGenerator.h"
 
 class ParserFactory
 {
