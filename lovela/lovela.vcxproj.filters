@@ -19,7 +19,6 @@
     <ClCompile Include="CodeGeneratorFactory.cpp" />
     <ClCompile Include="ParserFactory.cpp" />
     <ClCompile Include="LexerFactory.cpp" />
-    <ClCompile Include="Algorithm.cpp" />
     <ClCompile Include="pch.cpp">
       <Filter>Main</Filter>
     </ClCompile>

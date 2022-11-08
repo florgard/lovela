@@ -37,7 +37,7 @@ bool CodeGenTest::Failure(const char* name, std::wstring_view code, std::wstring
 
 	std::wostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
-	Traverse::DepthFirstPostorder(nodes, [&](Node& node) { codeGen->Visit(node); });
+	Traverse<Node>::DepthFirstPostorder(nodes, [&](Node& node) { codeGen->Visit(node); });
 
 	auto generatedCode = output.str();
 	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"^\\s+" }, L"");
@@ -86,7 +86,7 @@ bool CodeGenTest::ImportFailure(const char* name, std::wstring_view code, std::w
 
 	std::wostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
-	Traverse::DepthFirstPostorder(nodes, [&](Node& node) { codeGen->Visit(node); });
+	Traverse<Node>::DepthFirstPostorder(nodes, [&](Node& node) { codeGen->Visit(node); });
 
 	bool success = codeGen->GetImports().size() == 1 || codeGen->GetImports().empty() && cppCode.empty();
 
@@ -142,7 +142,7 @@ bool CodeGenTest::ExportFailure(const char* name, std::wstring_view code, std::w
 
 	std::wostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
-	Traverse::DepthFirstPostorder(nodes, [&](Node& node) { codeGen->Visit(node); });
+	Traverse<Node>::DepthFirstPostorder(nodes, [&](Node& node) { codeGen->Visit(node); });
 
 	bool success = codeGen->GetExports().size() == 1 || codeGen->GetExports().empty() && cppCode.empty();
 

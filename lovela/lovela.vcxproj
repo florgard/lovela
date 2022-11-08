@@ -155,7 +155,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Algorithm.cpp" />
     <ClCompile Include="CodeGeneratorCpp.cpp" />
     <ClCompile Include="CodeGeneratorFactory.cpp" />
     <ClCompile Include="Lexer.cpp" />
