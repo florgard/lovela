@@ -49,5 +49,8 @@ struct Token
 		return !operator==(rhs);
 	}
 
-	[[nodiscard]] constexpr operator bool() const noexcept { return type != Type::Empty; }
+	[[nodiscard]] constexpr operator bool() const noexcept
+	{
+		return type != Type::Empty;
+	}
 };

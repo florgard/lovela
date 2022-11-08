@@ -1,6 +1,11 @@
 #pragma once
 #include "Node.h"
 
+inline bool not_empty(const auto& x)
+{
+	return !!x;
+};
+
 struct Traverse
 {
 	static void DepthFirstPreorder(Node& tree, std::function<void(Node& node)> visitor) noexcept;

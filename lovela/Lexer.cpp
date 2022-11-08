@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Lexer.h"
+#include "Algorithm.h"
 
 static const std::wregex& GetSeparatorRegex()
 {
@@ -74,17 +75,16 @@ Token Lexer::GetCurrenToken()
 
 Token Lexer::DecorateToken(Token token) const
 {
-	if (token)
-	{
-		token.line = currentLine;
-		token.column = currentColumn;
-		token.code = std::wstring(currentCode.begin(), currentCode.end());
-	}
+	token.line = currentLine;
+	token.column = currentColumn;
+	token.code = std::wstring(currentCode.begin(), currentCode.end());
 	return token;
 }
 
 TokenGenerator Lexer::Lex() noexcept
 {
+	auto decorate = [this](auto& token) { return DecorateToken(std::move(token)); };
+
 	// Populate next and next after characters.
 	GetNextCharacter();
 	GetNextCharacter();
@@ -123,28 +123,24 @@ TokenGenerator Lexer::Lex() noexcept
 			currentLexeme += characters[Current];
 		}
 
-		for (auto& token : tokens)
+		for (auto token : tokens | std::views::filter(not_empty<Token>) | std::views::transform(decorate))
 		{
-			if (token)
-			{
-				auto t = DecorateToken(std::move(token));
-				co_yield t;
-			}
+			co_yield token;
 		}
 
 		tokens.clear();
 	}
 
-	// Get the possible token at the very end of the stream.
-	auto token = GetCurrenToken();
-	if (token)
-	{
-		auto t = DecorateToken(std::move(token));
-		co_yield t;
-	}
+	// Get the possible token at the very end of the stream.	
+	tokens.push_back(GetCurrenToken());
 
-	auto t = DecorateToken({ .type = Token::Type::End });
-	co_yield t;
+	// Add the end token.
+	tokens.push_back({ .type = Token::Type::End });
+
+	for (auto token : tokens | std::views::filter(not_empty<Token>) | std::views::transform(decorate))
+	{
+		co_yield token;
+	}
 }
 
 void Lexer::GetNextCharacter() noexcept
