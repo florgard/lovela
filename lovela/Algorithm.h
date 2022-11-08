@@ -5,7 +5,7 @@ constexpr bool not_empty(const auto& x)
 	return !!x;
 };
 
-auto to_vector(std::ranges::range auto&& range)
+constexpr auto to_vector(std::ranges::range auto&& range)
 {
 	std::vector<std::remove_reference_t<decltype(*range.begin())>> v;
 
