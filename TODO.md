@@ -3,8 +3,7 @@
 ## Small
 
 * Generic tagged types: [1] add [1]
-* Parser generator rewrite of Parse()
-  * Code generation on the fly? What about identifier and function signature validation?
+* Code generation on the fly? What about identifier and function signature validation?
 * Bind operator
 * Built-in comparison, arithmetic, bitwise operators
 * Standard library namespaces
