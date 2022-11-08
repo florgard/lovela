@@ -6,5 +6,5 @@
 std::unique_ptr<IParser> ParserFactory::Create(ITokenGenerator&& tokenGenerator, std::string_view id) noexcept
 {
 	static_cast<void>(id);
-	return std::unique_ptr<Parser>(new Parser(std::make_unique<TokenIterator<>>(std::move(tokenGenerator))));
+	return std::unique_ptr<Parser>(new Parser(std::move(tokenGenerator)));
 }

@@ -7,7 +7,7 @@
 class ParserBase : public IParser
 {
 public:
-	ParserBase(std::unique_ptr<ITokenIterator> tokenIterator) noexcept;
+	ParserBase(ITokenGenerator&& tokenGenerator) noexcept;
 
 	[[nodiscard]] const std::vector<Error>& GetErrors() noexcept override
 	{
@@ -42,14 +42,14 @@ public:
 	}
 
 	// Skips the current token and sets the next token as current token.
-	constexpr void Skip()
+	void Skip()
 	{
 		currentToken = *GetTokenIterator();
 		GetTokenIterator()++;
 	}
 
 	// Skips the current token and sets the next token as current token, if the next token is of the given type.
-	constexpr void Skip(Token::Type type)
+	void Skip(Token::Type type)
 	{
 		if (Peek(type))
 		{
@@ -84,7 +84,7 @@ public:
 
 	// Sets the current token to the next token that is expected to be of the given type.
 	// Throws if the next token isn't of the given type or if there's no next token.
-	constexpr void Expect(Token::Type type)
+	void Expect(Token::Type type)
 	{
 		if (!Accept(type))
 		{
@@ -105,7 +105,7 @@ public:
 
 	// Sets the current token to the next token if it's of the given type.
 	// Returns true if the token was set, false otherwise.
-	[[nodiscard]] constexpr bool Accept(Token::Type type)
+	[[nodiscard]] bool Accept(Token::Type type)
 	{
 		if (Peek(type))
 		{
@@ -126,21 +126,21 @@ public:
 
 	// Checks whether there's a next token.
 	// Returns true if there's a token, false otherwise.
-	[[nodiscard]] constexpr bool Peek()
+	[[nodiscard]] bool Peek()
 	{
-		return !GetTokenIterator().empty();
+		return _tokenIterator != _tokenGenerator.end();
 	}
 
 	// Checks whether the next token is of the given type.
 	// Returns true if the token is of the given type, false otherwise.
-	[[nodiscard]] constexpr bool Peek(Token::Type type)
+	[[nodiscard]] bool Peek(Token::Type type)
 	{
 		if (!Peek())
 		{
 			return false;
 		}
 
-		const auto nextType = GetTokenIterator()->type;
+		const auto nextType = NextToken().type;
 		return type == nextType;
 	}
 
@@ -154,7 +154,7 @@ public:
 			return false;
 		}
 
-		const auto nextType = GetTokenIterator()->type;
+		const auto nextType = NextToken().type;
 		return types.contains(nextType);
 	}
 
@@ -163,9 +163,12 @@ protected:
 	std::vector<Error> errors;
 
 protected:
-	ITokenIterator& GetTokenIterator() noexcept { return *tokenIterator; };
-	const ITokenIterator& GetTokenIterator() const noexcept { return *tokenIterator; };
+	Token& NextToken() noexcept { return *_tokenIterator; }
+	const Token& NextToken() const noexcept { return *_tokenIterator; }
+	ITokenIterator& GetTokenIterator() noexcept { return _tokenIterator; };
+	const ITokenIterator& GetTokenIterator() const noexcept { return _tokenIterator; };
 
 private:
-	std::unique_ptr<ITokenIterator> tokenIterator;
+	ITokenGenerator _tokenGenerator;
+	ITokenIterator _tokenIterator;
 };

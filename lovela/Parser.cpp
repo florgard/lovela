@@ -190,7 +190,7 @@ void Parser::Context::AddVariableSymbol(std::shared_ptr<VariableDeclaration> dec
 	}
 }
 
-Parser::Parser(std::unique_ptr<ITokenIterator> tokenIterator) noexcept : ParserBase(std::move(tokenIterator))
+Parser::Parser(ITokenGenerator&& tokenGenerator) noexcept : ParserBase(std::move(tokenGenerator))
 {
 }
 
@@ -199,7 +199,7 @@ INodeGenerator Parser::Parse() noexcept
 	auto context = make<Context>::shared();
 	// TODO: add built-in functions?
 
-	while (!GetTokenIterator().empty())
+	while (Peek())
 	{
 		try
 		{

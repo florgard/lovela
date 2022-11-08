@@ -6,7 +6,7 @@ class Parser : public ParserBase
 	friend class ParserFactory;
 
 protected:
-	Parser(std::unique_ptr<ITokenIterator> tokenIterator) noexcept;
+	Parser(ITokenGenerator&& tokenGenerator) noexcept;
 
 public:
 	[[nodiscard]] INodeGenerator Parse() noexcept override;
