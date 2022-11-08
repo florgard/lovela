@@ -1,5 +1,5 @@
 #pragma once
-#include "../lovela/NodeGenerator.h"
+#include "../lovela/Node.h"
 
 class TestingBase
 {
