@@ -11,7 +11,7 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 {
 	static_cast<void>(context);
 	auto& v1 = in; static_cast<void>(v1);
-	const auto v2 = f_puts(context, "Hello, Wordl!"); static_cast<void>(v2);
+	const auto v2 = f_puts(context, "Hello, World!"); static_cast<void>(v2);
 	return {};
 }
 

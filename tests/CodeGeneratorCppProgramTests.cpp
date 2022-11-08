@@ -19,7 +19,7 @@ suite CodeGeneratorCpp_program_tests = [] {
 
 		std::wstring code = LR"(
 -> 'Standard C' puts.
-: 'Hello, Wordl!' puts.
+: 'Hello, World!' puts.
 )";
 		std::wcout << code << '\n';
 
