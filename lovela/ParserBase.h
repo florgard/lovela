@@ -44,8 +44,8 @@ public:
 	// Skips the current token and sets the next token as current token.
 	void Skip()
 	{
-		currentToken = *GetTokenIterator();
-		GetTokenIterator()++;
+		currentToken = NextToken();
+		_tokenIterator++;
 	}
 
 	// Skips the current token and sets the next token as current token, if the next token is of the given type.
@@ -88,7 +88,7 @@ public:
 	{
 		if (!Accept(type))
 		{
-			throw UnexpectedTokenException(*GetTokenIterator(), type);
+			throw UnexpectedTokenException(NextToken(), type);
 		}
 	}
 
@@ -99,7 +99,7 @@ public:
 	{
 		if (!Accept(types))
 		{
-			throw UnexpectedTokenException(*GetTokenIterator(), types);
+			throw UnexpectedTokenException(NextToken(), types);
 		}
 	}
 
@@ -165,8 +165,6 @@ protected:
 protected:
 	Token& NextToken() noexcept { return *_tokenIterator; }
 	const Token& NextToken() const noexcept { return *_tokenIterator; }
-	ITokenIterator& GetTokenIterator() noexcept { return _tokenIterator; };
-	const ITokenIterator& GetTokenIterator() const noexcept { return _tokenIterator; };
 
 private:
 	ITokenGenerator _tokenGenerator;

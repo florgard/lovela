@@ -213,12 +213,12 @@ INodeGenerator Parser::Parse() noexcept
 			{
 				if (Peek())
 				{
-					throw UnexpectedTokenException(*GetTokenIterator());
+					throw UnexpectedTokenException(NextToken());
 				}
 			}
 			else if (Peek())
 			{
-				throw UnexpectedTokenException(*GetTokenIterator());
+				throw UnexpectedTokenException(NextToken());
 			}
 			else
 			{
@@ -278,7 +278,7 @@ TypeSpec Parser::ParseTypeSpec()
 	}
 	else
 	{
-		throw UnexpectedTokenException(*GetTokenIterator());
+		throw UnexpectedTokenException(NextToken());
 	}
 
 	return typeSpec;
@@ -500,7 +500,7 @@ std::unique_ptr<Node> Parser::ParseCompoundExpression(std::shared_ptr<Context> c
 
 std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 {
-	auto firstToken = *GetTokenIterator();
+	auto firstToken = NextToken();
 
 	const auto& inType = context->inType;
 	auto innerContext = make<Context>::shared({ .parent = context, .inType = inType });
@@ -535,7 +535,7 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		}
 		else
 		{
-			throw UnexpectedTokenException(*GetTokenIterator());
+			throw UnexpectedTokenException(NextToken());
 		}
 	}
 
