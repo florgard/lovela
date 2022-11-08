@@ -61,7 +61,6 @@
       <Filter>CodeGeneratorCpp</Filter>
     </ClInclude>
     <ClInclude Include="ITokenIterator.h" />
-    <ClInclude Include="TokenIterator.h" />
     <ClInclude Include="ITokenGenerator.h" />
     <ClInclude Include="Algorithm.h" />
     <ClInclude Include="pch.h">

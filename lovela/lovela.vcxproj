@@ -198,7 +198,6 @@
     <ClInclude Include="StandardCDeclarations.h" />
     <ClInclude Include="StandardCppDeclarations.h" />
     <ClInclude Include="Token.h" />
-    <ClInclude Include="TokenIterator.h" />
     <ClInclude Include="Utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
