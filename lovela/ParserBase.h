@@ -1,7 +1,6 @@
 #pragma once
 #include "ILexer.h"
 #include "IParser.h"
-#include "ITokenIterator.h"
 #include "ParseException.h"
 
 class ParserBase : public IParser
@@ -168,5 +167,5 @@ protected:
 
 private:
 	ITokenGenerator _tokenGenerator;
-	ITokenIterator _tokenIterator;
+	ITokenGenerator::iterator _tokenIterator;
 };
