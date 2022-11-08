@@ -9,7 +9,7 @@ protected:
 	Lexer(std::wistream& charStream) noexcept;
 
 public:
-	[[nodiscard]] ITokenGenerator Lex() noexcept override;
+	[[nodiscard]] TokenGenerator Lex() noexcept override;
 
 private:
 	[[nodiscard]] Token GetCurrenToken();

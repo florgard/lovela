@@ -183,7 +183,7 @@
     <ClInclude Include="ILexer.h" />
     <ClInclude Include="INodeGenerator.h" />
     <ClInclude Include="IParser.h" />
-    <ClInclude Include="ITokenGenerator.h" />
+    <ClInclude Include="TokenGenerator.h" />
     <ClInclude Include="Lexer.h" />
     <ClInclude Include="LexerBase.h" />
     <ClInclude Include="LexerFactory.h" />

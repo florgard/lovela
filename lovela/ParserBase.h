@@ -6,7 +6,7 @@
 class ParserBase : public IParser
 {
 public:
-	ParserBase(ITokenGenerator&& tokenGenerator) noexcept;
+	ParserBase(TokenGenerator&& tokenGenerator) noexcept;
 
 	[[nodiscard]] const std::vector<Error>& GetErrors() noexcept override
 	{
@@ -166,6 +166,6 @@ protected:
 	[[nodiscard]] const Token& NextToken() const noexcept { return *_tokenIterator; }
 
 private:
-	ITokenGenerator _tokenGenerator;
-	ITokenGenerator::iterator _tokenIterator;
+	TokenGenerator _tokenGenerator;
+	TokenGenerator::iterator _tokenIterator;
 };

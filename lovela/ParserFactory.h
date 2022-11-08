@@ -1,9 +1,9 @@
 #pragma once
 #include "IParser.h"
-#include "ITokenGenerator.h"
+#include "TokenGenerator.h"
 
 class ParserFactory
 {
 public:
-	static std::unique_ptr<IParser> Create(ITokenGenerator&& tokenGenerator, std::string_view id = {}) noexcept;
+	static std::unique_ptr<IParser> Create(TokenGenerator&& tokenGenerator, std::string_view id = {}) noexcept;
 };

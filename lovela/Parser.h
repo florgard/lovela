@@ -6,7 +6,7 @@ class Parser : public ParserBase
 	friend class ParserFactory;
 
 protected:
-	Parser(ITokenGenerator&& tokenGenerator) noexcept;
+	Parser(TokenGenerator&& tokenGenerator) noexcept;
 
 public:
 	[[nodiscard]] INodeGenerator Parse() noexcept override;

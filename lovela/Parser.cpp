@@ -190,7 +190,7 @@ void Parser::Context::AddVariableSymbol(std::shared_ptr<VariableDeclaration> dec
 	}
 }
 
-Parser::Parser(ITokenGenerator&& tokenGenerator) noexcept : ParserBase(std::move(tokenGenerator))
+Parser::Parser(TokenGenerator&& tokenGenerator) noexcept : ParserBase(std::move(tokenGenerator))
 {
 }
 

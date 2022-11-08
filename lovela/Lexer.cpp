@@ -83,7 +83,7 @@ Token Lexer::DecorateToken(Token token) const
 	return token;
 }
 
-ITokenGenerator Lexer::Lex() noexcept
+TokenGenerator Lexer::Lex() noexcept
 {
 	// Populate next and next after characters.
 	GetNextCharacter();

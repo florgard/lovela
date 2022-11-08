@@ -1,5 +1,5 @@
 #pragma once
-#include "ITokenGenerator.h"
+#include "TokenGenerator.h"
 
 class ILexer
 {
@@ -26,6 +26,6 @@ public:
 
 	virtual ~ILexer() = default;
 
-	[[nodiscard]] virtual ITokenGenerator Lex() noexcept = 0;
+	[[nodiscard]] virtual TokenGenerator Lex() noexcept = 0;
 	[[nodiscard]] virtual const std::vector<Error>& GetErrors() noexcept = 0;
 };

@@ -60,7 +60,7 @@
     <ClInclude Include="StandardCppDeclarations.h">
       <Filter>CodeGeneratorCpp</Filter>
     </ClInclude>
-    <ClInclude Include="ITokenGenerator.h" />
+    <ClInclude Include="TokenGenerator.h" />
     <ClInclude Include="Algorithm.h" />
     <ClInclude Include="pch.h">
       <Filter>Main</Filter>
