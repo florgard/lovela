@@ -9,7 +9,7 @@ protected:
 	Parser(TokenGenerator&& tokenGenerator) noexcept;
 
 public:
-	[[nodiscard]] INodeGenerator Parse() noexcept override;
+	[[nodiscard]] NodeGenerator Parse() noexcept override;
 
 
 private:

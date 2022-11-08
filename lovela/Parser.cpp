@@ -194,7 +194,7 @@ Parser::Parser(TokenGenerator&& tokenGenerator) noexcept : ParserBase(std::move(
 {
 }
 
-INodeGenerator Parser::Parse() noexcept
+NodeGenerator Parser::Parse() noexcept
 {
 	auto context = make<Context>::shared();
 	// TODO: add built-in functions?
