@@ -3,7 +3,6 @@
 #include "../lovela/LexerFactory.h"
 #include "../lovela/ParserFactory.h"
 #include "../lovela/CodeGeneratorFactory.h"
-#include "../lovela/Algorithm.h"
 
 suite CodeGeneratorCpp_program_tests = [] {
 	"program test"_test = [] {

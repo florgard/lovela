@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Lexer.h"
-#include "Algorithm.h"
 
 static const std::wregex& GetSeparatorRegex()
 {

@@ -5,6 +5,18 @@ constexpr bool not_empty(const auto& x)
 	return !!x;
 };
 
+auto to_vector(std::ranges::range auto&& range)
+{
+	std::vector<std::remove_reference_t<decltype(*range.begin())>> v;
+
+	for (auto&& item : range)
+	{
+		v.emplace_back(std::move(item));
+	}
+
+	return v;
+}
+
 template <typename NodeT>
 struct Traverse
 {

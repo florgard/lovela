@@ -26,3 +26,4 @@
 #include <ranges>
 #include "generator.hpp"
 #include "Utility.h"
+#include "Algorithm.h"

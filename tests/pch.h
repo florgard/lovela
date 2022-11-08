@@ -25,6 +25,7 @@
 #include <stdexcept>
 #include "../lovela/generator.hpp"
 #include "../lovela/Utility.h"
+#include "../lovela/Algorithm.h"
 
 #define BOOST_UT_DISABLE_MODULE
 #include "ut.hpp"
