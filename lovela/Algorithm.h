@@ -1,5 +1,5 @@
 #pragma once
-#include "NodeGenerator.h"
+#include "Node.h"
 
 struct Traverse
 {
