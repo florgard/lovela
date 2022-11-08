@@ -71,5 +71,8 @@
       <Filter>Libraries</Filter>
     </ClInclude>
     <ClInclude Include="INodeGenerator.h" />
+    <ClInclude Include="generator.hpp">
+      <Filter>Libraries</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

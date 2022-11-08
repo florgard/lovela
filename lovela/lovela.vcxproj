@@ -178,6 +178,7 @@
     <ClInclude Include="CodeGeneratorCpp.h" />
     <ClInclude Include="CodeGeneratorFactory.h" />
     <ClInclude Include="DataType.h" />
+    <ClInclude Include="generator.hpp" />
     <ClInclude Include="ICodeGenerator.h" />
     <ClInclude Include="ILexer.h" />
     <ClInclude Include="INodeGenerator.h" />
