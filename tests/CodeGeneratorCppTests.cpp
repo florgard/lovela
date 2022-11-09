@@ -51,7 +51,7 @@ bool CodeGenTest::Failure(const char* name, std::wstring_view code, std::wstring
 
 	if (!success)
 	{
-		std::wcerr << "Code generator test \"" << name << "\" error: The generated code differs from the expected code.\nGenerated:\n" << generatedCode
+		std::wcerr << "ERROR: Code generator test \"" << name << "\" error: The generated code differs from the expected code.\nGenerated:\n" << generatedCode
 			<< "\nExpected:\n" << expectedCode << "\n\nInput code:\n" << code << "\n\nAST:\n";
 
 		PrintAST(nodes);
@@ -63,7 +63,7 @@ bool CodeGenTest::Failure(const char* name, std::wstring_view code, std::wstring
 
 	if (!success)
 	{
-		std::wcerr << "Code generator test \"" << name << "\" error: The error count differs from the expected count.\nError messages:\n";
+		std::wcerr << "ERROR: Code generator test \"" << name << "\" error: The error count differs from the expected count.\nError messages:\n";
 
 		for (auto& error : codeGen->GetErrors())
 		{
@@ -91,7 +91,7 @@ bool CodeGenTest::ImportFailure(const char* name, std::wstring_view code, std::w
 
 	if (!success)
 	{
-		std::wcerr << "Code generator import test \"" << name << "\" error: The code didn't yield a single export.\n";
+		std::wcerr << "ERROR: Code generator import test \"" << name << "\" error: The code didn't yield a single export.\n";
 
 		return false;
 	}
@@ -109,7 +109,7 @@ bool CodeGenTest::ImportFailure(const char* name, std::wstring_view code, std::w
 
 	if (!success)
 	{
-		std::wcerr << "Code generator import test \"" << name << "\" error: The generated code differs from the expected code.\nGenerated:\n" << generatedCode
+		std::wcerr << "ERROR: Code generator import test \"" << name << "\" error: The generated code differs from the expected code.\nGenerated:\n" << generatedCode
 			<< "\nExpected:\n" << expectedCode << "\n\nInput code:\n" << code << "\n";
 
 		return false;
@@ -119,7 +119,7 @@ bool CodeGenTest::ImportFailure(const char* name, std::wstring_view code, std::w
 
 	if (!success)
 	{
-		std::wcerr << "Code generator import test \"" << name << "\" error: The error count differs from the expected count.\nError messages:\n";
+		std::wcerr << "ERROR: Code generator import test \"" << name << "\" error: The error count differs from the expected count.\nError messages:\n";
 
 		for (auto& error : codeGen->GetErrors())
 		{
@@ -147,7 +147,7 @@ bool CodeGenTest::ExportFailure(const char* name, std::wstring_view code, std::w
 
 	if (!success)
 	{
-		std::wcerr << "Code generator export test \"" << name << "\" error: The code didn't yield a single export.\n";
+		std::wcerr << "ERROR: Code generator export test \"" << name << "\" error: The code didn't yield a single export.\n";
 
 		return false;
 	}
@@ -165,7 +165,7 @@ bool CodeGenTest::ExportFailure(const char* name, std::wstring_view code, std::w
 
 	if (!success)
 	{
-		std::wcerr << "Code generator export test \"" << name << "\" error: The generated code differs from the expected code.\nGenerated:\n" << generatedCode
+		std::wcerr << "ERROR: Code generator export test \"" << name << "\" error: The generated code differs from the expected code.\nGenerated:\n" << generatedCode
 			<< "\nExpected:\n" << expectedCode << "\n\nInput code:\n" << code << "\n";
 
 		return false;
@@ -175,7 +175,7 @@ bool CodeGenTest::ExportFailure(const char* name, std::wstring_view code, std::w
 
 	if (!success)
 	{
-		std::wcerr << "Code generator export test \"" << name << "\" error: The error count differs from the expected count.\nError messages:\n";
+		std::wcerr << "ERROR: Code generator export test \"" << name << "\" error: The error count differs from the expected count.\nError messages:\n";
 
 		for (auto& error : codeGen->GetErrors())
 		{
