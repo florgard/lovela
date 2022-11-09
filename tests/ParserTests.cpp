@@ -213,6 +213,13 @@ suite parser_import_export_tests = [] {
 			Node{ .type = Node::Type::FunctionDeclaration, .value = L"func", .api = Api::Import | Api::Cpp | Api::Standard }
 		));
 	};
+	"invalid import specifier"_test = [] {
+		expect(ParserTest::Failure("invalid import specifier",
+			L"-> 'Standard Something' func1 func2", // func2 added to have any output
+			Node{ .type = Node::Type::FunctionDeclaration, .value = L"func2" },
+			{ IParser::Error{.code = IParser::Error::Code::ParseError } }
+		));
+	};
 };
 
 suite parser_function_namespace_tests = [] {

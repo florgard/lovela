@@ -372,17 +372,16 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 				{L"C++", Api::Cpp},
 			};
 
-			auto apiTokens = split(currentToken.value, L' ');
-			//for (auto value : apiTokens())
-			for (auto value : apiTokens)
+			const auto apiTokens = split(currentToken.value, L' ');
+			for (auto& apiToken : apiTokens)
 			{
-				if (validApiTokens.contains(value))
+				if (validApiTokens.contains(apiToken))
 				{
-					node->api.Set(validApiTokens.at(value));
+					node->api.Set(validApiTokens.at(apiToken));
 				}
 				else
 				{
-					throw ParseException(currentToken, "Invalid import/export API specification.");
+					throw ParseException(currentToken, std::format(L"Invalid import/export API specification token \"{}\".", apiToken));
 				}
 			}
 		}
