@@ -17,6 +17,12 @@ constexpr auto to_vector(std::ranges::range auto&& range)
 	return v;
 }
 
+template <typename T>
+constexpr auto to_vector(std::vector<T>&& v)
+{
+	return v;
+}
+
 template <typename NodeT>
 struct Traverse
 {

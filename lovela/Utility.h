@@ -78,19 +78,63 @@ template <typename Container>
 	}
 
 	return tokens;
-
-	// error LNK2019: unresolved external symbol "public: struct std::experimental::generator<...
-	//return [=]() -> std::experimental::generator<std::wstring>
-	//{
-	//	std::wistringstream ss(input);
-	//	std::wstring token;
-
-	//	while (std::getline(ss, token, delimiter))
-	//	{
-	//		co_yield token;
-	//	}
-	//};
 }
+
+[[nodiscard]] inline auto split(std::wstring&& input, wchar_t delimiter)
+{
+	std::vector<std::wstring> tokens;
+	std::wistringstream ss(std::move(input));
+	std::wstring token;
+
+	while (std::getline(ss, token, delimiter))
+	{
+		tokens.emplace_back(token);
+	}
+
+	return tokens;
+}
+
+struct co_split
+{
+	co_split(const std::wstring& input, wchar_t delimiter) noexcept
+		: stream(input)
+		, delim(delimiter)
+		, gen(gen_tokens())
+	{
+	}
+
+	co_split(std::wstring&& input, wchar_t delimiter) noexcept
+		: stream(std::move(input))
+		, delim(delimiter)
+		, gen(gen_tokens())
+	{
+	}
+
+	auto begin()
+	{
+		return gen.begin();
+	}
+
+	auto end() const noexcept
+	{
+		return gen.end();
+	}
+
+private:
+	tl::generator<std::wstring> gen_tokens()
+	{
+		std::wstring token;
+
+		while (std::getline(stream, token, delim))
+		{
+			co_yield token;
+		}
+	}
+
+	std::wistringstream stream;
+	wchar_t delim;
+	tl::generator<std::wstring> gen;
+};
 
 // https://www.reddit.com/r/cpp/comments/g05m1r/stdunique_ptr_and_braced_initialization/
 template <typename T>
