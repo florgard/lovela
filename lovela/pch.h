@@ -24,6 +24,7 @@
 #include <cassert>
 #include <stdexcept>
 #include <ranges>
+#include <format>
 #include "generator.hpp"
 #include "Utility.h"
 #include "Algorithm.h"
