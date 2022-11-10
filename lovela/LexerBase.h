@@ -19,7 +19,7 @@ public:
 			return {};
 		}
 
-		const auto end = input.find_last_not_of(whitespace.data(), std::string_view::npos, whitespace.size());
+		const auto end = input.find_last_not_of(whitespace.data(), input.npos, whitespace.size());
 		return input.substr(start, end - start + 1);
 	}
 
@@ -33,7 +33,7 @@ public:
 			return {};
 		}
 
-		const auto end = input.find_last_not_of(whitespace.data(), std::wstring_view::npos, whitespace.size());
+		const auto end = input.find_last_not_of(whitespace.data(), input.npos, whitespace.size());
 		return input.substr(start, end - start + 1);
 	}
 
