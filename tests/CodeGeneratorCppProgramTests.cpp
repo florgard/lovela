@@ -6,7 +6,7 @@
 
 suite CodeGeneratorCpp_program_tests = [] {
 	"program test"_test = [] {
-		//	std::wstring code = LR"(
+		//	std::string code = R"(
 		//[()] pi: 3.14.
 		//mul (factor): * factor.
 		//transform (mul, sub): (* mul. - sub).
@@ -16,17 +16,17 @@ suite CodeGeneratorCpp_program_tests = [] {
 			// Internal error:
 			// -> [#32] puts [#8#]. : 'Hello, Wordl!" puts.
 
-		std::wstring code = LR"(
+		std::string code = R"(
 -> 'Standard C' puts.
 : 'Hello, World!' puts.
 )";
-		std::wcout << code << '\n';
+		std::cout << code << '\n';
 
-		std::wistringstream input(code);
+		std::istringstream input(code);
 		auto lexer = LexerFactory::Create(input);
 		for (auto& error : lexer->GetErrors())
 		{
-			std::wcerr << error.message << '\n';
+			std::cerr << error.message << '\n';
 		}
 
 		expect(lexer->GetErrors().empty());
@@ -36,38 +36,38 @@ suite CodeGeneratorCpp_program_tests = [] {
 
 		for (auto& error : parser->GetErrors())
 		{
-			std::wcerr << error.message << '\n';
+			std::cerr << error.message << '\n';
 		}
 
 		expect(parser->GetErrors().empty());
 
 		TestingBase::PrintAST(nodes);
-		std::wcout << '\n';
+		std::cout << '\n';
 
-		std::wstringstream stream;
+		std::stringstream stream;
 
 		auto codeGen = CodeGeneratorFactory::Create(stream, "Cpp");
 		Traverse<Node>::DepthFirstPostorder(nodes, [&](Node& node) { codeGen->Visit(node); });
 
 		for (auto& error : codeGen->GetErrors())
 		{
-			std::wcerr << error << '\n';
+			std::cerr << error << '\n';
 		}
 
 		expect(codeGen->GetErrors().empty());
 
 		auto genCode = stream.str();
-		std::wcout << genCode;
+		std::cout << genCode;
 
-		std::wofstream program(R"(..\targets\cpp\program\lovela-program.cpp)");
+		std::ofstream program(R"(..\targets\cpp\program\lovela-program.cpp)");
 		codeGen->GenerateProgramFile(program);
 		program.close();
 
-		std::wofstream imports(R"(..\targets\cpp\program\lovela-imports.h)");
+		std::ofstream imports(R"(..\targets\cpp\program\lovela-imports.h)");
 		codeGen->GenerateImportsFile(imports);
 		imports.close();
 
-		std::wofstream exports(R"(..\targets\cpp\program\lovela-exports.h)");
+		std::ofstream exports(R"(..\targets\cpp\program\lovela-exports.h)");
 		codeGen->GenerateExportsFile(exports);
 		exports.close();
 	};

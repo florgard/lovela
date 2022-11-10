@@ -7,51 +7,51 @@
 class CodeGenTest : public TestingBase
 {
 public:
-	static bool Success(const char* name, std::wstring_view code, std::wstring_view cppCode)
+	static bool Success(const char* name, std::string_view code, std::string_view cppCode)
 	{
 		return Failure(name, code, cppCode, 0);
 	}
 
-	static bool ImportSuccess(const char* name, std::wstring_view code, std::wstring_view cppCode)
+	static bool ImportSuccess(const char* name, std::string_view code, std::string_view cppCode)
 	{
 		return ImportFailure(name, code, cppCode, 0);
 	}
 
-	static bool ExportSuccess(const char* name, std::wstring_view code, std::wstring_view cppCode)
+	static bool ExportSuccess(const char* name, std::string_view code, std::string_view cppCode)
 	{
 		return ExportFailure(name, code, cppCode, 0);
 	}
 
-	static bool Failure(const char* name, std::wstring_view code, std::wstring_view cppCode, int expectedErrors);
-	static bool ImportFailure(const char* name, std::wstring_view code, std::wstring_view cppCode, int expectedErrors);
-	static bool ExportFailure(const char* name, std::wstring_view code, std::wstring_view cppCode, int expectedErrors);
+	static bool Failure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors);
+	static bool ImportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors);
+	static bool ExportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors);
 };
 
-bool CodeGenTest::Failure(const char* name, std::wstring_view code, std::wstring_view cppCode, int expectedErrors)
+bool CodeGenTest::Failure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
-	std::wistringstream input(std::wstring(code.data(), code.size()));
+	std::istringstream input(std::string(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
 	auto parser = ParserFactory::Create(lexer->Lex());
 	auto nodes = to_vector(parser->Parse());
 
-	std::wostringstream output;
+	std::ostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
 	Traverse<Node>::DepthFirstPostorder(nodes, [&](Node& node) { codeGen->Visit(node); });
 
 	auto generatedCode = output.str();
-	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"^\\s+" }, L"");
-	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"\\s+$" }, L"");
-	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"\\s+" }, L" ");
-	auto expectedCode = to_wstring(cppCode);
-	expectedCode = std::regex_replace(expectedCode, std::wregex{ L"^\\s+" }, L"");
-	expectedCode = std::regex_replace(expectedCode, std::wregex{ L"\\s+$" }, L"");
-	expectedCode = std::regex_replace(expectedCode, std::wregex{ L"\\s+" }, L" ");
+	generatedCode = std::regex_replace(generatedCode, std::regex{ "^\\s+" }, "");
+	generatedCode = std::regex_replace(generatedCode, std::regex{ "\\s+$" }, "");
+	generatedCode = std::regex_replace(generatedCode, std::regex{ "\\s+" }, " ");
+	auto expectedCode = to_string(cppCode);
+	expectedCode = std::regex_replace(expectedCode, std::regex{ "^\\s+" }, "");
+	expectedCode = std::regex_replace(expectedCode, std::regex{ "\\s+$" }, "");
+	expectedCode = std::regex_replace(expectedCode, std::regex{ "\\s+" }, " ");
 
 	bool success = generatedCode == expectedCode;
 
 	if (!success)
 	{
-		std::wcerr << "ERROR: Code generator test \"" << name << "\" error: The generated code differs from the expected code.\nGenerated:\n" << generatedCode
+		std::cerr << "ERROR: Code generator test \"" << name << "\" error: The generated code differs from the expected code.\nGenerated:\n" << generatedCode
 			<< "\nExpected:\n" << expectedCode << "\n\nInput code:\n" << code << "\n\nAST:\n";
 
 		PrintAST(nodes);
@@ -63,11 +63,11 @@ bool CodeGenTest::Failure(const char* name, std::wstring_view code, std::wstring
 
 	if (!success)
 	{
-		std::wcerr << "ERROR: Code generator test \"" << name << "\" error: The error count differs from the expected count.\nError messages:\n";
+		std::cerr << "ERROR: Code generator test \"" << name << "\" error: The error count differs from the expected count.\nError messages:\n";
 
 		for (auto& error : codeGen->GetErrors())
 		{
-			std::wcerr << error << '\n';
+			std::cerr << error << '\n';
 		}
 
 		return false;
@@ -76,14 +76,14 @@ bool CodeGenTest::Failure(const char* name, std::wstring_view code, std::wstring
 	return true;
 }
 
-bool CodeGenTest::ImportFailure(const char* name, std::wstring_view code, std::wstring_view cppCode, int expectedErrors)
+bool CodeGenTest::ImportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
-	std::wistringstream input(std::wstring(code.data(), code.size()));
+	std::istringstream input(std::string(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
 	auto parser = ParserFactory::Create(lexer->Lex());
 	auto nodes = to_vector(parser->Parse());
 
-	std::wostringstream output;
+	std::ostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
 	Traverse<Node>::DepthFirstPostorder(nodes, [&](Node& node) { codeGen->Visit(node); });
 
@@ -91,25 +91,25 @@ bool CodeGenTest::ImportFailure(const char* name, std::wstring_view code, std::w
 
 	if (!success)
 	{
-		std::wcerr << "ERROR: Code generator import test \"" << name << "\" error: The code didn't yield a single export.\n";
+		std::cerr << "ERROR: Code generator import test \"" << name << "\" error: The code didn't yield a single export.\n";
 
 		return false;
 	}
 
 	auto generatedCode = codeGen->GetImports().front();
-	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"^\\s+" }, L"");
-	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"\\s+$" }, L"");
-	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"\\s+" }, L" ");
-	auto expectedCode = to_wstring(cppCode);
-	expectedCode = std::regex_replace(expectedCode, std::wregex{ L"^\\s+" }, L"");
-	expectedCode = std::regex_replace(expectedCode, std::wregex{ L"\\s+$" }, L"");
-	expectedCode = std::regex_replace(expectedCode, std::wregex{ L"\\s+" }, L" ");
+	generatedCode = std::regex_replace(generatedCode, std::regex{ "^\\s+" }, "");
+	generatedCode = std::regex_replace(generatedCode, std::regex{ "\\s+$" }, "");
+	generatedCode = std::regex_replace(generatedCode, std::regex{ "\\s+" }, " ");
+	auto expectedCode = to_string(cppCode);
+	expectedCode = std::regex_replace(expectedCode, std::regex{ "^\\s+" }, "");
+	expectedCode = std::regex_replace(expectedCode, std::regex{ "\\s+$" }, "");
+	expectedCode = std::regex_replace(expectedCode, std::regex{ "\\s+" }, " ");
 
 	success = generatedCode == expectedCode;
 
 	if (!success)
 	{
-		std::wcerr << "ERROR: Code generator import test \"" << name << "\" error: The generated code differs from the expected code.\nGenerated:\n" << generatedCode
+		std::cerr << "ERROR: Code generator import test \"" << name << "\" error: The generated code differs from the expected code.\nGenerated:\n" << generatedCode
 			<< "\nExpected:\n" << expectedCode << "\n\nInput code:\n" << code << "\n";
 
 		return false;
@@ -119,11 +119,11 @@ bool CodeGenTest::ImportFailure(const char* name, std::wstring_view code, std::w
 
 	if (!success)
 	{
-		std::wcerr << "ERROR: Code generator import test \"" << name << "\" error: The error count differs from the expected count.\nError messages:\n";
+		std::cerr << "ERROR: Code generator import test \"" << name << "\" error: The error count differs from the expected count.\nError messages:\n";
 
 		for (auto& error : codeGen->GetErrors())
 		{
-			std::wcerr << error << '\n';
+			std::cerr << error << '\n';
 		}
 
 		return false;
@@ -132,14 +132,14 @@ bool CodeGenTest::ImportFailure(const char* name, std::wstring_view code, std::w
 	return true;
 }
 
-bool CodeGenTest::ExportFailure(const char* name, std::wstring_view code, std::wstring_view cppCode, int expectedErrors)
+bool CodeGenTest::ExportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
-	std::wistringstream input(std::wstring(code.data(), code.size()));
+	std::istringstream input(std::string(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
 	auto parser = ParserFactory::Create(lexer->Lex());
 	auto nodes = to_vector(parser->Parse());
 
-	std::wostringstream output;
+	std::ostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
 	Traverse<Node>::DepthFirstPostorder(nodes, [&](Node& node) { codeGen->Visit(node); });
 
@@ -147,25 +147,25 @@ bool CodeGenTest::ExportFailure(const char* name, std::wstring_view code, std::w
 
 	if (!success)
 	{
-		std::wcerr << "ERROR: Code generator export test \"" << name << "\" error: The code didn't yield a single export.\n";
+		std::cerr << "ERROR: Code generator export test \"" << name << "\" error: The code didn't yield a single export.\n";
 
 		return false;
 	}
 
 	auto generatedCode = codeGen->GetExports().front();
-	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"^\\s+" }, L"");
-	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"\\s+$" }, L"");
-	generatedCode = std::regex_replace(generatedCode, std::wregex{ L"\\s+" }, L" ");
-	auto expectedCode = to_wstring(cppCode);
-	expectedCode = std::regex_replace(expectedCode, std::wregex{ L"^\\s+" }, L"");
-	expectedCode = std::regex_replace(expectedCode, std::wregex{ L"\\s+$" }, L"");
-	expectedCode = std::regex_replace(expectedCode, std::wregex{ L"\\s+" }, L" ");
+	generatedCode = std::regex_replace(generatedCode, std::regex{ "^\\s+" }, "");
+	generatedCode = std::regex_replace(generatedCode, std::regex{ "\\s+$" }, "");
+	generatedCode = std::regex_replace(generatedCode, std::regex{ "\\s+" }, " ");
+	auto expectedCode = to_string(cppCode);
+	expectedCode = std::regex_replace(expectedCode, std::regex{ "^\\s+" }, "");
+	expectedCode = std::regex_replace(expectedCode, std::regex{ "\\s+$" }, "");
+	expectedCode = std::regex_replace(expectedCode, std::regex{ "\\s+" }, " ");
 
 	success = generatedCode == expectedCode;
 
 	if (!success)
 	{
-		std::wcerr << "ERROR: Code generator export test \"" << name << "\" error: The generated code differs from the expected code.\nGenerated:\n" << generatedCode
+		std::cerr << "ERROR: Code generator export test \"" << name << "\" error: The generated code differs from the expected code.\nGenerated:\n" << generatedCode
 			<< "\nExpected:\n" << expectedCode << "\n\nInput code:\n" << code << "\n";
 
 		return false;
@@ -175,11 +175,11 @@ bool CodeGenTest::ExportFailure(const char* name, std::wstring_view code, std::w
 
 	if (!success)
 	{
-		std::wcerr << "ERROR: Code generator export test \"" << name << "\" error: The error count differs from the expected count.\nError messages:\n";
+		std::cerr << "ERROR: Code generator export test \"" << name << "\" error: The error count differs from the expected count.\nError messages:\n";
 
 		for (auto& error : codeGen->GetErrors())
 		{
-			std::wcerr << error << '\n';
+			std::cerr << error << '\n';
 		}
 
 		return false;
@@ -191,92 +191,92 @@ bool CodeGenTest::ExportFailure(const char* name, std::wstring_view code, std::w
 suite CodeGeneratorCpp_function_input_type_tests = [] {
 	"l_i1"_test = [] { 
 		expect(CodeGenTest::Success("l_i1",
-			L"#1 f", 
-			LR"cpp(auto f_f(lovela::context& context, l_i1 in);)cpp"
+			"#1 f", 
+			R"cpp(auto f_f(lovela::context& context, l_i1 in);)cpp"
 		));
 	};
 
 	"l_i8"_test = [] { 
 		expect(CodeGenTest::Success("l_i8", 
-			L"#8 f", 
-			LR"cpp(auto f_f(lovela::context& context, l_i8 in);)cpp"
+			"#8 f", 
+			R"cpp(auto f_f(lovela::context& context, l_i8 in);)cpp"
 		));
 	};
 
 	"l_i16"_test = [] { 
 		expect(CodeGenTest::Success("l_i16", 
-			L"#16 f", 
-			LR"cpp(auto f_f(lovela::context& context, l_i16 in);)cpp"
+			"#16 f", 
+			R"cpp(auto f_f(lovela::context& context, l_i16 in);)cpp"
 		));
 	};
 
 	"l_i32"_test = [] { 
 		expect(CodeGenTest::Success("l_i32", 
-			L"#32 f", 
-			LR"cpp(auto f_f(lovela::context& context, l_i32 in);)cpp"
+			"#32 f", 
+			R"cpp(auto f_f(lovela::context& context, l_i32 in);)cpp"
 		));
 	};
 
 	"l_i64"_test = [] { 
 		expect(CodeGenTest::Success("l_i64", 
-			L"#64 f", 
-			LR"cpp(auto f_f(lovela::context& context, l_i64 in);)cpp"
+			"#64 f", 
+			R"cpp(auto f_f(lovela::context& context, l_i64 in);)cpp"
 		));
 	};
 
 	"l_u1"_test = [] { 
 		expect(CodeGenTest::Success("l_u1", 
-			L"#+1 f", 
-			LR"cpp(auto f_f(lovela::context& context, l_u1 in);)cpp"
+			"#+1 f", 
+			R"cpp(auto f_f(lovela::context& context, l_u1 in);)cpp"
 		));
 	};
 
 	"l_u8"_test = [] { 
 		expect(CodeGenTest::Success("l_u8", 
-			L"#+8 f", 
-			LR"cpp(auto f_f(lovela::context& context, l_u8 in);)cpp"
+			"#+8 f", 
+			R"cpp(auto f_f(lovela::context& context, l_u8 in);)cpp"
 		));
 	};
 
 	"l_u16"_test = [] { 
 		expect(CodeGenTest::Success("l_u16", 
-			L"#+16 f", 
-			LR"cpp(auto f_f(lovela::context& context, l_u16 in);)cpp"
+			"#+16 f", 
+			R"cpp(auto f_f(lovela::context& context, l_u16 in);)cpp"
 		));
 	};
 
 	"l_u32"_test = [] { 
 		expect(CodeGenTest::Success("l_u32", 
-			L"#+32 f", 
-			LR"cpp(auto f_f(lovela::context& context, l_u32 in);)cpp"
+			"#+32 f", 
+			R"cpp(auto f_f(lovela::context& context, l_u32 in);)cpp"
 		));
 	};
 
 	"l_u64"_test = [] { 
 		expect(CodeGenTest::Success("l_u64", 
-			L"#+64 f", 
-			LR"cpp(auto f_f(lovela::context& context, l_u64 in);)cpp"
+			"#+64 f", 
+			R"cpp(auto f_f(lovela::context& context, l_u64 in);)cpp"
 		));
 	};
 
 	"l_f16 error"_test = [] { 
 		expect(CodeGenTest::Failure("l_f16 error", 
-			L"#.16 f", 
-			LR"cpp(auto f_f(lovela::context& context, t_#.16 in);)cpp", 1
+			"#.16 f", 
+			R"cpp(auto f_f(lovela::context& context, t_#.16 in);)cpp", 1
 		));
 	};
 
 	"l_f32"_test = [] { 
 		expect(CodeGenTest::Success("l_f32", 
-			L"#.32 f", 
-			LR"cpp(auto f_f(lovela::context& context, l_f32 in);)cpp"
+			"#.32 f", 
+			R"cpp(auto f_f(lovela::context& context, l_f32 in);)cpp"
 		));
 	};
 
 	"l_f64"_test = [] { 
 		expect(CodeGenTest::Success("l_f64", 
-			L"#.64 f", 
-			LR"cpp(auto f_f(lovela::context& context, l_f64 in);)cpp"
+			"#.64 f", 
+			R"cpp(auto f_f(lovela::context& context, l_f64 in);)cpp"
 		));
 	};
 };
@@ -284,8 +284,8 @@ suite CodeGeneratorCpp_function_input_type_tests = [] {
 suite CodeGeneratorCpp_function_declaration_tests = [] {
 	"trivial function"_test = [] { 
 		expect(CodeGenTest::Success("trivial function", 
-			L"func",
-			LR"cpp(
+			"func",
+			R"cpp(
 template <typename In>
 auto f_func(lovela::context& context, In in);
 )cpp"
@@ -294,8 +294,8 @@ auto f_func(lovela::context& context, In in);
 
 	"function with return type"_test = [] { 
 		expect(CodeGenTest::Success("function with return type", 
-			L"func [type]",
-			LR"cpp(
+			"func [type]",
+			R"cpp(
 template <typename In>
 t_type f_func(lovela::context& context, In in);
 )cpp"
@@ -304,8 +304,8 @@ t_type f_func(lovela::context& context, In in);
 
 	"function with object type"_test = [] { 
 		expect(CodeGenTest::Success("function with object type", 
-			L"[type] func",
-			LR"cpp(
+			"[type] func",
+			R"cpp(
 auto f_func(lovela::context& context, t_type in);
 )cpp"
 		));
@@ -313,8 +313,8 @@ auto f_func(lovela::context& context, t_type in);
 
 	"function with untyped parameter"_test = [] { 
 		expect(CodeGenTest::Success("function with untyped parameter", 
-			L"func (arg)",
-			LR"cpp(
+			"func (arg)",
+			R"cpp(
 template <typename In, typename Param1>
 auto f_func(lovela::context& context, In in, Param1 p_arg);
 )cpp"
@@ -323,8 +323,8 @@ auto f_func(lovela::context& context, In in, Param1 p_arg);
 
 	"function with typed parameter"_test = [] { 
 		expect(CodeGenTest::Success("function with typed parameter", 
-			L"func (arg [type])",
-			LR"cpp(
+			"func (arg [type])",
+			R"cpp(
 template <typename In>
 auto f_func(lovela::context& context, In in, t_type p_arg);
 )cpp"
@@ -333,8 +333,8 @@ auto f_func(lovela::context& context, In in, t_type p_arg);
 
 	"trivial function"_test = [] { 
 		expect(CodeGenTest::Success("trivial function", 
-			L"func: + 1.", 
-			LR"cpp(
+			"func: + 1.", 
+			R"cpp(
 template <typename In>
 auto f_func(lovela::context& context, In in)
 {
@@ -351,8 +351,8 @@ auto f_func(lovela::context& context, In in)
 suite CodeGeneratorCpp_function_call_tests = [] {
 	"function call"_test = [] { 
 		expect(CodeGenTest::Success("function call", 
-			L"[#8] func [#8]: f(1, 'a', g).", 
-			LR"cpp(
+			"[#8] func [#8]: f(1, 'a', g).", 
+			R"cpp(
 l_i8 f_func(lovela::context& context, l_i8 in)
 {
 	static_cast<void>(context);
@@ -368,8 +368,8 @@ l_i8 f_func(lovela::context& context, l_i8 in)
 suite CodeGeneratorCpp_exported_functions_with_implementation_tests = [] {
 	"exported function none -> none"_test = [] {
 		expect(CodeGenTest::Success("exported function none -> none",
-			L"<- [()] ex [()]:.",
-			LR"cpp(
+			"<- [()] ex [()]:.",
+			R"cpp(
 lovela::None f_ex(lovela::context& context, lovela::None in)
 {
 	static_cast<void>(context);
@@ -389,8 +389,8 @@ void ex()
 
 	"exported function any -> any"_test = [] {
 		expect(CodeGenTest::Success("exported function any -> any",
-			L"<- ex: + 1.",
-			LR"cpp(
+			"<- ex: + 1.",
+			R"cpp(
 template <typename In>
 auto f_ex(lovela::context& context, In in)
 {
@@ -413,22 +413,22 @@ void* ex(void* in)
 suite CodeGeneratorCpp_exported_functions_tests = [] {
 	"exported function C"_test = [] { 
 		expect(CodeGenTest::ExportSuccess("exported function C", 
-			L"<- 'C' #32 ex #32", 
-			L"LOVELA_API_C l_i32 ex(l_i32 in)"
+			"<- 'C' #32 ex #32", 
+			"LOVELA_API_C l_i32 ex(l_i32 in)"
 		));
 	};
 
 	"exported function C++"_test = [] { 
 		expect(CodeGenTest::ExportSuccess("exported function C++", 
-			L"<- 'C++' #32 ex #32", 
-			L"LOVELA_API_CPP l_i32 ex(l_i32 in)"
+			"<- 'C++' #32 ex #32", 
+			"LOVELA_API_CPP l_i32 ex(l_i32 in)"
 		));
 	};
 
 	"exported function C Dynamic"_test = [] { 
 		expect(CodeGenTest::ExportSuccess("exported function C Dynamic", 
-			L"<- 'C Dynamic' #32 ex #32", 
-			L"LOVELA_API_C LOVELA_API_DYNAMIC_EXPORT l_i32 ex(l_i32 in)"
+			"<- 'C Dynamic' #32 ex #32", 
+			"LOVELA_API_C LOVELA_API_DYNAMIC_EXPORT l_i32 ex(l_i32 in)"
 		));
 	};
 };
@@ -436,8 +436,8 @@ suite CodeGeneratorCpp_exported_functions_tests = [] {
 suite CodeGeneratorCpp_imported_functions_tests = [] {
 	"imported function"_test = [] {
 		expect(CodeGenTest::Success("imported function",
-			L"-> im",
-			LR"cpp(
+			"-> im",
+			R"cpp(
 template <typename In>
 auto f_im(lovela::context& context, In in)
 {
@@ -449,8 +449,8 @@ auto f_im(lovela::context& context, In in)
 
 	"imported function C"_test = [] {
 		expect(CodeGenTest::Success("imported function C",
-			L"-> 'C' #8 im #8",
-			LR"cpp(
+			"-> 'C' #8 im #8",
+			R"cpp(
 LOVELA_API_C l_i8 im(l_i8 in);
 
 l_i8 f_im(lovela::context& context, l_i8 in)
@@ -463,8 +463,8 @@ l_i8 f_im(lovela::context& context, l_i8 in)
 
 	"imported function C Dynamic"_test = [] {
 		expect(CodeGenTest::Success("imported function C Dynamic",
-			L"-> 'C Dynamic' #8 im #8",
-			LR"cpp(
+			"-> 'C Dynamic' #8 im #8",
+			R"cpp(
 LOVELA_API_C LOVELA_API_DYNAMIC_IMPORT l_i8 im(l_i8 in);
 
 l_i8 f_im(lovela::context& context, l_i8 in)
@@ -479,57 +479,57 @@ l_i8 f_im(lovela::context& context, l_i8 in)
 suite CodeGeneratorCpp_imported_standard_functions_tests = [] {
 	"imported function Standard C stdio"_test = [] { 
 		expect(CodeGenTest::ImportSuccess("imported function Standard C stdio", 
-			L"-> 'Standard C' puts", 
-			L"stdio.h"
+			"-> 'Standard C' puts", 
+			"stdio.h"
 		));
 	};
 
 	"imported function Standard C stlib"_test = [] { 
 		expect(CodeGenTest::ImportSuccess("imported function Standard C stlib", 
-			L"-> 'Standard C' atof", 
-			L"stdlib.h"
+			"-> 'Standard C' atof", 
+			"stdlib.h"
 		));
 	};
 
 	"imported function Standard C string"_test = [] { 
 		expect(CodeGenTest::ImportSuccess("imported function Standard C string", 
-			L"-> 'Standard C' strcpy", 
-			L"string.h"
+			"-> 'Standard C' strcpy", 
+			"string.h"
 		));
 	};
 
 	"imported function Standard C math"_test = [] { 
 		expect(CodeGenTest::ImportSuccess("imported function Standard C math", 
-			L"-> 'Standard C' sin", 
-			L"math.h"
+			"-> 'Standard C' sin", 
+			"math.h"
 		));
 	};
 
 	"imported function Standard C++ cstdio"_test = [] { 
 		expect(CodeGenTest::ImportSuccess("imported function Standard C++ cstdio", 
-			L"-> 'Standard C++' std|puts", 
-			L"cstdio"
+			"-> 'Standard C++' std|puts", 
+			"cstdio"
 		));
 	};
 
 	"imported function Standard C++ cstlib"_test = [] { 
 		expect(CodeGenTest::ImportSuccess("imported function Standard C++ cstlib", 
-			L"-> 'Standard C++' std|atof", 
-			L"cstdlib"
+			"-> 'Standard C++' std|atof", 
+			"cstdlib"
 		));
 	};
 
 	"imported function Standard C++ cstring"_test = [] { 
 		expect(CodeGenTest::ImportSuccess("imported function Standard C++ cstring", 
-			L"-> 'Standard C++' std|strcpy", 
-			L"cstring"
+			"-> 'Standard C++' std|strcpy", 
+			"cstring"
 		));
 	};
 
 	"imported function Standard C++ cmath"_test = [] { 
 		expect(CodeGenTest::ImportSuccess("imported function Standard C++ cmath", 
-			L"-> 'Standard C++' std|sin", 
-			L"cmath"
+			"-> 'Standard C++' std|sin", 
+			"cmath"
 		));
 	};
 };
@@ -537,8 +537,8 @@ suite CodeGeneratorCpp_imported_standard_functions_tests = [] {
 suite CodeGeneratorCpp_main_function_tests = [] {
 	"main and export"_test = [] { 
 		expect(CodeGenTest::Success("main and export", 
-			L"<- [#32] ex [#32]: + 1. : 1 ex.", 
-			LR"cpp(
+			"<- [#32] ex [#32]: + 1. : 1 ex.", 
+			R"cpp(
 l_i32 f_ex(lovela::context& context, l_i32 in)
 {
 	static_cast<void>(context);
@@ -566,8 +566,8 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 
 	"main and explicitly typed import"_test = [] { 
 		expect(CodeGenTest::Success("main and explicitly typed import", 
-			L"-> [#8#] puts [#32]. : 'Hello, Wordl!' puts.", 
-			LR"cpp(
+			"-> [#8#] puts [#32]. : 'Hello, Wordl!' puts.", 
+			R"cpp(
 l_i32 f_puts(lovela::context& context, l_cstr in)
 {
 	static_cast<void>(context);
@@ -587,8 +587,8 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 
 	"main and implicitly typed import"_test = [] { 
 		expect(CodeGenTest::Success("main and implicitly typed import", 
-			L"-> puts. : 'Hello, Wordl!' puts.", 
-			LR"cpp(
+			"-> puts. : 'Hello, Wordl!' puts.", 
+			R"cpp(
 template <typename In>
 auto f_puts(lovela::context& context, In in)
 {

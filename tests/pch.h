@@ -23,6 +23,7 @@
 #include <cwctype>
 #include <cassert>
 #include <stdexcept>
+#include "../lovela/utfcpp/utf8.h"
 #include "../lovela/generator.hpp"
 #include "../lovela/Utility.h"
 #include "../lovela/Algorithm.h"

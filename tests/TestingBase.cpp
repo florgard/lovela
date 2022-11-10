@@ -5,8 +5,8 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const 
 {
 	if (tree != expectedTree)
 	{
-		std::wcerr << "ERROR: Parser test \"" << name << "\" error: Some property of node " << index + 1 << " of type " << to_wstring(tree.type)
-			<< " differs from the expected node of type " << to_wstring(expectedTree.type) << ".\n";
+		std::cerr << "ERROR: Parser test \"" << name << "\" error: Some property of node " << index + 1 << " of type " << to_string(tree.type)
+			<< " differs from the expected node of type " << to_string(expectedTree.type) << ".\n";
 		return false;
 	}
 
@@ -31,19 +31,19 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const 
 	return true;
 }
 
-void TestingBase::PrintAST(int& index, const Node& tree, std::wstring indent)
+void TestingBase::PrintAST(int& index, const Node& tree, std::string indent)
 {
-	std::wcerr << indent << '(' << index + 1 << ' ' << to_wstring(tree.type) << " " << tree.value << '\n';
+	std::cerr << indent << '(' << index + 1 << ' ' << to_string(tree.type) << " " << tree.value << '\n';
 	index++;
 
 	if (tree.left)
 	{
-		PrintAST(index, *tree.left, indent + L"  ");
+		PrintAST(index, *tree.left, indent + "  ");
 	}
 	if (tree.right)
 	{
-		PrintAST(index, *tree.right, indent + L"  ");
+		PrintAST(index, *tree.right, indent + "  ");
 	}
 
-	std::wcerr << indent << "),\n";
+	std::cerr << indent << "),\n";
 }
