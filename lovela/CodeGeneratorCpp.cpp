@@ -94,7 +94,7 @@ void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
 		MainFunctionDeclaration(node, context);
 		return;
 	}
-	else if (node.api.Is(Api::Import))
+	else if (node.api.Is(ApiSpec::Import))
 	{
 		ImportedFunctionDeclaration(node, context);
 	}
@@ -169,7 +169,7 @@ void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
 
 	stream << ')';
 
-	if (node.api.Is(Api::Import))
+	if (node.api.Is(ApiSpec::Import))
 	{
 		ImportedFunctionBody(node, context, parameters);
 	}
@@ -182,7 +182,7 @@ void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
 
 	// Generate the exported function
 
-	if (node.api.Is(Api::Export))
+	if (node.api.Is(ApiSpec::Export))
 	{
 		ExportedFunctionDeclaration(node, context);
 	}
@@ -375,16 +375,16 @@ void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
 
 	std::ostringstream exportDeclaration;
 
-	if (node.api.Is(Api::C))
+	if (node.api.Is(ApiSpec::C))
 	{
 		exportDeclaration << "LOVELA_API_C ";
 	}
-	else if (node.api.Is(Api::Cpp))
+	else if (node.api.Is(ApiSpec::Cpp))
 	{
 		exportDeclaration << "LOVELA_API_CPP ";
 	}
 
-	if (node.api.Is(Api::Dynamic))
+	if (node.api.Is(ApiSpec::Dynamic))
 	{
 		exportDeclaration << "LOVELA_API_DYNAMIC_EXPORT ";
 	}
@@ -429,16 +429,16 @@ void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
 
 void CodeGeneratorCpp::ImportedFunctionDeclaration(Node& node, Context&)
 {
-	if (node.api.Is(Api::Standard))
+	if (node.api.Is(ApiSpec::Standard))
 	{
 		// Don't emit function declarations for standard library functions.
 		// Instead attempt to find the appropriate header to add to lovela-imports.h.
 
-		if (node.api.Is(Api::C))
+		if (node.api.Is(ApiSpec::C))
 		{
 			StandardCDeclarations::GetHeader(headers, node.value);
 		}
-		else if (node.api.Is(Api::Cpp))
+		else if (node.api.Is(ApiSpec::Cpp))
 		{
 			StandardCppDeclarations::GetHeader(headers, node.value);
 		}
@@ -516,20 +516,20 @@ void CodeGeneratorCpp::ImportedFunctionDeclaration(Node& node, Context&)
 
 	// Declare import
 
-	if (node.api.Is(Api::C))
+	if (node.api.Is(ApiSpec::C))
 	{
 		stream << "LOVELA_API_C ";
 	}
-	else if (node.api.Is(Api::Cpp))
+	else if (node.api.Is(ApiSpec::Cpp))
 	{
 		stream << "LOVELA_API_CPP ";
 	}
 
-	if (node.api.Is(Api::Dynamic | Api::Import))
+	if (node.api.Is(ApiSpec::Dynamic | ApiSpec::Import))
 	{
 		stream << "LOVELA_API_DYNAMIC_IMPORT ";
 	}
-	else if (node.api.Is(Api::Dynamic | Api::Export))
+	else if (node.api.Is(ApiSpec::Dynamic | ApiSpec::Export))
 	{
 		stream << "LOVELA_API_DYNAMIC_EXPORT ";
 	}

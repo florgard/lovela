@@ -34,7 +34,7 @@ struct VariableDeclaration
 
 using ParameterList = std::vector<std::shared_ptr<VariableDeclaration>>;
 
-struct Api
+struct ApiSpec
 {
 	static constexpr int None = 0;
 	static constexpr int Import = 1 << 0;
@@ -44,10 +44,10 @@ struct Api
 	static constexpr int C = 1 << 4;
 	static constexpr int Cpp = 1 << 5;
 
-	constexpr Api() noexcept = default;
-	constexpr Api(int flags) noexcept : flags(flags) {}
+	constexpr ApiSpec() noexcept = default;
+	constexpr ApiSpec(int flags) noexcept : flags(flags) {}
 
-	[[nodiscard]] constexpr auto operator<=>(const Api& rhs) const noexcept = default;
+	[[nodiscard]] constexpr auto operator<=>(const ApiSpec& rhs) const noexcept = default;
 	
 	constexpr void Set(int flag)
 	{
@@ -75,7 +75,7 @@ struct FunctionDeclaration
 	TypeSpec outType;
 	TypeSpec inType;
 	ParameterList parameters;
-	Api api{};
+	ApiSpec api{};
 };
 
 struct Node
@@ -101,7 +101,7 @@ struct Node
 	std::vector<std::string> nameSpace;
 	TypeSpec inType;
 	ParameterList parameters;
-	Api api{};
+	ApiSpec api{};
 
 	// Function call
 	std::shared_ptr<FunctionDeclaration> callee;

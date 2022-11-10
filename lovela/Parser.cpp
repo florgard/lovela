@@ -355,21 +355,21 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 	{
 		if (currentToken.value == "<-")
 		{
-			node->api = Api::Export;
+			node->api = ApiSpec::Export;
 		}
 		else if (currentToken.value == "->")
 		{
-			node->api = Api::Import;
+			node->api = ApiSpec::Import;
 		}
 
 		if (Accept(Token::Type::LiteralString))
 		{
 			static const std::map<std::string, int> validApiTokens
 			{
-				{ "Dynamic", Api::Dynamic },
-				{ "Standard", Api::Standard },
-				{ "C", Api::C },
-				{ "C++", Api::Cpp },
+				{ "Dynamic", ApiSpec::Dynamic },
+				{ "Standard", ApiSpec::Standard },
+				{ "C", ApiSpec::C },
+				{ "C++", ApiSpec::Cpp },
 			};
 
 			const auto apiTokens = split(currentToken.value, L' ');
