@@ -15,7 +15,6 @@
 
 ## Medium
 
-* Use UTF-8 input and internal strings
 * Assignment
 * Stream in/out syntax
 * Use msgpack for serialization
