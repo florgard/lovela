@@ -285,35 +285,49 @@ suite CodeGeneratorCpp_function_declaration_tests = [] {
 	"trivial function"_test = [] { 
 		expect(CodeGenTest::Success("trivial function", 
 			L"func",
-			LR"cpp(template <typename In> auto f_func(lovela::context& context, In in);)cpp"
+			LR"cpp(
+template <typename In>
+auto f_func(lovela::context& context, In in);
+)cpp"
 		));
 	};
 
 	"function with return type"_test = [] { 
 		expect(CodeGenTest::Success("function with return type", 
 			L"func [type]",
-			LR"cpp(template <typename In> t_type f_func(lovela::context& context, In in);)cpp"
+			LR"cpp(
+template <typename In>
+t_type f_func(lovela::context& context, In in);
+)cpp"
 		));
 	};
 
 	"function with object type"_test = [] { 
 		expect(CodeGenTest::Success("function with object type", 
 			L"[type] func",
-			LR"cpp(auto f_func(lovela::context& context, t_type in);)cpp"
+			LR"cpp(
+auto f_func(lovela::context& context, t_type in);
+)cpp"
 		));
 	};
 
 	"function with untyped parameter"_test = [] { 
 		expect(CodeGenTest::Success("function with untyped parameter", 
 			L"func (arg)",
-			LR"cpp(template <typename In, typename Param1> auto f_func(lovela::context& context, In in, Param1 p_arg);)cpp"
+			LR"cpp(
+template <typename In, typename Param1>
+auto f_func(lovela::context& context, In in, Param1 p_arg);
+)cpp"
 		));
 	};
 
 	"function with typed parameter"_test = [] { 
 		expect(CodeGenTest::Success("function with typed parameter", 
 			L"func (arg [type])",
-			LR"cpp(template <typename In> auto f_func(lovela::context& context, In in, t_type p_arg);)cpp"
+			LR"cpp(
+template <typename In>
+auto f_func(lovela::context& context, In in, t_type p_arg);
+)cpp"
 		));
 	};
 
