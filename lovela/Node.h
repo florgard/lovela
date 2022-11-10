@@ -16,7 +16,12 @@ public:
 	static TypeSpec AnyType() { return {}; };
 	static TypeSpec NoneType() { return { .name = noneTypeName }; };
 
-	[[nodiscard]] auto operator<=>(const TypeSpec& rhs) const noexcept = default;
+	// FIXME: Causes an internal compiler error in ut.hpp with VS 17.4
+	//[[nodiscard]] auto operator<=>(const TypeSpec& rhs) const noexcept = default;
+	[[nodiscard]] bool operator==(const TypeSpec& rhs) const noexcept
+	{
+		return name == rhs.name;
+	}
 };
 
 struct VariableDeclaration
