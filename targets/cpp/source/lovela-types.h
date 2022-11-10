@@ -1,5 +1,4 @@
 #pragma once
-#define LOVELA
 #include <string>
 #include <array>
 #include <vector>
