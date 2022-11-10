@@ -21,6 +21,11 @@
   <ItemGroup>
     <ClInclude Include="..\source\lovela-types.h" />
     <ClInclude Include="..\source\lovela.h" />
+    <ClInclude Include="..\source\utfcpp\utf8.h" />
+    <ClInclude Include="..\source\utfcpp\utf8\checked.h" />
+    <ClInclude Include="..\source\utfcpp\utf8\core.h" />
+    <ClInclude Include="..\source\utfcpp\utf8\cpp11.h" />
+    <ClInclude Include="..\source\utfcpp\utf8\unchecked.h" />
     <ClInclude Include="lovela-api.h" />
     <ClInclude Include="lovela-exports.h" />
     <ClInclude Include="lovela-imports.h" />

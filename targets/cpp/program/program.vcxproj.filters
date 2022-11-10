@@ -4,6 +4,12 @@
     <Filter Include="lovela">
       <UniqueIdentifier>{c7319c78-a71f-4bbd-8376-d1532e4b8b79}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Libraries">
+      <UniqueIdentifier>{733eb38e-61c3-4760-87c3-dbe17c04550f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\utf8">
+      <UniqueIdentifier>{0aff6828-af8a-4e93-aa75-bb291995f7ae}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\lovela.h">
@@ -16,6 +22,21 @@
     <ClInclude Include="user-imports.h" />
     <ClInclude Include="..\source\lovela-types.h">
       <Filter>lovela</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\utfcpp\utf8.h">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\utfcpp\utf8\unchecked.h">
+      <Filter>Libraries\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\utfcpp\utf8\checked.h">
+      <Filter>Libraries\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\utfcpp\utf8\core.h">
+      <Filter>Libraries\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\utfcpp\utf8\cpp11.h">
+      <Filter>Libraries\utf8</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
