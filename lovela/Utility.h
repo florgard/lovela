@@ -94,19 +94,31 @@ template <typename Container>
 	return tokens;
 }
 
-struct co_split
+template <typename CharT>
+struct basic_co_split
 {
-	co_split(const std::wstring& input, wchar_t delimiter) noexcept
-		: stream(input)
+	using StringT = std::basic_string<CharT>;
+	using StreamT = std::basic_istringstream<CharT>;
+	using GeneratorT = tl::generator<StringT>;
+
+	basic_co_split(StreamT&& input, CharT delimiter) noexcept
+		: stream(std::move(input))
 		, delim(delimiter)
-		, gen(gen_tokens())
+		, gen(get())
 	{
 	}
 
-	co_split(std::wstring&& input, wchar_t delimiter) noexcept
+	basic_co_split(const StringT& input, CharT delimiter) noexcept
+		: stream(input)
+		, delim(delimiter)
+		, gen(get())
+	{
+	}
+
+	basic_co_split(StringT&& input, CharT delimiter) noexcept
 		: stream(std::move(input))
 		, delim(delimiter)
-		, gen(gen_tokens())
+		, gen(get())
 	{
 	}
 
@@ -121,9 +133,9 @@ struct co_split
 	}
 
 private:
-	tl::generator<std::wstring> gen_tokens()
+	GeneratorT get()
 	{
-		std::wstring token;
+		StringT token;
 
 		while (std::getline(stream, token, delim))
 		{
@@ -131,10 +143,13 @@ private:
 		}
 	}
 
-	std::wistringstream stream;
-	wchar_t delim;
-	tl::generator<std::wstring> gen;
+	StreamT stream;
+	GeneratorT gen;
+	CharT delim;
 };
+
+using co_split = basic_co_split<char>;
+using co_wsplit = basic_co_split<wchar_t>;
 
 // https://www.reddit.com/r/cpp/comments/g05m1r/stdunique_ptr_and_braced_initialization/
 template <typename T>
