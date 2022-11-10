@@ -28,7 +28,15 @@ namespace lovela
 		static void to_string(std::string& str, std::wstring_view value)
 		{
 			str.resize(value.length());
-			std::transform(value.begin(), value.end(), str.begin(), [](auto elem) { return static_cast<char>(elem); });
+
+			if constexpr (sizeof(wchar_t) == 2)
+			{
+				utf8::utf16to8(value.begin(), value.end(), str.begin());
+			}
+			else
+			{
+				utf8::utf32to8(value.begin(), value.end(), str.begin());
+			}
 		}
 
 		static void to_wstring(std::wstring& str, std::string_view value)
