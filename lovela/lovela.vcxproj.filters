@@ -5,7 +5,6 @@
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="LexerBase.cpp" />
     <ClCompile Include="ParseException.cpp" />
-    <ClCompile Include="Node.cpp" />
     <ClCompile Include="ParserBase.cpp" />
     <ClCompile Include="CodeGeneratorCpp.cpp">
       <Filter>CodeGeneratorCpp</Filter>
