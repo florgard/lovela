@@ -192,79 +192,79 @@ suite CodeGeneratorCpp_function_input_type_tests = [] {
 	"l_i1"_test = [] { 
 		expect(CodeGenTest::Success("l_i1",
 			L"#1 f", 
-			L"auto f_f(lovela::context& context, l_i1 in);"
+			LR"cpp(auto f_f(lovela::context& context, l_i1 in);)cpp"
 		));
 	};
 	"l_i8"_test = [] { 
 		expect(CodeGenTest::Success("l_i8", 
 			L"#8 f", 
-			L"auto f_f(lovela::context& context, l_i8 in);"
+			LR"cpp(auto f_f(lovela::context& context, l_i8 in);)cpp"
 		));
 	};
 	"l_i16"_test = [] { 
 		expect(CodeGenTest::Success("l_i16", 
 			L"#16 f", 
-			L"auto f_f(lovela::context& context, l_i16 in);"
+			LR"cpp(auto f_f(lovela::context& context, l_i16 in);)cpp"
 		));
 	};
 	"l_i32"_test = [] { 
 		expect(CodeGenTest::Success("l_i32", 
 			L"#32 f", 
-			L"auto f_f(lovela::context& context, l_i32 in);"
+			LR"cpp(auto f_f(lovela::context& context, l_i32 in);)cpp"
 		));
 	};
 	"l_i64"_test = [] { 
 		expect(CodeGenTest::Success("l_i64", 
 			L"#64 f", 
-			L"auto f_f(lovela::context& context, l_i64 in);"
+			LR"cpp(auto f_f(lovela::context& context, l_i64 in);)cpp"
 		));
 	};
 	"l_u1"_test = [] { 
 		expect(CodeGenTest::Success("l_u1", 
 			L"#+1 f", 
-			L"auto f_f(lovela::context& context, l_u1 in);"
+			LR"cpp(auto f_f(lovela::context& context, l_u1 in);)cpp"
 		));
 	};
 	"l_u8"_test = [] { 
 		expect(CodeGenTest::Success("l_u8", 
 			L"#+8 f", 
-			L"auto f_f(lovela::context& context, l_u8 in);"
+			LR"cpp(auto f_f(lovela::context& context, l_u8 in);)cpp"
 		));
 	};
 	"l_u16"_test = [] { 
 		expect(CodeGenTest::Success("l_u16", 
 			L"#+16 f", 
-			L"auto f_f(lovela::context& context, l_u16 in);"
+			LR"cpp(auto f_f(lovela::context& context, l_u16 in);)cpp"
 		));
 	};
 	"l_u32"_test = [] { 
 		expect(CodeGenTest::Success("l_u32", 
 			L"#+32 f", 
-			L"auto f_f(lovela::context& context, l_u32 in);"
+			LR"cpp(auto f_f(lovela::context& context, l_u32 in);)cpp"
 		));
 	};
 	"l_u64"_test = [] { 
 		expect(CodeGenTest::Success("l_u64", 
 			L"#+64 f", 
-			L"auto f_f(lovela::context& context, l_u64 in);"
+			LR"cpp(auto f_f(lovela::context& context, l_u64 in);)cpp"
 		));
 	};
 	"l_f16 error"_test = [] { 
 		expect(CodeGenTest::Failure("l_f16 error", 
 			L"#.16 f", 
-			L"auto f_f(lovela::context& context, t_#.16 in);", 1
+			LR"cpp(auto f_f(lovela::context& context, t_#.16 in);)cpp", 1
 		));
 	};
 	"l_f32"_test = [] { 
 		expect(CodeGenTest::Success("l_f32", 
 			L"#.32 f", 
-			L"auto f_f(lovela::context& context, l_f32 in);"
+			LR"cpp(auto f_f(lovela::context& context, l_f32 in);)cpp"
 		));
 	};
 	"l_f64"_test = [] { 
 		expect(CodeGenTest::Success("l_f64", 
 			L"#.64 f", 
-			L"auto f_f(lovela::context& context, l_f64 in);"
+			LR"cpp(auto f_f(lovela::context& context, l_f64 in);)cpp"
 		));
 	};
 };
@@ -273,46 +273,48 @@ suite CodeGeneratorCpp_function_declaration_tests = [] {
 	"trivial function"_test = [] { 
 		expect(CodeGenTest::Success("trivial function", 
 			L"func",
-			L"template <typename In> auto f_func(lovela::context& context, In in);"
+			LR"cpp(template <typename In> auto f_func(lovela::context& context, In in);)cpp"
 		));
 	};
 
 	"function with return type"_test = [] { 
 		expect(CodeGenTest::Success("function with return type", 
 			L"func [type]",
-			L"template <typename In> t_type f_func(lovela::context& context, In in);"
+			LR"cpp(template <typename In> t_type f_func(lovela::context& context, In in);)cpp"
 		));
 	};
 
 	"function with object type"_test = [] { 
 		expect(CodeGenTest::Success("function with object type", 
 			L"[type] func",
-			L"auto f_func(lovela::context& context, t_type in);"
+			LR"cpp(auto f_func(lovela::context& context, t_type in);)cpp"
 		));
 	};
 
 	"function with untyped parameter"_test = [] { 
 		expect(CodeGenTest::Success("function with untyped parameter", 
 			L"func (arg)",
-			L"template <typename In, typename Param1> auto f_func(lovela::context& context, In in, Param1 p_arg);"
+			LR"cpp(template <typename In, typename Param1> auto f_func(lovela::context& context, In in, Param1 p_arg);)cpp"
 		));
 	};
 
 	"function with typed parameter"_test = [] { 
 		expect(CodeGenTest::Success("function with typed parameter", 
 			L"func (arg [type])",
-			L"template <typename In> auto f_func(lovela::context& context, In in, t_type p_arg);"
+			LR"cpp(template <typename In> auto f_func(lovela::context& context, In in, t_type p_arg);)cpp"
 		));
 	};
 
 	"trivial function"_test = [] { 
 		expect(CodeGenTest::Success("trivial function", 
 			L"func: + 1.", 
-			LR"code(
+			LR"cpp(
 template <typename In>
 auto f_func(lovela::context& context, In in)
-{ static_cast<void>(context); auto& v1 = in; static_cast<void>(v1); const auto v2 = v1 + 1; static_cast<void>(v2); return v2; }
-)code"
+{
+	static_cast<void>(context); auto& v1 = in; static_cast<void>(v1); const auto v2 = v1 + 1; static_cast<void>(v2); return v2;
+}
+)cpp"
 		));
 	};
 };
@@ -321,10 +323,12 @@ suite CodeGeneratorCpp_function_call_tests = [] {
 	"function call"_test = [] { 
 		expect(CodeGenTest::Success("function call", 
 			L"[#8] func [#8]: f(1, 'a', g).", 
-			LR"code(
+			LR"cpp(
 l_i8 f_func(lovela::context& context, l_i8 in)
-{ static_cast<void>(context); auto& v1 = in; static_cast<void>(v1); const auto v2 = f_f(context, v1, 1, "a", f_g(context, v1)); static_cast<void>(v2); return v2; }
-)code"
+{
+	static_cast<void>(context); auto& v1 = in; static_cast<void>(v1); const auto v2 = f_f(context, v1, 1, "a", f_g(context, v1)); static_cast<void>(v2); return v2;
+}
+)cpp"
 		));
 	};
 };
@@ -333,25 +337,35 @@ suite CodeGeneratorCpp_exported_functions_tests = [] {
 	"exported function none -> none"_test = [] { 
 		expect(CodeGenTest::Success("exported function none -> none", 
 			L"<- [()] ex [()]:.", 
-			LR"code(
+			LR"cpp(
 lovela::None f_ex(lovela::context& context, lovela::None in)
-{ static_cast<void>(context); auto& v1 = in; static_cast<void>(v1); return {}; }
+{
+	static_cast<void>(context); auto& v1 = in; static_cast<void>(v1); return {};
+}
+
 void ex()
-{ lovela::context context; lovela::None in; f_ex(context, in); }
-)code"
+{
+	lovela::context context; lovela::None in; f_ex(context, in);
+}
+)cpp"
 		));
 	};
 
 	"exported function any -> any"_test = [] { 
 		expect(CodeGenTest::Success("exported function any -> any", 
 			L"<- ex: + 1.", 
-			LR"code(
+			LR"cpp(
 template <typename In>
 auto f_ex(lovela::context& context, In in)
-{ static_cast<void>(context); auto& v1 = in; static_cast<void>(v1); const auto v2 = v1 + 1; static_cast<void>(v2); return v2; }
+{
+	static_cast<void>(context); auto& v1 = in; static_cast<void>(v1); const auto v2 = v1 + 1; static_cast<void>(v2); return v2;
+}
+
 void* ex(void* in)
-{ lovela::context context; return f_ex(context, in); }
-)code"
+{
+	lovela::context context; return f_ex(context, in);
+}
+)cpp"
 		));
 	};
 
@@ -379,19 +393,19 @@ suite CodeGeneratorCpp_imported_functions_tests = [] {
 	"imported function"_test = [] { 
 		expect(CodeGenTest::Success("imported function", 
 			L"-> im", 
-			L"template <typename In> auto f_im(lovela::context& context, In in) { static_cast<void>(context); return im(in); }"
+			LR"cpp(template <typename In> auto f_im(lovela::context& context, In in) { static_cast<void>(context); return im(in); })cpp"
 		));
 	};
 	"imported function C"_test = [] { 
 		expect(CodeGenTest::Success("imported function C", 
 			L"-> 'C' #8 im #8", 
-			L"LOVELA_API_C l_i8 im(l_i8 in); l_i8 f_im(lovela::context& context, l_i8 in) { static_cast<void>(context); return im(in); }"
+			LR"cpp(LOVELA_API_C l_i8 im(l_i8 in); l_i8 f_im(lovela::context& context, l_i8 in) { static_cast<void>(context); return im(in); })cpp"
 		));
 	};
 	"imported function C Dynamic"_test = [] { 
 		expect(CodeGenTest::Success("imported function C Dynamic", 
 			L"-> 'C Dynamic' #8 im #8", 
-			L"LOVELA_API_C LOVELA_API_DYNAMIC_IMPORT l_i8 im(l_i8 in); l_i8 f_im(lovela::context& context, l_i8 in) { static_cast<void>(context); return im(in); }"
+			LR"cpp(LOVELA_API_C LOVELA_API_DYNAMIC_IMPORT l_i8 im(l_i8 in); l_i8 f_im(lovela::context& context, l_i8 in) { static_cast<void>(context); return im(in); })cpp"
 		));
 	};
 	"imported function Standard C stdio"_test = [] { 
@@ -448,7 +462,7 @@ suite CodeGeneratorCpp_main_function_tests = [] {
 	"main and export"_test = [] { 
 		expect(CodeGenTest::Success("main and export", 
 			L"<- [#32] ex [#32]: + 1. : 1 ex.", 
-			LR"code(
+			LR"cpp(
 l_i32 f_ex(lovela::context& context, l_i32 in)
 {
 	static_cast<void>(context);
@@ -470,35 +484,35 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 	const auto v2 = f_ex(context, 1); static_cast<void>(v2);
 	return {};
 }
-)code"
+)cpp"
 		));
 	};
 
 	"main and explicitly typed import"_test = [] { 
 		expect(CodeGenTest::Success("main and explicitly typed import", 
 			L"-> [#8#] puts [#32]. : 'Hello, Wordl!' puts.", 
-			LR"code(
+			LR"cpp(
 l_i32 f_puts(lovela::context& context, l_cstr in)
 {
-        static_cast<void>(context);
-        return puts(in);
+	static_cast<void>(context);
+	return puts(in);
 }
 
 lovela::None lovela::main(lovela::context& context, lovela::None in)
 {
-        static_cast<void>(context);
-        auto& v1 = in; static_cast<void>(v1);
-        const auto v2 = f_puts(context, "Hello, Wordl!"); static_cast<void>(v2);
-        return {};
+	static_cast<void>(context);
+	auto& v1 = in; static_cast<void>(v1);
+	const auto v2 = f_puts(context, "Hello, Wordl!"); static_cast<void>(v2);
+	return {};
 }
-)code"
+)cpp"
 		));
 	};
 
 	"main and implicitly typed import"_test = [] { 
 		expect(CodeGenTest::Success("main and implicitly typed import", 
 			L"-> puts. : 'Hello, Wordl!' puts.", 
-			LR"code(
+			LR"cpp(
 template <typename In>
 auto f_puts(lovela::context& context, In in)
 {
@@ -513,7 +527,7 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 	const auto v2 = f_puts(context, "Hello, Wordl!"); static_cast<void>(v2);
 	return {};
 }
-)code"
+)cpp"
 		));
 	};
 };
