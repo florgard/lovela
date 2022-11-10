@@ -393,7 +393,7 @@ void Lexer::LexComment(std::vector<Token>& tokens) noexcept
 		}
 		else
 		{
-			AddError(Error::Code::CommentOpen, L"A comment wan't terminated.");
+			AddError(Error::Code::CommentOpen, L"A comment wasn't terminated.");
 			return;
 		}
 	}
