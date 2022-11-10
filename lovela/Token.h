@@ -1,9 +1,11 @@
 #pragma once
 
+// FIXME: Use char
+using DefaultCharT = wchar_t;
+
 template <typename CharT>
 struct basic_token
 {
-	using TokenT = basic_token<CharT>;
 	using StringT = std::basic_string<CharT>;
 
 	enum class Type
@@ -42,13 +44,13 @@ struct basic_token
 	int column{};
 	StringT code;
 
-	[[nodiscard]] constexpr bool operator==(const TokenT& rhs) const noexcept
+	[[nodiscard]] constexpr bool operator==(const basic_token& rhs) const noexcept
 	{
 		// Compare everything but the code location
 		return rhs.type == type && rhs.value == value;
 	}
 
-	[[nodiscard]] constexpr bool operator!=(const TokenT& rhs) const noexcept
+	[[nodiscard]] constexpr bool operator!=(const basic_token& rhs) const noexcept
 	{
 		return !operator==(rhs);
 	}
@@ -59,6 +61,4 @@ struct basic_token
 	}
 };
 
-// FIXME: Use char
-using Token = basic_token<wchar_t>;
-using TokenW = basic_token<wchar_t>;
+using Token = basic_token<DefaultCharT>;
