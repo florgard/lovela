@@ -1,7 +1,11 @@
 #pragma once
 
-struct Token
+template <typename CharT>
+struct basic_token
 {
+	using TokenT = basic_token<CharT>;
+	using StringT = std::basic_string<CharT>;
+
 	enum class Type
 	{
 		Empty,
@@ -31,20 +35,20 @@ struct Token
 		OperatorArrow,
 	} type{};
 
-	std::wstring value;
-	std::wstring outType;
+	StringT value;
+	StringT outType;
 
 	int line{};
 	int column{};
-	std::wstring code;
+	StringT code;
 
-	[[nodiscard]] constexpr bool operator==(const Token& rhs) const noexcept
+	[[nodiscard]] constexpr bool operator==(const TokenT& rhs) const noexcept
 	{
 		// Compare everything but the code location
 		return rhs.type == type && rhs.value == value;
 	}
 
-	[[nodiscard]] constexpr bool operator!=(const Token& rhs) const noexcept
+	[[nodiscard]] constexpr bool operator!=(const TokenT& rhs) const noexcept
 	{
 		return !operator==(rhs);
 	}
@@ -54,3 +58,7 @@ struct Token
 		return type != Type::Empty;
 	}
 };
+
+// FIXME: Use char
+using Token = basic_token<wchar_t>;
+using TokenW = basic_token<wchar_t>;
