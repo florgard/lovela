@@ -32,6 +32,9 @@
     <Filter Include="Libraries">
       <UniqueIdentifier>{916b1182-43b4-4794-ae5d-e111aa89074b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Libraries\utf8">
+      <UniqueIdentifier>{31a3b2d8-5a84-4a1a-a62c-18c928061f72}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CodeGeneratorFactory.h" />
@@ -67,6 +70,21 @@
     </ClInclude>
     <ClInclude Include="generator.hpp">
       <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="utfcpp\utf8.h">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="utfcpp\utf8\checked.h">
+      <Filter>Libraries\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="utfcpp\utf8\core.h">
+      <Filter>Libraries\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="utfcpp\utf8\cpp11.h">
+      <Filter>Libraries\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="utfcpp\utf8\unchecked.h">
+      <Filter>Libraries\utf8</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,17 +1,43 @@
 #pragma once
 #include "magic_enum.hpp"
 
+[[nodiscard]] inline std::string to_string(std::string_view value)
+{
+	return std::string(value.begin(), value.end());
+}
+
 [[nodiscard]] inline std::string to_string(std::wstring_view value)
 {
 	std::string str;
 	str.resize(value.length());
-	std::transform(value.begin(), value.end(), str.begin(), [](auto elem) { return static_cast<char>(elem); });
+
+	if constexpr (sizeof(wchar_t) == 2)
+	{
+		utf8::utf16to8(value.begin(), value.end(), str.begin());
+	}
+	else
+	{
+		utf8::utf32to8(value.begin(), value.end(), str.begin());
+	}
+
 	return str;
 }
 
 [[nodiscard]] inline std::wstring to_wstring(std::string_view value)
 {
-	return std::wstring(value.begin(), value.end());
+	std::wstring str;
+	str.resize(value.length());
+
+	if constexpr (sizeof(wchar_t) == 2)
+	{
+		utf8::utf8to16(value.begin(), value.end(), str.begin());
+	}
+	else
+	{
+		utf8::utf8to32(value.begin(), value.end(), str.begin());
+	}
+
+	return str;
 }
 
 [[nodiscard]] inline std::wstring to_wstring(const std::string& value)
@@ -30,9 +56,23 @@
 }
 
 template <typename Enum, typename std::enable_if<std::is_enum_v<Enum>>::type* = nullptr>
+[[nodiscard]] std::string to_string(Enum value)
+{
+	return to_string(magic_enum::enum_name(value));
+}
+
+template <typename Enum, typename std::enable_if<std::is_enum_v<Enum>>::type* = nullptr>
 [[nodiscard]] std::wstring to_wstring(Enum value)
 {
 	return to_wstring(magic_enum::enum_name(value));
+}
+
+template <typename T, typename std::enable_if<!std::is_enum_v<T>>::type* = nullptr>
+[[nodiscard]] std::string to_string(const T& value)
+{
+	std::ostringstream s;
+	s << value;
+	return s.str();
 }
 
 template <typename T, typename std::enable_if<!std::is_enum_v<T>>::type* = nullptr>
@@ -43,9 +83,19 @@ template <typename T, typename std::enable_if<!std::is_enum_v<T>>::type* = nullp
 	return s.str();
 }
 
+[[nodiscard]] inline std::string single_quote(const std::string& text)
+{
+	return '\'' + text + '\'';
+}
+
 [[nodiscard]] inline std::wstring single_quote(const std::wstring& text)
 {
 	return L'\'' + text + L'\'';
+}
+
+[[nodiscard]] inline std::string double_quote(const std::string& text)
+{
+	return '"' + text + '"';
 }
 
 [[nodiscard]] inline std::wstring double_quote(const std::wstring& text)
@@ -66,11 +116,39 @@ template <typename Container>
 	return ss.str();
 }
 
+[[nodiscard]] inline auto split(const std::string& input, char delimiter)
+{
+	std::vector<std::string> tokens;
+	std::istringstream ss(input);
+	std::string token;
+
+	while (std::getline(ss, token, delimiter))
+	{
+		tokens.emplace_back(token);
+	}
+
+	return tokens;
+}
+
 [[nodiscard]] inline auto split(const std::wstring& input, wchar_t delimiter)
 {
 	std::vector<std::wstring> tokens;
 	std::wistringstream ss(input);
 	std::wstring token;
+
+	while (std::getline(ss, token, delimiter))
+	{
+		tokens.emplace_back(token);
+	}
+
+	return tokens;
+}
+
+[[nodiscard]] inline auto split(std::string&& input, char delimiter)
+{
+	std::vector<std::string> tokens;
+	std::istringstream ss(std::move(input));
+	std::string token;
 
 	while (std::getline(ss, token, delimiter))
 	{

@@ -25,6 +25,7 @@
 #include <stdexcept>
 #include <ranges>
 #include <format>
+#include "utfcpp/utf8.h"
 #include "generator.hpp"
 #include "Utility.h"
 #include "Algorithm.h"
