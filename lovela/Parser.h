@@ -16,13 +16,13 @@ private:
 	struct Context
 	{
 		std::shared_ptr<Context> parent;
-		std::map<std::wstring, std::shared_ptr<FunctionDeclaration>> functionSymbols;
-		std::map<std::wstring, std::shared_ptr<VariableDeclaration>> variableSymbols;
+		std::map<std::string, std::shared_ptr<FunctionDeclaration>> functionSymbols;
+		std::map<std::string, std::shared_ptr<VariableDeclaration>> variableSymbols;
 		TypeSpec inType{};
 
-		[[nodiscard]] bool HasFunctionSymbol(const std::wstring& symbol) const;
-		[[nodiscard]] bool HasVariableSymbol(const std::wstring& symbol) const;
-		void AddFunctionSymbol(const std::wstring& symbol);
+		[[nodiscard]] bool HasFunctionSymbol(const std::string& symbol) const;
+		[[nodiscard]] bool HasVariableSymbol(const std::string& symbol) const;
+		void AddFunctionSymbol(const std::string& symbol);
 		void AddVariableSymbol(std::shared_ptr<VariableDeclaration> variable);
 	};
 

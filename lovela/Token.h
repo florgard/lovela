@@ -1,7 +1,7 @@
 #pragma once
 
 // FIXME: Use char
-using DefaultCharT = wchar_t;
+using DefaultCharT = char;
 
 template <typename CharT>
 struct basic_token

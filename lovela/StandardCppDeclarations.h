@@ -3,5 +3,5 @@
 class StandardCppDeclarations
 {
 public:
-	static void GetHeader(std::vector<std::wstring>& headers, std::wstring_view function);
+	static void GetHeader(std::vector<std::string>& headers, std::string_view function);
 };

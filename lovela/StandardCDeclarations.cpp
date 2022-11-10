@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "StandardCDeclarations.h"
 
-void StandardCDeclarations::GetHeader(std::vector<std::wstring>& headers, std::wstring_view function)
+void StandardCDeclarations::GetHeader(std::vector<std::string>& headers, std::string_view function)
 {
 	// TODO: Add more if needed, these are extracted from https://www.tutorialspoint.com/c_standard_library/index.htm
 	static const std::map<std::string, std::string> declarations{
@@ -125,6 +125,6 @@ void StandardCDeclarations::GetHeader(std::vector<std::wstring>& headers, std::w
 	auto iter = declarations.find(to_string(function));
 	if (iter != declarations.end())
 	{
-		headers.emplace_back(to_wstring(iter->second));
+		headers.emplace_back(iter->second);
 	}
 }

@@ -29,23 +29,23 @@ std::map<Node::Type, CodeGeneratorCpp::Visitor>& CodeGeneratorCpp::GetInternalVi
 
 const TypeSpec& CodeGeneratorCpp::GetNoneType()
 {
-	static TypeSpec t{ .name = L"lovela::None" };
+	static TypeSpec t{ .name = "lovela::None" };
 	return t;
 }
 
 const TypeSpec& CodeGeneratorCpp::GetVoidType()
 {
-	static TypeSpec t{ .name = L"void" };
+	static TypeSpec t{ .name = "void" };
 	return t;
 }
 
 const TypeSpec& CodeGeneratorCpp::GetVoidPtrType()
 {
-	static TypeSpec t{ .name = L"void*" };
+	static TypeSpec t{ .name = "void*" };
 	return t;
 }
 
-CodeGeneratorCpp::CodeGeneratorCpp(std::wostream& stream) : stream(stream)
+CodeGeneratorCpp::CodeGeneratorCpp(std::ostream& stream) : stream(stream)
 {
 }
 
@@ -101,12 +101,12 @@ void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
 
 	auto inType = node.inType;
 	auto outType = node.outType;
-	std::vector<std::wstring> templateParameters;
-	std::vector<std::pair<std::wstring, std::wstring>> parameters;
+	std::vector<std::string> templateParameters;
+	std::vector<std::pair<std::string, std::string>> parameters;
 
 	if (outType.Any())
 	{
-		outType.name = L"auto";
+		outType.name = "auto";
 	}
 	else if (node.outType.None())
 	{
@@ -119,16 +119,16 @@ void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
 
 	if (inType.Any())
 	{
-		parameters.emplace_back(std::make_pair(L"In", L"in"));
-		templateParameters.emplace_back(L"In");
+		parameters.emplace_back(std::make_pair("In", "in"));
+		templateParameters.emplace_back("In");
 	}
 	else if (inType.None())
 	{
-		parameters.emplace_back(std::make_pair(GetNoneType().name, L"in"));
+		parameters.emplace_back(std::make_pair(GetNoneType().name, "in"));
 	}
 	else
 	{
-		parameters.emplace_back(std::make_pair(TypeName(inType.name), L"in"));
+		parameters.emplace_back(std::make_pair(TypeName(inType.name), "in"));
 	}
 
 	size_t index = 0;
@@ -192,7 +192,7 @@ void CodeGeneratorCpp::MainFunctionDeclaration(Node& node, Context& context)
 {
 	if (!node.outType.None())
 	{
-		errors.emplace_back(L"Warning: The main function out type wasn't None. The parser should set that.");
+		errors.emplace_back("Warning: The main function out type wasn't None. The parser should set that.");
 		node.outType.SetNone();
 	}
 
@@ -209,17 +209,17 @@ bool CodeGeneratorCpp::CheckExportType(TypeSpec& type)
 	}
 	else if (!ConvertPrimitiveType(type.name))
 	{
-		errors.emplace_back(L"Error: Exported functions must have primitive in, out and parameter types. Unsupported type: " + type.name);
+		errors.emplace_back("Error: Exported functions must have primitive in, out and parameter types. Unsupported type: " + type.name);
 		return false;
 	}
 
 	return true;
 }
 
-bool CodeGeneratorCpp::ConvertPrimitiveType(std::wstring& name)
+bool CodeGeneratorCpp::ConvertPrimitiveType(std::string& name)
 {
-	static std::map<std::wstring, std::wstring> types{
-		{L"#8#", L"l_cstr"},
+	static std::map<std::string, std::string> types{
+		{"#8#", "l_cstr"},
 	};
 
 	if (types.contains(name))
@@ -228,51 +228,51 @@ bool CodeGeneratorCpp::ConvertPrimitiveType(std::wstring& name)
 		return true;
 	}
 
-	static std::wregex regex(LR"(#(\.|\+)?(1|8|16|32|64)(#*))");
-	std::wsmatch match;
+	static std::regex regex(R"(#(\.|\+)?(1|8|16|32|64)(#*))");
+	std::smatch match;
 	if (!std::regex_match(name, match, regex))
 	{
-		errors.emplace_back(L"Unsupported primitive type: " + name);
+		errors.emplace_back("Unsupported primitive type: " + name);
 		return false;
 	}
 
-	const bool floatingPoint = match[1].compare(L".") == 0;
-	const bool unsignedInteger = match[1].compare(L"+") == 0;
+	const bool floatingPoint = match[1].compare(".") == 0;
+	const bool unsignedInteger = match[1].compare("+") == 0;
 	const auto width = match[2];
-	if (floatingPoint && !(width == L"32" || width == L"64"))
+	if (floatingPoint && !(width == "32" || width == "64"))
 	{
-		errors.emplace_back(L"Unsupported primitive floating point type: " + name);
+		errors.emplace_back("Unsupported primitive floating point type: " + name);
 		return false;
 	}
 
-	std::wstring exportName = L"l_";
-	exportName += floatingPoint ? L'f' : (unsignedInteger ? L'u' : L'i');
+	std::string exportName = "l_";
+	exportName += floatingPoint ? 'f' : (unsignedInteger ? 'u' : 'i');
 	exportName += width;
-	exportName += std::wstring(match[3].length(), L'*');
+	exportName += std::string(match[3].length(), '*');
 	name = exportName;
 
 	return true;
 }
 
-std::wstring CodeGeneratorCpp::TypeName(const std::wstring& name)
+std::string CodeGeneratorCpp::TypeName(const std::string& name)
 {
 	if (name.front() == '#')
 	{
-		std::wstring converted = name;
+		std::string converted = name;
 		if (ConvertPrimitiveType(converted))
 		{
 			return converted;
 		}
 	}
 
-	return L"t_" + name;
+	return "t_" + name;
 }
 
-std::wstring CodeGeneratorCpp::TypeName(const std::wstring& name, size_t index)
+std::string CodeGeneratorCpp::TypeName(const std::string& name, size_t index)
 {
 	if (name.empty())
 	{
-		return L"Param" + to_wstring(index);
+		return "Param" + to_string(index);
 	}
 	else
 	{
@@ -280,16 +280,16 @@ std::wstring CodeGeneratorCpp::TypeName(const std::wstring& name, size_t index)
 	}
 }
 
-std::wstring CodeGeneratorCpp::ParameterName(const std::wstring& name)
+std::string CodeGeneratorCpp::ParameterName(const std::string& name)
 {
-	return L"p_" + name;
+	return "p_" + name;
 }
 
-std::wstring CodeGeneratorCpp::ParameterName(const std::wstring& name, size_t index)
+std::string CodeGeneratorCpp::ParameterName(const std::string& name, size_t index)
 {
 	if (name.empty())
 	{
-		return L"param" + to_wstring(index);
+		return "param" + to_string(index);
 	}
 	else
 	{
@@ -297,14 +297,14 @@ std::wstring CodeGeneratorCpp::ParameterName(const std::wstring& name, size_t in
 	}
 }
 
-std::wstring CodeGeneratorCpp::FunctionName(const std::wstring& name)
+std::string CodeGeneratorCpp::FunctionName(const std::string& name)
 {
-	return L"f_" + name;
+	return "f_" + name;
 }
 
-std::wstring CodeGeneratorCpp::RefVar(wchar_t prefix, size_t index)
+std::string CodeGeneratorCpp::RefVar(char prefix, size_t index)
 {
-	return std::wstring(L"static_cast<void>(") + prefix + to_wstring(index) + L')';
+	return std::string("static_cast<void>(") + prefix + to_string(index) + ')';
 }
 
 void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
@@ -312,7 +312,7 @@ void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
 	auto inType = node.inType;
 	auto outType = node.outType;
 
-	std::vector<std::pair<std::wstring, std::wstring>> parameters;
+	std::vector<std::pair<std::string, std::string>> parameters;
 
 	// Verify and convert the input type
 
@@ -321,7 +321,7 @@ void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
 	}
 	else if (CheckExportType(inType))
 	{
-		parameters.emplace_back(std::make_pair(inType.name, L"in"));
+		parameters.emplace_back(std::make_pair(inType.name, "in"));
 	}
 	else
 	{
@@ -358,7 +358,7 @@ void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
 
 	// Make the function signature
 
-	std::wstringstream ss;
+	std::stringstream ss;
 	ss << outType.name << ' ' << node.value << '(';
 
 	index = 0;
@@ -373,7 +373,7 @@ void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
 
 	// Store export declaration
 
-	std::wostringstream exportDeclaration;
+	std::ostringstream exportDeclaration;
 
 	if (node.api.Is(Api::C))
 	{
@@ -455,7 +455,7 @@ void CodeGeneratorCpp::ImportedFunctionDeclaration(Node& node, Context&)
 	auto inType = node.inType;
 	auto outType = node.outType;
 
-	std::vector<std::pair<std::wstring, std::wstring>> parameters;
+	std::vector<std::pair<std::string, std::string>> parameters;
 
 	// Verify and convert the input type
 
@@ -464,7 +464,7 @@ void CodeGeneratorCpp::ImportedFunctionDeclaration(Node& node, Context&)
 	}
 	else if (CheckExportType(inType))
 	{
-		parameters.emplace_back(std::make_pair(inType.name, L"in"));
+		parameters.emplace_back(std::make_pair(inType.name, "in"));
 	}
 	else
 	{
@@ -501,7 +501,7 @@ void CodeGeneratorCpp::ImportedFunctionDeclaration(Node& node, Context&)
 
 	// Make the function signature
 
-	std::wstringstream ss;
+	std::stringstream ss;
 	ss << outType.name << ' ' << node.value << '(';
 
 	index = 0;
@@ -571,7 +571,7 @@ void CodeGeneratorCpp::FunctionBody(Node& node, Context& context)
 	}
 }
 
-void CodeGeneratorCpp::ImportedFunctionBody(Node& node, Context&, const std::vector<std::pair<std::wstring, std::wstring>>& parameters)
+void CodeGeneratorCpp::ImportedFunctionBody(Node& node, Context&, const std::vector<std::pair<std::string, std::string>>& parameters)
 {
 	stream << '\n';
 
@@ -653,7 +653,7 @@ void CodeGeneratorCpp::BinaryOperation(Node& node, Context& context)
 {
 	if (!node.left || !node.right)
 	{
-		errors.emplace_back(L"Child node missing in binary operation.");
+		errors.emplace_back("Child node missing in binary operation.");
 		return;
 	}
 
@@ -729,7 +729,7 @@ void CodeGeneratorCpp::EndAssign(Context& context, bool reset)
 	EndAssign(context);
 }
 
-void CodeGeneratorCpp::GenerateImportsFile(std::wostream& file) const
+void CodeGeneratorCpp::GenerateImportsFile(std::ostream& file) const
 {
 	file << "#ifndef LOVELA_IMPORTS\n#define LOVELA_IMPORTS\n\n";
 
@@ -741,7 +741,7 @@ void CodeGeneratorCpp::GenerateImportsFile(std::wostream& file) const
 	file << "\n#endif\n";
 }
 
-void CodeGeneratorCpp::GenerateExportsFile(std::wostream& file) const
+void CodeGeneratorCpp::GenerateExportsFile(std::ostream& file) const
 {
 	file << "#ifndef LOVELA_EXPORTS\n#define LOVELA_EXPORTS\n\n";
 
@@ -753,7 +753,7 @@ void CodeGeneratorCpp::GenerateExportsFile(std::wostream& file) const
 	file << "\n#endif\n";
 }
 
-void CodeGeneratorCpp::GenerateProgramFile(std::wostream& file) const
+void CodeGeneratorCpp::GenerateProgramFile(std::ostream& file) const
 {
 	file << "#include \"lovela-program.h\"\n\n";
 	file << stream.rdbuf();

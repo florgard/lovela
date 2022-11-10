@@ -1,67 +1,67 @@
 #include "pch.h"
 #include "Lexer.h"
 
-static const std::wregex& GetSeparatorRegex()
+static const std::regex& GetSeparatorRegex()
 {
-	static const std::wregex re{ LR"([\(\)\[\]\{\}\.,:;\!\?\|#])" };
+	static const std::regex re{ R"([\(\)\[\]\{\}\.,:;\!\?\|#])" };
 	return re;
 }
 
-static const std::wregex& GetWhitespaceRegex()
+static const std::regex& GetWhitespaceRegex()
 {
-	static const std::wregex re{ LR"(\s)" };
+	static const std::regex re{ R"(\s)" };
 	return re;
 }
 
-static const std::wregex& GetLiteralNumberRegex()
+static const std::regex& GetLiteralNumberRegex()
 {
-	static const std::wregex re{ LR"([\+\-]?\d+)" };
+	static const std::regex re{ R"([\+\-]?\d+)" };
 	return re;
 }
 
-static const std::wregex& GetBeginCommentRegex()
+static const std::regex& GetBeginCommentRegex()
 {
-	static const std::wregex re{ LR"(<<)" };
+	static const std::regex re{ R"(<<)" };
 	return re;
 }
 
-static const std::wregex& GetEndCommentRegex()
+static const std::regex& GetEndCommentRegex()
 {
-	static const std::wregex re{ LR"(>>)" };
+	static const std::regex re{ R"(>>)" };
 	return re;
 }
 
-static const std::wregex& GetDigitRegex()
+static const std::regex& GetDigitRegex()
 {
-	static const std::wregex re{ LR"(\d)" };
+	static const std::regex re{ R"(\d)" };
 	return re;
 }
 
-static const std::wregex& GetStringFieldRegex()
+static const std::regex& GetStringFieldRegex()
 {
-	static const std::wregex re{ LR"([tnr])" };
+	static const std::regex re{ R"([tnr])" };
 	return re;
 }
 
-static const std::wregex& GetDecimalPartRegex()
+static const std::regex& GetDecimalPartRegex()
 {
-	static const std::wregex re{ LR"(\.\d)" };
+	static const std::regex re{ R"(\.\d)" };
 	return re;
 }
 
-static const std::wregex& GetFirstCharRegex()
+static const std::regex& GetFirstCharRegex()
 {
-	static const std::wregex re{ LR"([\d\+\.])" };
+	static const std::regex re{ R"([\d\+\.])" };
 	return re;
 }
 
-static const std::wregex& GetFollowingCharsRegex()
+static const std::regex& GetFollowingCharsRegex()
 {
-	static const std::wregex re{ LR"([\d#])" };
+	static const std::regex re{ R"([\d#])" };
 	return re;
 }
 
-Lexer::Lexer(std::wistream& charStream) noexcept : charStream(charStream >> std::noskipws)
+Lexer::Lexer(std::istream& charStream) noexcept : charStream(charStream >> std::noskipws)
 {
 }
 
@@ -76,7 +76,7 @@ Token Lexer::DecorateToken(Token token) const
 {
 	token.line = currentLine;
 	token.column = currentColumn;
-	token.code = std::wstring(currentCode.begin(), currentCode.end());
+	token.code = std::string(currentCode.begin(), currentCode.end());
 	return token;
 }
 
@@ -171,7 +171,7 @@ bool Lexer::Accept() noexcept
 	return true;
 }
 
-bool Lexer::Accept(wchar_t character) noexcept
+bool Lexer::Accept(char character) noexcept
 {
 	if (characters[Next] == character)
 	{
@@ -181,11 +181,11 @@ bool Lexer::Accept(wchar_t character) noexcept
 	return false;
 }
 
-bool Lexer::Accept(const std::wregex& regex, size_t length) noexcept
+bool Lexer::Accept(const std::regex& regex, size_t length) noexcept
 {
 	if (!(length > 0 && length <= characters.size() - Next))
 	{
-		AddError(Error::Code::InternalError, L"Regex match out of bounds.");
+		AddError(Error::Code::InternalError, "Regex match out of bounds.");
 		return false;
 	}
 
@@ -198,42 +198,42 @@ bool Lexer::Accept(const std::wregex& regex, size_t length) noexcept
 	return false;
 }
 
-bool Lexer::AcceptBegin(wchar_t character) noexcept
+bool Lexer::AcceptBegin(char character) noexcept
 {
 	return currentLexeme.empty() && Accept(character);
 }
 
-bool Lexer::AcceptBegin(const std::wregex& regex, size_t length) noexcept
+bool Lexer::AcceptBegin(const std::regex& regex, size_t length) noexcept
 {
 	return currentLexeme.empty() && Accept(regex, length);
 }
 
-bool Lexer::Expect(wchar_t character) noexcept
+bool Lexer::Expect(char character) noexcept
 {
 	if (Accept(character))
 	{
 		return true;
 	}
 
-	AddError(Error::Code::SyntaxError, std::wstring(L"Unexpected character \"") + characters[Next] + L"\", expected \"" + character + L" \".");
+	AddError(Error::Code::SyntaxError, std::string("Unexpected character \"") + characters[Next] + "\", expected \"" + character + " \".");
 	return false;
 }
 
-bool Lexer::Expect(const std::wregex& regex, size_t length) noexcept
+bool Lexer::Expect(const std::regex& regex, size_t length) noexcept
 {
 	if (Accept(regex, length))
 	{
 		return true;
 	}
 
-	AddError(Error::Code::SyntaxError, std::wstring(L"Unexpected character \"") + characters[Next] + L" \".");
+	AddError(Error::Code::SyntaxError, std::string("Unexpected character \"") + characters[Next] + " \".");
 	return false;
 }
 
 void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 {
-	std::wstring value;
-	wchar_t nextStringInterpolation = '1';
+	std::string value;
+	char nextStringInterpolation = '1';
 
 	for (;;)
 	{
@@ -265,17 +265,17 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 				// Add a string literal interpolation token with the next free index.
 				if (nextStringInterpolation > '9')
 				{
-					AddError(Error::Code::StringInterpolationOverflow, std::wstring(L"Too many string interpolations, index out of bounds (greater than 9)."));
+					AddError(Error::Code::StringInterpolationOverflow, std::string("Too many string interpolations, index out of bounds (greater than 9)."));
 				}
 				else
 				{
-					tokens.emplace_back(Token{ .type = Token::Type::LiteralStringInterpolation, .value = std::wstring(1, nextStringInterpolation) });
+					tokens.emplace_back(Token{ .type = Token::Type::LiteralStringInterpolation, .value = std::string(1, nextStringInterpolation) });
 					nextStringInterpolation++;
 				}
 			}
 			else if (Accept(GetDigitRegex(), 1))
 			{
-				wchar_t stringFieldCode = characters[Current];
+				char stringFieldCode = characters[Current];
 
 				if (Accept('}'))
 				{
@@ -283,16 +283,16 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 					tokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = std::move(value), .outType = stringTypeName });
 
 					// Add a string literal interpolation token with the given index.
-					tokens.emplace_back(Token{ .type = Token::Type::LiteralStringInterpolation, .value = std::wstring(1, stringFieldCode) });
+					tokens.emplace_back(Token{ .type = Token::Type::LiteralStringInterpolation, .value = std::string(1, stringFieldCode) });
 				}
 				else
 				{
-					AddError(Error::Code::StringFieldIllformed, std::wstring(L"Ill-formed string field \"") + stringFieldCode + L"\".");
+					AddError(Error::Code::StringFieldIllformed, std::string("Ill-formed string field \"") + stringFieldCode + "\".");
 				}
 			}
 			else if (Accept(GetStringFieldRegex(), 1))
 			{
-				wchar_t stringFieldCode = characters[Current];
+				char stringFieldCode = characters[Current];
 
 				if (Accept('}'))
 				{
@@ -301,12 +301,12 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 				}
 				else
 				{
-					AddError(Error::Code::StringFieldIllformed, std::wstring(L"Ill-formed string field \"") + stringFieldCode + L"\".");
+					AddError(Error::Code::StringFieldIllformed, std::string("Ill-formed string field \"") + stringFieldCode + "\".");
 				}
 			}
 			else
 			{
-				AddError(Error::Code::StringFieldUnknown, std::wstring(L"Unknown string field code \"") + characters[Next] + L"\".");
+				AddError(Error::Code::StringFieldUnknown, std::string("Unknown string field code \"") + characters[Next] + "\".");
 			}
 		}
 		else if (Accept())
@@ -316,7 +316,7 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 		}
 		else
 		{
-			AddError(Error::Code::StringLiteralOpen, L"A string literal wasn't terminated.");
+			AddError(Error::Code::StringLiteralOpen, "A string literal wasn't terminated.");
 			return;
 		}
 	}
@@ -324,7 +324,7 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 
 void Lexer::LexLiteralNumber(std::vector<Token>& tokens) noexcept
 {
-	std::wstring value;
+	std::string value;
 	value += characters[Current];
 
 	while (Accept(GetDigitRegex(), 1))
@@ -393,7 +393,7 @@ void Lexer::LexComment(std::vector<Token>& tokens) noexcept
 		}
 		else
 		{
-			AddError(Error::Code::CommentOpen, L"A comment wasn't terminated.");
+			AddError(Error::Code::CommentOpen, "A comment wasn't terminated.");
 			return;
 		}
 	}
@@ -423,12 +423,12 @@ void Lexer::LexWhitespace(std::vector<Token>& tokens) noexcept
 
 void Lexer::LexPrimitiveType(std::vector<Token>& tokens) noexcept
 {
-	std::wstring lexeme;
+	std::string lexeme;
 	lexeme += characters[Current];
 
 	if (!Expect(GetFirstCharRegex(), 1))
 	{
-		AddError(Error::Code::SyntaxError, L"Invalid primitive type.");
+		AddError(Error::Code::SyntaxError, "Invalid primitive type.");
 		return;
 	}
 

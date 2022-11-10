@@ -142,7 +142,7 @@ static constexpr auto& GetOperatorNodes()
 	return s_OperatorNodeSet;
 }
 
-bool Parser::Context::HasFunctionSymbol(const std::wstring& symbol) const
+bool Parser::Context::HasFunctionSymbol(const std::string& symbol) const
 {
 	if (functionSymbols.contains(symbol))
 	{
@@ -158,7 +158,7 @@ bool Parser::Context::HasFunctionSymbol(const std::wstring& symbol) const
 	}
 }
 
-bool Parser::Context::HasVariableSymbol(const std::wstring& symbol) const
+bool Parser::Context::HasVariableSymbol(const std::string& symbol) const
 {
 	if (variableSymbols.contains(symbol))
 	{
@@ -174,7 +174,7 @@ bool Parser::Context::HasVariableSymbol(const std::wstring& symbol) const
 	}
 }
 
-void Parser::Context::AddFunctionSymbol(const std::wstring& symbol)
+void Parser::Context::AddFunctionSymbol(const std::string& symbol)
 {
 	if (!HasFunctionSymbol(symbol))
 	{
@@ -353,23 +353,23 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 	// ->
 	if (IsToken(Token::Type::OperatorArrow))
 	{
-		if (currentToken.value == L"<-")
+		if (currentToken.value == "<-")
 		{
 			node->api = Api::Export;
 		}
-		else if (currentToken.value == L"->")
+		else if (currentToken.value == "->")
 		{
 			node->api = Api::Import;
 		}
 
 		if (Accept(Token::Type::LiteralString))
 		{
-			static const std::map<std::wstring, int> validApiTokens
+			static const std::map<std::string, int> validApiTokens
 			{
-				{L"Dynamic", Api::Dynamic},
-				{L"Standard", Api::Standard},
-				{L"C", Api::C},
-				{L"C++", Api::Cpp},
+				{ "Dynamic", Api::Dynamic },
+				{ "Standard", Api::Standard },
+				{ "C", Api::C },
+				{ "C++", Api::Cpp },
 			};
 
 			const auto apiTokens = split(currentToken.value, L' ');
@@ -381,7 +381,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 				}
 				else
 				{
-					throw ParseException(currentToken, std::format(L"Invalid import/export API specification token \"{}\".", apiToken));
+					throw ParseException(currentToken, std::format("Invalid import/export API specification token \"{}\".", apiToken));
 				}
 			}
 		}

@@ -6,18 +6,18 @@ class CodeGeneratorCpp : public ICodeGenerator
 	friend class CodeGeneratorFactory;
 
 protected:
-	CodeGeneratorCpp(std::wostream& stream);
+	CodeGeneratorCpp(std::ostream& stream);
 
 public:
-	[[nodiscard]] const std::vector<std::wstring>& GetErrors() const noexcept override { return errors; }
-	[[nodiscard]] const std::vector<std::wstring>& GetImports() const noexcept override { return headers; }
-	[[nodiscard]] const std::vector<std::wstring>& GetExports() const noexcept override { return exports; }
+	[[nodiscard]] const std::vector<std::string>& GetErrors() const noexcept override { return errors; }
+	[[nodiscard]] const std::vector<std::string>& GetImports() const noexcept override { return headers; }
+	[[nodiscard]] const std::vector<std::string>& GetExports() const noexcept override { return exports; }
 
 	void Visit(Node& node) override;
 
-	void GenerateProgramFile(std::wostream& file) const override;
-	void GenerateImportsFile(std::wostream& file) const override;
-	void GenerateExportsFile(std::wostream& file) const override;
+	void GenerateProgramFile(std::ostream& file) const override;
+	void GenerateImportsFile(std::ostream& file) const override;
+	void GenerateExportsFile(std::ostream& file) const override;
 
 private:
 	struct Context
@@ -41,25 +41,25 @@ private:
 	void ExportedFunctionDeclaration(Node& node, Context& context);
 	void ImportedFunctionDeclaration(Node& node, Context& context);
 	void FunctionBody(Node& node, Context& context);
-	void ImportedFunctionBody(Node& node, Context& context, const std::vector<std::pair<std::wstring, std::wstring>>& parameters);
+	void ImportedFunctionBody(Node& node, Context& context, const std::vector<std::pair<std::string, std::string>>& parameters);
 
 	void BeginScope();
 	void EndScope();
-	const std::wstring& Indent() const { return indent; }
+	const std::string& Indent() const { return indent; }
 	void BeginAssign(Context& context);
 	bool BeginAssign(Context& context, bool set);
 	void EndAssign(Context& context);
 	void EndAssign(Context& context, bool reset);
 
-	std::wstring TypeName(const std::wstring& name);
-	std::wstring TypeName(const std::wstring& name, size_t index);
-	static std::wstring ParameterName(const std::wstring& name);
-	static std::wstring ParameterName(const std::wstring& name, size_t index);
-	static std::wstring FunctionName(const std::wstring& name);
-	static std::wstring RefVar(wchar_t prefix, size_t index);
+	std::string TypeName(const std::string& name);
+	std::string TypeName(const std::string& name, size_t index);
+	static std::string ParameterName(const std::string& name);
+	static std::string ParameterName(const std::string& name, size_t index);
+	static std::string FunctionName(const std::string& name);
+	static std::string RefVar(char prefix, size_t index);
 
 	bool CheckExportType(TypeSpec& type);
-	bool ConvertPrimitiveType(std::wstring& name);
+	bool ConvertPrimitiveType(std::string& name);
 
 	using Visitor = std::function<void(CodeGeneratorCpp*, Node&, Context&)>;
 	static std::map<Node::Type, Visitor>& GetVisitors();
@@ -69,11 +69,11 @@ private:
 	static const TypeSpec& GetVoidType();
 	static const TypeSpec& GetVoidPtrType();
 
-	std::wostream& stream;
-	std::wstring indent;
-	std::vector<std::wstring> errors;
-	std::vector<std::wstring> headers;
-	std::vector<std::wstring> exports;
+	std::ostream& stream;
+	std::string indent;
+	std::vector<std::string> errors;
+	std::vector<std::string> headers;
+	std::vector<std::string> exports;
 
 	static constexpr char LocalVar{ 'v' };
 };

@@ -3,12 +3,11 @@
 
 struct ParseException
 {
-	std::wstring message;
+	std::string message;
 	Token token;
 
 	ParseException(const Token& token);
 	ParseException(const Token& token, std::string_view message);
-	ParseException(const Token& token, std::wstring_view message);
 };
 
 struct UnexpectedTokenException : public ParseException
@@ -20,8 +19,8 @@ struct UnexpectedTokenException : public ParseException
 	template <size_t Size>
 	constexpr UnexpectedTokenException(const Token& token, const static_set<Token::Type, Size>& expected) : ParseException(token)
 	{
-		std::wostringstream s;
-		s << "Unexpected token " << to_wstring(token.type) << ", expected ";
+		std::ostringstream s;
+		s << "Unexpected token " << to_string(token.type) << ", expected ";
 		bool first = true;
 		for (const auto& type : expected.data)
 		{
@@ -30,7 +29,7 @@ struct UnexpectedTokenException : public ParseException
 				s << ", ";
 			}
 			first = false;
-			s << to_wstring(type);
+			s << to_string(type);
 		}
 		message = s.str();
 	}

@@ -2,7 +2,7 @@
 
 struct DataType
 {
-	std::wstring name;
+	std::string name;
 
 	[[nodiscard]] auto operator<=>(const DataType& rhs) const noexcept = default;
 };

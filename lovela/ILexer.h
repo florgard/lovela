@@ -20,7 +20,7 @@ public:
 			StringInterpolationOverflow,
 		} code{};
 
-		std::wstring message;
+		std::string message;
 		Token token;
 
 		[[nodiscard]] auto operator<=>(const Error& rhs) const noexcept = default;

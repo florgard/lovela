@@ -2,7 +2,7 @@
 #include "CodeGeneratorFactory.h"
 #include "CodeGeneratorCpp.h"
 
-std::unique_ptr<ICodeGenerator> CodeGeneratorFactory::Create(std::wostream& stream, std::string_view id) noexcept
+std::unique_ptr<ICodeGenerator> CodeGeneratorFactory::Create(std::ostream& stream, std::string_view id) noexcept
 {
 	if (id == "Cpp")
 	{

@@ -6,7 +6,7 @@ class Lexer : public LexerBase
 	friend class LexerFactory;
 
 protected:
-	Lexer(std::wistream& charStream) noexcept;
+	Lexer(std::istream& charStream) noexcept;
 
 public:
 	[[nodiscard]] TokenGenerator Lex() noexcept override;
@@ -17,12 +17,12 @@ private:
 
 	void GetNextCharacter() noexcept;
 	[[nodiscard]] bool Accept() noexcept;
-	[[nodiscard]] bool Accept(wchar_t character) noexcept;
-	[[nodiscard]] bool Accept(const std::wregex& regex, size_t length) noexcept;
-	[[nodiscard]] bool AcceptBegin(wchar_t character) noexcept;
-	[[nodiscard]] bool AcceptBegin(const std::wregex& regex, size_t length) noexcept;
-	[[nodiscard]] bool Expect(wchar_t character) noexcept;
-	[[nodiscard]] bool Expect(const std::wregex& regex, size_t length) noexcept;
+	[[nodiscard]] bool Accept(char character) noexcept;
+	[[nodiscard]] bool Accept(const std::regex& regex, size_t length) noexcept;
+	[[nodiscard]] bool AcceptBegin(char character) noexcept;
+	[[nodiscard]] bool AcceptBegin(const std::regex& regex, size_t length) noexcept;
+	[[nodiscard]] bool Expect(char character) noexcept;
+	[[nodiscard]] bool Expect(const std::regex& regex, size_t length) noexcept;
 
 	[[nodiscard]] void LexLiteralString(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexLiteralNumber(std::vector<Token>& tokens) noexcept;
@@ -35,7 +35,7 @@ private:
 	static constexpr size_t Next = 1;
 	static constexpr size_t NextAfter = 2;
 
-	std::wistream& charStream;
-	std::array<wchar_t, 3> characters{};
-	std::wstring currentLexeme;
+	std::istream& charStream;
+	std::array<char, 3> characters{};
+	std::string currentLexeme;
 };

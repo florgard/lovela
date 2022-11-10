@@ -14,7 +14,7 @@ public:
 			ParseError,
 		} code{};
 
-		std::wstring message;
+		std::string message;
 		Token token;
 
 		[[nodiscard]] constexpr auto operator<=>(const Error& rhs) const noexcept = default;
