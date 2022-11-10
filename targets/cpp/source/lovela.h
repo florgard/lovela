@@ -98,6 +98,20 @@ namespace lovela
 				}, io);
 		}
 
+		static std::string to_string(std::wstring_view value)
+		{
+			std::string str;
+			to_string(str, value);
+			return str;
+		}
+
+		static std::wstring to_wstring(std::string_view value)
+		{
+			std::wstring str;
+			to_wstring(str, value);
+			return str;
+		}
+
 		static void to_string(std::string& str, std::wstring_view value)
 		{
 			str.resize(value.length());
@@ -129,7 +143,7 @@ namespace lovela
 
 	class streams
 	{
-#if defined(_MSC_VER)
+#ifdef _WIN32
 		std::vector<stream> _items{ {}, { std::wcin }, { std::wcout }, { std::wcerr } };
 #else
 		std::vector<stream> _items{ {}, { std::cin }, { std::cout }, { std::cerr } };
