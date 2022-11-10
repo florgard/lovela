@@ -13,12 +13,7 @@ struct TypeSpec
 	static TypeSpec AnyType() { return {}; };
 	static TypeSpec NoneType() { return { .name = noneTypeName }; };
 
-	// FIXME: Causes an internal compiler error in ut.hpp with VS 17.4
-	//[[nodiscard]] auto operator<=>(const TypeSpec& rhs) const noexcept = default;
-	[[nodiscard]] bool operator==(const TypeSpec& rhs) const noexcept
-	{
-		return name == rhs.name;
-	}
+	[[nodiscard]] auto operator<=>(const TypeSpec& rhs) const noexcept = default;
 
 private:
 	static constexpr const char* noneTypeName = "()";
