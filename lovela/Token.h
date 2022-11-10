@@ -1,12 +1,8 @@
 #pragma once
 
-// FIXME: Use char
-using DefaultCharT = char;
-
-template <typename CharT>
-struct basic_token
+struct Token
 {
-	using StringT = std::basic_string<CharT>;
+	using StringT = std::string;
 
 	enum class Type
 	{
@@ -44,13 +40,13 @@ struct basic_token
 	int column{};
 	StringT code;
 
-	[[nodiscard]] constexpr bool operator==(const basic_token& rhs) const noexcept
+	[[nodiscard]] constexpr bool operator==(const Token& rhs) const noexcept
 	{
 		// Compare everything but the code location
 		return rhs.type == type && rhs.value == value;
 	}
 
-	[[nodiscard]] constexpr bool operator!=(const basic_token& rhs) const noexcept
+	[[nodiscard]] constexpr bool operator!=(const Token& rhs) const noexcept
 	{
 		return !operator==(rhs);
 	}
@@ -60,5 +56,3 @@ struct basic_token
 		return type != Type::Empty;
 	}
 };
-
-using Token = basic_token<DefaultCharT>;

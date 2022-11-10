@@ -1,55 +1,40 @@
 #pragma once
 #include "Token.h"
 
-template <typename CharT>
-struct basic_type_spec
+struct TypeSpec
 {
-	using StringT = std::basic_string<CharT>;
-
-	StringT name;
+	std::string name;
 
 	bool Any() const { return name.empty(); }
 	bool None() const { return name == noneTypeName; }
 	void SetAny() { name.clear(); }
 	void SetNone() { name = noneTypeName; }
 
-	static basic_type_spec AnyType() { return {}; };
-	static basic_type_spec NoneType() { return { .name = noneTypeName }; };
+	static TypeSpec AnyType() { return {}; };
+	static TypeSpec NoneType() { return { .name = noneTypeName }; };
 
 	// FIXME: Causes an internal compiler error in ut.hpp with VS 17.4
 	//[[nodiscard]] auto operator<=>(const TypeSpec& rhs) const noexcept = default;
-	[[nodiscard]] bool operator==(const basic_type_spec& rhs) const noexcept
+	[[nodiscard]] bool operator==(const TypeSpec& rhs) const noexcept
 	{
 		return name == rhs.name;
 	}
 
 private:
-	static constexpr CharT noneTypeName[3]{ '(', ')', '\0' };
+	static constexpr const char* noneTypeName = "()";
 };
 
-using TypeSpec = basic_type_spec<DefaultCharT>;
-
-template <typename CharT>
-struct basic_variable_declaration
+struct VariableDeclaration
 {
-	using StringT = std::basic_string<CharT>;
-	using TypeSpecT = basic_type_spec<CharT>;
+	std::string name;
+	TypeSpec type;
 
-	StringT name;
-	TypeSpecT type;
-
-	[[nodiscard]] auto operator<=>(const basic_variable_declaration& rhs) const noexcept = default;
+	[[nodiscard]] auto operator<=>(const VariableDeclaration& rhs) const noexcept = default;
 };
 
-using VariableDeclaration = basic_variable_declaration<DefaultCharT>;
+using ParameterList = std::vector<std::shared_ptr<VariableDeclaration>>;
 
-template <typename CharT>
-using basic_parameter_list = std::vector<std::shared_ptr<basic_variable_declaration<CharT>>>;
-
-using ParameterList = basic_parameter_list<DefaultCharT>;
-
-template <typename CharT>
-struct basic_api
+struct Api
 {
 	static constexpr int None = 0;
 	static constexpr int Import = 1 << 0;
@@ -59,10 +44,10 @@ struct basic_api
 	static constexpr int C = 1 << 4;
 	static constexpr int Cpp = 1 << 5;
 
-	constexpr basic_api() noexcept = default;
-	constexpr basic_api(int flags) noexcept : flags(flags) {}
+	constexpr Api() noexcept = default;
+	constexpr Api(int flags) noexcept : flags(flags) {}
 
-	[[nodiscard]] constexpr auto operator<=>(const basic_api& rhs) const noexcept = default;
+	[[nodiscard]] constexpr auto operator<=>(const Api& rhs) const noexcept = default;
 	
 	constexpr void Set(int flag)
 	{
@@ -83,36 +68,18 @@ private:
 	int flags{};
 };
 
-using Api = basic_api<DefaultCharT>;
-
-template <typename CharT>
-struct basic_function_declaration
+struct FunctionDeclaration
 {
-	using StringT = std::basic_string<CharT>;
-	using TypeSpecT = basic_type_spec<CharT>;
-	using ParameterListT = basic_parameter_list<CharT>;
-	using ApiT = basic_api<CharT>;
-
-	StringT name;
-	std::vector<StringT> nameSpace;
-	TypeSpecT outType;
-	TypeSpecT inType;
-	ParameterListT parameters;
-	ApiT api{};
+	std::string name;
+	std::vector<std::string> nameSpace;
+	TypeSpec outType;
+	TypeSpec inType;
+	ParameterList parameters;
+	Api api{};
 };
 
-using FunctionDeclaration = basic_function_declaration<DefaultCharT>;
-
-template <typename CharT>
-struct basic_node
+struct Node
 {
-	using StringT = std::basic_string<CharT>;
-	using TypeSpecT = basic_type_spec<CharT>;
-	using TokenT = basic_token<CharT>;
-	using ParameterListT = basic_parameter_list<CharT>;
-	using ApiT = basic_api<CharT>;
-	using FunctionDeclarationT = basic_function_declaration<CharT>;
-
 	enum class Type
 	{
 		Empty,
@@ -126,23 +93,23 @@ struct basic_node
 		BinaryOperation,
 	} type{};
 
-	StringT value;
-	TypeSpecT outType;
-	TokenT token;
+	std::string value;
+	TypeSpec outType;
+	Token token;
 
 	// Function declaration
-	std::vector<StringT> nameSpace;
-	TypeSpecT inType;
-	ParameterListT parameters;
-	ApiT api{};
+	std::vector<std::string> nameSpace;
+	TypeSpec inType;
+	ParameterList parameters;
+	Api api{};
 
 	// Function call
-	std::shared_ptr<FunctionDeclarationT> callee;
+	std::shared_ptr<FunctionDeclaration> callee;
 
-	std::unique_ptr<basic_node> left;
-	std::unique_ptr<basic_node> right;
+	std::unique_ptr<Node> left;
+	std::unique_ptr<Node> right;
 
-	[[nodiscard]] bool operator==(const basic_node& rhs) const noexcept
+	[[nodiscard]] bool operator==(const Node& rhs) const noexcept
 	{
 		// Compare owned data (not the child nodes, token or callee)
 		return rhs.type == type
@@ -154,12 +121,12 @@ struct basic_node
 			&& std::equal(rhs.parameters.begin(), rhs.parameters.end(), parameters.begin(), [](const auto& v1, const auto& v2) { return *v1 == *v2; });
 	}
 
-	[[nodiscard]] bool operator!=(const basic_node& rhs) const noexcept { return !operator==(rhs); }
+	[[nodiscard]] bool operator!=(const Node& rhs) const noexcept { return !operator==(rhs); }
 	[[nodiscard]] operator bool() const noexcept { return type != Type::Empty; }
 
-	[[nodiscard]] FunctionDeclarationT ToFunctionDeclaration() const
+	[[nodiscard]] FunctionDeclaration ToFunctionDeclaration() const
 	{
-		return FunctionDeclarationT
+		return FunctionDeclaration
 		{
 			.name = value,
 			.nameSpace = nameSpace,
@@ -170,9 +137,9 @@ struct basic_node
 		};
 	}
 
-	[[nodiscard]] StringT GetQualifiedName() const
+	[[nodiscard]] std::string GetQualifiedName() const
 	{
-		std::basic_ostringstream<CharT> name;
+		std::ostringstream name;
 		for (auto& part : nameSpace)
 		{
 			name << part << '|';
@@ -181,5 +148,3 @@ struct basic_node
 		return name.str();
 	}
 };
-
-using Node = basic_node<DefaultCharT>;
