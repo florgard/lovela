@@ -1,0 +1,21 @@
+#pragma once
+#include <string>
+#include <string_view>
+#include <array>
+#include <vector>
+#include <set>
+#include <map>
+#include <deque>
+#include <algorithm>
+#include <memory>
+#include <functional>
+#include <iostream>
+#include <sstream>
+#include <fstream>
+#include <regex>
+#include <ranges>
+
+#include "utfcpp/utf8.h"
+#include "generator.hpp"
+#include "Utility.h"
+#include "Algorithm.h"

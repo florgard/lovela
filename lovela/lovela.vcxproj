@@ -183,6 +183,7 @@
     <ClInclude Include="Lexer.h" />
     <ClInclude Include="LexerBase.h" />
     <ClInclude Include="LexerFactory.h" />
+    <ClInclude Include="lovela-dependencies.h" />
     <ClInclude Include="magic_enum.hpp" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="ParseException.h" />

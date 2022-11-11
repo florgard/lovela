@@ -86,5 +86,8 @@
     <ClInclude Include="utfcpp\utf8\unchecked.h">
       <Filter>Libraries\utf8</Filter>
     </ClInclude>
+    <ClInclude Include="lovela-dependencies.h">
+      <Filter>Main</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
