@@ -48,8 +48,10 @@ typedef const char* l_cstr;
 
 // Edit user-imports.h to include headers or declare functions that the lovela program needs for its imported functions without explicit API specifications.
 #include "user-imports.h"
+
 // Automatically generated header with function declarations that the lovela program imports.
 #include "lovela-imports.h"
+
 // Automatically generated header with function declarations that the lovela program exports.
 #include "lovela-exports.h"
 
