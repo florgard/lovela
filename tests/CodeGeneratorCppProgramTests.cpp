@@ -44,10 +44,10 @@ suite CodeGeneratorCpp_program_tests = [] {
 		TestingBase::PrintAST(nodes);
 		std::cout << '\n';
 
-		std::ostringstream stream;
+		std::stringstream stream;
 
 		auto codeGen = CodeGeneratorFactory::Create(stream, "Cpp");
-		Traverse<Node>::DepthFirstPostorder(nodes, [&](Node& node) { codeGen->Visit(node); });
+		Traverse<Node>::DepthFirstPostorder(nodes, [&](auto& node) { codeGen->Visit(node); });
 
 		for (auto& error : codeGen->GetErrors())
 		{
