@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="lovela-stream.cpp" />
+    <ClCompile Include="libpu8.cpp">
+      <Filter>Libraries</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Libraries">
+      <UniqueIdentifier>{c0cdf8fc-3ee0-4f4d-aa8b-429166bce27d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="libpu8.h">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

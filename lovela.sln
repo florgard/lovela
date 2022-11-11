@@ -24,6 +24,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tests", "tests\tests.vcxpro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lovela-runtime", "targets\cpp\lovela-runtime\lovela-runtime.vcxitems", "{26FA06DE-7D30-42FD-9D05-DF128762D790}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "frontends", "frontends", "{073641C5-3B92-4E0A-A9F8-2C8B49413F14}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lovela-stream", "frontends\lovela-stream\lovela-stream.vcxproj", "{1CC41AF4-C068-493A-87F8-BD12928744C4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -56,6 +60,14 @@ Global
 		{A1C44B36-4549-4EB3-BE6B-1865B090A1FD}.Release|x64.Build.0 = Release|x64
 		{A1C44B36-4549-4EB3-BE6B-1865B090A1FD}.Release|x86.ActiveCfg = Release|Win32
 		{A1C44B36-4549-4EB3-BE6B-1865B090A1FD}.Release|x86.Build.0 = Release|Win32
+		{1CC41AF4-C068-493A-87F8-BD12928744C4}.Debug|x64.ActiveCfg = Debug|x64
+		{1CC41AF4-C068-493A-87F8-BD12928744C4}.Debug|x64.Build.0 = Debug|x64
+		{1CC41AF4-C068-493A-87F8-BD12928744C4}.Debug|x86.ActiveCfg = Debug|Win32
+		{1CC41AF4-C068-493A-87F8-BD12928744C4}.Debug|x86.Build.0 = Debug|Win32
+		{1CC41AF4-C068-493A-87F8-BD12928744C4}.Release|x64.ActiveCfg = Release|x64
+		{1CC41AF4-C068-493A-87F8-BD12928744C4}.Release|x64.Build.0 = Release|x64
+		{1CC41AF4-C068-493A-87F8-BD12928744C4}.Release|x86.ActiveCfg = Release|Win32
+		{1CC41AF4-C068-493A-87F8-BD12928744C4}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +76,7 @@ Global
 		{62910474-EC67-4537-8E6D-C1294247E1B8} = {BB9095B5-2311-42F3-9049-2AD6BD705342}
 		{D58A3804-5E3E-4034-BEC4-6D0D1BD7FA64} = {62910474-EC67-4537-8E6D-C1294247E1B8}
 		{26FA06DE-7D30-42FD-9D05-DF128762D790} = {62910474-EC67-4537-8E6D-C1294247E1B8}
+		{1CC41AF4-C068-493A-87F8-BD12928744C4} = {073641C5-3B92-4E0A-A9F8-2C8B49413F14}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {4B580BA7-1840-4F32-9CFD-2517A3852B3B}
