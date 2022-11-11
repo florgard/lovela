@@ -44,7 +44,7 @@ suite CodeGeneratorCpp_program_tests = [] {
 		TestingBase::PrintAST(nodes);
 		std::cout << '\n';
 
-		std::stringstream stream;
+		std::ostringstream stream;
 
 		auto codeGen = CodeGeneratorFactory::Create(stream, "Cpp");
 		Traverse<Node>::DepthFirstPostorder(nodes, [&](Node& node) { codeGen->Visit(node); });
