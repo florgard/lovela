@@ -731,30 +731,45 @@ void CodeGeneratorCpp::EndAssign(Context& context, bool reset)
 
 void CodeGeneratorCpp::GenerateImportsFile(std::ostream& file) const
 {
-	file << "#ifndef LOVELA_IMPORTS\n#define LOVELA_IMPORTS\n\n";
+	file << R"cpp(
+// Automatically generated header with function declarations that the lovela program imports.
+#ifndef LOVELA_IMPORTS
+#define LOVELA_IMPORTS
+)cpp";
 
 	for (auto& header : GetImports())
 	{
 		file << "#include <" << header << ">\n";
 	}
 
-	file << "\n#endif\n";
+	file << R"cpp(
+#endif
+)cpp";
 }
 
 void CodeGeneratorCpp::GenerateExportsFile(std::ostream& file) const
 {
-	file << "#ifndef LOVELA_EXPORTS\n#define LOVELA_EXPORTS\n\n";
+	file << R"cpp(
+// Automatically generated header with function declarations that the lovela program exports.
+#ifndef LOVELA_EXPORTS
+#define LOVELA_EXPORTS
+)cpp";
 
 	for (auto& declaration : GetExports())
 	{
 		file << declaration << ";\n";
 	}
 
-	file << "\n#endif\n";
+	file << R"cpp(
+#endif
+)cpp";
 }
 
 void CodeGeneratorCpp::GenerateProgramFile(std::ostream& file) const
 {
-	file << "#include \"lovela-program.h\"\n\n";
+	file << R"cpp(
+#include "lovela-program.h"
+)cpp";
+
 	file << stream.rdbuf();
 }
