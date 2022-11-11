@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Libraries">
+      <UniqueIdentifier>{07ac8a02-cd5a-4741-bd7f-d4817a3f7ffa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\utf8">
+      <UniqueIdentifier>{7e8606dc-1b73-4786-ae12-b95e85f0f27b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)utfcpp\utf8.h">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)utfcpp\utf8\checked.h">
+      <Filter>Libraries\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)utfcpp\utf8\core.h">
+      <Filter>Libraries\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)utfcpp\utf8\cpp11.h">
+      <Filter>Libraries\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="$(MSBuildThisFileDirectory)utfcpp\utf8\unchecked.h">
+      <Filter>Libraries\utf8</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

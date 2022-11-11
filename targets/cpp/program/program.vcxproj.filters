@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="lovela">
-      <UniqueIdentifier>{c7319c78-a71f-4bbd-8376-d1532e4b8b79}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Libraries">
       <UniqueIdentifier>{733eb38e-61c3-4760-87c3-dbe17c04550f}</UniqueIdentifier>
     </Filter>
@@ -12,17 +9,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\source\lovela.h">
-      <Filter>lovela</Filter>
-    </ClInclude>
     <ClInclude Include="lovela-program.h" />
     <ClInclude Include="lovela-exports.h" />
-    <ClInclude Include="lovela-api.h" />
     <ClInclude Include="lovela-imports.h" />
     <ClInclude Include="user-imports.h" />
-    <ClInclude Include="..\source\lovela-types.h">
-      <Filter>lovela</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\utfcpp\utf8.h">
       <Filter>Libraries</Filter>
     </ClInclude>
@@ -38,11 +28,9 @@
     <ClInclude Include="..\source\utfcpp\utf8\cpp11.h">
       <Filter>Libraries\utf8</Filter>
     </ClInclude>
+    <ClInclude Include="lovela-api.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\source\lovela-main.cpp">
-      <Filter>lovela</Filter>
-    </ClCompile>
     <ClCompile Include="lovela-program.cpp" />
   </ItemGroup>
 </Project>

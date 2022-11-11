@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "../targets/cpp/source/lovela.h"
+#include "../targets/cpp/lovela-runtime/lovela.h"
 
 auto f_RaisesError(lovela::context& context, const auto& in)
 {

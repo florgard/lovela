@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{26fa06de-7d30-42fd-9d05-df128762d790}</ItemsProjectGuid>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)lovela-types.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)lovela.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utfcpp\utf8.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utfcpp\utf8\checked.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utfcpp\utf8\core.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utfcpp\utf8\cpp11.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)utfcpp\utf8\unchecked.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)lovela-main.cpp" />
+  </ItemGroup>
+</Project>

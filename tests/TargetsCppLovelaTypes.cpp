@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "../targets/cpp/source/lovela-types.h"
+#include "../targets/cpp/lovela-runtime/lovela-types.h"
 
 suite Variable = [] {
 	"SetGetSize"_test = [] {

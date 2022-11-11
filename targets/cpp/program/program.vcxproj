@@ -19,8 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\source\lovela-types.h" />
-    <ClInclude Include="..\source\lovela.h" />
     <ClInclude Include="..\source\utfcpp\utf8.h" />
     <ClInclude Include="..\source\utfcpp\utf8\checked.h" />
     <ClInclude Include="..\source\utfcpp\utf8\core.h" />
@@ -33,7 +31,6 @@
     <ClInclude Include="user-imports.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\source\lovela-main.cpp" />
     <ClCompile Include="lovela-program.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -73,7 +70,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="Shared" />
+  <ImportGroup Label="Shared">
+    <Import Project="..\lovela-runtime\lovela-runtime.vcxitems" Label="Shared" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
