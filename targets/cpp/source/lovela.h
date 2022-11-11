@@ -1,9 +1,12 @@
 #pragma once
 #define LOVELA
 #include <string>
+#include <array>
 #include <vector>
-#include <iostream>
+#include <map>
+#include <algorithm>
 #include <exception>
+#include <iostream>
 #include <variant>
 #include <algorithm>
 #include "utfcpp/utf8.h"
