@@ -18,8 +18,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "targets", "targets", "{BB90
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cpp", "cpp", "{62910474-EC67-4537-8E6D-C1294247E1B8}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "source", "targets\cpp\source\source.vcxitems", "{534C2B31-8971-4797-93F5-1D4538CA84E4}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "program", "targets\cpp\program\program.vcxproj", "{D58A3804-5E3E-4034-BEC4-6D0D1BD7FA64}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tests", "tests\tests.vcxproj", "{A1C44B36-4549-4EB3-BE6B-1865B090A1FD}"
@@ -62,7 +60,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{62910474-EC67-4537-8E6D-C1294247E1B8} = {BB9095B5-2311-42F3-9049-2AD6BD705342}
-		{534C2B31-8971-4797-93F5-1D4538CA84E4} = {62910474-EC67-4537-8E6D-C1294247E1B8}
 		{D58A3804-5E3E-4034-BEC4-6D0D1BD7FA64} = {62910474-EC67-4537-8E6D-C1294247E1B8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
