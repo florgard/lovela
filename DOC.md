@@ -86,7 +86,7 @@ multi line'
 
 `#N` for signed integer types where `N` is the number of bits. 1, 8, 16, 32 and 64 bits are supported.
 
-`#0N` for unsigned integer types where `N` is the number of bits. 1, 8, 16, 32 and 64 bits are supported.
+`#+N` for unsigned integer types where `N` is the number of bits. 1, 8, 16, 32 and 64 bits are supported.
 
 `#.N` for floating point types where `N` is the number of bits. 32 and 64 bits are supported.
 
@@ -96,7 +96,7 @@ For predefined numeric type names, see types in the standard library.
 
 `#32` is a common signed 32 bit integer.
 
-`#08` is an 8 bit unsigned integer, a byte.
+`#+8` is an 8 bit unsigned integer, a byte.
 
 `#.64` is a 64 bit double precision floating point number.
 
@@ -112,7 +112,7 @@ For predefined numeric type names, see types in the standard library.
 print_message_1: io/print_line.
 
 << this function also explicitly states its input type >>
-[typ/string] print_message_2: io/print_line.
+[type/string] print_message_2: io/print_line.
 
 << this function contains multiple statements and thus needs parentheses for its definition >>
 print_three_messages:
@@ -174,31 +174,31 @@ where
 
 #### Integer types
 
-`typ/int8` is the same as `#8`.
+`type/int8` is the same as `#8`.
 
-`typ/int16` is the same as `#16`.
+`type/int16` is the same as `#16`.
 
-`typ/int32` is the same as `#32`.
+`type/int32` is the same as `#32`.
 
-`typ/int64` is the same as `#64`.
+`type/int64` is the same as `#64`.
 
-`typ/uint8` is the same as `#08`.
+`type/uint8` is the same as `#+8`.
 
-`typ/uint16` is the same as `#016`.
+`type/uint16` is the same as `#+16`.
 
-`typ/uint32` is the same as `#032`.
+`type/uint32` is the same as `#+32`.
 
-`typ/uint64` is the same as `#064`.
+`type/uint64` is the same as `#+64`.
 
 #### Boolean type
 
-`typ/bool` is stored as `#1`. On initialization it will be set to 0 if the input is 0, or 1 otherwise.
+`type/bool` is stored as `#1`. On initialization it will be set to 0 if the input is 0, or 1 otherwise.
 
 #### Floating point types
 
-`typ/float32` is the same as `#.32`.
+`type/float32` is the same as `#.32`.
 
-`typ/float64` is the same as `#.64`.
+`type/float64` is the same as `#.64`.
 
 ### Casting
 
@@ -208,17 +208,17 @@ Numberic types are implicitly cast if the source type fits in the target type.
 
 ##### Examples of implicit casts
 
-`#32` and `#032` can both be cast to `#64` or `#064`.
+`#32` and `#+32` can both be cast to `#64` or `#+64`.
 
-`#32`and `#032` can both be cast to `#.64` but not to `#.32`.
+`#32`and `#+32` can both be cast to `#.64` but not to `#.32`.
 
-`#032`cannot be cast to `#32` nor can `#32` be cast to `#032`.
+`#+32`cannot be cast to `#32` nor can `#32` be cast to `#+32`.
 
 #### Explicit casts
 
-`typ/truncate` can be used to cast any numeric type to a narrower type. The value will be truncated if it doesn't fit in the target type.
+`type/truncate` can be used to cast any numeric type to a narrower type. The value will be truncated if it doesn't fit in the target type.
 
-`typ/cast` can be used to cast any numeric type to a narrower type. A runtime error will be raised if the value doesn't fit in the target type.
+`type/cast` can be used to cast any numeric type to a narrower type. A runtime error will be raised if the value doesn't fit in the target type.
 
 ## I/O
 

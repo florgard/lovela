@@ -3,7 +3,6 @@
 ## Small
 
 * Generic tagged types: [1] add [1]
-* Code generation on the fly? What about identifier and function signature validation?
 * Bind operator
 * Built-in comparison, arithmetic, bitwise operators
 * Standard library namespaces
@@ -12,6 +11,7 @@
 ** str
 ** re
 ** type
+** net
 
 ## Medium
 
