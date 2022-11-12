@@ -301,103 +301,102 @@ auto f_f(lovela::context& context, Tag1 in);)cpp"
 	};
 };
 
-#if 0
 suite CodeGeneratorCpp_function_output_type_tests = [] {
 	"l_i1 output"_test = [] {
 		expect(CodeGenTest::Success("l_i1 output",
 			"f #1",
-			R"cpp(l_i1 f_f(lovela::context& context);)cpp"
+			R"cpp(l_i1 f_f(lovela::context& context, auto in);)cpp"
 		));
 	};
 
 	"l_i8 output"_test = [] {
 		expect(CodeGenTest::Success("l_i8 output",
 			"f #8",
-			R"cpp(l_i8 f_f(lovela::context& context);)cpp"
+			R"cpp(l_i8 f_f(lovela::context& context, auto in);)cpp"
 		));
 	};
 
 	"l_i16 output"_test = [] {
 		expect(CodeGenTest::Success("l_i16 output",
 			"f #16",
-			R"cpp(l_i16 f_f(lovela::context& context);)cpp"
+			R"cpp(l_i16 f_f(lovela::context& context, auto in);)cpp"
 		));
 	};
 
 	"l_i32 output"_test = [] {
 		expect(CodeGenTest::Success("l_i32 output",
 			"f #32",
-			R"cpp(l_i32 f_f(lovela::context& context);)cpp"
+			R"cpp(l_i32 f_f(lovela::context& context, auto in);)cpp"
 		));
 	};
 
 	"l_i64 output"_test = [] {
 		expect(CodeGenTest::Success("l_i64 output",
 			"f #64",
-			R"cpp(l_i64 f_f(lovela::context& context);)cpp"
+			R"cpp(l_i64 f_f(lovela::context& context, auto in);)cpp"
 		));
 	};
 
 	"l_i2 output error"_test = [] {
 		expect(CodeGenTest::Failure("l_i2 output error",
 			"f #2",
-			R"cpp(InvalidTypeName f_f(lovela::context& context);)cpp", 1
+			R"cpp(InvalidTypeName f_f(lovela::context& context, auto in);)cpp", 1
 		));
 	};
 
 	"l_u1 output"_test = [] {
 		expect(CodeGenTest::Success("l_u1 output",
 			"f #+1",
-			R"cpp(l_u1 f_f(lovela::context& context);)cpp"
+			R"cpp(l_u1 f_f(lovela::context& context, auto in);)cpp"
 		));
 	};
 
 	"l_u8 output"_test = [] {
 		expect(CodeGenTest::Success("l_u8 output",
 			"f #+8",
-			R"cpp(l_u8 f_f(lovela::context& context);)cpp"
+			R"cpp(l_u8 f_f(lovela::context& context, auto in);)cpp"
 		));
 	};
 
 	"l_u16 output"_test = [] {
 		expect(CodeGenTest::Success("l_u16 output",
 			"f #+16",
-			R"cpp(l_u16 f_f(lovela::context& context);)cpp"
+			R"cpp(l_u16 f_f(lovela::context& context, auto in);)cpp"
 		));
 	};
 
 	"l_u32 output"_test = [] {
 		expect(CodeGenTest::Success("l_u32 output",
 			"f #+32",
-			R"cpp(l_u32 f_f(lovela::context& context);)cpp"
+			R"cpp(l_u32 f_f(lovela::context& context, auto in);)cpp"
 		));
 	};
 
 	"l_u64 output"_test = [] {
 		expect(CodeGenTest::Success("l_u64 output",
 			"f #+64",
-			R"cpp(l_u64 f_f(lovela::context& context);)cpp"
+			R"cpp(l_u64 f_f(lovela::context& context, auto in);)cpp"
 		));
 	};
 
 	"l_f16 output error"_test = [] {
 		expect(CodeGenTest::Failure("l_f16 output error",
 			"f #.16",
-			R"cpp(InvalidTypeName f_f(lovela::context& context);)cpp", 1
+			R"cpp(InvalidTypeName f_f(lovela::context& context, auto in);)cpp", 1
 		));
 	};
 
 	"l_f32 output"_test = [] {
 		expect(CodeGenTest::Success("l_f32 output",
 			"f #.32",
-			R"cpp(l_f32 f_f(lovela::context& context);)cpp"
+			R"cpp(l_f32 f_f(lovela::context& context, auto in);)cpp"
 		));
 	};
 
 	"l_f64 output"_test = [] {
 		expect(CodeGenTest::Success("l_f64 output",
 			"f #.64",
-			R"cpp(l_f64 f_f(lovela::context& context);)cpp"
+			R"cpp(l_f64 f_f(lovela::context& context, auto in);)cpp"
 		));
 	};
 
@@ -406,11 +405,70 @@ suite CodeGeneratorCpp_function_output_type_tests = [] {
 			"f [1]",
 			R"cpp(
 template <typename Tag1>
-Tag1 f_f(lovela::context& context);)cpp"
+Tag1 f_f(lovela::context& context, auto in);)cpp"
 ));
 	};
 };
-#endif
+
+suite CodeGeneratorCpp_function_param_type_tests = [] {
+	"l_i1 param"_test = [] {
+		expect(CodeGenTest::Success("l_i1 param",
+			"f (#1)",
+			R"cpp(auto f_f(lovela::context& context, auto in, l_i1 param1);)cpp"
+		));
+	};
+
+	"l_i32 param"_test = [] {
+		expect(CodeGenTest::Success("l_i32 param",
+			"f (#32)",
+			R"cpp(auto f_f(lovela::context& context, auto in, l_i32 param1);)cpp"
+		));
+	};
+
+	"l_i2 param error"_test = [] {
+		expect(CodeGenTest::Failure("l_i2 param error",
+			"f (#2)",
+			R"cpp(auto f_f(lovela::context& context, auto in, InvalidTypeName param1);)cpp", 1
+		));
+	};
+
+	"l_u8 param"_test = [] {
+		expect(CodeGenTest::Success("l_u8 param",
+			"f (#+8)",
+			R"cpp(auto f_f(lovela::context& context, auto in, l_u8 param1);)cpp"
+		));
+	};
+
+	"l_u64 param"_test = [] {
+		expect(CodeGenTest::Success("l_u64 param",
+			"f (#+64)",
+			R"cpp(auto f_f(lovela::context& context, auto in, l_u64 param1);)cpp"
+		));
+	};
+
+	"l_f16 param error"_test = [] {
+		expect(CodeGenTest::Failure("l_f16 param error",
+			"f (#.16)",
+			R"cpp(auto f_f(lovela::context& context, auto in, InvalidTypeName param1);)cpp", 1
+		));
+	};
+
+	"l_f32 param"_test = [] {
+		expect(CodeGenTest::Success("l_f32 param",
+			"f (#.32)",
+			R"cpp(auto f_f(lovela::context& context, auto in, l_f32 param1);)cpp"
+		));
+	};
+
+	"[1] param"_test = [] {
+		expect(CodeGenTest::Success("[1] param",
+			"f ([1])",
+			R"cpp(
+template <typename Tag1>
+auto f_f(lovela::context& context, auto in, Tag1 param1);)cpp"
+));
+	};
+};
 
 suite CodeGeneratorCpp_function_declaration_tests = [] {
 	"trivial function"_test = [] { 
