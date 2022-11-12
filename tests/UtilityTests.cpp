@@ -9,7 +9,9 @@ suite static_map_tests = [] {
 	static_assert(map.at_or(2, 1.1) == 2.2);
 	static_assert(map.at_or(3, 1.1) == 1.1);
 
-	"Out of bounds"_test = [] { expect(throws([] { auto x = map.at(3); x; })); };
+	"Out of bounds"_test = [] {
+		expect(throws([] { auto x = map.at(3); x; }));
+	};
 };
 
 suite split_tests = [] {
