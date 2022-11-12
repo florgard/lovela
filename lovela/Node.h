@@ -3,15 +3,24 @@
 
 struct TypeSpec
 {
+	enum Kind
+	{
+		None,
+		Any,
+		Tagged,
+		Named
+	};
+
+	Kind kind{};
 	std::string name;
 
-	bool IsAny() const { return name.empty(); }
-	bool IsNone() const { return name == noneTypeName; }
-	void SetAny() { name.clear(); }
-	void SetNone() { name = noneTypeName; }
+	bool IsAny() const { return kind == Any; }
+	bool IsNone() const { return kind == None; }
+	void SetAny() { kind = Any; name.clear(); }
+	void SetNone() { kind = None; name = noneTypeName; }
 
-	static TypeSpec MakeAny() { return {}; };
-	static TypeSpec MakeNone() { return { .name = noneTypeName }; };
+	static TypeSpec MakeAny() { return { .kind = Any }; };
+	static TypeSpec MakeNone() { return { .kind = None, .name = noneTypeName }; };
 
 	[[nodiscard]] auto operator<=>(const TypeSpec& rhs) const noexcept = default;
 
