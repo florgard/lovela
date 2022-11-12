@@ -104,11 +104,11 @@ void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
 	std::vector<std::string> templateParameters;
 	std::vector<std::pair<std::string, std::string>> parameters;
 
-	if (outType.Any())
+	if (outType.IsAny())
 	{
 		outType.name = "auto";
 	}
-	else if (node.outType.None())
+	else if (node.outType.IsNone())
 	{
 		outType = GetNoneType();
 	}
@@ -117,12 +117,12 @@ void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
 		outType.name = TypeName(outType.name);
 	}
 
-	if (inType.Any())
+	if (inType.IsAny())
 	{
 		parameters.emplace_back(std::make_pair("In", "in"));
 		templateParameters.emplace_back("In");
 	}
-	else if (inType.None())
+	else if (inType.IsNone())
 	{
 		parameters.emplace_back(std::make_pair(GetNoneType().name, "in"));
 	}
@@ -138,7 +138,7 @@ void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
 		const auto name = ParameterName(parameter->name, index);
 		const auto type = TypeName(parameter->type.name, index);
 
-		if (parameter->type.Any())
+		if (parameter->type.IsAny())
 		{
 			templateParameters.push_back(type);
 		}
@@ -190,7 +190,7 @@ void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
 
 void CodeGeneratorCpp::MainFunctionDeclaration(Node& node, Context& context)
 {
-	if (!node.outType.None())
+	if (!node.outType.IsNone())
 	{
 		errors.emplace_back("Warning: The main function out type wasn't None. The parser should set that.");
 		node.outType.SetNone();
@@ -203,7 +203,7 @@ void CodeGeneratorCpp::MainFunctionDeclaration(Node& node, Context& context)
 
 bool CodeGeneratorCpp::CheckExportType(TypeSpec& type)
 {
-	if (type.Any())
+	if (type.IsAny())
 	{
 		type = GetVoidPtrType();
 	}
@@ -316,7 +316,7 @@ void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
 
 	// Verify and convert the input type
 
-	if (inType.None())
+	if (inType.IsNone())
 	{
 	}
 	else if (CheckExportType(inType))
@@ -330,7 +330,7 @@ void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
 
 	// Verify and convert the output type
 
-	if (outType.None())
+	if (outType.IsNone())
 	{
 		outType = GetVoidType();
 	}
@@ -401,16 +401,16 @@ void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
 
 	stream << Indent() << "lovela::context context;\n";
 
-	if (inType.None())
+	if (inType.IsNone())
 	{
 		stream << Indent() << GetNoneType().name << " in;\n";
 	}
 
 	// Call the actual function
 
-	stream << Indent() << (node.outType.None() ? "" : "return ") << FunctionName(node.value) << "(context";
+	stream << Indent() << (node.outType.IsNone() ? "" : "return ") << FunctionName(node.value) << "(context";
 
-	if (inType.None())
+	if (inType.IsNone())
 	{
 		stream << ", in";
 	}
@@ -459,7 +459,7 @@ void CodeGeneratorCpp::ImportedFunctionDeclaration(Node& node, Context&)
 
 	// Verify and convert the input type
 
-	if (inType.None())
+	if (inType.IsNone())
 	{
 	}
 	else if (CheckExportType(inType))
@@ -473,7 +473,7 @@ void CodeGeneratorCpp::ImportedFunctionDeclaration(Node& node, Context&)
 
 	// Verify and convert the output type
 
-	if (outType.None())
+	if (outType.IsNone())
 	{
 		outType = GetVoidType();
 	}
@@ -554,7 +554,7 @@ void CodeGeneratorCpp::FunctionBody(Node& node, Context& context)
 
 		Visit(*node.left, context);
 
-		if (node.outType.None())
+		if (node.outType.IsNone())
 		{
 			stream << Indent() << "return {};\n";
 		}
@@ -581,7 +581,7 @@ void CodeGeneratorCpp::ImportedFunctionBody(Node& node, Context&, const std::vec
 
 	stream << Indent();
 
-	if (!node.outType.None())
+	if (!node.outType.IsNone())
 	{
 		stream << "return ";
 	}
@@ -597,7 +597,7 @@ void CodeGeneratorCpp::ImportedFunctionBody(Node& node, Context&, const std::vec
 
 	stream << ");\n";
 
-	if (node.outType.None())
+	if (node.outType.IsNone())
 	{
 		stream << "return {};\n";
 	}

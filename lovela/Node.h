@@ -5,8 +5,8 @@ struct TypeSpec
 {
 	std::string name;
 
-	bool Any() const { return name.empty(); }
-	bool None() const { return name == noneTypeName; }
+	bool IsAny() const { return name.empty(); }
+	bool IsNone() const { return name == noneTypeName; }
 	void SetAny() { name.clear(); }
 	void SetNone() { name = noneTypeName; }
 
