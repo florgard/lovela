@@ -193,104 +193,224 @@ bool CodeGenTest::ExportFailure(const char* name, std::string_view code, std::st
 }
 
 suite CodeGeneratorCpp_function_input_type_tests = [] {
-	"l_i1"_test = [] { 
-		expect(CodeGenTest::Success("l_i1",
+	"l_i1 input"_test = [] { 
+		expect(CodeGenTest::Success("l_i1 input",
 			"#1 f", 
 			R"cpp(auto f_f(lovela::context& context, l_i1 in);)cpp"
 		));
 	};
 
-	"l_i8"_test = [] { 
-		expect(CodeGenTest::Success("l_i8", 
+	"l_i8 input"_test = [] { 
+		expect(CodeGenTest::Success("l_i8 input", 
 			"#8 f", 
 			R"cpp(auto f_f(lovela::context& context, l_i8 in);)cpp"
 		));
 	};
 
-	"l_i16"_test = [] { 
-		expect(CodeGenTest::Success("l_i16", 
+	"l_i16 input"_test = [] { 
+		expect(CodeGenTest::Success("l_i16 input", 
 			"#16 f", 
 			R"cpp(auto f_f(lovela::context& context, l_i16 in);)cpp"
 		));
 	};
 
-	"l_i32"_test = [] { 
-		expect(CodeGenTest::Success("l_i32", 
+	"l_i32 input"_test = [] { 
+		expect(CodeGenTest::Success("l_i32 input", 
 			"#32 f", 
 			R"cpp(auto f_f(lovela::context& context, l_i32 in);)cpp"
 		));
 	};
 
-	"l_i64"_test = [] { 
-		expect(CodeGenTest::Success("l_i64", 
+	"l_i64 input"_test = [] { 
+		expect(CodeGenTest::Success("l_i64 input", 
 			"#64 f", 
 			R"cpp(auto f_f(lovela::context& context, l_i64 in);)cpp"
 		));
 	};
 
-	"l_i2 error"_test = [] {
-		expect(CodeGenTest::Failure("l_i2 error",
+	"l_i2 input error"_test = [] {
+		expect(CodeGenTest::Failure("l_i2 input error",
 			"#2 f",
 			R"cpp(auto f_f(lovela::context& context, InvalidTypeName in);)cpp", 1
 		));
 	};
 
-	"l_u1"_test = [] { 
-		expect(CodeGenTest::Success("l_u1", 
+	"l_u1 input"_test = [] { 
+		expect(CodeGenTest::Success("l_u1 input", 
 			"#+1 f", 
 			R"cpp(auto f_f(lovela::context& context, l_u1 in);)cpp"
 		));
 	};
 
-	"l_u8"_test = [] { 
-		expect(CodeGenTest::Success("l_u8", 
+	"l_u8 input"_test = [] { 
+		expect(CodeGenTest::Success("l_u8 input", 
 			"#+8 f", 
 			R"cpp(auto f_f(lovela::context& context, l_u8 in);)cpp"
 		));
 	};
 
-	"l_u16"_test = [] { 
-		expect(CodeGenTest::Success("l_u16", 
+	"l_u16 input"_test = [] { 
+		expect(CodeGenTest::Success("l_u16 input", 
 			"#+16 f", 
 			R"cpp(auto f_f(lovela::context& context, l_u16 in);)cpp"
 		));
 	};
 
-	"l_u32"_test = [] { 
-		expect(CodeGenTest::Success("l_u32", 
+	"l_u32 input"_test = [] { 
+		expect(CodeGenTest::Success("l_u32 input", 
 			"#+32 f", 
 			R"cpp(auto f_f(lovela::context& context, l_u32 in);)cpp"
 		));
 	};
 
-	"l_u64"_test = [] { 
-		expect(CodeGenTest::Success("l_u64", 
+	"l_u64 input"_test = [] { 
+		expect(CodeGenTest::Success("l_u64 input", 
 			"#+64 f", 
 			R"cpp(auto f_f(lovela::context& context, l_u64 in);)cpp"
 		));
 	};
 
-	"l_f16 error"_test = [] { 
-		expect(CodeGenTest::Failure("l_f16 error", 
+	"l_f16 input error"_test = [] { 
+		expect(CodeGenTest::Failure("l_f16 input error", 
 			"#.16 f", 
 			R"cpp(auto f_f(lovela::context& context, InvalidTypeName in);)cpp", 1
 		));
 	};
 
-	"l_f32"_test = [] { 
-		expect(CodeGenTest::Success("l_f32", 
+	"l_f32 input"_test = [] { 
+		expect(CodeGenTest::Success("l_f32 input", 
 			"#.32 f", 
 			R"cpp(auto f_f(lovela::context& context, l_f32 in);)cpp"
 		));
 	};
 
-	"l_f64"_test = [] { 
-		expect(CodeGenTest::Success("l_f64", 
+	"l_f64 input"_test = [] { 
+		expect(CodeGenTest::Success("l_f64 input", 
 			"#.64 f", 
 			R"cpp(auto f_f(lovela::context& context, l_f64 in);)cpp"
 		));
 	};
+
+	"[1] input"_test = [] {
+		expect(CodeGenTest::Success("[1] input",
+			"[1] f",
+			R"cpp(
+template <typename Tag1>
+auto f_f(lovela::context& context, Tag1 in);)cpp"
+		));
+	};
 };
+
+#if 0
+suite CodeGeneratorCpp_function_output_type_tests = [] {
+	"l_i1 output"_test = [] {
+		expect(CodeGenTest::Success("l_i1 output",
+			"f #1",
+			R"cpp(l_i1 f_f(lovela::context& context);)cpp"
+		));
+	};
+
+	"l_i8 output"_test = [] {
+		expect(CodeGenTest::Success("l_i8 output",
+			"f #8",
+			R"cpp(l_i8 f_f(lovela::context& context);)cpp"
+		));
+	};
+
+	"l_i16 output"_test = [] {
+		expect(CodeGenTest::Success("l_i16 output",
+			"f #16",
+			R"cpp(l_i16 f_f(lovela::context& context);)cpp"
+		));
+	};
+
+	"l_i32 output"_test = [] {
+		expect(CodeGenTest::Success("l_i32 output",
+			"f #32",
+			R"cpp(l_i32 f_f(lovela::context& context);)cpp"
+		));
+	};
+
+	"l_i64 output"_test = [] {
+		expect(CodeGenTest::Success("l_i64 output",
+			"f #64",
+			R"cpp(l_i64 f_f(lovela::context& context);)cpp"
+		));
+	};
+
+	"l_i2 output error"_test = [] {
+		expect(CodeGenTest::Failure("l_i2 output error",
+			"f #2",
+			R"cpp(InvalidTypeName f_f(lovela::context& context);)cpp", 1
+		));
+	};
+
+	"l_u1 output"_test = [] {
+		expect(CodeGenTest::Success("l_u1 output",
+			"f #+1",
+			R"cpp(l_u1 f_f(lovela::context& context);)cpp"
+		));
+	};
+
+	"l_u8 output"_test = [] {
+		expect(CodeGenTest::Success("l_u8 output",
+			"f #+8",
+			R"cpp(l_u8 f_f(lovela::context& context);)cpp"
+		));
+	};
+
+	"l_u16 output"_test = [] {
+		expect(CodeGenTest::Success("l_u16 output",
+			"f #+16",
+			R"cpp(l_u16 f_f(lovela::context& context);)cpp"
+		));
+	};
+
+	"l_u32 output"_test = [] {
+		expect(CodeGenTest::Success("l_u32 output",
+			"f #+32",
+			R"cpp(l_u32 f_f(lovela::context& context);)cpp"
+		));
+	};
+
+	"l_u64 output"_test = [] {
+		expect(CodeGenTest::Success("l_u64 output",
+			"f #+64",
+			R"cpp(l_u64 f_f(lovela::context& context);)cpp"
+		));
+	};
+
+	"l_f16 output error"_test = [] {
+		expect(CodeGenTest::Failure("l_f16 output error",
+			"f #.16",
+			R"cpp(InvalidTypeName f_f(lovela::context& context);)cpp", 1
+		));
+	};
+
+	"l_f32 output"_test = [] {
+		expect(CodeGenTest::Success("l_f32 output",
+			"f #.32",
+			R"cpp(l_f32 f_f(lovela::context& context);)cpp"
+		));
+	};
+
+	"l_f64 output"_test = [] {
+		expect(CodeGenTest::Success("l_f64 output",
+			"f #.64",
+			R"cpp(l_f64 f_f(lovela::context& context);)cpp"
+		));
+	};
+
+	"[1] output"_test = [] {
+		expect(CodeGenTest::Success("[1] output",
+			"f [1]",
+			R"cpp(
+template <typename Tag1>
+Tag1 f_f(lovela::context& context);)cpp"
+));
+	};
+};
+#endif
 
 suite CodeGeneratorCpp_function_declaration_tests = [] {
 	"trivial function"_test = [] { 
