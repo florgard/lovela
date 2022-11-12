@@ -228,6 +228,13 @@ suite CodeGeneratorCpp_function_input_type_tests = [] {
 		));
 	};
 
+	"l_i2 error"_test = [] {
+		expect(CodeGenTest::Failure("l_i2 error",
+			"#2 f",
+			R"cpp(auto f_f(lovela::context& context, InvalidTypeName in);)cpp", 1
+		));
+	};
+
 	"l_u1"_test = [] { 
 		expect(CodeGenTest::Success("l_u1", 
 			"#+1 f", 
@@ -266,7 +273,7 @@ suite CodeGeneratorCpp_function_input_type_tests = [] {
 	"l_f16 error"_test = [] { 
 		expect(CodeGenTest::Failure("l_f16 error", 
 			"#.16 f", 
-			R"cpp(auto f_f(lovela::context& context, t_#.16 in);)cpp", 1
+			R"cpp(auto f_f(lovela::context& context, InvalidTypeName in);)cpp", 1
 		));
 	};
 

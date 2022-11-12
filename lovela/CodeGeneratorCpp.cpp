@@ -118,6 +118,11 @@ void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
 		outType.name = TypeName(outType.name);
 		break;
 
+	case TypeSpec::Kind::Tagged:
+		outType.name = TypeName(outType.name);
+		templateParameters.push_back(outType.name);
+		break;
+
 	default:
 		errors.emplace_back(std::format("Error: Unhandled kind of output type: {}", static_cast<int>(outType.GetKind())));
 		break;
@@ -137,6 +142,14 @@ void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
 	case TypeSpec::Kind::Named:
 		parameters.emplace_back(std::make_pair(TypeName(inType.name), "in"));
 		break;
+
+	case TypeSpec::Kind::Tagged:
+	{
+		auto typeName = TypeName(inType.name);
+		parameters.emplace_back(std::make_pair(typeName, "in"));
+		templateParameters.emplace_back(typeName);
+		break;
+	}
 
 	default:
 		errors.emplace_back(std::format("Error: Unhandled kind of input type: {}", static_cast<int>(inType.GetKind())));
@@ -275,9 +288,17 @@ std::string CodeGeneratorCpp::TypeName(const std::string& name)
 		{
 			return converted;
 		}
-	}
 
-	return "t_" + name;
+		return "InvalidTypeName";
+	}
+	else if (is_int(name))
+	{
+		return "Tag" + name;
+	}
+	else
+	{
+		return "t_" + name;
+	}
 }
 
 std::string CodeGeneratorCpp::TypeName(const std::string& name, size_t index)
