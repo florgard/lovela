@@ -2,7 +2,6 @@
 
 ## Small
 
-* Generic tagged types: [1] add [1]
 * Bind operator
 * Built-in comparison, arithmetic, bitwise operators
 * Standard library namespaces
