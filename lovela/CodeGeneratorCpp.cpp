@@ -226,39 +226,48 @@ void CodeGeneratorCpp::MainFunctionDeclaration(Node& node, Context& context)
 	stream << '\n';
 }
 
-bool CodeGeneratorCpp::CheckExportType(TypeSpec& type)
+std::optional<TypeSpec> CodeGeneratorCpp::CheckExportType(const TypeSpec& type)
 {
-	if (type.IsAny())
+	if (type.IsNone())
 	{
-		type = GetVoidPtrType();
+		return type;
 	}
-	else if (!ConvertPrimitiveType(type.name))
+	else if (type.IsAny())
 	{
-		errors.emplace_back("Error: Exported functions must have primitive in, out and parameter types. Unsupported type: " + type.name);
-		return false;
+		return GetVoidPtrType();
 	}
+	else
+	{
+		auto name = ConvertPrimitiveType(type.name);
+		if (!name.has_value())
+		{
+			errors.emplace_back("Error: Exported functions must have primitive in, out and parameter types. Unsupported type: " + type.name);
+			return {};
+		}
 
-	return true;
+		auto converted = type;
+		converted.name = name.value();
+		return converted;
+	}
 }
 
-bool CodeGeneratorCpp::ConvertPrimitiveType(std::string& name)
+std::optional<std::string> CodeGeneratorCpp::ConvertPrimitiveType(const std::string& name)
 {
-	static std::map<std::string, std::string> types{
+	static const std::map<std::string, std::string> types{
 		{"#8#", "l_cstr"},
 	};
 
 	if (types.contains(name))
 	{
-		name = types.at(name);
-		return true;
+		return types.at(name);
 	}
 
-	static std::regex regex(R"(#(\.|\+)?(1|8|16|32|64)(#*))");
+	static const std::regex regex(R"(#(\.|\+)?(1|8|16|32|64)(#*))");
 	std::smatch match;
 	if (!std::regex_match(name, match, regex))
 	{
 		errors.emplace_back("Unsupported primitive type: " + name);
-		return false;
+		return {};
 	}
 
 	const bool floatingPoint = match[1].compare(".") == 0;
@@ -267,29 +276,21 @@ bool CodeGeneratorCpp::ConvertPrimitiveType(std::string& name)
 	if (floatingPoint && !(width == "32" || width == "64"))
 	{
 		errors.emplace_back("Unsupported primitive floating point type: " + name);
-		return false;
+		return {};
 	}
 
 	std::string exportName = "l_";
 	exportName += floatingPoint ? 'f' : (unsignedInteger ? 'u' : 'i');
 	exportName += width;
 	exportName += std::string(match[3].length(), '*');
-	name = exportName;
-
-	return true;
+	return exportName;
 }
 
 std::string CodeGeneratorCpp::TypeName(const std::string& name)
 {
 	if (name.front() == '#')
 	{
-		std::string converted = name;
-		if (ConvertPrimitiveType(converted))
-		{
-			return converted;
-		}
-
-		return "InvalidTypeName";
+		return ConvertPrimitiveType(name).value_or("InvalidTypeName");
 	}
 	else if (is_int(name))
 	{
@@ -342,34 +343,34 @@ std::string CodeGeneratorCpp::RefVar(char prefix, size_t index)
 
 void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
 {
-	auto inType = node.inType;
-	auto outType = node.outType;
-
 	std::vector<std::pair<std::string, std::string>> parameters;
 
 	// Verify and convert the input type
 
-	if (inType.IsNone())
-	{
-	}
-	else if (CheckExportType(inType))
-	{
-		parameters.emplace_back(std::make_pair(inType.name, "in"));
-	}
-	else
+	const auto maybeInType = CheckExportType(node.inType);
+	if (!maybeInType.has_value())
 	{
 		return;
+	}
+
+	const auto inType = maybeInType.value();
+	if (!inType.IsNone())
+	{
+		parameters.emplace_back(std::make_pair(inType.name, "in"));
 	}
 
 	// Verify and convert the output type
 
+	const auto maybeOutType = CheckExportType(node.outType);
+	if (!maybeOutType.has_value())
+	{
+		return;
+	}
+
+	auto outType = maybeOutType.value();
 	if (outType.IsNone())
 	{
 		outType = GetVoidType();
-	}
-	else if (!CheckExportType(outType))
-	{
-		return;
 	}
 
 	// Verify and convert the parameter types
@@ -379,14 +380,14 @@ void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
 	{
 		index++;
 		const auto name = ParameterName(parameter->name, index);
-		auto type = parameter->type;
 
-		if (!CheckExportType(type))
+		auto maybeType = CheckExportType(parameter->type);
+		if (!maybeType.has_value())
 		{
 			return;
 		}
 
-		parameters.emplace_back(std::make_pair(type.name, name));
+		parameters.emplace_back(std::make_pair(maybeType.value().name, name));
 	}
 
 	// Make the function signature
@@ -485,34 +486,34 @@ void CodeGeneratorCpp::ImportedFunctionDeclaration(Node& node, Context&)
 		return;
 	}
 
-	auto inType = node.inType;
-	auto outType = node.outType;
-
 	std::vector<std::pair<std::string, std::string>> parameters;
 
 	// Verify and convert the input type
 
-	if (inType.IsNone())
-	{
-	}
-	else if (CheckExportType(inType))
-	{
-		parameters.emplace_back(std::make_pair(inType.name, "in"));
-	}
-	else
+	const auto maybeInType = CheckExportType(node.inType);
+	if (!maybeInType.has_value())
 	{
 		return;
+	}
+
+	const auto inType = maybeInType.value();
+	if (!inType.IsNone())
+	{
+		parameters.emplace_back(std::make_pair(inType.name, "in"));
 	}
 
 	// Verify and convert the output type
 
+	const auto maybeOutType = CheckExportType(node.outType);
+	if (!maybeOutType.has_value())
+	{
+		return;
+	}
+
+	auto outType = maybeOutType.value();
 	if (outType.IsNone())
 	{
 		outType = GetVoidType();
-	}
-	else if (!CheckExportType(outType))
-	{
-		return;
 	}
 
 	// Verify and convert the parameter types
@@ -522,14 +523,14 @@ void CodeGeneratorCpp::ImportedFunctionDeclaration(Node& node, Context&)
 	{
 		index++;
 		const auto name = ParameterName(parameter->name, index);
-		auto type = parameter->type;
 
-		if (!CheckExportType(type))
+		auto maybeType = CheckExportType(parameter->type);
+		if (!maybeType.has_value())
 		{
 			return;
 		}
 
-		parameters.emplace_back(std::make_pair(type.name, name));
+		parameters.emplace_back(std::make_pair(maybeType.value().name, name));
 	}
 
 	// Make the function signature

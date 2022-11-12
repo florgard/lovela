@@ -58,8 +58,8 @@ private:
 	static std::string FunctionName(const std::string& name);
 	static std::string RefVar(char prefix, size_t index);
 
-	bool CheckExportType(TypeSpec& type);
-	bool ConvertPrimitiveType(std::string& name);
+	std::optional<TypeSpec> CheckExportType(const TypeSpec& type);
+	std::optional<std::string> ConvertPrimitiveType(const std::string& name);
 
 	using Visitor = std::function<void(CodeGeneratorCpp*, Node&, Context&)>;
 	static std::map<Node::Type, Visitor>& GetVisitors();
