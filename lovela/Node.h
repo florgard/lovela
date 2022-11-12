@@ -10,8 +10,8 @@ struct TypeSpec
 	void SetAny() { name.clear(); }
 	void SetNone() { name = noneTypeName; }
 
-	static TypeSpec AnyType() { return {}; };
-	static TypeSpec NoneType() { return { .name = noneTypeName }; };
+	static TypeSpec MakeAny() { return {}; };
+	static TypeSpec MakeNone() { return { .name = noneTypeName }; };
 
 	[[nodiscard]] auto operator<=>(const TypeSpec& rhs) const noexcept = default;
 

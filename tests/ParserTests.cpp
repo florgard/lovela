@@ -100,7 +100,7 @@ suite parser_function_declaration_tests = [] {
 	"function with empty in type"_test = [] {
 		expect(ParserTest::Success("function with empty in type",
 			"[()] func",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType = TypeSpec::NoneType() }
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType = TypeSpec::MakeNone() }
 		));
 	};
 	"function with out type"_test = [] {
@@ -349,7 +349,7 @@ suite parser_function_body_tests = [] {
 
 	"function without object but with parameters and body"_test = [] {
 		auto fc = Node{ .type = Node::Type::FunctionCall, .value = "doWork", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
-		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType = TypeSpec::NoneType(), .parameters{
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType = TypeSpec::MakeNone(), .parameters{
 				make<VariableDeclaration>::shared({.name = "name_only"}),
 				make<VariableDeclaration>::shared({.name = "name", .type{.name = "type"}}),
 				make<VariableDeclaration>::shared({.type{.name = "type_only"}})
