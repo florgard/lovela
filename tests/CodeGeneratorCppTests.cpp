@@ -417,8 +417,7 @@ suite CodeGeneratorCpp_function_declaration_tests = [] {
 		expect(CodeGenTest::Success("trivial function", 
 			"func",
 			R"cpp(
-template <typename In>
-auto f_func(lovela::context& context, In in);
+auto f_func(lovela::context& context, auto in);
 )cpp"
 		));
 	};
@@ -427,8 +426,7 @@ auto f_func(lovela::context& context, In in);
 		expect(CodeGenTest::Success("function with return type", 
 			"func [type]",
 			R"cpp(
-template <typename In>
-t_type f_func(lovela::context& context, In in);
+t_type f_func(lovela::context& context, auto in);
 )cpp"
 		));
 	};
@@ -446,8 +444,8 @@ auto f_func(lovela::context& context, t_type in);
 		expect(CodeGenTest::Success("function with untyped parameter", 
 			"func (arg)",
 			R"cpp(
-template <typename In, typename Param1>
-auto f_func(lovela::context& context, In in, Param1 p_arg);
+template <typename Param1>
+auto f_func(lovela::context& context, auto in, Param1 p_arg);
 )cpp"
 		));
 	};
@@ -456,8 +454,7 @@ auto f_func(lovela::context& context, In in, Param1 p_arg);
 		expect(CodeGenTest::Success("function with typed parameter", 
 			"func (arg [type])",
 			R"cpp(
-template <typename In>
-auto f_func(lovela::context& context, In in, t_type p_arg);
+auto f_func(lovela::context& context, auto in, t_type p_arg);
 )cpp"
 		));
 	};
@@ -466,8 +463,7 @@ auto f_func(lovela::context& context, In in, t_type p_arg);
 		expect(CodeGenTest::Success("trivial function", 
 			"func: + 1.", 
 			R"cpp(
-template <typename In>
-auto f_func(lovela::context& context, In in)
+auto f_func(lovela::context& context, auto in)
 {
 	static_cast<void>(context);
 	auto& v1 = in; static_cast<void>(v1);
@@ -522,8 +518,7 @@ void ex()
 		expect(CodeGenTest::Success("exported function any -> any",
 			"<- ex: + 1.",
 			R"cpp(
-template <typename In>
-auto f_ex(lovela::context& context, In in)
+auto f_ex(lovela::context& context, auto in)
 {
 	static_cast<void>(context);
 	auto& v1 = in; static_cast<void>(v1);
@@ -569,8 +564,7 @@ suite CodeGeneratorCpp_imported_functions_tests = [] {
 		expect(CodeGenTest::Success("imported function",
 			"-> im",
 			R"cpp(
-template <typename In>
-auto f_im(lovela::context& context, In in)
+auto f_im(lovela::context& context, auto in)
 {
 	static_cast<void>(context); return im(in);
 }
@@ -720,8 +714,7 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 		expect(CodeGenTest::Success("main and implicitly typed import", 
 			"-> puts. : 'Hello, Wordl!' puts.", 
 			R"cpp(
-template <typename In>
-auto f_puts(lovela::context& context, In in)
+auto f_puts(lovela::context& context, auto in)
 {
 	static_cast<void>(context);
 	return puts(in);

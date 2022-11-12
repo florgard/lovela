@@ -1,7 +1,6 @@
 
 #include "lovela-program.h"
-template <typename In>
-auto f_puts(lovela::context& context, In in)
+auto f_puts(lovela::context& context, auto in)
 {
 	static_cast<void>(context);
 	return puts(in);

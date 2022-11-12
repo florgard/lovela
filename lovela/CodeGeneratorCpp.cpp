@@ -131,8 +131,7 @@ void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
 	switch (inType.GetKind())
 	{
 	case TypeSpec::Kind::Any:
-		parameters.emplace_back(std::make_pair("In", "in"));
-		templateParameters.emplace_back("In");
+		parameters.emplace_back(std::make_pair("auto", "in"));
 		break;
 
 	case TypeSpec::Kind::None:
