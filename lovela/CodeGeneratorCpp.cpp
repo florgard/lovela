@@ -104,31 +104,43 @@ void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
 	std::vector<std::string> templateParameters;
 	std::vector<std::pair<std::string, std::string>> parameters;
 
-	if (outType.IsAny())
+	switch (outType.GetKind())
 	{
+	case TypeSpec::Kind::Any:
 		outType.name = "auto";
-	}
-	else if (node.outType.IsNone())
-	{
+		break;
+
+	case TypeSpec::Kind::None:
 		outType = GetNoneType();
-	}
-	else
-	{
+		break;
+
+	case TypeSpec::Kind::Named:
 		outType.name = TypeName(outType.name);
+		break;
+
+	default:
+		errors.emplace_back(std::format("Error: Unhandled kind of output type: {}", static_cast<int>(outType.GetKind())));
+		break;
 	}
 
-	if (inType.IsAny())
+	switch (inType.GetKind())
 	{
+	case TypeSpec::Kind::Any:
 		parameters.emplace_back(std::make_pair("In", "in"));
 		templateParameters.emplace_back("In");
-	}
-	else if (inType.IsNone())
-	{
+		break;
+
+	case TypeSpec::Kind::None:
 		parameters.emplace_back(std::make_pair(GetNoneType().name, "in"));
-	}
-	else
-	{
+		break;
+
+	case TypeSpec::Kind::Named:
 		parameters.emplace_back(std::make_pair(TypeName(inType.name), "in"));
+		break;
+
+	default:
+		errors.emplace_back(std::format("Error: Unhandled kind of input type: {}", static_cast<int>(inType.GetKind())));
+		break;
 	}
 
 	size_t index = 0;

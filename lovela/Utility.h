@@ -1,6 +1,19 @@
 #pragma once
 #include "magic_enum.hpp"
 
+[[nodiscard]] constexpr bool is_int(std::string_view value)
+{
+	for (size_t i = 0; i < value.length(); ++i)
+	{
+		if (value[i] < '0' || value[i] > '9')
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 [[nodiscard]] inline std::string to_string(std::string_view value)
 {
 	return std::string(value.begin(), value.end());
@@ -246,8 +259,6 @@ struct make
 	// Moves an r-value into shared_ptr.
 	[[nodiscard]] static std::shared_ptr<T> shared(T&& src) noexcept { return std::make_shared<T>(std::move(src)); }
 };
-
-#pragma once
 
 // Clone of Jason Turner's constexpr map: https://www.youtube.com/watch?v=INn3xa4pMfg
 // Usage:
