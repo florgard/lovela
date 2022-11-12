@@ -444,8 +444,7 @@ auto f_func(lovela::context& context, t_type in);
 		expect(CodeGenTest::Success("function with untyped parameter", 
 			"func (arg)",
 			R"cpp(
-template <typename Param1>
-auto f_func(lovela::context& context, auto in, Param1 p_arg);
+auto f_func(lovela::context& context, auto in, auto p_arg);
 )cpp"
 		));
 	};

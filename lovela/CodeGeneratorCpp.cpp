@@ -27,12 +27,6 @@ std::map<Node::Type, CodeGeneratorCpp::Visitor>& CodeGeneratorCpp::GetInternalVi
 	return visitors;
 }
 
-const TypeSpec& CodeGeneratorCpp::GetNoneType()
-{
-	static TypeSpec t{ .name = "lovela::None" };
-	return t;
-}
-
 const TypeSpec& CodeGeneratorCpp::GetVoidType()
 {
 	static TypeSpec t{ .name = "void" };
@@ -99,75 +93,37 @@ void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
 		ImportedFunctionDeclaration(node, context);
 	}
 
-	auto inType = node.inType;
-	auto outType = node.outType;
 	std::vector<std::string> templateParameters;
 	std::vector<std::pair<std::string, std::string>> parameters;
 
-	switch (outType.GetKind())
+	const auto outType = ConvertType(node.outType);
+
+	if (node.outType.IsTagged())
 	{
-	case TypeSpec::Kind::Any:
-		outType.name = "auto";
-		break;
-
-	case TypeSpec::Kind::None:
-		outType = GetNoneType();
-		break;
-
-	case TypeSpec::Kind::Named:
-		outType.name = TypeName(outType.name);
-		break;
-
-	case TypeSpec::Kind::Tagged:
-		outType.name = TypeName(outType.name);
 		templateParameters.push_back(outType.name);
-		break;
-
-	default:
-		errors.emplace_back(std::format("Error: Unhandled kind of output type: {}", static_cast<int>(outType.GetKind())));
-		break;
 	}
 
-	switch (inType.GetKind())
+	const auto inType = ConvertType(node.inType);
+	parameters.emplace_back(std::make_pair(inType.name, "in"));
+
+	if (node.inType.IsTagged())
 	{
-	case TypeSpec::Kind::Any:
-		parameters.emplace_back(std::make_pair("auto", "in"));
-		break;
-
-	case TypeSpec::Kind::None:
-		parameters.emplace_back(std::make_pair(GetNoneType().name, "in"));
-		break;
-
-	case TypeSpec::Kind::Named:
-		parameters.emplace_back(std::make_pair(TypeName(inType.name), "in"));
-		break;
-
-	case TypeSpec::Kind::Tagged:
-	{
-		auto typeName = TypeName(inType.name);
-		parameters.emplace_back(std::make_pair(typeName, "in"));
-		templateParameters.emplace_back(typeName);
-		break;
-	}
-
-	default:
-		errors.emplace_back(std::format("Error: Unhandled kind of input type: {}", static_cast<int>(inType.GetKind())));
-		break;
+		templateParameters.push_back(inType.name);
 	}
 
 	size_t index = 0;
 	for (auto& parameter : node.parameters)
 	{
-		index++;
+		++index;
 		const auto name = ParameterName(parameter->name, index);
-		const auto type = TypeName(parameter->type.name, index);
+		const auto type = ConvertType(parameter->type);
 
-		if (parameter->type.IsAny())
+		if (parameter->type.IsTagged())
 		{
-			templateParameters.push_back(type);
+			templateParameters.push_back(type.name);
 		}
 
-		parameters.emplace_back(std::make_pair(type, name));
+		parameters.emplace_back(std::make_pair(type.name, name));
 	}
 
 	if (!templateParameters.empty())
@@ -220,7 +176,7 @@ void CodeGeneratorCpp::MainFunctionDeclaration(Node& node, Context& context)
 		node.outType.SetNone();
 	}
 
-	stream << GetNoneType().name << ' ' << "lovela::main(lovela::context& context, " << GetNoneType().name << " in)";
+	stream << TypeNames::none << ' ' << "lovela::main(lovela::context& context, " << TypeNames::none << " in)";
 	FunctionBody(node, context);
 	stream << '\n';
 }
@@ -285,31 +241,39 @@ std::optional<std::string> CodeGeneratorCpp::ConvertPrimitiveType(const std::str
 	return exportName;
 }
 
-std::string CodeGeneratorCpp::TypeName(const std::string& name)
+TypeSpec CodeGeneratorCpp::ConvertType(const TypeSpec& type)
 {
-	if (name.front() == '#')
-	{
-		return ConvertPrimitiveType(name).value_or("InvalidTypeName");
-	}
-	else if (is_int(name))
-	{
-		return "Tag" + name;
-	}
-	else
-	{
-		return "t_" + name;
-	}
+	auto converted = type;
+	converted.name = ConvertTypeName(type);
+	return converted;
 }
 
-std::string CodeGeneratorCpp::TypeName(const std::string& name, size_t index)
+std::string CodeGeneratorCpp::ConvertTypeName(const TypeSpec& type)
 {
-	if (name.empty())
+	switch (type.GetKind())
 	{
-		return "Param" + to_string(index);
-	}
-	else
-	{
-		return TypeName(name);
+	case TypeSpec::Kind::Any:
+		return TypeNames::any;
+
+	case TypeSpec::Kind::None:
+		return TypeNames::none;
+
+	case TypeSpec::Kind::Tagged:
+		return "Tag" + type.name;
+
+	case TypeSpec::Kind::Named:
+		if (type.name.front() == '#')
+		{
+			return ConvertPrimitiveType(type.name).value_or(TypeNames::invalid);
+		}
+		else
+		{
+			return "t_" + type.name;
+		}
+
+	default:
+		errors.emplace_back(std::format("Error: Unhandled kind of type when getting the type name: {}", static_cast<int>(type.GetKind())));
+		return TypeNames::invalid;
 	}
 }
 
@@ -436,7 +400,7 @@ void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
 
 	if (inType.IsNone())
 	{
-		stream << Indent() << GetNoneType().name << " in;\n";
+		stream << Indent() << TypeNames::none << " in;\n";
 	}
 
 	// Call the actual function

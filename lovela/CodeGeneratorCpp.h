@@ -51,8 +51,8 @@ private:
 	void EndAssign(Context& context);
 	void EndAssign(Context& context, bool reset);
 
-	std::string TypeName(const std::string& name);
-	std::string TypeName(const std::string& name, size_t index);
+	std::string ConvertTypeName(const TypeSpec& type);
+	TypeSpec ConvertType(const TypeSpec& type);
 	static std::string ParameterName(const std::string& name);
 	static std::string ParameterName(const std::string& name, size_t index);
 	static std::string FunctionName(const std::string& name);
@@ -65,7 +65,6 @@ private:
 	static std::map<Node::Type, Visitor>& GetVisitors();
 	static std::map<Node::Type, Visitor>& GetInternalVisitors();
 
-	static const TypeSpec& GetNoneType();
 	static const TypeSpec& GetVoidType();
 	static const TypeSpec& GetVoidPtrType();
 
@@ -76,4 +75,11 @@ private:
 	std::vector<std::string> exports;
 
 	static constexpr char LocalVar{ 'v' };
+
+	struct TypeNames
+	{
+		static constexpr const char* none{ "lovela::None" };
+		static constexpr const char* any{ "auto" };
+		static constexpr const char* invalid{ "InvalidTypeName" };
+	};
 };

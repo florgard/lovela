@@ -35,6 +35,8 @@ struct TypeSpec
 
 	bool IsAny() const { return GetKind() == Kind::Any; }
 	bool IsNone() const { return GetKind() == Kind::None; }
+	bool IsTagged() const { return GetKind() == Kind::Tagged; }
+
 	void SetAny() { name.clear(); }
 	void SetNone() { name = noneTypeName; }
 
