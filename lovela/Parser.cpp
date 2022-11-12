@@ -248,6 +248,7 @@ TypeSpec Parser::ParseTypeSpec()
 
 	TypeSpec typeSpec;
 
+	// #32
 	if (IsToken(Token::Type::PrimitiveType))
 	{
 		typeSpec.name = currentToken.value;
@@ -259,6 +260,12 @@ TypeSpec Parser::ParseTypeSpec()
 	}
 	// [#32]
 	else if (Accept(Token::Type::PrimitiveType))
+	{
+		typeSpec.name = currentToken.value;
+		Expect(Token::Type::ParenSquareClose);
+	}
+	// [1]
+	else if (Accept(Token::Type::LiteralInteger))
 	{
 		typeSpec.name = currentToken.value;
 		Expect(Token::Type::ParenSquareClose);

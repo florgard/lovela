@@ -82,7 +82,7 @@ bool ParserTest::Failure(const char* name, std::string_view code, const std::ran
 	return success;
 }
 
-suite parser_function_declaration_tests = [] {
+suite parser_function_declaration_input_types_tests = [] {
 	"trivial function declaration"_test = [] {
 		expect(ParserTest::Success("trivial function declaration",
 			"func",
@@ -107,7 +107,16 @@ suite parser_function_declaration_tests = [] {
 			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType = TypeSpec::MakeNone() }
 		));
 	};
-	"function with out type"_test = [] {
+	"function with tagged in type"_test = [] {
+		expect(ParserTest::Success("function with tagged in type",
+			"[1] func",
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType{.name = "1"} }
+		));
+	};
+};
+
+suite parser_function_declaration_other_types_tests = [] {
+		"function with out type"_test = [] {
 		expect(ParserTest::Success("function with out type",
 			"func [type]",
 			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.name = "type"} }
