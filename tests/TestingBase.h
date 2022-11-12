@@ -1,6 +1,10 @@
 #pragma once
 #include "../lovela/Node.h"
 
+#define BOOST_UT_DISABLE_MODULE
+#include "ut.hpp"
+using namespace boost::ut;
+
 class TestingBase
 {
 public:

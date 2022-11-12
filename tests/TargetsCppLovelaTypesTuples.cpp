@@ -1,6 +1,10 @@
 #include "pch.h"
 #include "../targets/cpp/lovela-runtime/lovela-types.h"
 
+#define BOOST_UT_DISABLE_MODULE
+#include "ut.hpp"
+using namespace boost::ut;
+
 suite FixedTuple = [] {
 	"InitAndRange"_test = [] {
 		lovela::fixed_tuple<std::tuple<int, double, std::string>> obj1;

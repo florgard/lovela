@@ -1,6 +1,10 @@
 #include "pch.h"
 #include "TestingBase.h"
 
+#define BOOST_UT_DISABLE_MODULE
+#include "ut.hpp"
+using namespace boost::ut;
+
 bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const Node& expectedTree)
 {
 	if (tree != expectedTree)

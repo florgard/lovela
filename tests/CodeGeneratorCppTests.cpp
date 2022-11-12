@@ -4,6 +4,10 @@
 #include "../lovela/ParserFactory.h"
 #include "../lovela/CodeGeneratorFactory.h"
 
+#define BOOST_UT_DISABLE_MODULE
+#include "ut.hpp"
+using namespace boost::ut;
+
 class CodeGenTest : public TestingBase
 {
 public:

@@ -3,6 +3,10 @@
 #include "../lovela/LexerFactory.h"
 #include "../lovela/ParserFactory.h"
 
+#define BOOST_UT_DISABLE_MODULE
+#include "ut.hpp"
+using namespace boost::ut;
+
 class ParserTest : public TestingBase
 {
 public:

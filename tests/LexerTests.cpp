@@ -2,6 +2,10 @@
 #include "TestingBase.h"
 #include "../lovela/LexerFactory.h"
 
+#define BOOST_UT_DISABLE_MODULE
+#include "ut.hpp"
+using namespace boost::ut;
+
 class LexerTest : public TestingBase
 {
 public:

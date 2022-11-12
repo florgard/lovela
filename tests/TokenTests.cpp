@@ -1,6 +1,10 @@
 #include "pch.h"
 #include "../lovela/LexerBase.h"
 
+#define BOOST_UT_DISABLE_MODULE
+#include "ut.hpp"
+using namespace boost::ut;
+
 suite token_tests = [] {
 	"ParenRoundOpen type"_test = [] { expect(LexerBase::GetTokenType('(') == Token::Type::ParenRoundOpen); };
 	"SeparatorDot type"_test = [] { expect(LexerBase::GetTokenType('.') == Token::Type::SeparatorDot); };

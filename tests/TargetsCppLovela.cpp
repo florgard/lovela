@@ -1,6 +1,10 @@
 #include "pch.h"
 #include "../targets/cpp/lovela-runtime/lovela.h"
 
+#define BOOST_UT_DISABLE_MODULE
+#include "ut.hpp"
+using namespace boost::ut;
+
 suite Stream = [] {
 	"SimpleOut"_test = [] {
 		std::wostringstream r1;
