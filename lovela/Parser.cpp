@@ -206,7 +206,7 @@ NodeGenerator Parser::Parse() noexcept
 			if (Accept(GetFunctionDeclarationTokens()))
 			{
 				auto p = ParseFunctionDeclaration(context);
-				Node n = std::move(*p);
+				auto n = std::move(*p);
 				co_yield n;
 			}
 			else if (Accept(Token::Type::End))
