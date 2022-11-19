@@ -192,7 +192,7 @@ where
 
 #### Boolean type
 
-`type/bool` is stored as `#1`. On initialization it will be set to 0 if the input is 0, or 1 otherwise.
+`type/bool` is stored as `#+8`. On initialization it will be set to 0 if the input is 0, or 1 otherwise.
 
 #### Floating point types
 
@@ -208,7 +208,9 @@ Numberic types are implicitly cast if the source type fits in the target type.
 
 ##### Examples of implicit casts
 
-`#32` and `#+32` can both be cast to `#64` or `#+64`.
+`#32` and `#+32` can both be cast to `#64`.
+
+`#+32` can be cast to `#+64`.
 
 `#32`and `#+32` can both be cast to `#.64` but not to `#.32`.
 
