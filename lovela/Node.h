@@ -34,17 +34,14 @@ struct TypeSpec
 	}
 
 	[[nodiscard]] constexpr bool Is(Kind kind) const noexcept { return GetKind() == kind; }
-	bool IsAny() const { return Is(Kind::Any); }
-	bool IsNone() const { return Is(Kind::None); }
-	bool IsTagged() const { return Is(Kind::Tagged); }
 
-	void SetAny() { name.clear(); }
-	void SetNone() { name = noneTypeName; }
+	void SetAny() noexcept { name.clear(); }
+	void SetNone() noexcept { name = noneTypeName; }
 
-	static TypeSpec MakeAny() { return {}; };
-	static TypeSpec MakeNone() { return { .name = noneTypeName }; };
+	[[nodiscard]] static constexpr TypeSpec MakeAny() noexcept { return {}; };
+	[[nodiscard]] static constexpr TypeSpec MakeNone() noexcept { return { .name = noneTypeName }; };
 
-	[[nodiscard]] auto operator<=>(const TypeSpec& rhs) const noexcept = default;
+	[[nodiscard]] constexpr auto operator<=>(const TypeSpec& rhs) const noexcept = default;
 
 private:
 	static constexpr const char* noneTypeName = "()";

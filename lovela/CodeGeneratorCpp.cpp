@@ -98,7 +98,7 @@ void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
 
 	const auto outType = ConvertType(node.outType);
 
-	if (node.outType.IsTagged())
+	if (node.outType.Is(TypeSpec::Kind::Tagged))
 	{
 		templateParameters.push_back(outType.name);
 	}
@@ -106,7 +106,7 @@ void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
 	const auto inType = ConvertType(node.inType);
 	parameters.emplace_back(std::make_pair(inType.name, "in"));
 
-	if (node.inType.IsTagged())
+	if (node.inType.Is(TypeSpec::Kind::Tagged))
 	{
 		templateParameters.push_back(inType.name);
 	}
@@ -118,7 +118,7 @@ void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
 		const auto name = ParameterName(parameter->name, index);
 		const auto type = ConvertType(parameter->type);
 
-		if (parameter->type.IsTagged())
+		if (parameter->type.Is(TypeSpec::Kind::Tagged))
 		{
 			templateParameters.push_back(type.name);
 		}
@@ -170,7 +170,7 @@ void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
 
 void CodeGeneratorCpp::MainFunctionDeclaration(Node& node, Context& context)
 {
-	if (!node.outType.IsNone())
+	if (!node.outType.Is(TypeSpec::Kind::None))
 	{
 		errors.emplace_back("Warning: The main function out type wasn't None. The parser should set that.");
 		node.outType.SetNone();
@@ -183,11 +183,11 @@ void CodeGeneratorCpp::MainFunctionDeclaration(Node& node, Context& context)
 
 std::optional<TypeSpec> CodeGeneratorCpp::CheckExportType(const TypeSpec& type)
 {
-	if (type.IsNone())
+	if (type.Is(TypeSpec::Kind::None))
 	{
 		return type;
 	}
-	else if (type.IsAny())
+	else if (type.Is(TypeSpec::Kind::Any))
 	{
 		return GetVoidPtrType();
 	}
@@ -317,7 +317,7 @@ void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
 	}
 
 	const auto inType = maybeInType.value();
-	if (!inType.IsNone())
+	if (!inType.Is(TypeSpec::Kind::None))
 	{
 		parameters.emplace_back(std::make_pair(inType.name, "in"));
 	}
@@ -331,7 +331,7 @@ void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
 	}
 
 	auto outType = maybeOutType.value();
-	if (outType.IsNone())
+	if (outType.Is(TypeSpec::Kind::None))
 	{
 		outType = GetVoidType();
 	}
@@ -398,16 +398,16 @@ void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
 
 	stream << Indent() << "lovela::context context;\n";
 
-	if (inType.IsNone())
+	if (inType.Is(TypeSpec::Kind::None))
 	{
 		stream << Indent() << TypeNames::none << " in;\n";
 	}
 
 	// Call the actual function
 
-	stream << Indent() << (node.outType.IsNone() ? "" : "return ") << FunctionName(node.value) << "(context";
+	stream << Indent() << (node.outType.Is(TypeSpec::Kind::None) ? "" : "return ") << FunctionName(node.value) << "(context";
 
-	if (inType.IsNone())
+	if (inType.Is(TypeSpec::Kind::None))
 	{
 		stream << ", in";
 	}
@@ -460,7 +460,7 @@ void CodeGeneratorCpp::ImportedFunctionDeclaration(Node& node, Context&)
 	}
 
 	const auto inType = maybeInType.value();
-	if (!inType.IsNone())
+	if (!inType.Is(TypeSpec::Kind::None))
 	{
 		parameters.emplace_back(std::make_pair(inType.name, "in"));
 	}
@@ -474,7 +474,7 @@ void CodeGeneratorCpp::ImportedFunctionDeclaration(Node& node, Context&)
 	}
 
 	auto outType = maybeOutType.value();
-	if (outType.IsNone())
+	if (outType.Is(TypeSpec::Kind::None))
 	{
 		outType = GetVoidType();
 	}
@@ -551,7 +551,7 @@ void CodeGeneratorCpp::FunctionBody(Node& node, Context& context)
 
 		Visit(*node.left, context);
 
-		if (node.outType.IsNone())
+		if (node.outType.Is(TypeSpec::Kind::None))
 		{
 			stream << Indent() << "return {};\n";
 		}
@@ -578,7 +578,7 @@ void CodeGeneratorCpp::ImportedFunctionBody(Node& node, Context&, const std::vec
 
 	stream << Indent();
 
-	if (!node.outType.IsNone())
+	if (!node.outType.Is(TypeSpec::Kind::None))
 	{
 		stream << "return ";
 	}
@@ -594,7 +594,7 @@ void CodeGeneratorCpp::ImportedFunctionBody(Node& node, Context&, const std::vec
 
 	stream << ");\n";
 
-	if (node.outType.IsNone())
+	if (node.outType.Is(TypeSpec::Kind::None))
 	{
 		stream << "return {};\n";
 	}
