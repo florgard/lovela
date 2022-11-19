@@ -10,9 +10,19 @@ struct TypeSpec
 		Tagged,
 		Named,
 		Primitive,
+		Invalid,
 	} kind{};
 
 	std::string name;
+
+	struct Primitive
+	{
+		unsigned char bits{};
+		bool signedType{};
+		size_t arrayLength{};
+
+		[[nodiscard]] constexpr auto operator<=>(const Primitive& rhs) const noexcept = default;
+	} primitive{};
 
 	[[nodiscard]] constexpr bool Is(Kind k) const noexcept { return kind == k; }
 

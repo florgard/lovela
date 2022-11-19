@@ -1,17 +1,101 @@
 #pragma once
 #include "magic_enum.hpp"
 
-[[nodiscard]] constexpr bool is_int(std::string_view value)
+[[nodiscard]] constexpr bool is_int(std::string_view value) noexcept
 {
-	for (size_t i = 0; i < value.length(); ++i)
+	if (value.empty())
 	{
-		if (value[i] < '0' || value[i] > '9')
+		return false;
+	}
+
+	size_t i = 0;
+	switch (value[0])
+	{
+	case '-':
+	case '+':
+		++i;
+		break;
+	}
+
+	size_t digits = 0;
+	for (; i < value.length(); ++i)
+	{
+		if (value[i] >= '0' && value[i] <= '9')
+		{
+			++digits;
+		}
+		else
 		{
 			return false;
 		}
 	}
 
-	return true;
+	return digits > 0;
+}
+
+namespace detail
+{
+	template <typename T>
+	constexpr std::optional<T> to_int_read_value(std::string_view value) noexcept
+	{
+		T result = 0;
+
+		for (size_t i = 0; i < value.length(); ++i)
+		{
+			if (value[i] >= '0' && value[i] <= '9')
+			{
+				auto prev = result;
+				result *= 10;
+				if (result / 10 != prev)
+				{
+					// Overflow
+					return {};
+				}
+
+				result += value[i] - '0';
+			}
+			else
+			{
+				return {};
+			}
+		}
+
+		return result;
+	}
+}
+
+template <typename U, typename S>
+[[nodiscard]] constexpr auto to_int(std::string_view value) noexcept
+{
+	using return_type = std::pair<std::optional<U>, std::optional<S>>;
+
+	if (value.empty())
+	{
+		return return_type{};
+	}
+
+	bool sign = false;
+	size_t i = 0;
+
+	switch (value[i])
+	{
+	case '-':
+		sign = true;
+	case '+':
+		++i;
+		break;
+	}
+
+	if (sign)
+	{
+		auto result = detail::to_int_read_value<S>(value.substr(i));
+		return result.has_value() ? return_type{ {}, -result.value() } : return_type{};
+	}
+	else
+	{
+		auto result = detail::to_int_read_value<U>(value.substr(i));
+		return return_type{ result, {} };
+	}
 }
 
 [[nodiscard]] inline std::string to_string(std::string_view value)
