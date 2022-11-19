@@ -89,5 +89,6 @@
     <ClInclude Include="lovela-dependencies.h">
       <Filter>Main</Filter>
     </ClInclude>
+    <ClInclude Include="LexerRegexes.h" />
   </ItemGroup>
 </Project>
