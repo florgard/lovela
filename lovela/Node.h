@@ -13,7 +13,7 @@ struct TypeSpec
 
 	std::string name;
 
-	Kind GetKind() const
+	[[nodiscard]] constexpr Kind GetKind() const noexcept
 	{
 		if (name.empty())
 		{
@@ -33,9 +33,10 @@ struct TypeSpec
 		}
 	}
 
-	bool IsAny() const { return GetKind() == Kind::Any; }
-	bool IsNone() const { return GetKind() == Kind::None; }
-	bool IsTagged() const { return GetKind() == Kind::Tagged; }
+	[[nodiscard]] constexpr bool Is(Kind kind) const noexcept { return GetKind() == kind; }
+	bool IsAny() const { return Is(Kind::Any); }
+	bool IsNone() const { return Is(Kind::None); }
+	bool IsTagged() const { return Is(Kind::Tagged); }
 
 	void SetAny() { name.clear(); }
 	void SetNone() { name = noneTypeName; }
