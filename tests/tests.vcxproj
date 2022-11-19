@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClCompile Include="CodeGeneratorCppProgramTests.cpp" />
     <ClCompile Include="CodeGeneratorCppTests.cpp" />
+    <ClCompile Include="LexerRegexesTests.cpp" />
     <ClCompile Include="LexerTests.cpp" />
     <ClCompile Include="ParserTests.cpp" />
     <ClCompile Include="pch.cpp">

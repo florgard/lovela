@@ -21,6 +21,7 @@
     <ClCompile Include="TargetsCppErrorHandling.cpp" />
     <ClCompile Include="TargetsCppFunctionCalls.cpp" />
     <ClCompile Include="TargetsCppMain.cpp" />
+    <ClCompile Include="LexerRegexesTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestingBase.h" />
