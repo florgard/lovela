@@ -98,19 +98,19 @@ suite parser_function_declaration_input_types_tests = [] {
 	"function with given in type"_test = [] {
 		expect(ParserTest::Success("function with given in type",
 			"[type] func",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType{.name = "type"} }
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType{.kind = TypeSpec::Kind::Named, .name = "type"} }
 		));
 	};
 	"function with empty in type"_test = [] {
 		expect(ParserTest::Success("function with empty in type",
 			"[()] func",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType = TypeSpec::MakeNone() }
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType {.kind = TypeSpec::Kind::None} }
 		));
 	};
 	"function with tagged in type"_test = [] {
 		expect(ParserTest::Success("function with tagged in type",
 			"[1] func",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType{.name = "1"} }
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType {.kind = TypeSpec::Kind::Tagged, .name = "1"} }
 		));
 	};
 };
@@ -119,25 +119,25 @@ suite parser_function_declaration_other_types_tests = [] {
 		"function with out type"_test = [] {
 		expect(ParserTest::Success("function with out type",
 			"func [type]",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.name = "type"} }
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Named, .name = "type"} }
 		));
 	};
 	"function with in and out type"_test = [] {
 		expect(ParserTest::Success("function with in and out type",
 			"[in] func [out]",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.name = "out"}, .inType{.name = "in"} }
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Named, .name = "out"}, .inType{.kind = TypeSpec::Kind::Named, .name = "in"} }
 		));
 	};
 	"function with primitive types"_test = [] {
 		expect(ParserTest::Success("function with primitive types",
 			"#8# func #32",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.name = "#32"}, .inType{.name = "#8#"} }
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Primitive, .name = "#32"}, .inType{.kind = TypeSpec::Kind::Primitive, .name = "#8#"} }
 		));
 	};
 	"function with primitive types in brackets"_test = [] {
 		expect(ParserTest::Success("function with primitive types in brackets",
 			"[#32] func [#8]",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.name = "#8"}, .inType{.name = "#32"} }
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Primitive, .name = "#8"}, .inType{.kind = TypeSpec::Kind::Primitive, .name = "#32"} }
 		));
 	};
 	"anonymous function"_test = [] {
@@ -178,18 +178,18 @@ suite parser_function_declaration_other_types_tests = [] {
 			"func(name_only, name [type], [type_only])",
 			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .parameters{
 				make<VariableDeclaration>::shared({.name = "name_only"}),
-				make<VariableDeclaration>::shared({.name = "name", .type{.name = "type"}}),
-				make<VariableDeclaration>::shared({.type{.name = "type_only"}})
+				make<VariableDeclaration>::shared({.name = "name", .type{.kind = TypeSpec::Kind::Named, .name = "type"}}),
+				make<VariableDeclaration>::shared({.type{.kind = TypeSpec::Kind::Named, .name = "type_only"}})
 			}}
 		));
 	};
 	"complete function declaration"_test = [] {
 		expect(ParserTest::Success("complete function declaration",
 			"[inType] func (name_only, name [type], [type_only]) [functionType]",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.name = "functionType"}, .inType{.name = "inType"}, .parameters{
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Named, .name = "functionType"}, .inType{.kind = TypeSpec::Kind::Named, .name = "inType"}, .parameters{
 				make<VariableDeclaration>::shared({.name = "name_only"}),
-				make<VariableDeclaration>::shared({.name = "name", .type{.name = "type"}}),
-				make<VariableDeclaration>::shared({.type{.name = "type_only"}})
+				make<VariableDeclaration>::shared({.name = "name", .type{.kind = TypeSpec::Kind::Named, .name = "type"}}),
+				make<VariableDeclaration>::shared({.type{.kind = TypeSpec::Kind::Named, .name = "type_only"}})
 			}}
 		));
 	};
@@ -352,8 +352,8 @@ suite parser_function_body_tests = [] {
 		auto fc = Node{ .type = Node::Type::FunctionCall, .value = "doWork", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .parameters{
 				make<VariableDeclaration>::shared({.name = "name_only"}),
-				make<VariableDeclaration>::shared({.name = "name", .type{.name = "type"}}),
-				make<VariableDeclaration>::shared({.type{.name = "type_only"}})
+				make<VariableDeclaration>::shared({.name = "name", .type{.kind = TypeSpec::Kind::Named, .name = "type"}}),
+				make<VariableDeclaration>::shared({.type{.kind = TypeSpec::Kind::Named, .name = "type_only"}})
 			}, .left = make<Node>::unique(fc) };
 		expect(ParserTest::Success("function with parameters and body",
 			"func(name_only, name [type], [type_only]): doWork.",
@@ -362,10 +362,10 @@ suite parser_function_body_tests = [] {
 
 	"function without object but with parameters and body"_test = [] {
 		auto fc = Node{ .type = Node::Type::FunctionCall, .value = "doWork", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
-		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType = TypeSpec::MakeNone(), .parameters{
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType = {.kind = TypeSpec::Kind::None}, .parameters{
 				make<VariableDeclaration>::shared({.name = "name_only"}),
-				make<VariableDeclaration>::shared({.name = "name", .type{.name = "type"}}),
-				make<VariableDeclaration>::shared({.type{.name = "type_only"}})
+				make<VariableDeclaration>::shared({.name = "name", .type{.kind = TypeSpec::Kind::Named, .name = "type"}}),
+				make<VariableDeclaration>::shared({.type{.kind = TypeSpec::Kind::Named, .name = "type_only"}})
 			}, .left = make<Node>::unique(fc) };
 		expect(ParserTest::Success("function without object but with parameters and body",
 			"[()] func(name_only, name [type], [type_only]): doWork.",

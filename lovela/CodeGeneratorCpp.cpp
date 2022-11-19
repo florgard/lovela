@@ -5,8 +5,9 @@
 
 std::map<Node::Type, CodeGeneratorCpp::Visitor>& CodeGeneratorCpp::GetVisitors()
 {
-	static std::map<Node::Type, Visitor> visitors {
-		{Node::Type::FunctionDeclaration, &CodeGeneratorCpp::FunctionDeclaration}
+	static std::map<Node::Type, Visitor> visitors
+	{
+		{ Node::Type::FunctionDeclaration, &CodeGeneratorCpp::FunctionDeclaration }
 	};
 
 	return visitors;
@@ -14,14 +15,15 @@ std::map<Node::Type, CodeGeneratorCpp::Visitor>& CodeGeneratorCpp::GetVisitors()
 
 std::map<Node::Type, CodeGeneratorCpp::Visitor>& CodeGeneratorCpp::GetInternalVisitors()
 {
-	static std::map<Node::Type, Visitor> visitors {
-		{Node::Type::Expression, &CodeGeneratorCpp::Expression},
-		{Node::Type::ExpressionInput, &CodeGeneratorCpp::ExpressionInput},
-		{Node::Type::FunctionCall, &CodeGeneratorCpp::FunctionCall},
-		{Node::Type::BinaryOperation, &CodeGeneratorCpp::BinaryOperation},
-		{Node::Type::Literal, &CodeGeneratorCpp::Literal},
-		{Node::Type::Tuple, &CodeGeneratorCpp::Tuple},
-		{Node::Type::VariableReference, &CodeGeneratorCpp::VariableReference},
+	static std::map<Node::Type, Visitor> visitors
+	{
+		{ Node::Type::Expression, &CodeGeneratorCpp::Expression },
+		{ Node::Type::ExpressionInput, &CodeGeneratorCpp::ExpressionInput },
+		{ Node::Type::FunctionCall, &CodeGeneratorCpp::FunctionCall },
+		{ Node::Type::BinaryOperation, &CodeGeneratorCpp::BinaryOperation },
+		{ Node::Type::Literal, &CodeGeneratorCpp::Literal },
+		{ Node::Type::Tuple, &CodeGeneratorCpp::Tuple },
+		{ Node::Type::VariableReference, &CodeGeneratorCpp::VariableReference },
 	};
 
 	return visitors;
@@ -173,7 +175,7 @@ void CodeGeneratorCpp::MainFunctionDeclaration(Node& node, Context& context)
 	if (!node.outType.Is(TypeSpec::Kind::None))
 	{
 		errors.emplace_back("Warning: The main function out type wasn't None. The parser should set that.");
-		node.outType.SetNone();
+		node.outType = { .kind = TypeSpec::Kind::None };
 	}
 
 	stream << TypeNames::none << ' ' << "lovela::main(lovela::context& context, " << TypeNames::none << " in)";
@@ -183,15 +185,15 @@ void CodeGeneratorCpp::MainFunctionDeclaration(Node& node, Context& context)
 
 std::optional<TypeSpec> CodeGeneratorCpp::CheckExportType(const TypeSpec& type)
 {
-	if (type.Is(TypeSpec::Kind::None))
+	switch (type.kind)
 	{
+	case TypeSpec::Kind::None:
 		return type;
-	}
-	else if (type.Is(TypeSpec::Kind::Any))
-	{
+
+	case TypeSpec::Kind::Any:
 		return GetVoidPtrType();
-	}
-	else
+
+	default:
 	{
 		auto name = ConvertPrimitiveType(type.name);
 		if (!name.has_value())
@@ -204,11 +206,13 @@ std::optional<TypeSpec> CodeGeneratorCpp::CheckExportType(const TypeSpec& type)
 		converted.name = name.value();
 		return converted;
 	}
+	}
 }
 
 std::optional<std::string> CodeGeneratorCpp::ConvertPrimitiveType(const std::string& name)
 {
-	static const std::map<std::string, std::string> types{
+	static const std::map<std::string, std::string> types
+	{
 		{"#8#", "l_cstr"},
 	};
 
@@ -250,7 +254,7 @@ TypeSpec CodeGeneratorCpp::ConvertType(const TypeSpec& type)
 
 std::string CodeGeneratorCpp::ConvertTypeName(const TypeSpec& type)
 {
-	switch (type.GetKind())
+	switch (type.kind)
 	{
 	case TypeSpec::Kind::Any:
 		return TypeNames::any;
@@ -262,17 +266,13 @@ std::string CodeGeneratorCpp::ConvertTypeName(const TypeSpec& type)
 		return "Tag" + type.name;
 
 	case TypeSpec::Kind::Named:
-		if (type.name.front() == '#')
-		{
-			return ConvertPrimitiveType(type.name).value_or(TypeNames::invalid);
-		}
-		else
-		{
-			return "t_" + type.name;
-		}
+		return "t_" + type.name;
+
+	case TypeSpec::Kind::Primitive:
+		return ConvertPrimitiveType(type.name).value_or(TypeNames::invalid);
 
 	default:
-		errors.emplace_back(std::format("Error: Unhandled kind of type when getting the type name: {}", static_cast<int>(type.GetKind())));
+		errors.emplace_back(std::format("Error: Unhandled kind of type when getting the type name: {}", static_cast<int>(type.kind)));
 		return TypeNames::invalid;
 	}
 }

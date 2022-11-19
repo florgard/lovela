@@ -9,39 +9,12 @@ struct TypeSpec
 		None,
 		Tagged,
 		Named,
-	};
+		Primitive,
+	} kind{};
 
 	std::string name;
 
-	[[nodiscard]] constexpr Kind GetKind() const noexcept
-	{
-		if (name.empty())
-		{
-			return Kind::Any;
-		}
-		else if (name == noneTypeName)
-		{
-			return Kind::None;
-		}
-		// FIXME:
-		// else if (name[0] == '#')
-		else if (is_int(name))
-		{
-			return Kind::Tagged;
-		}
-		else
-		{
-			return Kind::Named;
-		}
-	}
-
-	[[nodiscard]] constexpr bool Is(Kind kind) const noexcept { return GetKind() == kind; }
-
-	void SetAny() noexcept { name.clear(); }
-	void SetNone() noexcept { name = noneTypeName; }
-
-	[[nodiscard]] static constexpr TypeSpec MakeAny() noexcept { return {}; };
-	[[nodiscard]] static constexpr TypeSpec MakeNone() noexcept { return { .name = noneTypeName }; };
+	[[nodiscard]] constexpr bool Is(Kind k) const noexcept { return kind == k; }
 
 	[[nodiscard]] constexpr auto operator<=>(const TypeSpec& rhs) const noexcept = default;
 

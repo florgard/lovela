@@ -246,49 +246,49 @@ TypeSpec Parser::ParseTypeSpec()
 {
 	Assert(GetTypeSpecTokens());
 
-	TypeSpec typeSpec;
-
 	// #32
 	if (IsToken(Token::Type::PrimitiveType))
 	{
-		typeSpec.name = currentToken.value;
+		return { .kind = TypeSpec::Kind::Primitive, .name = currentToken.value };
 	}
 	// []
 	else if (Accept(Token::Type::ParenSquareClose))
 	{
-		typeSpec.SetAny();
+		return { .kind = TypeSpec::Kind::Any };
 	}
 	// [#32]
 	else if (Accept(Token::Type::PrimitiveType))
 	{
-		typeSpec.name = currentToken.value;
+		TypeSpec t{ .kind = TypeSpec::Kind::Primitive, .name = currentToken.value };
 		Expect(Token::Type::ParenSquareClose);
+		return t;
 	}
 	// [1]
 	else if (Accept(Token::Type::LiteralInteger))
 	{
-		typeSpec.name = currentToken.value;
+		TypeSpec t{ .kind = TypeSpec::Kind::Tagged, .name = currentToken.value };
 		Expect(Token::Type::ParenSquareClose);
+		return t;
 	}
 	// [identifier]
 	else if (Accept(Token::Type::Identifier))
 	{
-		typeSpec.name = currentToken.value;
+		TypeSpec t{ .kind = TypeSpec::Kind::Named, .name = currentToken.value };
 		Expect(Token::Type::ParenSquareClose);
+		return t;
 	}
 	// [()]
 	else if (Accept(Token::Type::ParenRoundOpen))
 	{
-		typeSpec.SetNone();
+		TypeSpec t{ .kind = TypeSpec::Kind::None };
 		Expect(Token::Type::ParenRoundClose);
 		Expect(Token::Type::ParenSquareClose);
+		return t;
 	}
 	else
 	{
 		throw UnexpectedTokenException(NextToken());
 	}
-
-	return typeSpec;
 }
 
 ParameterList Parser::ParseParameterList()
@@ -323,7 +323,7 @@ ParameterList Parser::ParseParameterList()
 		}
 		else
 		{
-			parameter->type.SetAny();
+			parameter->type = {.kind = TypeSpec::Kind::Any};
 		}
 
 		// Name and/or type must be specified
@@ -471,7 +471,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 		if (node->value.empty())
 		{
 			// The anonymous main function has no output type.
-			node->outType.SetNone();
+			node->outType = { .kind = TypeSpec::Kind::None };
 		}
 
 		auto innerContext = make<Context>::shared({ .parent = context, .inType = node->inType });
