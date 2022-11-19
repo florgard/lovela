@@ -705,27 +705,22 @@ suite lexer_comparison_tests = [] {
 suite lexer_primitive_types_tests = [] {
 	"primitive type, int32"_test = [] {
 		expect(LexerTest::Success("primitive type, int32",
-			"#32",
+			"[-1000000]",
 			{
-				{.type = Token::Type::PrimitiveType, .value = "#32"},
+				{.type = Token::Type::ParenSquareOpen, .value = "["},
+				{.type = Token::Type::LiteralInteger, .value = "-1000000"},
+				{.type = Token::Type::ParenSquareClose, .value = "]"},
 				endToken
 			}
 		));
 	};
 	"primitive type, uint32"_test = [] {
 		expect(LexerTest::Success("primitive type, uint32",
-			"#+32",
+			"[1000000]",
 			{
-				{.type = Token::Type::PrimitiveType, .value = "#+32"},
-				endToken
-			}
-		));
-	};
-	"primitive type, int8"_test = [] {
-		expect(LexerTest::Success("primitive type, int8",
-			"#8",
-			{
-				{.type = Token::Type::PrimitiveType, .value = "#8"},
+				{.type = Token::Type::ParenSquareOpen, .value = "["},
+				{.type = Token::Type::LiteralInteger, .value = "1000000"},
+				{.type = Token::Type::ParenSquareClose, .value = "]"},
 				endToken
 			}
 		));

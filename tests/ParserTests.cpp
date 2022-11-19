@@ -130,8 +130,8 @@ suite parser_function_declaration_other_types_tests = [] {
 	};
 	"function with primitive types"_test = [] {
 		expect(ParserTest::Success("function with primitive types",
-			"#8# func #32",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Primitive, .name = "#32"}, .inType{.kind = TypeSpec::Kind::Primitive, .name = "#8#"} }
+			"#8# func [1000000]",
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Primitive, .primitive{.bits = 32, .signedType = true}}, .inType{.kind = TypeSpec::Kind::Primitive, .name = "#8#"} }
 		));
 	};
 	"function with primitive types in brackets"_test = [] {
