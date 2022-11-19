@@ -1,9 +1,11 @@
 #include "pch.h"
 #include "Lexer.h"
 
+// https://stackoverflow.com/questions/399078/what-special-characters-must-be-escaped-in-regular-expressions
+
 static const std::regex& GetSeparatorRegex()
 {
-	static const std::regex re{ R"([\(\)\[\]\{\}\.,:;\!\?\|#])" };
+	static const std::regex re{ R"([()[\]{}.,:;!?|#])" };
 	return re;
 }
 
@@ -15,7 +17,7 @@ static const std::regex& GetWhitespaceRegex()
 
 static const std::regex& GetLiteralNumberRegex()
 {
-	static const std::regex re{ R"([\+\-]?\d+)" };
+	static const std::regex re{ R"([+\-]?\d+)" };
 	return re;
 }
 
@@ -51,7 +53,7 @@ static const std::regex& GetDecimalPartRegex()
 
 static const std::regex& GetFirstCharRegex()
 {
-	static const std::regex re{ R"([\d\+\.])" };
+	static const std::regex re{ R"([\d+.])" };
 	return re;
 }
 
