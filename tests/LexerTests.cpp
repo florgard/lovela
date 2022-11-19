@@ -610,9 +610,9 @@ suite lexer_comment_tests = [] {
 		expect(LexerTest::Success("mixed character identifier",
 			"ident123.",
 			{
-		{.type = ident, .value = "ident123"},
-		{.type = Token::Type::SeparatorDot, .value = "."},
-		endToken
+				{.type = ident, .value = "ident123"},
+				{.type = Token::Type::SeparatorDot, .value = "."},
+				endToken
 			}
 		));
 	};
