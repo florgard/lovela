@@ -266,7 +266,7 @@ TypeSpec Parser::ParseTypeSpec()
 	// [1]
 	else if (Accept(Token::Type::LiteralInteger))
 	{
-		TypeSpec t{ .kind = TypeSpec::Kind::Tagged, .name = currentToken.value };
+		TypeSpec t = GetPrimitiveTypeSpec(currentToken.value);
 		Expect(Token::Type::ParenSquareClose);
 		return t;
 	}
