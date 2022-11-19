@@ -9,6 +9,7 @@ Simpler basic types
 * What about floats? Exponential notation?
   * [+\-]?\d+\.\d+[+\-]?(e|E)\d+
   * [1.0e30] instead of #.32, [1.0e300] instead of #.64
+* What about tagged types? [1] -> [#1]? [#key]
 Identifiers beginning with number or operator
 * 6.28 -> 2pi
 * 50 -> %approved

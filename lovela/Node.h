@@ -23,6 +23,8 @@ struct TypeSpec
 		{
 			return Kind::None;
 		}
+		// FIXME:
+		// else if (name[0] == '#')
 		else if (is_int(name))
 		{
 			return Kind::Tagged;
