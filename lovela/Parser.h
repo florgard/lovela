@@ -11,7 +11,6 @@ protected:
 public:
 	[[nodiscard]] NodeGenerator Parse() noexcept override;
 
-
 private:
 	struct Context
 	{
@@ -49,27 +48,6 @@ private:
 		{
 			const auto i = pair.first.value();
 
-			if (i <= std::numeric_limits<uint8_t>::max())
-			{
-				return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 8, .signedType = i <= static_cast<decltype(i)>(std::numeric_limits<int8_t>::max())}};
-			}
-			else if (i <= std::numeric_limits<uint16_t>::max())
-			{
-				return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 16, .signedType = i <= static_cast<decltype(i)>(std::numeric_limits<int16_t>::max())} };
-			}
-			else if (i <= std::numeric_limits<uint32_t>::max())
-			{
-				return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 32, .signedType = i <= static_cast<decltype(i)>(std::numeric_limits<int32_t>::max())} };
-			}
-			else if (i <= std::numeric_limits<uint64_t>::max())
-			{
-				return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 64, .signedType = i <= static_cast<decltype(i)>(std::numeric_limits<int64_t>::max())} };
-			}
-		}
-		else if (pair.second.has_value())
-		{
-			const auto i = pair.second.value();
-
 			if (i >= std::numeric_limits<int8_t>::min())
 			{
 				return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 8, .signedType = true} };
@@ -85,6 +63,27 @@ private:
 			else if (i >= std::numeric_limits<int64_t>::min())
 			{
 				return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 64, .signedType = true} };
+			}
+		}
+		else if (pair.second.has_value())
+		{
+			const auto i = pair.second.value();
+
+			if (i <= std::numeric_limits<uint8_t>::max())
+			{
+				return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 8, .signedType = i <= static_cast<decltype(i)>(std::numeric_limits<int8_t>::max())}};
+			}
+			else if (i <= std::numeric_limits<uint16_t>::max())
+			{
+				return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 16, .signedType = i <= static_cast<decltype(i)>(std::numeric_limits<int16_t>::max())} };
+			}
+			else if (i <= std::numeric_limits<uint32_t>::max())
+			{
+				return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 32, .signedType = i <= static_cast<decltype(i)>(std::numeric_limits<int32_t>::max())} };
+			}
+			else if (i <= std::numeric_limits<uint64_t>::max())
+			{
+				return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 64, .signedType = i <= static_cast<decltype(i)>(std::numeric_limits<int64_t>::max())} };
 			}
 		}
 

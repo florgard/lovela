@@ -67,7 +67,7 @@ namespace detail
 template <typename S, typename U = std::make_unsigned_t<S>>
 [[nodiscard]] constexpr auto to_int(std::string_view value) noexcept
 {
-	using return_type = std::pair<std::optional<U>, std::optional<S>>;
+	using return_type = std::pair<std::optional<S>, std::optional<U>>;
 
 	if (value.empty())
 	{
@@ -88,13 +88,13 @@ template <typename S, typename U = std::make_unsigned_t<S>>
 
 	if (sign)
 	{
-		auto result = detail::to_int_read_value<S>(value.substr(i));
-		return result.has_value() ? return_type{ {}, -result.value() } : return_type{};
+		const auto result = detail::to_int_read_value<S>(value.substr(i));
+		return result.has_value() ? return_type{ -result.value(), {}} : return_type{};
 	}
 	else
 	{
-		auto result = detail::to_int_read_value<U>(value.substr(i));
-		return return_type{ result, {} };
+		const auto result = detail::to_int_read_value<U>(value.substr(i));
+		return return_type{ {}, result };
 	}
 }
 
