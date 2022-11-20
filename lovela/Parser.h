@@ -43,35 +43,32 @@ private:
 
 	[[nodiscard]] static constexpr TypeSpec GetPrimitiveTypeSpec(std::string_view value)
 	{
-		using U = uint64_t;
-		using S = int64_t;
-
-		const auto pair = to_int<U, S>(value);
+		const auto pair = to_int<int64_t>(value);
 
 		if (pair.first.has_value())
 		{
-			const U i = pair.first.value();
+			const auto i = pair.first.value();
 
 			if (i <= std::numeric_limits<uint8_t>::max())
 			{
-				return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 8, .signedType = i <= static_cast<U>(std::numeric_limits<int8_t>::max())} };
+				return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 8, .signedType = i <= static_cast<decltype(i)>(std::numeric_limits<int8_t>::max())}};
 			}
 			else if (i <= std::numeric_limits<uint16_t>::max())
 			{
-				return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 16, .signedType = i <= static_cast<U>(std::numeric_limits<int16_t>::max())} };
+				return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 16, .signedType = i <= static_cast<decltype(i)>(std::numeric_limits<int16_t>::max())} };
 			}
 			else if (i <= std::numeric_limits<uint32_t>::max())
 			{
-				return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 32, .signedType = i <= static_cast<U>(std::numeric_limits<int32_t>::max())} };
+				return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 32, .signedType = i <= static_cast<decltype(i)>(std::numeric_limits<int32_t>::max())} };
 			}
 			else if (i <= std::numeric_limits<uint64_t>::max())
 			{
-				return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 64, .signedType = i <= static_cast<U>(std::numeric_limits<int64_t>::max())} };
+				return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 64, .signedType = i <= static_cast<decltype(i)>(std::numeric_limits<int64_t>::max())} };
 			}
 		}
 		else if (pair.second.has_value())
 		{
-			const S i = pair.second.value();
+			const auto i = pair.second.value();
 
 			if (i >= std::numeric_limits<int8_t>::min())
 			{

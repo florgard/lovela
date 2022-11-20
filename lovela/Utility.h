@@ -64,7 +64,7 @@ namespace detail
 	}
 }
 
-template <typename U, typename S>
+template <typename S, typename U = std::make_unsigned_t<S>>
 [[nodiscard]] constexpr auto to_int(std::string_view value) noexcept
 {
 	using return_type = std::pair<std::optional<U>, std::optional<S>>;
