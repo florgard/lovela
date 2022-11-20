@@ -3,7 +3,7 @@
 #define BOOST_UT_DISABLE_MODULE
 #include "ut.hpp"
 using namespace boost::ut;
-#pragma warning(disable:4189)
+
 suite is_int_tests = [] {
 	static_assert(is_int("0"));
 	static_assert(is_int("1"));
@@ -31,6 +31,10 @@ suite is_int_tests = [] {
 	static_assert(!is_int("a1"));
 	static_assert(!is_int("-1a"));
 	static_assert(!is_int("+1a"));
+};
+
+suite to_int_tests = [] {
+
 };
 
 suite static_map_tests = [] {
