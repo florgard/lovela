@@ -20,7 +20,8 @@
 	size_t digits = 0;
 	for (; i < value.length(); ++i)
 	{
-		if (value[i] >= '0' && value[i] <= '9')
+		const unsigned char digit = value[i] - '0';
+		if (digit < 10)
 		{
 			++digits;
 		}
@@ -38,21 +39,43 @@ namespace detail
 	template <typename T>
 	constexpr std::optional<T> to_int_read_value(std::string_view value) noexcept
 	{
+		// Signed types are expected to represent negative values.
+		constexpr bool negative = std::is_signed_v<T>;
+
 		T result = 0;
 
 		for (size_t i = 0; i < value.length(); ++i)
 		{
-			if (value[i] >= '0' && value[i] <= '9')
+			const unsigned char digit = value[i] - '0';
+			if (digit < 10)
 			{
-				auto prev = result;
+				const auto prev = result;
+
 				result *= 10;
+
 				if (result / 10 != prev)
 				{
 					// Overflow
 					return {};
 				}
 
-				result += value[i] - '0';
+				if (result >= 0)
+				{
+					result += digit;
+				}
+				else
+				{
+					result -= digit;
+				}
+
+				if constexpr (negative)
+				{
+					// Make the result negative at the first non-zero digit to be able to reach max negative integers.
+					if (result > 0)
+					{
+						result = -result;
+					}
+				}
 			}
 			else
 			{
@@ -71,6 +94,11 @@ template <typename S, typename U = std::make_unsigned_t<S>>
 	{
 		std::optional<S> signedValue;
 		std::optional<U> unsignedValue;
+
+		constexpr bool has_value() const noexcept
+		{
+			return signedValue.has_value() || unsignedValue.has_value();
+		}
 	};
 
 	if (value.empty())
@@ -78,22 +106,22 @@ template <typename S, typename U = std::make_unsigned_t<S>>
 		return return_type{};
 	}
 
-	bool sign = false;
+	bool negative = false;
 	size_t i = 0;
 
 	switch (value[i])
 	{
 	case '-':
-		sign = true;
+		negative = true;
 	case '+':
 		++i;
 		break;
 	}
 
-	if (sign)
+	if (negative)
 	{
 		const auto result = detail::to_int_read_value<S>(value.substr(i));
-		return result.has_value() ? return_type{ -result.value(), {}} : return_type{};
+		return return_type{ result, {} };
 	}
 	else
 	{

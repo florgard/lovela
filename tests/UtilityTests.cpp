@@ -7,9 +7,8 @@ using namespace boost::ut;
 suite is_int_tests = [] {
 	static_assert(is_int("0"));
 	static_assert(is_int("1"));
+	static_assert(is_int("+1"));
 	static_assert(is_int("-1"));
-	static_assert(is_int("+1"));
-	static_assert(is_int("+1"));
 	static_assert(is_int("001"));
 	static_assert(is_int("-001"));
 	static_assert(is_int("123"));
@@ -38,6 +37,21 @@ suite to_int_tests = [] {
 	static_assert(to_int<int>("1").unsignedValue.value_or(123) == 1, "Positive becomes unsigned");
 	static_assert(to_int<int>("+1").unsignedValue.value_or(123) == 1, "Explicit positive becomes unsigned");
 	static_assert(to_int<int>("-1").signedValue.value_or(123) == -1, "Negative becomes signed");
+	static_assert(to_int<int>("001").unsignedValue.value_or(123) == 1, "Handles padding zeroes, positive");
+	static_assert(to_int<int>("-001").signedValue.value_or(123) == -1, "Handles padding zeroes, negative");
+	static_assert(to_int<int>("123").unsignedValue.value_or(0) == 123, "Arbitrary number");
+	static_assert(to_int<int>( "2147483647").unsignedValue.value_or(0) == 2147483647, "Max int32 becomes uint32");
+	static_assert(to_int<int>("-2147483648").signedValue.value_or(0) == (-2147483647 - 1), "Min int32 becomes int32");
+	static_assert(to_int<int>("4294967295").unsignedValue.value_or(0) == 4294967295, "Max uint32 becomes uint32");
+	static_assert(to_int<int64_t>("2147483647").unsignedValue.value_or(0) == 2147483647, "Max int32 becomes uint32 also with wider type");
+	static_assert(to_int<int64_t>("-2147483648").signedValue.value_or(0) == (-2147483647 - 1), "Min int32 becomes int32 also with wider type");
+	static_assert(to_int<int64_t>("4294967295").unsignedValue.value_or(0) == 4294967295, "Max uint32 becomes uint32 also with wider type");
+	static_assert(to_int<int64_t>("9223372036854775807").unsignedValue.value_or(0) == 9223372036854775807, "Max int64 becomes uint64");
+	static_assert(to_int<int64_t>("-9223372036854775808").signedValue.value_or(0) == (-9223372036854775807 - 1), "Min int64 becomes int64");
+	static_assert(to_int<int64_t>("18446744073709551615").unsignedValue.value_or(0) == 18446744073709551615, "Max uint64 becomes uint64");
+
+	expect(!to_int<int64_t>("20000000000000000000").has_value()) << "Arbitrary width, positive big int can't be converted";
+	expect(!to_int<int64_t>("-20000000000000000000").has_value()) << "Arbitrary width, negative big int can't be converted";
 };
 
 suite static_map_tests = [] {
