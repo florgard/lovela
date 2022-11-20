@@ -44,9 +44,9 @@ private:
 	{
 		const auto pair = to_int<int64_t>(value);
 
-		if (pair.first.has_value())
+		if (pair.signedValue.has_value())
 		{
-			const auto i = pair.first.value();
+			const auto i = pair.signedValue.value();
 
 			if (i >= std::numeric_limits<int8_t>::min())
 			{
@@ -65,9 +65,9 @@ private:
 				return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 64, .signedType = true} };
 			}
 		}
-		else if (pair.second.has_value())
+		else if (pair.unsignedValue.has_value())
 		{
-			const auto i = pair.second.value();
+			const auto i = pair.unsignedValue.value();
 
 			if (i <= std::numeric_limits<uint8_t>::max())
 			{

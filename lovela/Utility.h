@@ -67,7 +67,11 @@ namespace detail
 template <typename S, typename U = std::make_unsigned_t<S>>
 [[nodiscard]] constexpr auto to_int(std::string_view value) noexcept
 {
-	using return_type = std::pair<std::optional<S>, std::optional<U>>;
+	struct return_type
+	{
+		std::optional<S> signedValue;
+		std::optional<U> unsignedValue;
+	};
 
 	if (value.empty())
 	{

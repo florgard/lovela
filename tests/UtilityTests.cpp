@@ -34,10 +34,10 @@ suite is_int_tests = [] {
 };
 
 suite to_int_tests = [] {
-	static_assert(to_int<int>("0").second.value_or(-1) == 0, "0 becomes unsigned");
-	static_assert(to_int<int>("1").second.value_or(-1) == 1, "Positive becomes unsigned");
-	static_assert(to_int<int>("+1").second.value_or(-1) == 1, "Explicit positive becomes unsigned");
-	static_assert(to_int<int>("-1").first.value_or(0) == -1, "Negative becomes signed");
+	static_assert(to_int<int>("0").unsignedValue.value_or(123) == 0, "0 becomes unsigned");
+	static_assert(to_int<int>("1").unsignedValue.value_or(123) == 1, "Positive becomes unsigned");
+	static_assert(to_int<int>("+1").unsignedValue.value_or(123) == 1, "Explicit positive becomes unsigned");
+	static_assert(to_int<int>("-1").signedValue.value_or(123) == -1, "Negative becomes signed");
 };
 
 suite static_map_tests = [] {
