@@ -3,6 +3,35 @@
 #define BOOST_UT_DISABLE_MODULE
 #include "ut.hpp"
 using namespace boost::ut;
+#pragma warning(disable:4189)
+suite is_int_tests = [] {
+	static_assert(is_int("0"));
+	static_assert(is_int("1"));
+	static_assert(is_int("-1"));
+	static_assert(is_int("+1"));
+	static_assert(is_int("+1"));
+	static_assert(is_int("001"));
+	static_assert(is_int("-001"));
+	static_assert(is_int("123"));
+	static_assert(is_int("2147483647"));
+	static_assert(is_int("-2147483648"));
+	static_assert(is_int("4294967295"));
+	static_assert(is_int("9223372036854775807"));
+	static_assert(is_int("-9223372036854775808"));
+	static_assert(is_int("18446744073709551615"));
+	static_assert(is_int("20000000000000000000")); // is_int currently doesn't stop at any boundary. May change.
+	static_assert(is_int("-20000000000000000000")); // is_int currently doesn't stop at any boundary. May change.
+
+	static_assert(!is_int(""));
+	static_assert(!is_int(" "));
+	static_assert(!is_int("a"));
+	static_assert(!is_int(" 1"));
+	static_assert(!is_int("1 "));
+	static_assert(!is_int("1a"));
+	static_assert(!is_int("a1"));
+	static_assert(!is_int("-1a"));
+	static_assert(!is_int("+1a"));
+};
 
 suite static_map_tests = [] {
 	static constexpr std::array<std::pair<int, double>, 2> values{ { {1, 1.1}, {2, 2.2} } };
