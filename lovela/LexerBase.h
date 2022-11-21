@@ -39,7 +39,7 @@ public:
 
 	[[nodiscard]] static constexpr Token::Type GetTokenType(char lexeme) noexcept
 	{
-		constexpr std::array<std::pair<char, Token::Type>, 13> values
+		constexpr std::array<std::pair<char, Token::Type>, 14> values
 		{ {
 			{'(', Token::Type::ParenRoundOpen },
 			{')', Token::Type::ParenRoundClose },
@@ -52,6 +52,7 @@ public:
 			{'!', Token::Type::SeparatorExclamation },
 			{'?', Token::Type::SeparatorQuestion },
 			{'|', Token::Type::SeparatorVerticalLine },
+			{'/', Token::Type::SeparatorSlash },
 			{':', Token::Type::SeparatorColon },
 			{'#', Token::Type::SeparatorHash },
 		} };

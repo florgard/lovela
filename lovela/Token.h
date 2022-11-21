@@ -25,6 +25,7 @@ struct Token
 		SeparatorExclamation,
 		SeparatorQuestion,
 		SeparatorVerticalLine,
+		SeparatorSlash,
 		SeparatorColon,
 		SeparatorHash,
 		OperatorComparison,
