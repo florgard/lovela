@@ -82,23 +82,63 @@ multi line'
 
 ## Integer types
 
-### Syntax
+### Literals
 
-`#N` for signed integer types where `N` is the number of bits. 1, 8, 16, 32 and 64 bits are supported.
+`0`
+`123`
+`+123`
+`-123`
 
-`#+N` for unsigned integer types where `N` is the number of bits. 1, 8, 16, 32 and 64 bits are supported.
+### Standard types
 
-`#.N` for floating point types where `N` is the number of bits. 32 and 64 bits are supported.
+`type/i8`
+`type/u8`
+`type/i16`
+`type/u16`
+`type/i32`
+`type/u32`
+`type/i64`
+`type/u64`
 
-For predefined numeric type names, see types in the standard library.
+### Type definition
 
-### Examples
+`[n]` where `n` is a literal integer number that needs to fit in the data type.
+The most narrow supported integer type that fits the literal number will be used. Signed types will be used before unsigned types.
+Supported types are signed and unsigned 8, 16, 32, and 64 bit wide integer types.
+Examples:
+`[0]` yields a signed 8 bit integer type (for which the max value is 127). Same as `type/i8`.
+`[100]` yields a signed 8 bit integer type (for which the max value is 127). Same as `type/i8`.
+`[-100]` yields a signed 8 bit integer type (for which the min value is -128). Same as `type/i8`.
+`[200]` yields an unsigned 8 bit integer type (a byte, for which the max value is 255). Same as `type/u8`.
+`[100000]` yields a signed 32 bit integer type (for which the max value is 2147483647). Same as `type/i32`.
+`[10000000000000000000]` yields an unsigned 64 bit integer type (for which the max value is 18446744073709551615). Same as `type/u64`.
 
-`#32` is a common signed 32 bit integer.
+## Floating point (real) types
 
-`#+8` is an 8 bit unsigned integer, a byte.
+### Literals
 
-`#.64` is a 64 bit double precision floating point number.
+`0.0`
+`123.45`
+`+123.45`
+`-123.45`
+`1.0e6`
+`1.0e+6`
+`1.0e-6`
+
+### Standard types
+
+`type/f32`
+`type/f64`
+
+### Type definition
+
+`[n]` where `n` is a literal real number that needs to fit in the data type.
+The most narrow supported floating point type that fits the literal number will be used.
+Supported types are 32 and 64 bit wide floating point types.
+Examples:
+`[0.0]` yields a 32 bit floating point type (for which the max value is in the order 1.0e38). Same as `type/f32`.
+`[1.0e30]` yields a 32 bit floating point type (for which the max value is in the order 1.0e38). Same as `type/f32`.
+`[1.0e300]` yields a 64 bit floating point (for which the min value is in the order 1.0e308). Same as `type/f64`.
 
 # Functions
 

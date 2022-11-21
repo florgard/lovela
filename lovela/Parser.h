@@ -4,6 +4,7 @@
 class Parser : public ParserBase
 {
 	friend class ParserFactory;
+	friend class ParserTest;
 
 protected:
 	Parser(TokenGenerator&& tokenGenerator) noexcept;
