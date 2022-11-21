@@ -12,12 +12,14 @@ suite is_int_tests = [] {
 	static_assert(is_int("001"));
 	static_assert(is_int("-001"));
 	static_assert(is_int("123"));
+
 	static_assert(is_int("2147483647"), "Max int32 is int");
 	static_assert(is_int("-2147483648"), "Min int32 is int");
 	static_assert(is_int("4294967295"), "Max uint32 is int");
 	static_assert(is_int("9223372036854775807"), "Max int64 is int");
 	static_assert(is_int("-9223372036854775808"), "Min int64 is int");
 	static_assert(is_int("18446744073709551615"), "Max uint64 is int");
+
 	static_assert(is_int("20000000000000000000"), "Arbitrary big int is int (may change)");
 	static_assert(is_int("-20000000000000000000"), "Arbitrary big int is int (may change)");
 
@@ -39,7 +41,8 @@ suite to_int_tests = [] {
 	static_assert(to_int<int>("-1").signedValue.value_or(123) == -1, "Negative becomes signed");
 	static_assert(to_int<int>("001").unsignedValue.value_or(123) == 1, "Handles padding zeroes, positive");
 	static_assert(to_int<int>("-001").signedValue.value_or(123) == -1, "Handles padding zeroes, negative");
-	static_assert(to_int<int>("123").unsignedValue.value_or(0) == 123, "Arbitrary number");
+	static_assert(to_int<int>("234").unsignedValue.value_or(123) == 234, "Arbitrary number");
+
 	static_assert(to_int<int>( "2147483647").unsignedValue.value_or(0) == 2147483647, "Max int32 becomes uint32");
 	static_assert(to_int<int>("-2147483648").signedValue.value_or(0) == (-2147483647 - 1), "Min int32 becomes int32");
 	static_assert(to_int<int>("4294967295").unsignedValue.value_or(0) == 4294967295, "Max uint32 becomes uint32");
