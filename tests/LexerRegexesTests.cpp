@@ -31,7 +31,6 @@ suite regex_tests = [] {
 		expect(!std::regex_match("+", re));
 		expect(!std::regex_match("-", re));
 		expect(!std::regex_match("*", re));
-		expect(!std::regex_match("/", re));
 		expect(!std::regex_match("%", re));
 	};
 };
