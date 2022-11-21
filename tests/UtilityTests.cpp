@@ -50,8 +50,19 @@ suite to_int_tests = [] {
 	static_assert(to_int<int64_t>("-9223372036854775808").signedValue.value_or(0) == (-9223372036854775807 - 1), "Min int64 becomes int64");
 	static_assert(to_int<int64_t>("18446744073709551615").unsignedValue.value_or(0) == 18446744073709551615, "Max uint64 becomes uint64");
 
+	// Can't be static due to integer overflow
 	expect(!to_int<int64_t>("20000000000000000000").has_value()) << "Arbitrary width, positive big int can't be converted";
 	expect(!to_int<int64_t>("-20000000000000000000").has_value()) << "Arbitrary width, negative big int can't be converted";
+
+	static_assert(!to_int<int>("").has_value());
+	static_assert(!to_int<int>(" ").has_value());
+	static_assert(!to_int<int>("a").has_value());
+	static_assert(!to_int<int>(" 1").has_value());
+	static_assert(!to_int<int>("1 ").has_value());
+	static_assert(!to_int<int>("1a").has_value());
+	static_assert(!to_int<int>("a1").has_value());
+	static_assert(!to_int<int>("-1a").has_value());
+	static_assert(!to_int<int>("+1a").has_value());
 };
 
 suite static_map_tests = [] {
