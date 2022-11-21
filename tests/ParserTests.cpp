@@ -113,6 +113,12 @@ suite parser_function_declaration_input_types_tests = [] {
 			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType {.kind = TypeSpec::Kind::Tagged, .name = "1"} }
 		));
 	};
+	"function with built-in in type"_test = [] {
+		expect(ParserTest::Success("function with built-in in type",
+			"[/type/i32] func",
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType {.kind = TypeSpec::Kind::Primitive, .primitive{.bits = 32, .signedType = true}} }
+		));
+	};
 };
 
 suite parser_function_declaration_other_types_tests = [] {
