@@ -43,6 +43,11 @@ private:
 
 	[[nodiscard]] static constexpr TypeSpec GetBuiltinTypeSpec(std::string_view value)
 	{
+		if (value.empty())
+		{
+			return { .kind = TypeSpec::Kind::Invalid };
+		}
+
 		TypeSpec t{ .kind = TypeSpec::Kind::Primitive };
 
 		switch (value[0])

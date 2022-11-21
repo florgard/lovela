@@ -10,10 +10,36 @@ class ParserTest
 public:
 	// Parser function forwarding
 
+	[[nodiscard]] static constexpr TypeSpec GetBuiltinTypeSpec(std::string_view value)
+	{
+		return Parser::GetBuiltinTypeSpec(value);
+	}
+
 	[[nodiscard]] static constexpr TypeSpec GetPrimitiveTypeSpec(std::string_view value)
 	{
 		return Parser::GetPrimitiveTypeSpec(value);
 	}
+};
+
+suite parser_GetBuiltinTypeSpec_tests = [] {
+	static_assert(ParserTest::GetBuiltinTypeSpec("i8") == TypeSpec{ .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 8, .signedType = true} });
+	static_assert(ParserTest::GetBuiltinTypeSpec("i16") == TypeSpec{ .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 16, .signedType = true} });
+	static_assert(ParserTest::GetBuiltinTypeSpec("i32") == TypeSpec{ .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 32, .signedType = true} });
+	static_assert(ParserTest::GetBuiltinTypeSpec("i64") == TypeSpec{ .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 64, .signedType = true} });
+	static_assert(ParserTest::GetBuiltinTypeSpec("u8") == TypeSpec{ .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 8, .signedType = false} });
+	static_assert(ParserTest::GetBuiltinTypeSpec("u16") == TypeSpec{ .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 16, .signedType = false} });
+	static_assert(ParserTest::GetBuiltinTypeSpec("u32") == TypeSpec{ .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 32, .signedType = false} });
+	static_assert(ParserTest::GetBuiltinTypeSpec("u64") == TypeSpec{ .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 64, .signedType = false} });
+	static_assert(ParserTest::GetBuiltinTypeSpec("f32") == TypeSpec{ .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 32, .floatType = true} });
+	static_assert(ParserTest::GetBuiltinTypeSpec("f64") == TypeSpec{ .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 64, .floatType = true} });
+
+	static_assert(ParserTest::GetBuiltinTypeSpec("") == TypeSpec{ .kind = TypeSpec::Kind::Invalid });
+	static_assert(ParserTest::GetBuiltinTypeSpec(" ") == TypeSpec{ .kind = TypeSpec::Kind::Invalid });
+	static_assert(ParserTest::GetBuiltinTypeSpec("a") == TypeSpec{ .kind = TypeSpec::Kind::Invalid });
+	static_assert(ParserTest::GetBuiltinTypeSpec("a8") == TypeSpec{ .kind = TypeSpec::Kind::Invalid });
+	static_assert(ParserTest::GetBuiltinTypeSpec("i9") == TypeSpec{ .kind = TypeSpec::Kind::Invalid });
+	static_assert(ParserTest::GetBuiltinTypeSpec("f8") == TypeSpec{ .kind = TypeSpec::Kind::Invalid });
+	static_assert(ParserTest::GetBuiltinTypeSpec("f16") == TypeSpec{ .kind = TypeSpec::Kind::Invalid });
 };
 
 suite parser_GetPrimitiveTypeSpec_tests = [] {
