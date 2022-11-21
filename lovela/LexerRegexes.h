@@ -7,7 +7,7 @@ class LexerRegexes
 public:
 	static const std::regex& GetSeparatorRegex()
 	{
-		static const std::regex re{ R"([()[\]{}.,:;!?|#])" };
+		static const std::regex re{ R"([()[\]{}.,:;!?/|#])" };
 		return re;
 	}
 
