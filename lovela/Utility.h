@@ -12,6 +12,8 @@
 	switch (value[0])
 	{
 	case '-':
+		[[fallthrough]];
+
 	case '+':
 		++i;
 		break;
@@ -125,6 +127,8 @@ template <typename S, typename U = std::make_unsigned_t<S>>
 	{
 	case '-':
 		negative = true;
+		[[fallthrough]];
+
 	case '+':
 		++i;
 		break;
