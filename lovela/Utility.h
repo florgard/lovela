@@ -61,10 +61,22 @@ namespace detail
 
 				if (result >= 0)
 				{
+					if (result > std::numeric_limits<T>::max() - digit)
+					{
+						// Overflow
+						return {};
+					}
+
 					result += digit;
 				}
 				else
 				{
+					if (result < std::numeric_limits<T>::min() + digit)
+					{
+						// Overflow
+						return {};
+					}
+
 					result -= digit;
 				}
 
@@ -109,7 +121,7 @@ template <typename S, typename U = std::make_unsigned_t<S>>
 	bool negative = false;
 	size_t i = 0;
 
-	switch (value[i])
+	switch (value[0])
 	{
 	case '-':
 		negative = true;
