@@ -91,14 +91,14 @@ multi line'
 
 ### Standard types
 
-`type/i8`
-`type/u8`
-`type/i16`
-`type/u16`
-`type/i32`
-`type/u32`
-`type/i64`
-`type/u64`
+`/type/i8`
+`/type/u8`
+`/type/i16`
+`/type/u16`
+`/type/i32`
+`/type/u32`
+`/type/i64`
+`/type/u64`
 
 ### Type definition
 
@@ -106,12 +106,12 @@ multi line'
 The most narrow supported integer type that fits the literal number will be used. Signed types will be used before unsigned types.
 Supported types are signed and unsigned 8, 16, 32, and 64 bit wide integer types.
 Examples:
-`[0]` yields a signed 8 bit integer type (for which the max value is 127). Same as `type/i8`.
-`[100]` yields a signed 8 bit integer type (for which the max value is 127). Same as `type/i8`.
-`[-100]` yields a signed 8 bit integer type (for which the min value is -128). Same as `type/i8`.
-`[200]` yields an unsigned 8 bit integer type (a byte, for which the max value is 255). Same as `type/u8`.
-`[100000]` yields a signed 32 bit integer type (for which the max value is 2147483647). Same as `type/i32`.
-`[10000000000000000000]` yields an unsigned 64 bit integer type (for which the max value is 18446744073709551615). Same as `type/u64`.
+`[0]` yields a signed 8 bit integer type (for which the max value is 127). Same as `/type/i8`.
+`[100]` yields a signed 8 bit integer type (for which the max value is 127). Same as `/type/i8`.
+`[-100]` yields a signed 8 bit integer type (for which the min value is -128). Same as `/type/i8`.
+`[200]` yields an unsigned 8 bit integer type (a byte, for which the max value is 255). Same as `/type/u8`.
+`[100000]` yields a signed 32 bit integer type (for which the max value is 2147483647). Same as `/type/i32`.
+`[10000000000000000000]` yields an unsigned 64 bit integer type (for which the max value is 18446744073709551615). Same as `/type/u64`.
 
 ## Floating point (real) types
 
@@ -127,8 +127,8 @@ Examples:
 
 ### Standard types
 
-`type/f32`
-`type/f64`
+`/type/f32`
+`/type/f64`
 
 ### Type definition
 
@@ -136,9 +136,9 @@ Examples:
 The most narrow supported floating point type that fits the literal number will be used.
 Supported types are 32 and 64 bit wide floating point types.
 Examples:
-`[0.0]` yields a 32 bit floating point type (for which the max value is in the order 1.0e38). Same as `type/f32`.
-`[1.0e30]` yields a 32 bit floating point type (for which the max value is in the order 1.0e38). Same as `type/f32`.
-`[1.0e300]` yields a 64 bit floating point (for which the min value is in the order 1.0e308). Same as `type/f64`.
+`[0.0]` yields a 32 bit floating point type (for which the max value is in the order 1.0e38). Same as `/type/f32`.
+`[1.0e30]` yields a 32 bit floating point type (for which the max value is in the order 1.0e38). Same as `/type/f32`.
+`[1.0e300]` yields a 64 bit floating point (for which the min value is in the order 1.0e308). Same as `/type/f64`.
 
 # Functions
 
@@ -146,13 +146,13 @@ Examples:
 
 ```
 << this is an imported function that prints a line of text >>
--> io/print_line.
+-> /io/print_line.
 
-<< this function takes its input and passes it on to io/print_line >>
-print_message_1: io/print_line.
+<< this function takes its input and passes it on to /io/print_line >>
+print_message_1: /io/print_line.
 
 << this function also explicitly states its input type >>
-[type/string] print_message_2: io/print_line.
+[/type/string] print_message_2: /io/print_line.
 
 << this function contains multiple statements and thus needs parentheses for its definition >>
 print_three_messages:
@@ -198,8 +198,8 @@ where
 ### Example
 
 ```
--> io/print_line. << import >>
-: io/print_line 'Hello, World!'.
+-> /io/print_line. << import >>
+: /io/print_line 'Hello, World!'.
 ```
 
 ## Imported functions
@@ -208,37 +208,53 @@ where
 
 # Standard library
 
+Standard library types and functions reside in the global namespace `/`.
+
+The following libraries constitute the standard library:
+
+`type` contains built-in data types and type related functions.
+
+`str` contains string data types and functions.
+
+`io` contains basic input and output functions for things like printing text, files, streams, system state, etc.
+
+`mem` contains memory related functions, such as memory allocation.
+
+`net` contains networking types and functions.
+
+`re` contains regular expression types and functions.
+
 ## Types
 
 ### Numeric types
 
 #### Integer types
 
-`type/int8` is the same as `#8`.
+`/type/i8` is a signed 8 bit integer type.
 
-`type/int16` is the same as `#16`.
+`/type/i16` is a signed 16 bit integer type.
 
-`type/int32` is the same as `#32`.
+`/type/i32` is a signed 32 bit integer type.
 
-`type/int64` is the same as `#64`.
+`/type/i64` is a signed 64 bit integer type.
 
-`type/uint8` is the same as `#+8`.
+`/type/u8` is an unsigned 8 bit integer type.
 
-`type/uint16` is the same as `#+16`.
+`/type/u16` is an unsigned 16 bit integer type.
 
-`type/uint32` is the same as `#+32`.
+`/type/u32` is an unsigned 32 bit integer type.
 
-`type/uint64` is the same as `#+64`.
+`/type/u64` is an unsigned 64 bit integer type.
 
 #### Boolean type
 
-`type/bool` is stored as `#+8`. On initialization it will be set to 0 if the input is 0, or 1 otherwise.
+`/type/bool` is stored as `/type/u8`. On initialization it will be set to 0 if the input is 0, or 1 otherwise.
 
-#### Floating point types
+#### Floating point (real) types
 
-`type/float32` is the same as `#.32`.
+`/type/f32` is a 32 bit floating point type.
 
-`type/float64` is the same as `#.64`.
+`/type/f64` is a 64 bit floating point type.
 
 ### Casting
 
@@ -248,28 +264,28 @@ Numberic types are implicitly cast if the source type fits in the target type.
 
 ##### Examples of implicit casts
 
-`#32` and `#+32` can both be cast to `#64`.
+`/type/i32` and `/type/u32` can both be cast to `/type/i64`.
 
-`#+32` can be cast to `#+64`.
+`/type/u32` can be cast to `#+64`.
 
-`#32`and `#+32` can both be cast to `#.64` but not to `#.32`.
+`/type/i32`and `/type/u32` can both be cast to `/type/f64` but not to `/type/f32`.
 
-`#+32`cannot be cast to `#32` nor can `#32` be cast to `#+32`.
+`/type/u32`cannot be cast to `/type/i32` nor can `/type/i32` be cast to `/type/u32`.
 
 #### Explicit casts
 
-`type/truncate` can be used to cast any numeric type to a narrower type. The value will be truncated if it doesn't fit in the target type.
+`/type/truncate` can be used to cast any numeric type to a narrower type. The value will be truncated if it doesn't fit in the target type.
 
-`type/cast` can be used to cast any numeric type to a narrower type. A runtime error will be raised if the value doesn't fit in the target type.
+`/type/cast` can be used to cast any numeric type to a narrower type. A runtime error will be raised if the value doesn't fit in the target type.
 
 ## I/O
 
-`io/print_line` prints a line of text to the standard output stream.
-`io/print` prints text to the standard output stream.
+`/io/print_line` prints a line of text to the standard output stream.
+`/io/print` prints text to the standard output stream.
 
 ## Memory
 
-`mem/get` allocates memory for an object of the given type and initializes it.
+`/mem/get` allocates memory for an object of the given type and initializes it.
 
 ## String
 
@@ -336,5 +352,10 @@ Possibly TODO.
 
 # Namespaces
 
-`io/stream/out`
+Proposed:
+
+`/io/stream/out`
+
+Current:
+
 `io|stream|out`
