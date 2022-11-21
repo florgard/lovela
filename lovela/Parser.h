@@ -26,9 +26,6 @@ private:
 		void AddVariableSymbol(std::shared_ptr<VariableDeclaration> variable);
 	};
 
-	[[nodiscard]] TypeSpec ParseTypeSpec();
-	[[nodiscard]] ParameterList ParseParameterList();
-
 	[[nodiscard]] std::unique_ptr<Node> ParseFunctionDeclaration(std::shared_ptr<Context> context);
 	[[nodiscard]] std::unique_ptr<Node> ParseCompoundExpression(std::shared_ptr<Context> context);
 	[[nodiscard]] std::unique_ptr<Node> ParseExpression(std::shared_ptr<Context> context);
@@ -40,6 +37,9 @@ private:
 	[[nodiscard]] std::unique_ptr<Node> ParseVariableReference(std::shared_ptr<Context> context);
 
 	[[nodiscard]] std::unique_ptr<Node> ReduceExpression(std::unique_ptr<Node>&& expression);
+
+	[[nodiscard]] TypeSpec ParseTypeSpec();
+	[[nodiscard]] ParameterList ParseParameterList();
 
 	[[nodiscard]] static constexpr TypeSpec GetPrimitiveTypeSpec(std::string_view value)
 	{
