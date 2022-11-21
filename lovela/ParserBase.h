@@ -91,6 +91,21 @@ public:
 		}
 	}
 
+	// Sets the current token to the next token that is expected to be of the given type and hold the given value.
+	// Throws if the next token isn't of the given type, doesn't hold the given value, or if there's no next token.
+	void Expect(Token::Type type, std::string_view value)
+	{
+		if (!Accept(type))
+		{
+			throw UnexpectedTokenException(NextToken(), type);
+		}
+
+		if (currentToken.value != value)
+		{
+			throw UnexpectedTokenException(NextToken(), type, value);
+		}
+	}
+
 	// Sets the current token to the next token that is expected to be of one of the given types.
 	// Throws if the next token isn't of one of the given types or if there's no next token.
 	template <size_t Size>

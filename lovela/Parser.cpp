@@ -273,6 +273,15 @@ TypeSpec Parser::ParseTypeSpec()
 	// [identifier]
 	else if (Accept(Token::Type::Identifier))
 	{
+		// [/type/i32]
+		if (Accept(Token::Type::SeparatorSlash))
+		{
+			Expect(Token::Type::Identifier, "type");
+			Expect(Token::Type::SeparatorSlash);
+			Expect(Token::Type::Identifier);
+			return GetBuiltinTypeSpec(currentToken.value);
+		}
+
 		TypeSpec t{ .kind = TypeSpec::Kind::Named, .name = currentToken.value };
 		Expect(Token::Type::ParenSquareClose);
 		return t;

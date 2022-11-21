@@ -13,16 +13,17 @@ struct ParseException
 struct UnexpectedTokenException : public ParseException
 {
 	UnexpectedTokenException(const Token& token);
-	UnexpectedTokenException(const Token& token, Token::Type expected);
-	UnexpectedTokenException(const Token& token, const std::set<Token::Type>& expected);
+	UnexpectedTokenException(const Token& token, Token::Type expectedType);
+	UnexpectedTokenException(const Token& token, Token::Type expectedType, std::string_view expectedValue);
+	UnexpectedTokenException(const Token& token, const std::set<Token::Type>& expectedTypes);
 
 	template <size_t Size>
-	constexpr UnexpectedTokenException(const Token& token, const static_set<Token::Type, Size>& expected) : ParseException(token)
+	constexpr UnexpectedTokenException(const Token& token, const static_set<Token::Type, Size>& expectedTypes) : ParseException(token)
 	{
 		std::ostringstream s;
 		s << "Unexpected token " << to_string(token.type) << ", expected ";
 		bool first = true;
-		for (const auto& type : expected.data)
+		for (const auto& type : expectedTypes.data)
 		{
 			if (!first)
 			{

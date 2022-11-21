@@ -41,6 +41,54 @@ private:
 	[[nodiscard]] TypeSpec ParseTypeSpec();
 	[[nodiscard]] ParameterList ParseParameterList();
 
+	[[nodiscard]] static constexpr TypeSpec GetBuiltinTypeSpec(std::string_view value)
+	{
+		TypeSpec t{ .kind = TypeSpec::Kind::Primitive };
+
+		switch (value[0])
+		{
+		case 'i':
+			t.primitive.signedType = true;
+			break;
+
+		case 'u':
+			break;
+
+		case 'f':
+			t.primitive.floatType = true;
+			break;
+
+		default:
+			return { .kind = TypeSpec::Kind::Invalid };
+		}
+
+		auto bits = to_int<char>(value.substr(1)).unsignedValue.value_or(0);
+		switch (bits)
+		{
+		case 8:
+			[[fallthrough]];
+
+		case 16:
+			if (t.primitive.floatType)
+			{
+				return { .kind = TypeSpec::Kind::Invalid };
+			}
+			[[fallthrough]];
+
+		case 32:
+			[[fallthrough]];
+
+		case 64:
+			t.primitive.bits = bits;
+			break;
+
+		default:
+			return { .kind = TypeSpec::Kind::Invalid };
+		}
+
+		return t;
+	}
+
 	[[nodiscard]] static constexpr TypeSpec GetPrimitiveTypeSpec(std::string_view value)
 	{
 		const auto pair = to_int<int64_t>(value);
