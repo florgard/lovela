@@ -73,8 +73,7 @@ protected:
 	template <typename ErrorType>
 	void PrintErrorMessage(std::ostream& stream, const ErrorType& error)
 	{
-		stream << to_string(error.code) << ": " << error.message << '\n'
-			<< '(' << error.token.line << ':' << error.token.column << ") \"..." << error.token.code << "\" <-- At this place" << '\n';
+		stream << to_string(error.code) << ": " << error.message << '\n' << '(' << error.token.line << ':' << error.token.column << ") \"..." << error.token.code << "\" <-- At this place" << '\n';
 	}
 
 	struct Color
@@ -85,5 +84,9 @@ protected:
 		std::string_view warn = "\033[33m";
 		std::string_view fail = "\033[31m";
 		std::string_view name = "\033[33m";
+		std::string_view code = "\033[1;36m";
+		std::string_view cpp = "\033[36m";
+		std::string_view expect = "\033[1;32m";
+		std::string_view actual = "\033[1;33m";
 	} color;
 };
