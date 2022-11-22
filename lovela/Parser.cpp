@@ -2,6 +2,8 @@
 #include "Parser.h"
 #include "ParseException.h"
 
+// Token sets
+
 static constexpr std::array<Token::Type, 8> s_FunctionDeclarationTokens
 {
 	Token::Type::ParenSquareOpen,
@@ -79,23 +81,6 @@ static constexpr static_set<Token::Type, s_OperatorTokens.size()> s_OperatorToke
 static constexpr static_set<Token::Type, s_ExpressionTerminatorTokens.size()> s_ExpressionTerminatorTokenSet{ {s_ExpressionTerminatorTokens} };
 static constexpr static_set<Token::Type, s_TaggedTypeSpecTokens.size()> s_TaggedTypeSpecTokenSet{ {s_TaggedTypeSpecTokens} };
 
-static constexpr std::array<Node::Type, 4> s_OperandNodes
-{
-	Node::Type::Expression,
-	Node::Type::Tuple,
-	Node::Type::Literal,
-	Node::Type::VariableReference,
-};
-
-static constexpr std::array<Node::Type, 2> s_OperatorNodes
-{
-	Node::Type::FunctionCall,
-	Node::Type::BinaryOperation,
-};
-
-static constexpr static_set<Node::Type, s_OperandNodes.size()> s_OperandNodeSet{ {s_OperandNodes} };
-static constexpr static_set<Node::Type, s_OperatorNodes.size()> s_OperatorNodeSet{ {s_OperatorNodes} };
-
 static constexpr auto& GetFunctionDeclarationTokens()
 {
 	return s_FunctionDeclarationTokenSet;
@@ -136,6 +121,30 @@ static constexpr auto& GetExpressionTerminatorTokens()
 	return s_ExpressionTerminatorTokenSet;
 }
 
+static constexpr auto& GetTaggedTypeSpecTokens()
+{
+	return s_TaggedTypeSpecTokenSet;
+}
+
+// Node sets
+
+static constexpr std::array<Node::Type, 4> s_OperandNodes
+{
+	Node::Type::Expression,
+	Node::Type::Tuple,
+	Node::Type::Literal,
+	Node::Type::VariableReference,
+};
+
+static constexpr std::array<Node::Type, 2> s_OperatorNodes
+{
+	Node::Type::FunctionCall,
+	Node::Type::BinaryOperation,
+};
+
+static constexpr static_set<Node::Type, s_OperandNodes.size()> s_OperandNodeSet{ {s_OperandNodes} };
+static constexpr static_set<Node::Type, s_OperatorNodes.size()> s_OperatorNodeSet{ {s_OperatorNodes} };
+
 static constexpr auto& GetOperandNodes()
 {
 	return s_OperandNodeSet;
@@ -145,6 +154,8 @@ static constexpr auto& GetOperatorNodes()
 {
 	return s_OperatorNodeSet;
 }
+
+// Context
 
 bool Parser::Context::HasFunctionSymbol(const std::string& symbol) const
 {
@@ -193,6 +204,8 @@ void Parser::Context::AddVariableSymbol(std::shared_ptr<VariableDeclaration> dec
 		variableSymbols.emplace(std::make_pair(declaration->name, declaration));
 	}
 }
+
+// Parser
 
 Parser::Parser(TokenGenerator&& tokenGenerator) noexcept : ParserBase(std::move(tokenGenerator))
 {
@@ -274,7 +287,7 @@ TypeSpec Parser::ParseTypeSpec()
 	// [#1]
 	else if (Accept(Token::Type::SeparatorHash))
 	{
-		if (Accept(s_TaggedTypeSpecTokenSet))
+		if (Accept(GetTaggedTypeSpecTokens()))
 		{
 			t = { .kind = TypeSpec::Kind::Tagged, .name = currentToken.value };
 		}
