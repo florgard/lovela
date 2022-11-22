@@ -121,22 +121,28 @@ suite parser_function_declaration_input_types_tests = [] {
 			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType {.kind = TypeSpec::Kind::None} }
 		));
 	};
+	"function with primitive in type"_test = [] {
+		expect(s_test.Success("function with primitive in type",
+			"[1] func",
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType {.kind = TypeSpec::Kind::Primitive, .primitive{.bits = 8, .signedType = true}} }
+		));
+	};
 	"function with tagged in type"_test = [] {
 		expect(s_test.Success("function with tagged in type",
-			"[1] func",
+			"[#1] func",
 			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType {.kind = TypeSpec::Kind::Tagged, .name = "1"} }
 		));
 	};
 	"function with built-in in type"_test = [] {
 		expect(s_test.Success("function with built-in in type",
 			"[/type/i32] func",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType {.kind = TypeSpec::Kind::Primitive, .primitive{.bits = 32, .signedType = true}} }
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType {.kind = TypeSpec::Kind::Primitive, .nameSpace{.parts{"type"}, .isRoot = true}, .primitive{.bits = 32, .signedType = true}}}
 		));
 	};
 };
 
 suite parser_function_declaration_other_types_tests = [] {
-		"function with out type"_test = [] {
+	"function with out type"_test = [] {
 		expect(s_test.Success("function with out type",
 			"func [type]",
 			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Named, .name = "type"} }
@@ -151,13 +157,13 @@ suite parser_function_declaration_other_types_tests = [] {
 	"function with primitive types"_test = [] {
 		expect(s_test.Success("function with primitive types",
 			"[/type/i8]# func [/type/i32]",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Primitive, .primitive{.bits = 32, .signedType = true}}, .inType{.kind = TypeSpec::Kind::Primitive, .arrayDims{0}, .primitive{ .bits = 8, .signedType = true } }}
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Primitive, .nameSpace{.parts{"type"}, .isRoot = true}, .primitive{.bits = 32, .signedType = true}}, .inType{.kind = TypeSpec::Kind::Primitive, .nameSpace{.parts{"type"}, .isRoot = true}, .arrayDims{0}, .primitive{ .bits = 8, .signedType = true } }}
 		));
 	};
 	"function with primitive types in brackets"_test = [] {
 		expect(s_test.Success("function with primitive types in brackets",
-			"[[/type/i32]] func [/type/i8]",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Primitive, .primitive{.bits = 8, .signedType = true }}, .inType{.kind = TypeSpec::Kind::Primitive, .primitive{ .bits = 32, .signedType = true }} }
+			"[/type/i32] func [/type/i8]",
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Primitive, .nameSpace{.parts{"type"}, .isRoot = true}, .primitive{.bits = 8, .signedType = true }}, .inType{.kind = TypeSpec::Kind::Primitive, .nameSpace{.parts{"type"}, .isRoot = true}, .primitive{ .bits = 32, .signedType = true }} }
 		));
 	};
 	"anonymous function"_test = [] {
