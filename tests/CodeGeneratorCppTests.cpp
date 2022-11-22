@@ -8,7 +8,7 @@
 #include "ut.hpp"
 using namespace boost::ut;
 
-class CodeGeneratorTest : public TestingBase
+class CodeGeneratorCppTest : public TestingBase
 {
 public:
 	bool Success(const char* name, std::string_view code, std::string_view cppCode)
@@ -31,9 +31,9 @@ public:
 	bool ExportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors);
 };
 
-static CodeGeneratorTest s_test;
+static CodeGeneratorCppTest s_test;
 
-bool CodeGeneratorTest::Failure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
+bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
 	std::istringstream input(std::string(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
@@ -82,7 +82,7 @@ bool CodeGeneratorTest::Failure(const char* name, std::string_view code, std::st
 	return true;
 }
 
-bool CodeGeneratorTest::ImportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
+bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
 	std::istringstream input(std::string(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
@@ -138,7 +138,7 @@ bool CodeGeneratorTest::ImportFailure(const char* name, std::string_view code, s
 	return true;
 }
 
-bool CodeGeneratorTest::ExportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
+bool CodeGeneratorCppTest::ExportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
 	std::istringstream input(std::string(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);

@@ -8,11 +8,11 @@
 #include "ut.hpp"
 using namespace boost::ut;
 
-class CodeGeneratorTest : public TestingBase
+class CodeGeneratorCppTest : public TestingBase
 {
 };
 
-static CodeGeneratorTest s_test;
+static CodeGeneratorCppTest s_test;
 
 suite CodeGeneratorCpp_program_tests = [] {
 	"program test"_test = [] {
