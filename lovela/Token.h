@@ -2,8 +2,6 @@
 
 struct Token
 {
-	using StringT = std::string;
-
 	enum class Type
 	{
 		Empty,
@@ -33,12 +31,12 @@ struct Token
 		OperatorArrow,
 	} type{};
 
-	StringT value;
-	StringT outType;
+	std::string value;
+	std::string outType;
 
 	int line{};
 	int column{};
-	StringT code;
+	std::string code;
 
 	[[nodiscard]] constexpr bool operator==(const Token& rhs) const noexcept
 	{
