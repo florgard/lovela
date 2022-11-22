@@ -1,6 +1,27 @@
 #pragma once
 #include "Token.h"
 
+struct NameSpace
+{
+	std::vector<std::string> parts;
+	bool isRoot{};
+
+	[[nodiscard]] constexpr auto operator<=>(const NameSpace& rhs) const noexcept = default;
+
+	[[nodiscard]] void Print(std::ostream& stream) const
+	{
+		if (isRoot)
+		{
+			stream << '/';
+		}
+
+		for (auto& part : parts)
+		{
+			stream << part << '/';
+		}
+	}
+};
+
 struct TypeSpec
 {
 	enum class Kind
@@ -14,8 +35,8 @@ struct TypeSpec
 	} kind{};
 
 	std::string name;
-	bool arrayType{};
-	size_t arrayLength{};
+	NameSpace nameSpace{};
+	std::vector<size_t> arrayDims;
 
 	struct Primitive
 	{
@@ -30,6 +51,27 @@ struct TypeSpec
 
 	[[nodiscard]] constexpr auto operator<=>(const TypeSpec& rhs) const noexcept = default;
 
+	[[nodiscard]] std::string GetQualifiedName() const
+	{
+		std::ostringstream s;
+
+		s << '[';
+		nameSpace.Print(s);
+		s << name << ']';
+
+		for (auto& length : arrayDims)
+		{
+			s << '#';
+
+			if (length)
+			{
+				s << length;
+			}
+		}
+
+		return s.str();
+	}
+
 private:
 	static constexpr const char* noneTypeName = "()";
 };
@@ -37,7 +79,7 @@ private:
 struct VariableDeclaration
 {
 	std::string name;
-	TypeSpec type;
+	TypeSpec type{};
 
 	[[nodiscard]] auto operator<=>(const VariableDeclaration& rhs) const noexcept = default;
 };
@@ -81,10 +123,10 @@ private:
 struct FunctionDeclaration
 {
 	std::string name;
-	std::vector<std::string> nameSpace;
-	TypeSpec outType;
-	TypeSpec inType;
-	ParameterList parameters;
+	NameSpace nameSpace{};
+	TypeSpec outType{};
+	TypeSpec inType{};
+	ParameterList parameters{};
 	ApiSpec api{};
 };
 
@@ -105,13 +147,13 @@ struct Node
 	} type{};
 
 	std::string value;
-	TypeSpec outType;
-	Token token;
+	TypeSpec outType{};
+	Token token{};
 
 	// Function declaration
-	std::vector<std::string> nameSpace;
-	TypeSpec inType;
-	ParameterList parameters;
+	NameSpace nameSpace{};
+	TypeSpec inType{};
+	ParameterList parameters{};
 	ApiSpec api{};
 
 	// Function call
@@ -163,12 +205,11 @@ struct Node
 
 	[[nodiscard]] std::string GetQualifiedName() const
 	{
-		std::ostringstream name;
-		for (auto& part : nameSpace)
-		{
-			name << part << '|';
-		}
-		name << value;
-		return name.str();
+		std::ostringstream s;
+
+		nameSpace.Print(s);
+		s << value;
+
+		return s.str();
 	}
 };

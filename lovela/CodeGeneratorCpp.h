@@ -60,7 +60,7 @@ private:
 	static std::string RefVar(char prefix, size_t index);
 
 	std::optional<TypeSpec> CheckExportType(const TypeSpec& type);
-	std::optional<std::string> ConvertPrimitiveType(const std::string& name);
+	std::optional<std::string> ConvertPrimitiveType(const TypeSpec& type);
 
 	using Visitor = std::function<void(CodeGeneratorCpp*, Node&, Context&)>;
 	static std::map<Node::Type, Visitor>& GetVisitors();

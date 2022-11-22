@@ -323,17 +323,17 @@ TypeSpec Parser::ParseTypeSpec()
 	Expect(Token::Type::ParenSquareClose);
 
 	// [identifier]#
-	if (Accept(Token::Type::SeparatorHash))
+	while (Accept(Token::Type::SeparatorHash))
 	{
-		t.arrayType = true;
+		t.arrayDims.emplace_back(0);
 
 		if (Accept(Token::Type::LiteralInteger))
 		{
-			t.arrayLength = to_int<int64_t>(currentToken.value).unsignedValue.value_or(0);
+			t.arrayDims.back() = to_int<int64_t>(currentToken.value).unsignedValue.value_or(0);
 
-			if (!t.arrayLength)
+			if (!t.arrayDims.back())
 			{
-				// The array length must be greater than zero.
+				// The given array length must be greater than zero.
 				throw UnexpectedTokenException(currentToken);
 			}
 		}
@@ -469,7 +469,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 		// namespace1|namespaceN|binaryOperator
 		while (Accept(Token::Type::SeparatorVerticalLine))
 		{
-			node->nameSpace.emplace_back(name);
+			node->nameSpace.parts.emplace_back(name);
 
 			// binaryOperator
 			if (Accept(GetBinaryOperatorTokens()))

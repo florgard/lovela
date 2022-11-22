@@ -201,7 +201,7 @@ std::optional<TypeSpec> CodeGeneratorCpp::CheckExportType(const TypeSpec& type)
 
 	default:
 	{
-		auto name = ConvertPrimitiveType(type.name);
+		auto name = ConvertPrimitiveType(type);
 		if (!name.has_value())
 		{
 			errors.emplace_back("Error: Exported functions must have primitive in, out and parameter types. Unsupported type: " + type.name);
@@ -215,40 +215,28 @@ std::optional<TypeSpec> CodeGeneratorCpp::CheckExportType(const TypeSpec& type)
 	}
 }
 
-std::optional<std::string> CodeGeneratorCpp::ConvertPrimitiveType(const std::string& name)
+std::optional<std::string> CodeGeneratorCpp::ConvertPrimitiveType(const TypeSpec& type)
 {
 	static const std::map<std::string, std::string> types
 	{
-		{"#8#", "l_cstr"},
+		{"[/type/bool]", "l_i8"},
+		{"[/type/i8]#", "l_cstr"},
 	};
 
-	if (types.contains(name))
+	auto it = types.find(type.GetQualifiedName());
+	if (it != types.end())
 	{
-		return types.at(name);
+		return it->second;
 	}
 
-	static const std::regex regex(R"(#(\.|\+)?(1|8|16|32|64)(#*))");
-	std::smatch match;
-	if (!std::regex_match(name, match, regex))
-	{
-		errors.emplace_back("Unsupported primitive type: " + name);
-		return {};
-	}
+	std::ostringstream exportName;
 
-	const bool floatingPoint = match[1].compare(".") == 0;
-	const bool unsignedInteger = match[1].compare("+") == 0;
-	const auto width = match[2];
-	if (floatingPoint && !(width == "32" || width == "64"))
-	{
-		errors.emplace_back("Unsupported primitive floating point type: " + name);
-		return {};
-	}
+	exportName << "l_"
+		<< (type.primitive.floatType ? 'f' : (type.primitive.signedType ? 'i' : 'u'))
+		<< static_cast<unsigned int>(type.primitive.bits)
+		<< std::string(type.arrayDims.size(), '*');
 
-	std::string exportName = "l_";
-	exportName += floatingPoint ? 'f' : (unsignedInteger ? 'u' : 'i');
-	exportName += width;
-	exportName += std::string(match[3].length(), '*');
-	return exportName;
+	return exportName.str();
 }
 
 TypeSpec CodeGeneratorCpp::ConvertType(const TypeSpec& type)
@@ -275,7 +263,7 @@ std::string CodeGeneratorCpp::ConvertTypeName(const TypeSpec& type)
 		return "t_" + type.name;
 
 	case TypeSpec::Kind::Primitive:
-		return ConvertPrimitiveType(type.name).value_or(TypeNames::invalid);
+		return ConvertPrimitiveType(type).value_or(TypeNames::invalid);
 
 	default:
 		errors.emplace_back(std::format("Error: Unhandled kind of type when getting the type name: {}", static_cast<int>(type.kind)));
