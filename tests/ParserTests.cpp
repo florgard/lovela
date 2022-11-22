@@ -39,7 +39,7 @@ bool ParserTest::Failure(const char* name, std::string_view code, const std::ran
 	auto parser = ParserFactory::Create(lexer->Lex());
 	auto nodes = to_vector(parser->Parse());
 
-	bool success = nodes.begin() != nodes.end();
+	bool success = nodes.begin() != nodes.end(); 
 
 	if (!success)
 	{
