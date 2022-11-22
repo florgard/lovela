@@ -337,7 +337,6 @@ TypeSpec Parser::ParseTypeSpec()
 				throw UnexpectedTokenException(currentToken);
 			}
 		}
-
 	}
 
 	return t;
