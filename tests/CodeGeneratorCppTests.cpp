@@ -57,9 +57,13 @@ bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std:
 
 	if (!success)
 	{
-		std::cerr << color.fail << "ERROR: " << color.none << "Code generator test \"" << color.name << name << color.none << "\" error: The generated code differs from the expected code.\n";
-		std::cerr << "Generated:\n" << color.actual << generatedCode << color.none << "\nExpected:\n" << color.expect << expectedCode << color.none << "\n\nInput code:\n" << color.code << code << color.none << "\n";
-		std::cerr << "\nAST:\n" << color.actual;
+		std::cerr << color.fail << "ERROR: " << color.none
+			<< "Code generator test \"" << color.name << name << color.none << "\": "
+			<< "The generated code differs from the expected code.\n"
+			<< "Generated:\n" << color.actual << generatedCode << color.none << '\n'
+			<< "Expected:\n" << color.expect << expectedCode << color.none << '\n'
+			<< "Input code : \n" << color.code << code << color.none << '\n'
+			<< "AST:\n" << color.actual;
 		PrintAST(nodes);
 		std::cerr << color.none << '\n';
 
@@ -70,7 +74,9 @@ bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std:
 
 	if (!success)
 	{
-		std::cerr << color.fail << "ERROR: " << color.none << "Code generator test \"" << color.name << name << color.none << "\" error: The error count differs from the expected count.\nError messages:\n";
+		std::cerr << color.fail << "ERROR: " << color.none
+			<< "Code generator test \"" << color.name << name << color.none << "\": "
+			<< "The error count differs from the expected count.\nError messages:\n";
 
 		for (auto& error : codeGen->GetErrors())
 		{
@@ -98,7 +104,9 @@ bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code
 
 	if (!success)
 	{
-		std::cerr << color.fail << "ERROR: " << color.none << "Code generator import test \"" << color.name << name << color.none << "\" error: The code didn't yield a single export.\n";
+		std::cerr << color.fail << "ERROR: " << color.none
+			<< "Code generator import test \"" << color.name << name << color.none << "\": "
+			<< "The code didn't yield a single export.\n";
 
 		return false;
 	}
@@ -116,8 +124,12 @@ bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code
 
 	if (!success)
 	{
-		std::cerr << color.fail << "ERROR: " << color.none << "Code generator import test \"" << color.name << name << color.none << "\" error: The generated code differs from the expected code.\n";
-		std::cerr << "Generated:\n" << color.actual << generatedCode << color.none << "\nExpected:\n" << color.expect << expectedCode << color.none << "\n\nInput code:\n" << color.code << code << color.none << "\n";
+		std::cerr << color.fail << "ERROR: " << color.none
+			<< "Code generator import test \"" << color.name << name << color.none << "\": "
+			<< "The generated code differs from the expected code.\n"
+			<< "Generated:\n" << color.actual << generatedCode << color.none << '\n'
+			<< "Expected:\n" << color.expect << expectedCode << color.none << '\n'
+			<< "Input code:\n" << color.code << code << color.none << "\n";
 
 		return false;
 	}
@@ -126,7 +138,10 @@ bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code
 
 	if (!success)
 	{
-		std::cerr << color.fail << "ERROR: " << color.none << "Code generator import test \"" << color.name << name << color.none << "\" error: The error count differs from the expected count.\nError messages:\n";
+		std::cerr << color.fail << "ERROR: " << color.none
+			<< "Code generator import test \"" << color.name << name << color.none << "\": "
+			<< "The error count differs from the expected count.\n"
+			<< "Error messages:\n";
 
 		for (auto& error : codeGen->GetErrors())
 		{
@@ -154,7 +169,9 @@ bool CodeGeneratorCppTest::ExportFailure(const char* name, std::string_view code
 
 	if (!success)
 	{
-		std::cerr << color.fail << "ERROR: " << color.none << "Code generator export test \"" << color.name << name << color.none << "\" error: The code didn't yield a single export.\n";
+		std::cerr << color.fail << "ERROR: " << color.none
+			<< "Code generator export test \"" << color.name << name << color.none << "\": "
+			<< "The code didn't yield a single export.\n";
 
 		return false;
 	}
@@ -172,8 +189,12 @@ bool CodeGeneratorCppTest::ExportFailure(const char* name, std::string_view code
 
 	if (!success)
 	{
-		std::cerr << color.fail << "ERROR: " << color.none << "Code generator export test \"" << color.name << name << color.none << "\" error: The generated code differs from the expected code.\n";
-		std::cerr << "Generated:\n" << color.actual << generatedCode << color.none << "\nExpected:\n" << color.expect << expectedCode << color.none << "\n\nInput code:\n" << color.code << code << color.none << "\n";
+		std::cerr << color.fail << "ERROR: " << color.none
+			<< "Code generator export test \"" << color.name << name << color.none << "\": "
+			<< "The generated code differs from the expected code.\n"
+			<< "Generated:\n" << color.actual << generatedCode << color.none << '\n'
+			<< "Expected:\n" << color.expect << expectedCode << color.none << '\n'
+			<< "Input code:\n" << color.code << code << color.none << '\n';
 
 		return false;
 	}
@@ -182,7 +203,10 @@ bool CodeGeneratorCppTest::ExportFailure(const char* name, std::string_view code
 
 	if (!success)
 	{
-		std::cerr << color.fail << "ERROR: " << color.none << "Code generator export test \"" << color.name << name << color.none << "\" error: The error count differs from the expected count.\nError messages:\n";
+		std::cerr << color.fail << "ERROR: " << color.none
+			<< "Code generator export test \"" << color.name << name << color.none << "\": "
+			<< "The error count differs from the expected count.\n"
+			<< "Error messages:\n";
 
 		for (auto& error : codeGen->GetErrors())
 		{

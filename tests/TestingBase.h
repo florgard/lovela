@@ -61,12 +61,16 @@ protected:
 	template <typename Code>
 	void PrintIncorrectErrorCodeMessage(std::ostream& stream, const char* phase, const char* name, int index, Code actual, Code expected)
 	{
-		stream << color.fail << "ERROR: " << color.none << phase << " test \"" << color.name << name << color.none << "\" error: Error " << index + 1 << " code is " << color.actual << to_string(actual) << color.none << ", expected " << color.expect << to_string(expected) << color.none << ".\n";
+		stream << color.fail << "ERROR: " << color.none
+			<< phase << " test \"" << color.name << name << color.none << "\": "
+			<< "Error " << index + 1 << " code is " << color.actual << to_string(actual) << color.none << ", expected " << color.expect << to_string(expected) << color.none << ".\n";
 	}
 
 	void PrintIncorrectErrorLineMessage(std::ostream& stream, const char* phase, const char* name, int index, int actual, int expected)
 	{
-		stream << color.fail << "ERROR: " << color.none << phase << " test \"" << color.name << name << color.none << "\" error: Error " << index + 1 << " line number is " << color.actual << actual << color.none << ", expected " << color.expect << expected << color.none << ".\n";
+		stream << color.fail << "ERROR: " << color.none
+			<< phase << " test \"" << color.name << name << color.none << "\": "
+			<< "Error " << index + 1 << " line number is " << color.actual << actual << color.none << ", expected " << color.expect << expected << color.none << ".\n";
 	}
 
 	template <typename ErrorType>

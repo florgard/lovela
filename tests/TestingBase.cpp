@@ -9,7 +9,9 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const 
 {
 	if (tree != expectedTree)
 	{
-		std::cerr << color.fail << "ERROR: " << color.none << "Parser test \"" << color.name << name << color.none << "\" error: Some property of node " << index + 1 << " of type " << color.actual << to_string(tree.type) << color.none
+		std::cerr << color.fail << "ERROR: " << color.none
+			<< "Parser test \"" << color.name << name << color.none << "\": "
+			<< "Some property of node " << index + 1 << " of type " << color.actual << to_string(tree.type) << color.none
 			<< " differs from the expected node of type " << color.expect << to_string(expectedTree.type) << color.none << ".\n";
 		return false;
 	}
