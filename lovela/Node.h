@@ -20,6 +20,7 @@ struct TypeSpec
 		unsigned char bits{};
 		bool signedType{};
 		bool floatType{};
+		bool arrayType{};
 		size_t arrayLength{};
 
 		[[nodiscard]] constexpr auto operator<=>(const Primitive& rhs) const noexcept = default;
