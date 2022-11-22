@@ -205,19 +205,24 @@ NodeGenerator Parser::Parse() noexcept
 
 	while (Peek())
 	{
+		Node n;
+
 		try
 		{
 			if (Accept(GetFunctionDeclarationTokens()))
 			{
 				auto p = ParseFunctionDeclaration(context);
-				auto n = std::move(*p);
-				co_yield n;
+				n = std::move(*p);
 			}
 			else if (Accept(Token::Type::End))
 			{
 				if (Peek())
 				{
 					throw UnexpectedTokenException(NextToken());
+				}
+				else
+				{
+					co_return;
 				}
 			}
 			else if (Peek())
@@ -232,6 +237,7 @@ NodeGenerator Parser::Parse() noexcept
 		catch (const InvalidCurrentTokenException& e)
 		{
 			errors.emplace_back(Error{ .code = IParser::Error::Code::ParseError, .message = e.message, .token = e.token });
+			n = { .type = Node::Type::Error, .error = {.code = Node::Error::Code::ParseError, .message = e.message } };
 
 			// Skip faulty token.
 			Skip();
@@ -239,10 +245,13 @@ NodeGenerator Parser::Parse() noexcept
 		catch (const ParseException& e)
 		{
 			errors.emplace_back(Error{ .code = IParser::Error::Code::ParseError, .message = e.message, .token = e.token });
+			n = { .type = Node::Type::Error, .error = {.code = Node::Error::Code::ParseError, .message = e.message } };
 
 			// Skip faulty token.
 			Skip();
 		}
+
+		co_yield n;
 	}
 }
 

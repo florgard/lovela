@@ -93,6 +93,7 @@ struct Node
 	enum class Type
 	{
 		Empty,
+		Error,
 		FunctionDeclaration,
 		Expression,
 		ExpressionInput,
@@ -118,6 +119,19 @@ struct Node
 
 	std::unique_ptr<Node> left;
 	std::unique_ptr<Node> right;
+
+	struct Error
+	{
+		enum class Code
+		{
+			NoError,
+			ParseError,
+		} code{};
+
+		std::string message;
+
+		[[nodiscard]] constexpr auto operator<=>(const Error& rhs) const noexcept = default;
+	} error{};
 
 	[[nodiscard]] bool operator==(const Node& rhs) const noexcept
 	{
