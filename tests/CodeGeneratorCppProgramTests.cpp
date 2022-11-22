@@ -8,6 +8,12 @@
 #include "ut.hpp"
 using namespace boost::ut;
 
+class CodeGeneratorTest : public TestingBase
+{
+};
+
+static CodeGeneratorTest s_test;
+
 suite CodeGeneratorCpp_program_tests = [] {
 	"program test"_test = [] {
 		//	std::string code = R"(
@@ -45,7 +51,7 @@ suite CodeGeneratorCpp_program_tests = [] {
 
 		expect(parser->GetErrors().empty());
 
-		TestingBase::PrintAST(nodes);
+		s_test.PrintAST(nodes);
 		std::cout << '\n';
 
 		std::stringstream stream;

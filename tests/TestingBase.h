@@ -8,13 +8,13 @@ using namespace boost::ut;
 class TestingBase
 {
 public:
-	static void PrintAST(const Node& tree)
+	void PrintAST(const Node& tree)
 	{
 		int i{};
 		PrintAST(i, tree, {});
 	}
 
-	static void PrintAST(std::ranges::range auto& range)
+	void PrintAST(std::ranges::range auto& range)
 	{
 		auto end = range.end();
 		for (auto it = range.begin(); it != end; it++)
@@ -32,7 +32,7 @@ protected:
 	/// <param name="tree"></param>
 	/// <param name="expectedTree"></param>
 	/// <returns>true if the actual and expected AST match, false otherwise.</returns>
-	static bool TestAST(int& index, const char* name, const Node& tree, const Node& expectedTree);
+	bool TestAST(int& index, const char* name, const Node& tree, const Node& expectedTree);
 
 	/// <summary>
 	/// Compares each AST in the actual range with the corresponding one in the expected range.
@@ -42,7 +42,7 @@ protected:
 	/// <param name="range"></param>
 	/// <param name="expectedRange"></param>
 	/// <returns>true if the actual and expected AST match, false otherwise.</returns>
-	static bool TestAST(int& index, const char* name, std::ranges::range auto& range, const std::ranges::range auto& expectedRange)
+	bool TestAST(int& index, const char* name, std::ranges::range auto& range, const std::ranges::range auto& expectedRange)
 	{
 		auto expected = expectedRange.begin();
 		for (auto it = range.begin(), end = range.end(); it != end; it++, expected++)

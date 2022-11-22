@@ -9,13 +9,15 @@ using namespace boost::ut;
 class LexerTest : public TestingBase
 {
 public:
-	static bool Success(const char* name, std::string_view code, const std::vector<Token>& expectedTokens)
+	bool Success(const char* name, std::string_view code, const std::vector<Token>& expectedTokens)
 	{
 		return Failure(name, code, expectedTokens, {});
 	}
 
-	static bool Failure(const char* name, std::string_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors);
+	bool Failure(const char* name, std::string_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors);
 };
+
+static LexerTest s_test;
 
 bool LexerTest::Failure(const char* name, std::string_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
 {
@@ -35,7 +37,7 @@ bool LexerTest::Failure(const char* name, std::string_view code, const std::vect
 		if (actual != expected)
 		{
 			success = false;
-			std::cerr << "ERROR: Lexer test \"" << name << "\" error: Token " << i + 1 << " is " << to_string(actual.type) << " \"" << actual.value
+			std::cerr << color.fail << "ERROR: " << color.none << "Lexer test \"" << name << "\" error: Token " << i + 1 << " is " << to_string(actual.type) << " \"" << actual.value
 				<< "\", expected " << to_string(expected.type) << " \"" << expected.value << "\".\n";
 		}
 	}
@@ -69,7 +71,7 @@ static constexpr auto ident = Token::Type::Identifier;
 
 suite lexer_rudimental_tests = [] {
 	"empty expression"_test = [] {
-		expect(LexerTest::Success("empty expression",
+		expect(s_test.Success("empty expression",
 			"",
 			{
 				endToken
@@ -77,7 +79,7 @@ suite lexer_rudimental_tests = [] {
 		));
 	};
 	"single character"_test = [] {
-		expect(LexerTest::Success("single character",
+		expect(s_test.Success("single character",
 			".",
 			{
 				{.type = Token::Type::SeparatorDot, .value = "." },
@@ -89,7 +91,7 @@ suite lexer_rudimental_tests = [] {
 
 suite lexer_identifier_tests = [] {
 	"simple identifier"_test = [] {
-		expect(LexerTest::Success("simple identifier",
+		expect(s_test.Success("simple identifier",
 			"abc",
 			{
 				{.type = ident, .value = "abc" },
@@ -98,7 +100,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"two identifiers"_test = [] {
-		expect(LexerTest::Success("two identifiers",
+		expect(s_test.Success("two identifiers",
 			"abc def",
 			{
 				{.type = ident, .value = "abc" },
@@ -108,7 +110,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"alphanumerical identifier"_test = [] {
-		expect(LexerTest::Success("alphanumerical identifier",
+		expect(s_test.Success("alphanumerical identifier",
 			"abc123",
 			{
 				{.type = ident, .value = "abc123" },
@@ -117,7 +119,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"kebab case identifier"_test = [] {
-		expect(LexerTest::Success("kebab case identifier",
+		expect(s_test.Success("kebab case identifier",
 			"abc-123",
 			{
 				{.type = ident, .value = "abc-123" },
@@ -126,7 +128,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"snake case identifier"_test = [] {
-		expect(LexerTest::Success("snake case identifier",
+		expect(s_test.Success("snake case identifier",
 			"abc_123",
 			{
 				{.type = ident, .value = "abc_123" },
@@ -135,7 +137,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"operator character identifier"_test = [] {
-		expect(LexerTest::Success("operator character identifier",
+		expect(s_test.Success("operator character identifier",
 			"abc>=123",
 			{
 				{.type = ident, .value = "abc>=123" },
@@ -144,7 +146,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"Unicode identifier"_test = [] {
-		expect(LexerTest::Success("Unicode identifier",
+		expect(s_test.Success("Unicode identifier",
 			"\xE6\x97\xA5\xE6\x9C\xAC", // Nihon in nihongo, U+65E5 U+672C
 			{
 				{.type = ident, .value = "\xE6\x97\xA5\xE6\x9C\xAC" },
@@ -153,7 +155,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"Unicode combining mark identifier"_test = [] {
-		expect(LexerTest::Success("Unicode combining mark identifier",
+		expect(s_test.Success("Unicode combining mark identifier",
 			"a\xCC\x80", // a with combining mark, U+0300
 			{
 				{.type = ident, .value = "a\xCC\x80" },
@@ -162,7 +164,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"invalid identifier 1"_test = [] {
-		expect(LexerTest::Failure("invalid identifier 1",
+		expect(s_test.Failure("invalid identifier 1",
 			"1abc",
 			{
 				endToken
@@ -173,7 +175,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"invalid identifier 2"_test = [] {
-		expect(LexerTest::Failure("invalid identifier 2",
+		expect(s_test.Failure("invalid identifier 2",
 			"=abc",
 			{
 				endToken
@@ -187,7 +189,7 @@ suite lexer_identifier_tests = [] {
 
 suite lexer_numeric_literals_tests = [] {
 	"integer literal"_test = [] {
-		expect(LexerTest::Success("integer literal",
+		expect(s_test.Success("integer literal",
 			"123",
 			{
 				{.type = Token::Type::LiteralInteger, .value = "123" },
@@ -196,7 +198,7 @@ suite lexer_numeric_literals_tests = [] {
 		));
 	};
 	"integer literal and full stop"_test = [] {
-		expect(LexerTest::Success("integer literal and full stop",
+		expect(s_test.Success("integer literal and full stop",
 			"123.",
 			{
 				{.type = Token::Type::LiteralInteger, .value = "123"},
@@ -206,7 +208,7 @@ suite lexer_numeric_literals_tests = [] {
 		));
 	};
 	"decimal literal"_test = [] {
-		expect(LexerTest::Success("decimal literal",
+		expect(s_test.Success("decimal literal",
 			"123.456",
 			{
 				{.type = Token::Type::LiteralDecimal, .value = "123.456" },
@@ -215,7 +217,7 @@ suite lexer_numeric_literals_tests = [] {
 		));
 	};
 	"decimal literal and full stop"_test = [] {
-		expect(LexerTest::Success("decimal literal and full stop",
+		expect(s_test.Success("decimal literal and full stop",
 			"123.456.",
 			{
 				{.type = Token::Type::LiteralDecimal, .value = "123.456"},
@@ -225,7 +227,7 @@ suite lexer_numeric_literals_tests = [] {
 		));
 	};
 	"decimal literal, full stop, digit"_test = [] {
-		expect(LexerTest::Success("decimal literal, full stop, digit",
+		expect(s_test.Success("decimal literal, full stop, digit",
 			"123.456.7",
 			{
 				{.type = Token::Type::LiteralDecimal, .value = "123.456"},
@@ -239,7 +241,7 @@ suite lexer_numeric_literals_tests = [] {
 
 suite lexer_string_literal_tests = [] {
 	"empty string literal"_test = [] {
-		expect(LexerTest::Success("empty string literal",
+		expect(s_test.Success("empty string literal",
 			"''",
 			{
 				{.type = Token::Type::LiteralString, .value = "" },
@@ -248,7 +250,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"single escaped quotation mark"_test = [] {
-		expect(LexerTest::Success("single escaped quotation mark",
+		expect(s_test.Success("single escaped quotation mark",
 			"''''",
 			{
 				{.type = Token::Type::LiteralString, .value = "'" },
@@ -257,7 +259,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"simple string literal"_test = [] {
-		expect(LexerTest::Success("simple string literal",
+		expect(s_test.Success("simple string literal",
 			"'abc'",
 			{
 				{.type = Token::Type::LiteralString, .value = "abc" },
@@ -266,7 +268,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"string literal with whitespace"_test = [] {
-		expect(LexerTest::Success("string literal with whitespace",
+		expect(s_test.Success("string literal with whitespace",
 			"'ab c'",
 			{
 				{.type = Token::Type::LiteralString, .value = "ab c" },
@@ -275,7 +277,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"string literal with escaped quotation mark"_test = [] {
-		expect(LexerTest::Success("string literal with escaped quotation mark",
+		expect(s_test.Success("string literal with escaped quotation mark",
 			"'ab''c'",
 			{
 				{.type = Token::Type::LiteralString, .value = "ab'c" },
@@ -284,7 +286,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"separated string literals"_test = [] {
-		expect(LexerTest::Success("separated string literals",
+		expect(s_test.Success("separated string literals",
 			"'ab' 'c'",
 			{
 				{.type = Token::Type::LiteralString, .value = "ab"},
@@ -294,7 +296,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"comment in string literal"_test = [] {
-		expect(LexerTest::Success("comment in string literal",
+		expect(s_test.Success("comment in string literal",
 			"'<< abc >>'",
 			{
 				{.type = Token::Type::LiteralString, .value = "<< abc >>" },
@@ -303,7 +305,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"non-closed string literal"_test = [] {
-		expect(LexerTest::Failure("non-closed string literal",
+		expect(s_test.Failure("non-closed string literal",
 			"'",
 			{
 				endToken
@@ -314,7 +316,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"non-closed string literal on line 1"_test = [] {
-		expect(LexerTest::Failure("non-closed string literal on line 1",
+		expect(s_test.Failure("non-closed string literal on line 1",
 			"'abc",
 			{
 				endToken
@@ -325,7 +327,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"non-closed string literal on line 2"_test = [] {
-		expect(LexerTest::Failure("non-closed string literal on line 2",
+		expect(s_test.Failure("non-closed string literal on line 2",
 			"\r\n'abc",
 			{
 				endToken
@@ -336,7 +338,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"non-closed string literal on line 2"_test = [] {
-		expect(LexerTest::Failure("non-closed string literal on line 2", "\n'abc",
+		expect(s_test.Failure("non-closed string literal on line 2", "\n'abc",
 			{
 				endToken
 			},
@@ -346,7 +348,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"non-closed string literal on line 1"_test = [] {
-		expect(LexerTest::Failure("non-closed string literal on line 1",
+		expect(s_test.Failure("non-closed string literal on line 1",
 			"\r'abc",
 			{
 				endToken
@@ -357,7 +359,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"whitespace outside and within string literal"_test = [] {
-		expect(LexerTest::Success("whitespace outside and within string literal",
+		expect(s_test.Success("whitespace outside and within string literal",
 			"\t'ab\r\n\tc'\r\n",
 			{
 				{.type = Token::Type::LiteralString, .value = "ab\r\n\tc" },
@@ -369,7 +371,7 @@ suite lexer_string_literal_tests = [] {
 
 suite lexer_string_field_tests = [] {
 	"escaped curly bracket"_test = [] {
-		expect(LexerTest::Success("escaped curly bracket",
+		expect(s_test.Success("escaped curly bracket",
 			"'{{'",
 			{
 				{.type = Token::Type::LiteralString, .value = "{" },
@@ -378,7 +380,7 @@ suite lexer_string_field_tests = [] {
 		));
 	};
 	"escaped curly bracket"_test = [] {
-		expect(LexerTest::Success("escaped curly bracket",
+		expect(s_test.Success("escaped curly bracket",
 			"'{{}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "{}" },
@@ -387,7 +389,7 @@ suite lexer_string_field_tests = [] {
 		));
 	};
 	"single closing curly bracket"_test = [] {
-		expect(LexerTest::Success("single closing curly bracket",
+		expect(s_test.Success("single closing curly bracket",
 			"'}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "}" },
@@ -396,7 +398,7 @@ suite lexer_string_field_tests = [] {
 		));
 	};
 	"string field"_test = [] {
-		expect(LexerTest::Success("string field",
+		expect(s_test.Success("string field",
 			"'{n}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "\n" },
@@ -405,7 +407,7 @@ suite lexer_string_field_tests = [] {
 		));
 	};
 	"string fields"_test = [] {
-		expect(LexerTest::Success("string fields",
+		expect(s_test.Success("string fields",
 			"'{t}{n}{r}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "\t\n\r" },
@@ -414,7 +416,7 @@ suite lexer_string_field_tests = [] {
 		));
 	};
 	"embedded string fields"_test = [] {
-		expect(LexerTest::Success("embedded string fields",
+		expect(s_test.Success("embedded string fields",
 			"'abc{r}{n}def'",
 			{
 				{.type = Token::Type::LiteralString, .value = "abc\r\ndef" },
@@ -423,7 +425,7 @@ suite lexer_string_field_tests = [] {
 		));
 	};
 	"non-closed string field"_test = [] {
-		expect(LexerTest::Failure("non-closed string field",
+		expect(s_test.Failure("non-closed string field",
 			"'{n'",
 			{
 				{.type = Token::Type::LiteralString},
@@ -435,7 +437,7 @@ suite lexer_string_field_tests = [] {
 		));
 	};
 	"ill-formed string field"_test = [] {
-		expect(LexerTest::Failure("ill-formed string field",
+		expect(s_test.Failure("ill-formed string field",
 			"'{nn}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "n}"},
@@ -447,7 +449,7 @@ suite lexer_string_field_tests = [] {
 		));
 	};
 	"unknown string field"_test = [] {
-		expect(LexerTest::Failure("unknown string field",
+		expect(s_test.Failure("unknown string field",
 			"'{m}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "m}"},
@@ -462,7 +464,7 @@ suite lexer_string_field_tests = [] {
 
 suite lexer_string_interpolation_tests = [] {
 	"unindexed string interpolation"_test = [] {
-		expect(LexerTest::Success("unindexed string interpolation",
+		expect(s_test.Success("unindexed string interpolation",
 			"'{}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "" },
@@ -473,7 +475,7 @@ suite lexer_string_interpolation_tests = [] {
 		));
 	};
 	"embedded unindexed string interpolation"_test = [] {
-		expect(LexerTest::Success("embedded unindexed string interpolation",
+		expect(s_test.Success("embedded unindexed string interpolation",
 			"'abc{}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "abc" },
@@ -484,7 +486,7 @@ suite lexer_string_interpolation_tests = [] {
 		));
 	};
 	"unindexed string interpolations"_test = [] {
-		expect(LexerTest::Success("unindexed string interpolations",
+		expect(s_test.Success("unindexed string interpolations",
 			"'abc{}{}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "abc" },
@@ -497,7 +499,7 @@ suite lexer_string_interpolation_tests = [] {
 		));
 	};
 	"indexed string interpolation"_test = [] {
-		expect(LexerTest::Success("indexed string interpolation",
+		expect(s_test.Success("indexed string interpolation",
 			"'{2}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "" },
@@ -508,7 +510,7 @@ suite lexer_string_interpolation_tests = [] {
 		));
 	};
 	"indexed string interpolations"_test = [] {
-		expect(LexerTest::Success("indexed string interpolations",
+		expect(s_test.Success("indexed string interpolations",
 			"'abc{4}{1}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "abc" },
@@ -524,7 +526,7 @@ suite lexer_string_interpolation_tests = [] {
 
 suite lexer_function_declarations_tests = [] {
 	"trivial function declaration"_test = [] {
-		expect(LexerTest::Success("trivial function declaration",
+		expect(s_test.Success("trivial function declaration",
 			"func",
 			{
 				{.type = ident, .value = "func"},
@@ -533,7 +535,7 @@ suite lexer_function_declarations_tests = [] {
 		));
 	};
 	"trivial integer function"_test = [] {
-		expect(LexerTest::Success("trivial integer function",
+		expect(s_test.Success("trivial integer function",
 			"func: 123.",
 			{
 				{.type = ident, .value = "func"},
@@ -545,7 +547,7 @@ suite lexer_function_declarations_tests = [] {
 		));
 	};
 	"trivial decimal function with whitespace"_test = [] {
-		expect(LexerTest::Success("trivial decimal function with whitespace",
+		expect(s_test.Success("trivial decimal function with whitespace",
 			"func : 123.4.",
 			{
 				{.type = ident, .value = "func"},
@@ -557,7 +559,7 @@ suite lexer_function_declarations_tests = [] {
 		));
 	};
 	"trivial decimal function with mixed name and group"_test = [] {
-		expect(LexerTest::Success("trivial decimal function with mixed name and group",
+		expect(s_test.Success("trivial decimal function with mixed name and group",
 			"\r\nfunc44: (123.4).",
 			{
 				{.type = ident, .value = "func44"},
@@ -571,7 +573,7 @@ suite lexer_function_declarations_tests = [] {
 		));
 	};
 	"imported function"_test = [] {
-		expect(LexerTest::Success("imported function",
+		expect(s_test.Success("imported function",
 			"-> func",
 			{
 				{.type = Token::Type::OperatorArrow, .value = "->"},
@@ -581,7 +583,7 @@ suite lexer_function_declarations_tests = [] {
 		));
 	};
 	"exported function"_test = [] {
-		expect(LexerTest::Success("exported function",
+		expect(s_test.Success("exported function",
 			"<- []func",
 			{
 				{.type = Token::Type::OperatorArrow, .value = "<-"},
@@ -593,7 +595,7 @@ suite lexer_function_declarations_tests = [] {
 		));
 	};
 	"function with namespace"_test = [] {
-		expect(LexerTest::Success("function with namespace",
+		expect(s_test.Success("function with namespace",
 			"namespace|func",
 			{
 				{.type = ident, .value = "namespace"},
@@ -607,7 +609,7 @@ suite lexer_function_declarations_tests = [] {
 
 suite lexer_comment_tests = [] {
 	"mixed character identifier"_test = [] {
-		expect(LexerTest::Success("mixed character identifier",
+		expect(s_test.Success("mixed character identifier",
 			"ident123.",
 			{
 				{.type = ident, .value = "ident123"},
@@ -617,7 +619,7 @@ suite lexer_comment_tests = [] {
 		));
 	};
 	"commented out identifier"_test = [] {
-		expect(LexerTest::Success("commented out identifier",
+		expect(s_test.Success("commented out identifier",
 			"<< ident123. >>",
 			{
 				endToken
@@ -625,7 +627,7 @@ suite lexer_comment_tests = [] {
 		));
 	};
 	"commented out identifier and whitespace"_test = [] {
-		expect(LexerTest::Success("commented out identifier and whitespace",
+		expect(s_test.Success("commented out identifier and whitespace",
 			"<<\r\nident123.\r\n>>",
 			{
 				endToken
@@ -633,7 +635,7 @@ suite lexer_comment_tests = [] {
 		));
 	};
 	"commented and non-commented identifier"_test = [] {
-		expect(LexerTest::Success("commented and non-commented identifier",
+		expect(s_test.Success("commented and non-commented identifier",
 			"<< ident123. >> ident456.",
 			{
 				{.type = ident, .value = "ident456"},
@@ -643,7 +645,7 @@ suite lexer_comment_tests = [] {
 		));
 	};
 	"nested comments"_test = [] {
-		expect(LexerTest::Success("nested comments",
+		expect(s_test.Success("nested comments",
 			"<<<< 123 << 456 >>>>.>> ident456.",
 			{
 				{.type = ident, .value = "ident456"},
@@ -653,7 +655,7 @@ suite lexer_comment_tests = [] {
 		));
 	};
 	"multiple comments"_test = [] {
-		expect(LexerTest::Success("multiple comments",
+		expect(s_test.Success("multiple comments",
 			"<<<<123>>ident234<<<<123<<456>>>:>>.",
 			{
 				{.type = ident, .value = "ident234"},
@@ -663,7 +665,7 @@ suite lexer_comment_tests = [] {
 		));
 	};
 	"non-closed comment"_test = [] {
-		expect(LexerTest::Failure("non-closed comment",
+		expect(s_test.Failure("non-closed comment",
 			"<<<<123>>ident234<<<<123<<456>>>:>.",
 			{
 				{.type = ident, .value = "ident234"},
@@ -678,7 +680,7 @@ suite lexer_comment_tests = [] {
 
 suite lexer_comparison_tests = [] {
 	"comparison operator"_test = [] {
-		expect(LexerTest::Success("comparison operator",
+		expect(s_test.Success("comparison operator",
 			"1 < 2",
 			{
 				{.type = Token::Type::LiteralInteger, .value = "1"},
@@ -689,7 +691,7 @@ suite lexer_comparison_tests = [] {
 		));
 	};
 	"comparison declaration"_test = [] {
-		expect(LexerTest::Success("comparison declaration",
+		expect(s_test.Success("comparison declaration",
 			"<(operand)",
 			{
 				{.type = Token::Type::OperatorComparison, .value = "<"},
@@ -704,7 +706,7 @@ suite lexer_comparison_tests = [] {
 
 suite lexer_primitive_types_tests = [] {
 	"primitive type, int"_test = [] {
-		expect(LexerTest::Success("primitive type, int",
+		expect(s_test.Success("primitive type, int",
 			"[1000000]",
 			{
 				{.type = Token::Type::ParenSquareOpen, .value = "["},
@@ -715,7 +717,7 @@ suite lexer_primitive_types_tests = [] {
 		));
 	};
 	"primitive type, negative int"_test = [] {
-		expect(LexerTest::Success("primitive type, negative int",
+		expect(s_test.Success("primitive type, negative int",
 			"[-1000000]",
 			{
 				{.type = Token::Type::ParenSquareOpen, .value = "["},
@@ -726,7 +728,7 @@ suite lexer_primitive_types_tests = [] {
 		));
 	};
 	"primitive type, double"_test = [] {
-		expect(LexerTest::Success("primitive type, double",
+		expect(s_test.Success("primitive type, double",
 			"#.64",
 			{
 				{.type = Token::Type::PrimitiveType, .value = "#.64"},
@@ -735,7 +737,7 @@ suite lexer_primitive_types_tests = [] {
 		));
 	};
 	"primitive type, int8 array"_test = [] {
-		expect(LexerTest::Success("primitive type, int8 array",
+		expect(s_test.Success("primitive type, int8 array",
 			"#8#",
 			{
 				{.type = Token::Type::PrimitiveType, .value = "#8#"},
@@ -744,7 +746,7 @@ suite lexer_primitive_types_tests = [] {
 		));
 	};
 	"primitive type, int8 array of arrays"_test = [] {
-		expect(LexerTest::Success("primitive type, int8 array of arrays",
+		expect(s_test.Success("primitive type, int8 array of arrays",
 			"#8##",
 			{
 				{.type = Token::Type::PrimitiveType, .value = "#8##"},
@@ -753,7 +755,7 @@ suite lexer_primitive_types_tests = [] {
 		));
 	};
 	"primitive type, int32 array size 8"_test = [] {
-		expect(LexerTest::Success("primitive type, int32 array size 8",
+		expect(s_test.Success("primitive type, int32 array size 8",
 			"#32#8",
 			{
 				{.type = Token::Type::PrimitiveType, .value = "#32#8"},
@@ -766,7 +768,7 @@ suite lexer_primitive_types_tests = [] {
 
 suite lexer_builtin_types_tests = [] {
 	"built-in type, /type/i32"_test = [] {
-		expect(LexerTest::Success("built-in type, /type/i32",
+		expect(s_test.Success("built-in type, /type/i32",
 			"[/type/i32]",
 			{
 				{.type = Token::Type::ParenSquareOpen, .value = "["},
