@@ -43,7 +43,7 @@ bool ParserTest::Failure(const char* name, std::string_view code, const std::ran
 
 	if (!success)
 	{
-		std::cerr << color.fail << "ERROR: " << color.none << "Parser test \"" << name << "\" error: The parser didn't yield an AST.\n\nExpected:\n";
+		std::cerr << color.fail << "ERROR: " << color.none << "Parser test \"" << color.warn << name << color.none << "\" error: The parser didn't yield an AST.\n\nExpected:\n";
 		PrintAST(expectedRange);
 	}
 	else
@@ -53,7 +53,7 @@ bool ParserTest::Failure(const char* name, std::string_view code, const std::ran
 
 		if (!success)
 		{
-			std::cerr << color.fail << "ERROR: " << color.none << "Parser test \"" << name << "\" error: AST mismatch.\n\nActual:\n";
+			std::cerr << color.fail << "ERROR: " << color.none << "Parser test \"" << color.warn << name << color.none << "\" error: AST mismatch.\n\nActual:\n";
 			PrintAST(nodes);
 			std::cerr << "\nExpected:\n";
 			PrintAST(expectedRange);
@@ -72,12 +72,16 @@ bool ParserTest::Failure(const char* name, std::string_view code, const std::ran
 		if (actual.code != expected.code)
 		{
 			success = false;
-			std::cerr << GetIncorrectErrorCodeMessage("Parser", name, i, actual.code, expected.code) << GetErrorMessage(actual);
+
+			PrintIncorrectErrorCodeMessage(std::cerr, "Parser", name, i, actual.code, expected.code);
+			PrintErrorMessage(std::cerr, actual);
 		}
 		else if (expected.token.line && actual.token.line != expected.token.line)
 		{
 			success = false;
-			std::cerr << GetIncorrectErrorLineMessage("Parser", name, i, actual.token.line, expected.token.line) << GetErrorMessage(actual);
+
+			PrintIncorrectErrorLineMessage(std::cerr, "Parser", name, i, actual.token.line, expected.token.line);
+			PrintErrorMessage(std::cerr, actual);
 		}
 	}
 

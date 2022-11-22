@@ -56,38 +56,33 @@ protected:
 		return true;
 	}
 
-	static void PrintAST(int& index, const Node& tree, std::string indent);
+	void PrintAST(int& index, const Node& tree, std::string indent);
 
 	template <typename Code>
-	static std::string GetIncorrectErrorCodeMessage(const char* phase, const char* name, int index, Code actual, Code expected)
+	void PrintIncorrectErrorCodeMessage(std::ostream& stream, const char* phase, const char* name, int index, Code actual, Code expected)
 	{
-		std::ostringstream s;
-		s << phase << " test \"" << name << "\" error: Error " << index + 1 << " code is " << to_string(actual)
+		stream << color.fail << "ERROR: " << color.none << phase << " test \"" << color.warn << name << color.none << "\" error: Error " << index + 1 << " code is " << to_string(actual)
 			<< ", expected " << to_string(expected) << ".\n";
-		return s.str();
 	}
 
-	static std::string GetIncorrectErrorLineMessage(const char* phase, const char* name, int index, int actual, int expected)
+	void PrintIncorrectErrorLineMessage(std::ostream& stream, const char* phase, const char* name, int index, int actual, int expected)
 	{
-		std::ostringstream s;
-		s << phase << " test \"" << name << "\" error: Error " << index + 1 << " line number is " << actual << ", expected " << expected << ".\n";
-		return s.str();
+		stream << color.fail << "ERROR: " << color.none << phase << " test \"" << color.warn << name << color.none << "\" error: Error " << index + 1 << " line number is " << actual << ", expected " << expected << ".\n";
 	}
 
 	template <typename ErrorType>
-	static std::string GetErrorMessage(const ErrorType& error)
+	void PrintErrorMessage(std::ostream& stream, const ErrorType& error)
 	{
-		std::ostringstream s;
-		s << to_string(error.code) << ": " << error.message << '\n'
+		stream << to_string(error.code) << ": " << error.message << '\n'
 			<< '(' << error.token.line << ':' << error.token.column << ") \"..." << error.token.code << "\" <-- At this place" << '\n';
-		return s.str();
 	}
 
 	struct Color
 	{
-		// Copied from ut.hpp
+		// Copied from ut.hpp (c) Kris Jusiak 
 		std::string_view none = "\033[0m";
 		std::string_view pass = "\033[32m";
 		std::string_view fail = "\033[31m";
+		std::string_view warn = "\033[33m";
 	} color;
 };

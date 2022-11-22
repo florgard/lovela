@@ -37,7 +37,7 @@ bool LexerTest::Failure(const char* name, std::string_view code, const std::vect
 		if (actual != expected)
 		{
 			success = false;
-			std::cerr << color.fail << "ERROR: " << color.none << "Lexer test \"" << name << "\" error: Token " << i + 1 << " is " << to_string(actual.type) << " \"" << actual.value
+			std::cerr << color.fail << "ERROR: " << color.none << "Lexer test \"" << color.warn << name << color.none << "\" error: Token " << i + 1 << " is " << to_string(actual.type) << " \"" << actual.value
 				<< "\", expected " << to_string(expected.type) << " \"" << expected.value << "\".\n";
 		}
 	}
@@ -54,12 +54,16 @@ bool LexerTest::Failure(const char* name, std::string_view code, const std::vect
 		if (actual.code != expected.code)
 		{
 			success = false;
-			std::cerr << GetIncorrectErrorCodeMessage("Lexer", name, i, actual.code, expected.code) << GetErrorMessage(actual);
+
+			PrintIncorrectErrorCodeMessage(std::cerr, "Lexer", name, i, actual.code, expected.code);
+			PrintErrorMessage(std::cerr, actual);
 		}
 		else if (expected.token.line && actual.token.line != expected.token.line)
 		{
 			success = false;
-			std::cerr << GetIncorrectErrorLineMessage("Lexer", name, i, actual.token.line, expected.token.line) << GetErrorMessage(actual);
+
+			PrintIncorrectErrorLineMessage(std::cerr, "Lexer", name, i, actual.token.line, expected.token.line);
+			PrintErrorMessage(std::cerr, actual);
 		}
 	}
 
