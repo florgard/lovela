@@ -183,7 +183,7 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 			}
 			else
 			{
-				tokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = std::move(value), .outType = stringTypeName });
+				tokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = std::move(value) });
 				return;
 			}
 		}
@@ -197,7 +197,7 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 			else if (Accept('}'))
 			{
 				// Unindexed string interpolation. Add the string literal up to this point as a token.
-				tokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = std::move(value), .outType = stringTypeName });
+				tokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = std::move(value) });
 
 				// Add a string literal interpolation token with the next free index.
 				if (nextStringInterpolation > '9')
@@ -217,7 +217,7 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 				if (Accept('}'))
 				{
 					// Indexed string interpolation. Add the string literal up to this point as a token.
-					tokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = std::move(value), .outType = stringTypeName });
+					tokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = std::move(value) });
 
 					// Add a string literal interpolation token with the given index.
 					tokens.emplace_back(Token{ .type = Token::Type::LiteralStringInterpolation, .value = std::string(1, stringFieldCode) });
@@ -280,11 +280,11 @@ void Lexer::LexLiteralNumber(std::vector<Token>& tokens) noexcept
 			value += characters[Current];
 		}
 
-		tokens.emplace_back(Token{ .type = Token::Type::LiteralDecimal, .value = std::move(value), .outType = decimalTypeName });
+		tokens.emplace_back(Token{ .type = Token::Type::LiteralDecimal, .value = std::move(value) });
 	}
 	else
 	{
-		tokens.emplace_back(Token{ .type = Token::Type::LiteralInteger, .value = std::move(value), .outType = integerTypeName });
+		tokens.emplace_back(Token{ .type = Token::Type::LiteralInteger, .value = std::move(value) });
 	}
 }
 

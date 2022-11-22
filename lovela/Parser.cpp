@@ -739,9 +739,22 @@ std::unique_ptr<Node> Parser::ParseOperand(std::shared_ptr<Context> context)
 			{
 				.type = Node::Type::Literal,
 				.value = currentToken.value,
-				.outType{.name = currentToken.outType},
 				.token = currentToken
 			});
+
+		switch (currentToken.type)
+		{
+		case Token::Type::LiteralInteger:
+			node->outType = GetPrimitiveTypeSpec(currentToken.value);
+			break;
+
+		case Token::Type::LiteralDecimal:
+			node->outType = GetPrimitiveTypeSpec(currentToken.value);
+			break;
+
+		case Token::Type::LiteralString:
+			node->outType = TypeSpec{ .kind = TypeSpec::Kind::Primitive, .arrayDims{0}, .primitive{.bits = 8, .signedType = true} };
+		}
 	}
 	else
 	{

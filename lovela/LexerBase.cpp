@@ -24,20 +24,20 @@ Token LexerBase::GetToken(const std::string_view& lexeme) noexcept
 	// https://www.regular-expressions.info/posixbrackets.html
 	// https://www.regular-expressions.info/unicode.html
 	// https://en.wikipedia.org/wiki/Combining_character
-	static const std::vector<std::tuple<std::regex, Token::Type, std::string_view>> definitions
+	static const std::vector<std::pair<std::regex, Token::Type>> definitions
 	{
-		{ std::regex{ R"(\d+)" }, Token::Type::LiteralInteger, integerTypeName },
-		{ std::regex{ R"(\d+\.\d+)" }, Token::Type::LiteralDecimal, decimalTypeName },
-		{ std::regex{ R"(<|>|<>|<=|>=|=)" }, Token::Type::OperatorComparison, {} },
-		{ std::regex{ R"(\+|-|\*|/|/*)" }, Token::Type::OperatorArithmetic, {} },
-		{ std::regex{ R"(\*\*|\+\+|--)" }, Token::Type::OperatorBitwise, {} },
-		{ std::regex{ R"(<-|->)" }, Token::Type::OperatorArrow, {} },
-		{ std::regex{ R"([[:alpha:]][\w<>=\+\-\*/]*)" }, Token::Type::Identifier, {} },
+		{ std::regex{ R"(\d+)" }, Token::Type::LiteralInteger },
+		{ std::regex{ R"(\d+\.\d+)" }, Token::Type::LiteralDecimal },
+		{ std::regex{ R"(<|>|<>|<=|>=|=)" }, Token::Type::OperatorComparison },
+		{ std::regex{ R"(\+|-|\*|/|/*)" }, Token::Type::OperatorArithmetic },
+		{ std::regex{ R"(\*\*|\+\+|--)" }, Token::Type::OperatorBitwise },
+		{ std::regex{ R"(<-|->)" }, Token::Type::OperatorArrow },
+		{ std::regex{ R"([[:alpha:]][\w<>=\+\-\*/]*)" }, Token::Type::Identifier },
 	};
 
-	static const std::vector<std::tuple<std::wregex, Token::Type, std::string_view>> unicodeDefinitions
+	static const std::vector<std::pair<std::wregex, Token::Type>> unicodeDefinitions
 	{
-		{ std::wregex{ LR"([[:alpha:]][\w<>=\+\-\*/\u0300–\u036F\u1AB0–\u1AFF\u1DC0–\u1DFF\u20D0–\u20FF\uFE20–\uFE2F]*)" }, Token::Type::Identifier, {} },
+		{ std::wregex{ LR"([[:alpha:]][\w<>=\+\-\*/\u0300–\u036F\u1AB0–\u1AFF\u1DC0–\u1DFF\u20D0–\u20FF\uFE20–\uFE2F]*)" }, Token::Type::Identifier },
 	};
 
 	const auto trimmed = Trim(lexeme);
@@ -58,9 +58,9 @@ Token LexerBase::GetToken(const std::string_view& lexeme) noexcept
 
 	for (const auto& definition : definitions)
 	{
-		if (std::regex_match(trimmed.begin(), trimmed.end(), std::get<0>(definition)))
+		if (std::regex_match(trimmed.begin(), trimmed.end(), definition.first))
 		{
-			return { .type = std::get<1>(definition), .value = std::string(trimmed.data(), trimmed.size()), .outType = to_string(std::get<2>(definition)) };
+			return { .type = definition.second, .value = std::string(trimmed.data(), trimmed.size()) };
 		}
 	}
 
@@ -69,9 +69,9 @@ Token LexerBase::GetToken(const std::string_view& lexeme) noexcept
 
 	for (const auto& unicodeDefinition : unicodeDefinitions)
 	{
-		if (std::regex_match(wtrimmed.begin(), wtrimmed.end(), std::get<0>(unicodeDefinition)))
+		if (std::regex_match(wtrimmed.begin(), wtrimmed.end(), unicodeDefinition.first))
 		{
-			return { .type = std::get<1>(unicodeDefinition), .value = std::string(trimmed.data(), trimmed.size()), .outType = to_string(std::get<2>(unicodeDefinition)) };
+			return { .type = unicodeDefinition.second, .value = std::string(trimmed.data(), trimmed.size()) };
 		}
 	}
 

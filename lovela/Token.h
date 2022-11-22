@@ -38,7 +38,6 @@ struct Token
 	} type{};
 
 	std::string value;
-	std::string outType;
 
 	int line{};
 	int column{};

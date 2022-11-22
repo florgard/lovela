@@ -83,8 +83,4 @@ protected:
 	int currentLine = 1;
 	int currentColumn = 1;
 	std::deque<char> currentCode;
-
-	static constexpr char stringTypeName[4]{ "#8#" };
-	static constexpr char integerTypeName[5]{ "#32" };
-	static constexpr char decimalTypeName[5]{ "#.32" };
 };
