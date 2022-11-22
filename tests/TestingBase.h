@@ -56,7 +56,7 @@ protected:
 		return true;
 	}
 
-	void PrintAST(int& index, const Node& tree, std::string indent);
+	void PrintAST(int& index, const Node& tree, int indent);
 
 	template <typename Code>
 	void PrintIncorrectErrorCodeMessage(std::ostream& stream, const char* phase, const char* name, int index, Code actual, Code expected)
@@ -92,4 +92,7 @@ protected:
 		std::string_view expect = "\033[1;32m";
 		std::string_view actual = "\033[1;33m";
 	} color;
+
+private:
+	void PrintIndent(int indent);
 };

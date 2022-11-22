@@ -37,13 +37,23 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const 
 	return true;
 }
 
-void TestingBase::PrintAST(int& index, const Node& tree, std::string indent)
+void TestingBase::PrintIndent(int indent)
 {
-	std::cerr << indent << '(' << index + 1 << ' ' << to_string(tree.type);
+	for (int i = 0; i < indent; ++i)
+	{
+		std::cerr << "  ";
+	}
+}
+
+void TestingBase::PrintAST(int& index, const Node& tree, int indent)
+{
+	PrintIndent(indent);
+
+	std::cerr << '(' << index + 1 << ' ' << to_string(tree.type);
 	
 	if (!tree.value.empty())
 	{
-		std::cerr << ' ' << tree.value;
+		std::cerr << " \"" << tree.value << '\"';
 	}
 
 	if (tree.type == Node::Type::Error)
@@ -53,16 +63,18 @@ void TestingBase::PrintAST(int& index, const Node& tree, std::string indent)
 
 	std::cerr << '\n';
 
-	index++;
+	++index;
 
 	if (tree.left)
 	{
-		PrintAST(index, *tree.left, indent + "  ");
+		PrintAST(index, *tree.left, indent + 1);
 	}
 	if (tree.right)
 	{
-		PrintAST(index, *tree.right, indent + "  ");
+		PrintAST(index, *tree.right, indent + 1);
 	}
 
-	std::cerr << indent << "),\n";
+	PrintIndent(indent);
+
+	std::cerr << "),\n";
 }
