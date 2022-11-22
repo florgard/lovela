@@ -59,4 +59,9 @@ struct Token
 	{
 		return type != Type::Empty;
 	}
+
+	[[nodiscard]] void Print(std::ostream& stream) const
+	{
+		stream << '[' << to_string(type) << ',' << value << ']';
+	}
 };

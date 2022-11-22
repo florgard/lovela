@@ -45,6 +45,11 @@ struct TypeSpec
 		bool floatType{};
 
 		[[nodiscard]] constexpr auto operator<=>(const Primitive& rhs) const noexcept = default;
+
+		[[nodiscard]] void Print(std::ostream& stream) const
+		{
+			stream << '[' << static_cast<unsigned int>(bits) << ',' << signedType << ',' << floatType << ']';
+		}
 	} primitive{};
 
 	[[nodiscard]] constexpr bool Is(Kind k) const noexcept { return kind == k; }
@@ -88,6 +93,20 @@ struct TypeSpec
 		return s.str();
 	}
 
+	[[nodiscard]] void Print(std::ostream& stream) const
+	{
+		stream << '[' << to_string(kind) << ',' << name << ',';
+		nameSpace.Print(stream);
+		stream << ',' << '[';
+		for (auto& length : arrayDims)
+		{
+			stream << length << ',';
+		}
+		stream << ']' << ',';
+		primitive.Print(stream);
+		stream << ']';
+	}
+
 private:
 	static constexpr const char* noneTypeName = "()";
 };
@@ -98,6 +117,13 @@ struct VariableDeclaration
 	TypeSpec type{};
 
 	[[nodiscard]] auto operator<=>(const VariableDeclaration& rhs) const noexcept = default;
+
+	[[nodiscard]] void Print(std::ostream& stream) const
+	{
+		stream << '[' << name << ',';
+		type.Print(stream);
+		stream << ']';
+	}
 };
 
 using ParameterList = std::vector<std::shared_ptr<VariableDeclaration>>;
@@ -132,6 +158,11 @@ struct ApiSpec
 		return flags > Export;
 	}
 
+	[[nodiscard]] void Print(std::ostream& stream) const
+	{
+		stream << '[' << flags << ']';
+	}
+
 private:
 	int flags{};
 };
@@ -144,6 +175,25 @@ struct FunctionDeclaration
 	TypeSpec inType{};
 	ParameterList parameters{};
 	ApiSpec api{};
+
+	[[nodiscard]] void Print(std::ostream& stream) const
+	{
+		stream << '[' << name << ',';
+		nameSpace.Print(stream);
+		stream << ',';
+		outType.Print(stream);
+		stream << ',';
+		inType.Print(stream);
+		stream << ',' << '[';
+		for (auto& param : parameters)
+		{
+			param->Print(stream);
+			stream << ',';
+		}
+		stream << ']' << ',';
+		api.Print(stream);
+		stream << ']';
+	}
 };
 
 struct Node
@@ -227,5 +277,26 @@ struct Node
 		s << value;
 
 		return s.str();
+	}
+
+	[[nodiscard]] void Print(std::ostream& stream) const
+	{
+		stream << '[' << to_string(type) << ',';
+		outType.Print(stream);
+		stream << ',';
+		token.Print(stream);
+		stream << ',';
+		nameSpace.Print(stream);
+		stream << ',';
+		inType.Print(stream);
+		stream << ',' << '[';
+		for (auto& param : parameters)
+		{
+			param->Print(stream);
+			stream << ',';
+		}
+		stream << ']' << ',';
+		api.Print(stream);
+		stream << ']';
 	}
 };

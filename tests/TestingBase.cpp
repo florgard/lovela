@@ -12,7 +12,13 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& node, const 
 		std::cerr << color.fail << "ERROR: " << color.none
 			<< "Parser test \"" << color.name << name << color.none << "\": "
 			<< "Some property of node " << index + 1 << " of type " << color.actual << to_string(node.type) << color.none
-			<< " differs from the expected node of type " << color.expect << to_string(expectedNode.type) << color.none << ".\n";
+			<< " differs from the expected node of type " << color.expect << to_string(expectedNode.type) << color.none << ".\n"
+			<< "Actual:\n" << color.actual;
+		node.Print(std::cerr);
+		std::cerr << color.none << '\n'
+			<< "Expected:\n" << color.expect;
+		expectedNode.Print(std::cerr);
+		std::cerr << color.none << '\n';
 		return false;
 	}
 
