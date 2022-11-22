@@ -61,12 +61,12 @@ protected:
 	template <typename Code>
 	void PrintIncorrectErrorCodeMessage(std::ostream& stream, const char* phase, const char* name, int index, Code actual, Code expected)
 	{
-		stream << color.fail << "ERROR: " << color.none << phase << " test \"" << color.name << name << color.none << "\" error: Error " << index + 1 << " code is " << to_string(actual) << ", expected " << to_string(expected) << ".\n";
+		stream << color.fail << "ERROR: " << color.none << phase << " test \"" << color.name << name << color.none << "\" error: Error " << index + 1 << " code is " << color.actual << to_string(actual) << color.none << ", expected " << color.expect << to_string(expected) << color.none << ".\n";
 	}
 
 	void PrintIncorrectErrorLineMessage(std::ostream& stream, const char* phase, const char* name, int index, int actual, int expected)
 	{
-		stream << color.fail << "ERROR: " << color.none << phase << " test \"" << color.name << name << color.none << "\" error: Error " << index + 1 << " line number is " << actual << ", expected " << expected << ".\n";
+		stream << color.fail << "ERROR: " << color.none << phase << " test \"" << color.name << name << color.none << "\" error: Error " << index + 1 << " line number is " << color.actual << actual << color.none << ", expected " << color.expect << expected << color.none << ".\n";
 	}
 
 	template <typename ErrorType>
@@ -84,7 +84,7 @@ protected:
 		std::string_view fail = "\033[31m";
 		std::string_view name = "\033[33m";
 		std::string_view code = "\033[1;36m";
-		std::string_view cpp = "\033[36m";
+		std::string_view output = "\033[36m";
 		std::string_view expect = "\033[1;32m";
 		std::string_view actual = "\033[1;33m";
 	} color;

@@ -10,12 +10,9 @@ using namespace boost::ut;
 
 class CodeGeneratorCppTest : public TestingBase
 {
-};
-
-static CodeGeneratorCppTest s_test;
-
-suite CodeGeneratorCpp_program_tests = [] {
-	"program test"_test = [] {
+public:
+	void GenerateCode()
+	{
 		//	std::string code = R"(
 		//[()] pi: 3.14.
 		//mul (factor): * factor.
@@ -30,7 +27,7 @@ suite CodeGeneratorCpp_program_tests = [] {
 -> 'Standard C' puts.
 : 'Hello, World!' puts.
 )";
-		std::cout << code << '\n';
+		std::cout << "Input code:\n" << color.code << code << color.none << '\n';
 
 		std::istringstream input(code);
 		auto lexer = LexerFactory::Create(input);
@@ -51,8 +48,9 @@ suite CodeGeneratorCpp_program_tests = [] {
 
 		expect(parser->GetErrors().empty());
 
-		s_test.PrintAST(nodes);
-		std::cout << '\n';
+		std::cout << "AST:\n" << color.output;
+		PrintAST(nodes);
+		std::cout << color.none << '\n';
 
 		std::stringstream stream;
 
@@ -67,7 +65,7 @@ suite CodeGeneratorCpp_program_tests = [] {
 		expect(codeGen->GetErrors().empty());
 
 		auto genCode = stream.str();
-		std::cout << genCode;
+		std::cout << "Generated code:\n" << color.output << genCode << color.none;
 
 		std::ofstream program(R"(..\targets\cpp\program\lovela-program.cpp)");
 		codeGen->GenerateProgramFile(program);
@@ -80,5 +78,13 @@ suite CodeGeneratorCpp_program_tests = [] {
 		std::ofstream exports(R"(..\targets\cpp\program\lovela-exports.h)");
 		codeGen->GenerateExportsFile(exports);
 		exports.close();
+	}
+};
+
+static CodeGeneratorCppTest s_test;
+
+suite CodeGeneratorCpp_program_tests = [] {
+	"program test"_test = [] {
+		s_test.GenerateCode();
 	};
 };
