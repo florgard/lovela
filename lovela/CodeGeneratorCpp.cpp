@@ -7,7 +7,8 @@ std::map<Node::Type, CodeGeneratorCpp::Visitor>& CodeGeneratorCpp::GetVisitors()
 {
 	static std::map<Node::Type, Visitor> visitors
 	{
-		{ Node::Type::FunctionDeclaration, &CodeGeneratorCpp::FunctionDeclaration }
+		{ Node::Type::Error,&CodeGeneratorCpp::ErrorVisitor },
+		{ Node::Type::FunctionDeclaration, &CodeGeneratorCpp::FunctionDeclarationVisitor },
 	};
 
 	return visitors;
@@ -17,13 +18,13 @@ std::map<Node::Type, CodeGeneratorCpp::Visitor>& CodeGeneratorCpp::GetInternalVi
 {
 	static std::map<Node::Type, Visitor> visitors
 	{
-		{ Node::Type::Expression, &CodeGeneratorCpp::Expression },
-		{ Node::Type::ExpressionInput, &CodeGeneratorCpp::ExpressionInput },
-		{ Node::Type::FunctionCall, &CodeGeneratorCpp::FunctionCall },
-		{ Node::Type::BinaryOperation, &CodeGeneratorCpp::BinaryOperation },
-		{ Node::Type::Literal, &CodeGeneratorCpp::Literal },
-		{ Node::Type::Tuple, &CodeGeneratorCpp::Tuple },
-		{ Node::Type::VariableReference, &CodeGeneratorCpp::VariableReference },
+		{ Node::Type::Expression, &CodeGeneratorCpp::ExpressionVisitor },
+		{ Node::Type::ExpressionInput, &CodeGeneratorCpp::ExpressionInputVisitor },
+		{ Node::Type::FunctionCall, &CodeGeneratorCpp::FunctionCallVisitor },
+		{ Node::Type::BinaryOperation, &CodeGeneratorCpp::BinaryOperationVisitor },
+		{ Node::Type::Literal, &CodeGeneratorCpp::LiteralVisitor },
+		{ Node::Type::Tuple, &CodeGeneratorCpp::TupleVisitor },
+		{ Node::Type::VariableReference, &CodeGeneratorCpp::VariableReferenceVisitor },
 	};
 
 	return visitors;
@@ -83,7 +84,12 @@ void CodeGeneratorCpp::EndScope()
 	stream << Indent() << "}\n";
 }
 
-void CodeGeneratorCpp::FunctionDeclaration(Node& node, Context& context)
+void CodeGeneratorCpp::ErrorVisitor(Node& node, Context&)
+{
+	stream << "/* " << to_string(node.error.code) << ": " << node.error.message << " */\n";
+}
+
+void CodeGeneratorCpp::FunctionDeclarationVisitor(Node& node, Context& context)
 {
 	if (node.value.empty())
 	{
@@ -602,7 +608,7 @@ void CodeGeneratorCpp::ImportedFunctionBody(Node& node, Context&, const std::vec
 	EndScope();
 }
 
-void CodeGeneratorCpp::Expression(Node& node, Context& context)
+void CodeGeneratorCpp::ExpressionVisitor(Node& node, Context& context)
 {
 	if (node.left)
 	{
@@ -617,13 +623,13 @@ void CodeGeneratorCpp::Expression(Node& node, Context& context)
 	}
 }
 
-void CodeGeneratorCpp::ExpressionInput(Node&, Context& context)
+void CodeGeneratorCpp::ExpressionInputVisitor(Node&, Context& context)
 {
 	// The input of an expression is the output of the previous expression.
 	stream << LocalVar << (context.variableIndex - 1);
 }
 
-void CodeGeneratorCpp::FunctionCall(Node& node, Context& context)
+void CodeGeneratorCpp::FunctionCallVisitor(Node& node, Context& context)
 {
 	const auto reset = BeginAssign(context, true);
 
@@ -646,7 +652,7 @@ void CodeGeneratorCpp::FunctionCall(Node& node, Context& context)
 	EndAssign(context, reset);
 }
 
-void CodeGeneratorCpp::BinaryOperation(Node& node, Context& context)
+void CodeGeneratorCpp::BinaryOperationVisitor(Node& node, Context& context)
 {
 	if (!node.left || !node.right)
 	{
@@ -663,14 +669,14 @@ void CodeGeneratorCpp::BinaryOperation(Node& node, Context& context)
 	EndAssign(context, reset);
 }
 
-void CodeGeneratorCpp::Literal(Node& node, Context& context)
+void CodeGeneratorCpp::LiteralVisitor(Node& node, Context& context)
 {
 	BeginAssign(context);
 	stream << (node.token.type == Token::Type::LiteralString ? double_quote(node.value) : node.value);
 	EndAssign(context);
 }
 
-void CodeGeneratorCpp::Tuple(Node& node, Context& context)
+void CodeGeneratorCpp::TupleVisitor(Node& node, Context& context)
 {
 	const bool hasLeft = !!node.left;
 	if (hasLeft)
@@ -689,7 +695,7 @@ void CodeGeneratorCpp::Tuple(Node& node, Context& context)
 	}
 }
 
-void CodeGeneratorCpp::VariableReference(Node& node, Context&)
+void CodeGeneratorCpp::VariableReferenceVisitor(Node& node, Context&)
 {
 	stream << ParameterName(node.value);
 }
