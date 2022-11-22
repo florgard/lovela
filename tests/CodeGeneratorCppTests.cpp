@@ -507,6 +507,14 @@ suite CodeGeneratorCpp_function_param_type_tests = [] {
 		expect(s_test.Success("[1] param",
 			"f ([1])",
 			R"cpp(
+auto f_f(lovela::context& context, auto in, l_i8 param1);)cpp"
+));
+	};
+
+	"[#1] param"_test = [] {
+		expect(s_test.Success("[#1] param",
+			"f ([#1])",
+			R"cpp(
 template <typename Tag1>
 auto f_f(lovela::context& context, auto in, Tag1 param1);)cpp"
 ));
