@@ -246,17 +246,17 @@ TypeSpec Parser::ParseTypeSpec()
 {
 	Assert(GetTypeSpecTokens());
 
+	TypeSpec t{ .kind = TypeSpec::Kind::Invalid };
+
 	// []
-	if (Accept(Token::Type::ParenSquareClose))
+	if (Peek(Token::Type::ParenSquareClose))
 	{
-		return { .kind = TypeSpec::Kind::Any };
+		t = { .kind = TypeSpec::Kind::Any };
 	}
 	// [1]
 	else if (Accept(Token::Type::LiteralInteger))
 	{
-		TypeSpec t = GetPrimitiveTypeSpec(currentToken.value);
-		Expect(Token::Type::ParenSquareClose);
-		return t;
+		t = GetPrimitiveTypeSpec(currentToken.value);
 	}
 	// [/type/i32]
 	else if (Accept(Token::Type::SeparatorSlash))
@@ -264,29 +264,27 @@ TypeSpec Parser::ParseTypeSpec()
 		Expect(Token::Type::Identifier, "type");
 		Expect(Token::Type::SeparatorSlash);
 		Expect(Token::Type::Identifier);
-		TypeSpec t = GetBuiltinTypeSpec(currentToken.value);
-		Expect(Token::Type::ParenSquareClose);
-		return t;
+		t = GetBuiltinTypeSpec(currentToken.value);
 	}
 	// [identifier]
 	else if (Accept(Token::Type::Identifier))
 	{
-		TypeSpec t{ .kind = TypeSpec::Kind::Named, .name = currentToken.value };
-		Expect(Token::Type::ParenSquareClose);
-		return t;
+		t = { .kind = TypeSpec::Kind::Named, .name = currentToken.value };
 	}
 	// [()]
 	else if (Accept(Token::Type::ParenRoundOpen))
 	{
-		TypeSpec t{ .kind = TypeSpec::Kind::None };
 		Expect(Token::Type::ParenRoundClose);
-		Expect(Token::Type::ParenSquareClose);
-		return t;
+		t = { .kind = TypeSpec::Kind::None };
 	}
 	else
 	{
 		throw UnexpectedTokenException(NextToken());
 	}
+
+	Expect(Token::Type::ParenSquareClose);
+
+	return t;
 }
 
 ParameterList Parser::ParseParameterList()
