@@ -298,6 +298,14 @@ suite CodeGeneratorCpp_function_input_type_tests = [] {
 		expect(s_test.Success("[1] input",
 			"[1] f",
 			R"cpp(
+auto f_f(lovela::context& context, l_i8 in);)cpp"
+));
+	};
+
+	"[#1] input"_test = [] {
+		expect(s_test.Success("[#1] input",
+			"[#1] f",
+			R"cpp(
 template <typename Tag1>
 auto f_f(lovela::context& context, Tag1 in);)cpp"
 		));
@@ -406,6 +414,14 @@ suite CodeGeneratorCpp_function_output_type_tests = [] {
 	"[1] output"_test = [] {
 		expect(s_test.Success("[1] output",
 			"f [1]",
+			R"cpp(
+l_i8 f_f(lovela::context& context, auto in);)cpp"
+));
+	};
+
+	"[#1] output"_test = [] {
+		expect(s_test.Success("[#1] output",
+			"f [#1]",
 			R"cpp(
 template <typename Tag1>
 Tag1 f_f(lovela::context& context, auto in);)cpp"
