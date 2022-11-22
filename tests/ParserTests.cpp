@@ -43,7 +43,7 @@ bool ParserTest::Failure(const char* name, std::string_view code, const std::ran
 
 	if (!success)
 	{
-		std::cerr << color.fail << "ERROR: " << color.none << "Parser test \"" << color.warn << name << color.none << "\" error: The parser didn't yield an AST.\n\nExpected:\n";
+		std::cerr << color.fail << "ERROR: " << color.none << "Parser test \"" << color.name << name << color.none << "\" error: The parser didn't yield an AST.\n\nExpected:\n";
 		PrintAST(expectedRange);
 	}
 	else
@@ -53,7 +53,7 @@ bool ParserTest::Failure(const char* name, std::string_view code, const std::ran
 
 		if (!success)
 		{
-			std::cerr << color.fail << "ERROR: " << color.none << "Parser test \"" << color.warn << name << color.none << "\" error: AST mismatch.\n\nActual:\n";
+			std::cerr << color.fail << "ERROR: " << color.none << "Parser test \"" << color.name << name << color.none << "\" error: AST mismatch.\n\nActual:\n";
 			PrintAST(nodes);
 			std::cerr << "\nExpected:\n";
 			PrintAST(expectedRange);

@@ -37,7 +37,7 @@ bool LexerTest::Failure(const char* name, std::string_view code, const std::vect
 		if (actual != expected)
 		{
 			success = false;
-			std::cerr << color.fail << "ERROR: " << color.none << "Lexer test \"" << color.warn << name << color.none << "\" error: Token " << i + 1 << " is " << to_string(actual.type) << " \"" << actual.value
+			std::cerr << color.fail << "ERROR: " << color.none << "Lexer test \"" << color.name << name << color.none << "\" error: Token " << i + 1 << " is " << to_string(actual.type) << " \"" << actual.value
 				<< "\", expected " << to_string(expected.type) << " \"" << expected.value << "\".\n";
 		}
 	}
