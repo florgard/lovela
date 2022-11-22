@@ -136,14 +136,14 @@ suite parser_function_declaration_other_types_tests = [] {
 	};
 	"function with primitive types"_test = [] {
 		expect(ParserTest::Success("function with primitive types",
-			"#8# func [1000000]",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Primitive, .primitive{.bits = 32, .signedType = true}}, .inType{.kind = TypeSpec::Kind::Primitive, .name = "#8#"} }
+			"[/type/i8]# func [/type/i32]",
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Primitive, .primitive{.bits = 32, .signedType = true}}, .inType{.kind = TypeSpec::Kind::Primitive, .primitive{.bits = 8, .signedType = true, .arrayType = true }} }
 		));
 	};
 	"function with primitive types in brackets"_test = [] {
 		expect(ParserTest::Success("function with primitive types in brackets",
-			"[#32] func [#8]",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Primitive, .name = "#8"}, .inType{.kind = TypeSpec::Kind::Primitive, .name = "#32"} }
+			"[[/type/i32]] func [/type/i8]",
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Primitive, .primitive{.bits = 8, .signedType = true }}, .inType{.kind = TypeSpec::Kind::Primitive, .primitive{ .bits = 32, .signedType = true }} }
 		));
 	};
 	"anonymous function"_test = [] {
@@ -379,7 +379,7 @@ suite parser_function_body_tests = [] {
 	};
 
 	"binary operation with function call"_test = [] {
-		auto l = Node{ .type = Node::Type::Literal, .value = "1", .outType{.name = "#32"} };
+		auto l = Node{ .type = Node::Type::Literal, .value = "1", .outType{ .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 8, .signedType = true }} };
 		auto fc = Node{ .type = Node::Type::FunctionCall, .value = "call", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
 		auto bo = Node{ .type = Node::Type::BinaryOperation, .value = "+", .left = make<Node>::unique(fc), .right = make<Node>::unique(l) };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .left = make<Node>::unique(bo) };

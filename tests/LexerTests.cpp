@@ -703,23 +703,23 @@ suite lexer_comparison_tests = [] {
 };
 
 suite lexer_primitive_types_tests = [] {
-	"primitive type, int32"_test = [] {
-		expect(LexerTest::Success("primitive type, int32",
-			"[-1000000]",
+	"primitive type, int"_test = [] {
+		expect(LexerTest::Success("primitive type, int",
+			"[1000000]",
 			{
 				{.type = Token::Type::ParenSquareOpen, .value = "["},
-				{.type = Token::Type::LiteralInteger, .value = "-1000000"},
+				{.type = Token::Type::LiteralInteger, .value = "1000000"},
 				{.type = Token::Type::ParenSquareClose, .value = "]"},
 				endToken
 			}
 		));
 	};
-	"primitive type, uint32"_test = [] {
-		expect(LexerTest::Success("primitive type, uint32",
-			"[1000000]",
+	"primitive type, negative int"_test = [] {
+		expect(LexerTest::Success("primitive type, negative int",
+			"[-1000000]",
 			{
 				{.type = Token::Type::ParenSquareOpen, .value = "["},
-				{.type = Token::Type::LiteralInteger, .value = "1000000"},
+				{.type = Token::Type::LiteralInteger, .value = "-1000000"},
 				{.type = Token::Type::ParenSquareClose, .value = "]"},
 				endToken
 			}
@@ -757,6 +757,24 @@ suite lexer_primitive_types_tests = [] {
 			"#32#8",
 			{
 				{.type = Token::Type::PrimitiveType, .value = "#32#8"},
+				endToken
+			}
+		));
+	};
+
+};
+
+suite lexer_builtin_types_tests = [] {
+	"built-in type, /type/i32"_test = [] {
+		expect(LexerTest::Success("built-in type, /type/i32",
+			"[/type/i32]",
+			{
+				{.type = Token::Type::ParenSquareOpen, .value = "["},
+				{.type = Token::Type::SeparatorSlash, .value = "/"},
+				{.type = Token::Type::Identifier, .value = "type"},
+				{.type = Token::Type::SeparatorSlash, .value = "/"},
+				{.type = Token::Type::Identifier, .value = "i32"},
+				{.type = Token::Type::ParenSquareClose, .value = "]"},
 				endToken
 			}
 		));
