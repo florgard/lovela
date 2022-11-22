@@ -82,4 +82,12 @@ protected:
 			<< '(' << error.token.line << ':' << error.token.column << ") \"..." << error.token.code << "\" <-- At this place" << '\n';
 		return s.str();
 	}
+
+	struct Color
+	{
+		// Copied from ut.hpp
+		std::string_view none = "\033[0m";
+		std::string_view pass = "\033[32m";
+		std::string_view fail = "\033[31m";
+	} color;
 };
