@@ -66,6 +66,12 @@ static constexpr std::array<Token::Type, 4> s_ExpressionTerminatorTokens
 	Token::Type::ParenRoundClose,
 };
 
+static constexpr std::array<Token::Type, 2> s_TaggedTypeSpecTokens
+{
+	Token::Type::LiteralInteger,
+	Token::Type::Identifier,
+};
+
 static constexpr static_set<Token::Type, s_FunctionDeclarationTokens.size()> s_FunctionDeclarationTokenSet{ {s_FunctionDeclarationTokens} };
 static constexpr static_set<Token::Type, s_TypeSpecTokens.size()> s_TypeSpecTokenSet{ {s_TypeSpecTokens} };
 static constexpr static_set<Token::Type, s_ExternalFunctionDeclarationTokens.size()> s_ExternalFunctionDeclarationTokenSet{ {s_ExternalFunctionDeclarationTokens} };
@@ -74,6 +80,7 @@ static constexpr static_set<Token::Type, s_OperandTokens.size()> s_OperandTokenS
 static constexpr static_set<Token::Type, s_BinaryOperatorTokens.size()> s_BinaryOperatorTokenSet{ {s_BinaryOperatorTokens} };
 static constexpr static_set<Token::Type, s_OperatorTokens.size()> s_OperatorTokenSet{ {s_OperatorTokens} };
 static constexpr static_set<Token::Type, s_ExpressionTerminatorTokens.size()> s_ExpressionTerminatorTokenSet{ {s_ExpressionTerminatorTokens} };
+static constexpr static_set<Token::Type, s_TaggedTypeSpecTokens.size()> s_TaggedTypeSpecTokenSet{ {s_TaggedTypeSpecTokens} };
 
 static constexpr std::array<Node::Type, 4> s_OperandNodes
 {
@@ -257,6 +264,18 @@ TypeSpec Parser::ParseTypeSpec()
 	else if (Accept(Token::Type::LiteralInteger))
 	{
 		t = GetPrimitiveTypeSpec(currentToken.value);
+	}
+	// [#1]
+	else if (Accept(Token::Type::SeparatorHash))
+	{
+		if (Accept(s_TaggedTypeSpecTokenSet))
+		{
+			t = { .kind = TypeSpec::Kind::Tagged, .name = currentToken.value };
+		}
+		else
+		{
+			throw UnexpectedTokenException(NextToken());
+		}
 	}
 	// [/type/i32]
 	else if (Accept(Token::Type::SeparatorSlash))

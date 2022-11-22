@@ -46,10 +46,6 @@ TokenGenerator Lexer::Lex() noexcept
 		{
 			LexLiteralNumber(tokens);
 		}
-		else if (AcceptBegin('#'))
-		{
-			LexPrimitiveType(tokens);
-		}
 		else if (Accept(LexerRegexes::GetSeparatorRegex(), 1))
 		{
 			LexSeparator(tokens);
@@ -360,25 +356,4 @@ void Lexer::LexWhitespace(std::vector<Token>& tokens) noexcept
 		currentLine++;
 		currentColumn = 1;
 	}
-}
-
-void Lexer::LexPrimitiveType(std::vector<Token>& tokens) noexcept
-{
-	std::string lexeme;
-	lexeme += characters[Current];
-
-	if (!Expect(LexerRegexes::GetFirstCharRegex(), 1))
-	{
-		AddError(Error::Code::SyntaxError, "Invalid primitive type.");
-		return;
-	}
-
-	lexeme += characters[Current];
-
-	while (Accept(LexerRegexes::GetFollowingCharsRegex(), 1))
-	{
-		lexeme += characters[Current];
-	}
-
-	tokens.emplace_back(Token{ .type = Token::Type::PrimitiveType, .value = std::move(lexeme) });
 }
