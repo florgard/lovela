@@ -322,6 +322,7 @@ TypeSpec Parser::ParseTypeSpec()
 
 	Expect(Token::Type::ParenSquareClose);
 
+	// [identifier]#
 	if (Accept(Token::Type::SeparatorHash))
 	{
 		t.arrayType = true;
