@@ -735,7 +735,8 @@ suite lexer_primitive_types_tests = [] {
 		expect(s_test.Success("primitive type, double",
 			"#.64",
 			{
-				{.type = Token::Type::PrimitiveType, .value = "#.64"},
+				{.type = Token::Type::SeparatorHash, .value = "#"},
+				{.type = Token::Type::LiteralDecimal, .value = ".64"},
 				endToken
 			}
 		));
@@ -744,7 +745,9 @@ suite lexer_primitive_types_tests = [] {
 		expect(s_test.Success("primitive type, int8 array",
 			"#8#",
 			{
-				{.type = Token::Type::PrimitiveType, .value = "#8#"},
+				{.type = Token::Type::SeparatorHash, .value = "#"},
+				{.type = Token::Type::LiteralInteger, .value = "8"},
+				{.type = Token::Type::SeparatorHash, .value = "#"},
 				endToken
 			}
 		));
@@ -753,7 +756,10 @@ suite lexer_primitive_types_tests = [] {
 		expect(s_test.Success("primitive type, int8 array of arrays",
 			"#8##",
 			{
-				{.type = Token::Type::PrimitiveType, .value = "#8##"},
+				{.type = Token::Type::SeparatorHash, .value = "#"},
+				{.type = Token::Type::LiteralInteger, .value = "8"},
+				{.type = Token::Type::SeparatorHash, .value = "#"},
+				{.type = Token::Type::SeparatorHash, .value = "#"},
 				endToken
 			}
 		));
@@ -762,12 +768,14 @@ suite lexer_primitive_types_tests = [] {
 		expect(s_test.Success("primitive type, int32 array size 8",
 			"#32#8",
 			{
-				{.type = Token::Type::PrimitiveType, .value = "#32#8"},
+				{.type = Token::Type::SeparatorHash, .value = "#"},
+				{.type = Token::Type::LiteralInteger, .value = "32"},
+				{.type = Token::Type::SeparatorHash, .value = "#"},
+				{.type = Token::Type::LiteralInteger, .value = "8"},
 				endToken
 			}
 		));
 	};
-
 };
 
 suite lexer_builtin_types_tests = [] {
