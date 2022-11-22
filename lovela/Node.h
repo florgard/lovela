@@ -14,14 +14,14 @@ struct TypeSpec
 	} kind{};
 
 	std::string name;
+	bool arrayType{};
+	size_t arrayLength{};
 
 	struct Primitive
 	{
 		unsigned char bits{};
 		bool signedType{};
 		bool floatType{};
-		bool arrayType{};
-		size_t arrayLength{};
 
 		[[nodiscard]] constexpr auto operator<=>(const Primitive& rhs) const noexcept = default;
 	} primitive{};

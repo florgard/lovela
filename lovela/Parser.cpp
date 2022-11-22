@@ -322,6 +322,23 @@ TypeSpec Parser::ParseTypeSpec()
 
 	Expect(Token::Type::ParenSquareClose);
 
+	if (Accept(Token::Type::SeparatorHash))
+	{
+		t.arrayType = true;
+
+		if (Accept(Token::Type::LiteralInteger))
+		{
+			t.arrayLength = to_int<int64_t>(currentToken.value).unsignedValue.value_or(0);
+
+			if (!t.arrayLength)
+			{
+				// The array length must be greater than zero.
+				throw UnexpectedTokenException(currentToken);
+			}
+		}
+
+	}
+
 	return t;
 }
 
