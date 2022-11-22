@@ -9,7 +9,6 @@ struct Token
 		Empty,
 		End,
 		Identifier,
-		PrimitiveType,
 		LiteralString,
 		LiteralStringInterpolation,
 		LiteralInteger,

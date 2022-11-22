@@ -5,7 +5,6 @@
 static constexpr std::array<Token::Type, 8> s_FunctionDeclarationTokens
 {
 	Token::Type::ParenSquareOpen,
-	Token::Type::PrimitiveType,
 	Token::Type::Identifier,
 	Token::Type::OperatorArrow,
 	Token::Type::OperatorArithmetic,
@@ -17,13 +16,11 @@ static constexpr std::array<Token::Type, 8> s_FunctionDeclarationTokens
 static constexpr std::array<Token::Type, 2> s_TypeSpecTokens
 {
 	Token::Type::ParenSquareOpen,
-	Token::Type::PrimitiveType,
 };
 
 static constexpr std::array<Token::Type, 3> s_ExternalFunctionDeclarationTokens
 {
 	Token::Type::ParenSquareOpen,
-	Token::Type::PrimitiveType,
 	Token::Type::Identifier,
 };
 
