@@ -39,7 +39,20 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const 
 
 void TestingBase::PrintAST(int& index, const Node& tree, std::string indent)
 {
-	std::cerr << indent << '(' << index + 1 << ' ' << to_string(tree.type) << " " << tree.value << '\n';
+	std::cerr << indent << '(' << index + 1 << ' ' << to_string(tree.type);
+	
+	if (!tree.value.empty())
+	{
+		std::cerr << ' ' << tree.value;
+	}
+
+	if (tree.type == Node::Type::Error)
+	{
+		std::cerr << " [" << to_string(tree.error.code) << ": " << tree.error.message << ']';
+	}
+
+	std::cerr << '\n';
+
 	index++;
 
 	if (tree.left)
