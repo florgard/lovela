@@ -299,10 +299,16 @@ TypeSpec Parser::ParseTypeSpec()
 	// [/type/i32]
 	else if (Accept(Token::Type::SeparatorSlash))
 	{
-		Expect(Token::Type::Identifier, "type");
+		Expect(Token::Type::Identifier, Token::Constant::TypeNameSpace);
 		Expect(Token::Type::SeparatorSlash);
 		Expect(Token::Type::Identifier);
 		t = GetBuiltinTypeSpec(currentToken.value);
+
+		if (t.Is(TypeSpec::Kind::Primitive))
+		{
+			t.nameSpace.isRoot = true;
+			t.nameSpace.parts.emplace_back(Token::Constant::TypeNameSpace);
+		}
 	}
 	// [identifier]
 	else if (Accept(Token::Type::Identifier))

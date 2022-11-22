@@ -2,6 +2,12 @@
 
 struct Token
 {
+	struct Constant
+	{
+		static constexpr std::string_view TypeNameSpace = "type";
+		static constexpr std::string_view NameSpaceSeparator = "/";
+	};
+
 	enum class Type
 	{
 		Empty,

@@ -231,10 +231,14 @@ std::optional<std::string> CodeGeneratorCpp::ConvertPrimitiveType(const TypeSpec
 
 	std::ostringstream exportName;
 
-	exportName << "l_"
-		<< (type.primitive.floatType ? 'f' : (type.primitive.signedType ? 'i' : 'u'))
-		<< static_cast<unsigned int>(type.primitive.bits)
-		<< std::string(type.arrayDims.size(), '*');
+	exportName << "l_";
+
+	type.PrintPrimitiveName(exportName);
+
+	for (size_t i = 0, c = type.arrayDims.size(); i < c; ++i)
+	{
+		exportName << '*';
+	}
 
 	return exportName.str();
 }

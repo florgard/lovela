@@ -12,12 +12,12 @@ struct NameSpace
 	{
 		if (isRoot)
 		{
-			stream << '/';
+			stream << Token::Constant::NameSpaceSeparator;
 		}
 
 		for (auto& part : parts)
 		{
-			stream << part << '/';
+			stream << part << Token::Constant::NameSpaceSeparator;
 		}
 	}
 };
@@ -51,13 +51,29 @@ struct TypeSpec
 
 	[[nodiscard]] constexpr auto operator<=>(const TypeSpec& rhs) const noexcept = default;
 
+	[[nodiscard]] void PrintPrimitiveName(std::ostream& stream) const
+	{
+		stream << (primitive.floatType ? 'f' : (primitive.signedType ? 'i' : 'u')) << static_cast<unsigned int>(primitive.bits);
+	}
+
 	[[nodiscard]] std::string GetQualifiedName() const
 	{
 		std::ostringstream s;
 
 		s << '[';
+
 		nameSpace.Print(s);
-		s << name << ']';
+
+		if (Is(Kind::Primitive))
+		{
+			PrintPrimitiveName(s);
+		}
+		else
+		{
+			s << name;
+		}
+
+		s << ']';
 
 		for (auto& length : arrayDims)
 		{
