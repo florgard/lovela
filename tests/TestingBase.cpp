@@ -5,31 +5,31 @@
 #include "ut.hpp"
 using namespace boost::ut;
 
-bool TestingBase::TestAST(int& index, const char* name, const Node& tree, const Node& expectedTree)
+bool TestingBase::TestAST(int& index, const char* name, const Node& node, const Node& expectedNode)
 {
-	if (tree != expectedTree)
+	if (node != expectedNode)
 	{
 		std::cerr << color.fail << "ERROR: " << color.none
 			<< "Parser test \"" << color.name << name << color.none << "\": "
-			<< "Some property of node " << index + 1 << " of type " << color.actual << to_string(tree.type) << color.none
-			<< " differs from the expected node of type " << color.expect << to_string(expectedTree.type) << color.none << ".\n";
+			<< "Some property of node " << index + 1 << " of type " << color.actual << to_string(node.type) << color.none
+			<< " differs from the expected node of type " << color.expect << to_string(expectedNode.type) << color.none << ".\n";
 		return false;
 	}
 
 	index++;
 
 	// Fail if one pointer is set but not the other
-	if (!!tree.left != !!expectedTree.left || !!tree.right != !!expectedTree.right)
+	if (!!node.left != !!expectedNode.left || !!node.right != !!expectedNode.right)
 	{
 		return false;
 	}
 
-	if (tree.left && !TestAST(index, name, *tree.left, *expectedTree.left))
+	if (node.left && !TestAST(index, name, *node.left, *expectedNode.left))
 	{
 		return false;
 	}
 
-	if (tree.right && !TestAST(index, name, *tree.right, *expectedTree.right))
+	if (node.right && !TestAST(index, name, *node.right, *expectedNode.right))
 	{
 		return false;
 	}
@@ -45,33 +45,33 @@ void TestingBase::PrintIndent(int indent)
 	}
 }
 
-void TestingBase::PrintAST(int& index, const Node& tree, int indent)
+void TestingBase::PrintAST(int& index, const Node& node, int indent)
 {
 	PrintIndent(indent);
 
-	std::cerr << '(' << index + 1 << ' ' << to_string(tree.type);
+	std::cerr << '(' << index + 1 << ' ' << to_string(node.type);
 	
-	if (!tree.value.empty())
+	if (!node.value.empty())
 	{
-		std::cerr << " \"" << tree.value << '\"';
+		std::cerr << " \"" << node.value << '\"';
 	}
 
-	if (tree.type == Node::Type::Error)
+	if (node.type == Node::Type::Error)
 	{
-		std::cerr << " [" << to_string(tree.error.code) << ": " << tree.error.message << ']';
+		std::cerr << " [" << to_string(node.error.code) << ": " << node.error.message << ']';
 	}
 
 	std::cerr << '\n';
 
 	++index;
 
-	if (tree.left)
+	if (node.left)
 	{
-		PrintAST(index, *tree.left, indent + 1);
+		PrintAST(index, *node.left, indent + 1);
 	}
-	if (tree.right)
+	if (node.right)
 	{
-		PrintAST(index, *tree.right, indent + 1);
+		PrintAST(index, *node.right, indent + 1);
 	}
 
 	PrintIndent(indent);

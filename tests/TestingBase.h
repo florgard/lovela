@@ -8,10 +8,10 @@ using namespace boost::ut;
 class TestingBase
 {
 public:
-	void PrintAST(const Node& tree)
+	void PrintAST(const Node& node)
 	{
 		int i{};
-		PrintAST(i, tree, {});
+		PrintAST(i, node, {});
 	}
 
 	void PrintAST(std::ranges::range auto& range)
@@ -29,10 +29,10 @@ protected:
 	/// </summary>
 	/// <param name="index"></param>
 	/// <param name="name"></param>
-	/// <param name="tree"></param>
-	/// <param name="expectedTree"></param>
+	/// <param name="node"></param>
+	/// <param name="expectedNode"></param>
 	/// <returns>true if the actual and expected AST match, false otherwise.</returns>
-	bool TestAST(int& index, const char* name, const Node& tree, const Node& expectedTree);
+	bool TestAST(int& index, const char* name, const Node& node, const Node& expectedNode);
 
 	/// <summary>
 	/// Compares each AST in the actual range with the corresponding one in the expected range.
@@ -56,7 +56,7 @@ protected:
 		return true;
 	}
 
-	void PrintAST(int& index, const Node& tree, int indent);
+	void PrintAST(int& index, const Node& node, int indent);
 
 	template <typename Code>
 	void PrintIncorrectErrorCodeMessage(std::ostream& stream, const char* phase, const char* name, int index, Code actual, Code expected)
