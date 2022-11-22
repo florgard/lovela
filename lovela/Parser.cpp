@@ -246,22 +246,10 @@ TypeSpec Parser::ParseTypeSpec()
 {
 	Assert(GetTypeSpecTokens());
 
-	// #32
-	if (IsToken(Token::Type::PrimitiveType))
-	{
-		return { .kind = TypeSpec::Kind::Primitive, .name = currentToken.value };
-	}
 	// []
-	else if (Accept(Token::Type::ParenSquareClose))
+	if (Accept(Token::Type::ParenSquareClose))
 	{
 		return { .kind = TypeSpec::Kind::Any };
-	}
-	// [#32]
-	else if (Accept(Token::Type::PrimitiveType))
-	{
-		TypeSpec t{ .kind = TypeSpec::Kind::Primitive, .name = currentToken.value };
-		Expect(Token::Type::ParenSquareClose);
-		return t;
 	}
 	// [1]
 	else if (Accept(Token::Type::LiteralInteger))
