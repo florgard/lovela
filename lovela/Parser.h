@@ -144,9 +144,5 @@ private:
 		return { .kind = TypeSpec::Kind::Invalid };
 	}
 
-	[[nodiscard]] static TypeSpec GetPrimitiveDecimalTypeSpec(std::string_view value)
-	{
-		static_cast<void>(value);
-		return {};
-	}
+	[[nodiscard]] static TypeSpec GetPrimitiveDecimalTypeSpec(std::string_view value);
 };

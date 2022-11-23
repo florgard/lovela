@@ -268,6 +268,44 @@ NodeGenerator Parser::Parse() noexcept
 	}
 }
 
+TypeSpec Parser::GetPrimitiveDecimalTypeSpec(std::string_view value)
+{
+	const auto separator = value.find('.');
+	if (separator == value.npos)
+	{
+		// Decimal part missing.
+		return { .kind = TypeSpec::Kind::Invalid };
+	}
+
+	const auto start = separator + 1;
+	const auto end = value.find_first_not_of("0123456789", start);
+	const auto decimals = end == value.npos ? value.length() - start : end - start;
+
+	if (decimals > 6)
+	{
+		// Higher precision than 6 decimal places requires a double.
+		return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 64, .floatType = true} };
+	}
+
+	double d{};
+	auto [ptr1, error1] = std::from_chars(value.data(), value.data() + value.size(), d);
+
+	if (error1 != std::errc{})
+	{
+		// Not a number or out of range.
+		return { .kind = TypeSpec::Kind::Invalid };
+	}
+
+	if (std::fabs(d) > static_cast<double>(std::numeric_limits<float>::max()))
+	{
+		return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 64, .floatType = true} };
+	}
+	else
+	{
+		return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 32, .floatType = true} };
+	}
+}
+
 TypeSpec Parser::ParseTypeSpec()
 {
 	Assert(GetTypeSpecTokens());
