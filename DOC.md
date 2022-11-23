@@ -246,15 +246,15 @@ The following libraries constitute the standard library:
 
 `/type/u64` is an unsigned 64 bit integer type.
 
-#### Boolean type
-
-`/type/bool` is stored as `/type/u8`. On initialization it will be set to 0 if the input is 0, or 1 otherwise.
-
 #### Floating point (real) types
 
 `/type/f32` is a 32 bit floating point type.
 
 `/type/f64` is a 64 bit floating point type.
+
+#### Boolean type
+
+`/type/bool` is stored as `/type/u8`. On initialization it will be set to 0 if the input is 0, or 1 otherwise.
 
 ### Casting
 
@@ -262,7 +262,7 @@ The following libraries constitute the standard library:
 
 Numberic types are implicitly cast if the source type fits in the target type.
 
-##### Rules for implicit casts
+##### Rules for allowed implicit casts
 
 `/type/bool` -> `/type/u8`
 
