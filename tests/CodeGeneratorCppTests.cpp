@@ -267,9 +267,10 @@ suite CodeGeneratorCpp_function_input_type_tests = [] {
 	};
 
 	"l_u1 input error"_test = [] { 
-		expect(s_test.Success("l_u1 input error", 
+		expect(s_test.Failure("l_u1 input error",
 			"[/type/u1] f", 
-			R"cpp(auto f_f(lovela::context& context, InvalidTypeName in);)cpp"
+			R"cpp(auto f_f(lovela::context& context, InvalidTypeName in);)cpp",
+			1
 		));
 	};
 

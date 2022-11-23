@@ -270,10 +270,11 @@ std::string CodeGeneratorCpp::ConvertTypeName(const TypeSpec& type)
 		return ConvertPrimitiveType(type).value_or(TypeNames::invalid);
 
 	case TypeSpec::Kind::Invalid:
+		errors.emplace_back("Error: Invalid type encountered at code generation.");
 		return TypeNames::invalid;
 
 	default:
-		errors.emplace_back(std::format("Error: Unhandled type kind \"{}\" when getting the type name.", to_string(type.kind)));
+		errors.emplace_back(std::format("Error: Unhandled type kind \"{}\" when getting the target type name.", to_string(type.kind)));
 		return TypeNames::invalid;
 	}
 }
