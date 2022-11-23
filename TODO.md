@@ -2,14 +2,7 @@
 
 ## Small
 
-Simpler basic types
-* [100] instead of #8
-* [200] instead of #+8
-* [1000000] instead of #32
-* What about floats? Exponential notation?
-  * [+\-]?\d+\.\d+[+\-]?(e|E)\d+
-  * [1.0e30] instead of #.32, [1.0e300] instead of #.64
-* What about tagged types? [1] -> [#1]? [#key]
+/type/bool
 Identifiers beginning with number or operator
 * 6.28 -> 2pi
 * 50 -> %approved
@@ -57,9 +50,8 @@ Type system
 * [1] -> flag. << new "type" called "flag", really a function "flag" that gives a default value of type [flag]. >>
 * [flag] raise_error_if_set: << body >>. << function that takes input of type [flag] >>
 Type construction
-* [100] -> unchecked_integer_that_can_hold_at_least_-100_to_100 << int8 >>
-* [100] unsigned -> unchecked_integer_that_can_hold_at_least_0_to_100 << uint8 >>
-* [[100] unsigned checked] -> checked_integer_that_can_hold_only_-100_to_100 << Checked<uint8, 100> >> 
+* [[100] checked] -> checked_integer_that_can_hold_only_-100_to_100 << Checked<100> >> 
+* [[100] checked unsigned] -> checked_integer_that_can_hold_only_0_to_100 << Checked<100, 0> >> 
 Built-in data structures
 * Dynamic named array
 * Dynamic tuple

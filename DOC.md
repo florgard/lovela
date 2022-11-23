@@ -262,15 +262,40 @@ The following libraries constitute the standard library:
 
 Numberic types are implicitly cast if the source type fits in the target type.
 
-##### Examples of implicit casts
+##### Rules for implicit casts
 
-`/type/i32` and `/type/u32` can both be cast to `/type/i64`.
+`/type/bool` -> `/type/u8`
 
-`/type/u32` can be cast to `#+64`.
+`/type/bool` -> `/type/i8`
 
-`/type/i32`and `/type/u32` can both be cast to `/type/f64` but not to `/type/f32`.
 
-`/type/u32`cannot be cast to `/type/i32` nor can `/type/i32` be cast to `/type/u32`.
+`/type/u8` -> `/type/u16`
+
+`/type/u8` -> `/type/i16`
+
+`/type/i8` -> `/type/i16`
+
+
+`/type/u16` -> `/type/u32`
+
+`/type/u16` -> `/type/i32`
+
+`/type/u16` -> `/type/f32`
+
+`/type/i16` -> `/type/i32`
+
+`/type/i16` -> `/type/f32`
+
+
+`/type/u32` -> `/type/u64`
+
+`/type/u32` -> `/type/i64`
+
+`/type/u32` -> `/type/f64`
+
+`/type/i32` -> `/type/i64`
+
+`/type/i32` -> `/type/f64`
 
 #### Explicit casts
 
