@@ -48,7 +48,7 @@ bool ParserTest::Failure(const char* name, std::string_view code, const std::ran
 			<< "The parser didn't yield an AST.\n"
 			<< "Expected:\n" << color.expect;
 		PrintAST(expectedRange);
-		std::cerr << color.none << '\n';
+		std::cerr << color.none << "Input code:\n" << color.code << code << color.none << '\n';
 	}
 	else
 	{
@@ -64,7 +64,7 @@ bool ParserTest::Failure(const char* name, std::string_view code, const std::ran
 			PrintAST(nodes);
 			std::cerr <<  color.none << "Expected:\n" << color.expect;
 			PrintAST(expectedRange);
-			std::cerr << color.none << '\n';
+			std::cerr << color.none << "Input code:\n" << color.code << code << color.none << '\n';
 		}
 	}
 
@@ -91,6 +91,11 @@ bool ParserTest::Failure(const char* name, std::string_view code, const std::ran
 			PrintIncorrectErrorLineMessage(std::cerr, "Parser", name, i, actual.token.line, expected.token.line);
 			PrintErrorMessage(std::cerr, actual);
 		}
+	}
+
+	if (!success)
+	{
+		std::cerr << '\n';
 	}
 
 	return success;
@@ -154,14 +159,14 @@ suite parser_function_declaration_other_types_tests = [] {
 			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Named, .name = "out"}, .inType{.kind = TypeSpec::Kind::Named, .name = "in"} }
 		));
 	};
-	"function with primitive types"_test = [] {
-		expect(s_test.Success("function with primitive types",
+	"function with primitive types 1"_test = [] {
+		expect(s_test.Success("function with primitive types 1",
 			"[/type/i8]# func [/type/i32]",
 			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Primitive, .nameSpace{.parts{"type"}, .isRoot = true}, .primitive{.bits = 32, .signedType = true}}, .inType{.kind = TypeSpec::Kind::Primitive, .nameSpace{.parts{"type"}, .isRoot = true}, .arrayDims{0}, .primitive{ .bits = 8, .signedType = true } }}
 		));
 	};
-	"function with primitive types in brackets"_test = [] {
-		expect(s_test.Success("function with primitive types in brackets",
+	"function with primitive types 2"_test = [] {
+		expect(s_test.Success("function with primitive types 2",
 			"[/type/i32] func [/type/i8]",
 			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Primitive, .nameSpace{.parts{"type"}, .isRoot = true}, .primitive{.bits = 8, .signedType = true }}, .inType{.kind = TypeSpec::Kind::Primitive, .nameSpace{.parts{"type"}, .isRoot = true}, .primitive{ .bits = 32, .signedType = true }} }
 		));
@@ -255,7 +260,11 @@ suite parser_import_export_tests = [] {
 	"invalid import specifier"_test = [] {
 		expect(s_test.Failure("invalid import specifier",
 			"-> 'Standard Something' func1 func2", // func2 added to have any output
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func2" },
+			std::array<Node, 2>
+			{
+				Node{ .type = Node::Type::Error },
+				Node{ .type = Node::Type::FunctionDeclaration, .value = "func2" },
+			},
 			{ IParser::Error{.code = IParser::Error::Code::ParseError } }
 		));
 	};
@@ -294,8 +303,9 @@ suite parser_binary_operator_tests = [] {
 	"invalid binary operator as namespace"_test = [] {
 		expect(s_test.Failure("invalid binary operator as namespace",
 			"namespace1|<|namespace2 (operand)",
-			std::array<Node, 2> {
+			std::array<Node, 3> {
 				Node{ .type = Node::Type::FunctionDeclaration, .value = "<", .nameSpace{.parts{"namespace1"}} },
+				Node{ .type = Node::Type::Error },
 				Node{ .type = Node::Type::FunctionDeclaration, .value = "namespace2", .parameters{make<VariableDeclaration>::shared({.name = "operand"})} }
 			},
 			{ IParser::Error{.code = IParser::Error::Code::ParseError } }

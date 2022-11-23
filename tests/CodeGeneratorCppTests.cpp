@@ -62,7 +62,7 @@ bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std:
 			<< "The generated code differs from the expected code.\n"
 			<< "Generated:\n" << color.actual << generatedCode << color.none << '\n'
 			<< "Expected:\n" << color.expect << expectedCode << color.none << '\n'
-			<< "Input code : \n" << color.code << code << color.none << '\n'
+			<< "Input code:\n" << color.code << code << color.none << '\n'
 			<< "AST:\n" << color.actual;
 		PrintAST(nodes);
 		std::cerr << color.none << '\n';
