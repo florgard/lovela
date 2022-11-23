@@ -377,10 +377,32 @@ Possibly TODO.
 
 # Namespaces
 
-Proposed:
+Namespaces are hierarchical and are expressed with a slash separated path much like a web address.
+
+A user namespace doesn't begin with a slash since they are in the context of the code module.
+
+`utility/math/`
+
+Standard library namespaces begin with a slash since they are in the root context.
+
+`/io/stream/`
+
+When a namespace is specified it must end with a slash.
+
+`/type/bool/`
+
+When a function or type within a namespace is specified then there's no slash at the end.
+
+`/type/bool`
 
 `/io/stream/out`
 
-Current:
+A function or type can have the same name as a namespace in the same context.
 
-`io|stream|out`
+`[/type/bool] << bool type >>`
+
+`/type/bool << bool type initializer >>`
+
+`/type/bool/ << bool namespace >>`
+
+`/type/bool/is_true << bool namespace function >>`
