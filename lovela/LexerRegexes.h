@@ -17,7 +17,7 @@ public:
 		return re;
 	}
 
-	static const std::regex& GetLiteralNumberRegex()
+	static const std::regex& GetBeginLiteralNumberRegex()
 	{
 		static const std::regex re{ R"([+\-]?\d+)" };
 		return re;

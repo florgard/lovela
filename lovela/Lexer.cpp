@@ -42,7 +42,7 @@ TokenGenerator Lexer::Lex() noexcept
 		{
 			LexLiteralString(tokens);
 		}
-		else if (AcceptBegin(LexerRegexes::GetLiteralNumberRegex(), 2))
+		else if (AcceptBegin(LexerRegexes::GetBeginLiteralNumberRegex(), 2))
 		{
 			LexLiteralNumber(tokens);
 		}
@@ -261,10 +261,13 @@ void Lexer::LexLiteralString(std::vector<Token>& tokens) noexcept
 
 void Lexer::LexLiteralNumber(std::vector<Token>& tokens) noexcept
 {
+	// FIXME: Optimize with a simple state machine.
+
 	std::string value;
 	value += characters[Current];
 
-	while (Accept(LexerRegexes::GetDigitRegex(), 1))
+	auto& digitRegex = LexerRegexes::GetDigitRegex();
+	while (Accept(digitRegex, 1))
 	{
 		value += characters[Current];
 	}
@@ -275,7 +278,7 @@ void Lexer::LexLiteralNumber(std::vector<Token>& tokens) noexcept
 	{
 		value += characters[Current];
 
-		while (Accept(LexerRegexes::GetDigitRegex(), 1))
+		while (Accept(digitRegex, 1))
 		{
 			value += characters[Current];
 		}
