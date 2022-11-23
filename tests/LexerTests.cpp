@@ -734,20 +734,22 @@ suite lexer_primitive_types_tests = [] {
 	};
 	"primitive type, double"_test = [] {
 		expect(s_test.Success("primitive type, double",
-			"#.64",
+			"[1.0e300]",
 			{
-				{.type = Token::Type::SeparatorHash, .value = "#"},
-				{.type = Token::Type::LiteralDecimal, .value = ".64"},
+				{.type = Token::Type::ParenSquareOpen, .value = "["},
+				{.type = Token::Type::LiteralDecimal, .value = "1.0e300"},
+				{.type = Token::Type::ParenSquareClose, .value = "]"},
 				endToken
 			}
 		));
 	};
 	"primitive type, int8 array"_test = [] {
 		expect(s_test.Success("primitive type, int8 array",
-			"#8#",
+			"[100]#",
 			{
-				{.type = Token::Type::SeparatorHash, .value = "#"},
-				{.type = Token::Type::LiteralInteger, .value = "8"},
+				{.type = Token::Type::ParenSquareOpen, .value = "["},
+				{.type = Token::Type::LiteralInteger, .value = "100"},
+				{.type = Token::Type::ParenSquareClose, .value = "]"},
 				{.type = Token::Type::SeparatorHash, .value = "#"},
 				endToken
 			}
@@ -755,10 +757,11 @@ suite lexer_primitive_types_tests = [] {
 	};
 	"primitive type, int8 array of arrays"_test = [] {
 		expect(s_test.Success("primitive type, int8 array of arrays",
-			"#8##",
+			"[100]##",
 			{
-				{.type = Token::Type::SeparatorHash, .value = "#"},
-				{.type = Token::Type::LiteralInteger, .value = "8"},
+				{.type = Token::Type::ParenSquareOpen, .value = "["},
+				{.type = Token::Type::LiteralInteger, .value = "100"},
+				{.type = Token::Type::ParenSquareClose, .value = "]"},
 				{.type = Token::Type::SeparatorHash, .value = "#"},
 				{.type = Token::Type::SeparatorHash, .value = "#"},
 				endToken
@@ -767,10 +770,11 @@ suite lexer_primitive_types_tests = [] {
 	};
 	"primitive type, int32 array size 8"_test = [] {
 		expect(s_test.Success("primitive type, int32 array size 8",
-			"#32#8",
+			"[100000]#8",
 			{
-				{.type = Token::Type::SeparatorHash, .value = "#"},
-				{.type = Token::Type::LiteralInteger, .value = "32"},
+				{.type = Token::Type::ParenSquareOpen, .value = "["},
+				{.type = Token::Type::LiteralInteger, .value = "100000"},
+				{.type = Token::Type::ParenSquareClose, .value = "]"},
 				{.type = Token::Type::SeparatorHash, .value = "#"},
 				{.type = Token::Type::LiteralInteger, .value = "8"},
 				endToken
