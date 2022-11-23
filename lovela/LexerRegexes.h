@@ -19,7 +19,7 @@ public:
 
 	static const std::regex& GetBeginLiteralNumberRegex()
 	{
-		static const std::regex re{ R"([+\-]?\d+)" };
+		static const std::regex re{ R"((\d\d?|[+\-]\d|\d\.))" };
 		return re;
 	}
 
