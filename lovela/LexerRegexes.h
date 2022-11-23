@@ -47,9 +47,15 @@ public:
 		return re;
 	}
 
-	static const std::regex& GetDecimalPartRegex()
+	static const std::regex& GetBeginDecimalPartRegex()
 	{
 		static const std::regex re{ R"(\.\d)" };
+		return re;
+	}
+
+	static const std::regex& GetBeginDecimalExponentRegex()
+	{
+		static const std::regex re{ R"([eE][+\-\d])" };
 		return re;
 	}
 };

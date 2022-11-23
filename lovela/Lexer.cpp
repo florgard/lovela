@@ -118,6 +118,12 @@ bool Lexer::Accept(char character) noexcept
 	return false;
 }
 
+/// <summary>
+/// Checks if the next 1 or 2 characters match the given regex.
+/// </summary>
+/// <param name="regex"></param>
+/// <param name="length">The number of characters to match. Must be 1 or 2.</param>
+/// <returns>true on match, false on mismatch or error (length out of bounds).</returns>
 bool Lexer::Accept(const std::regex& regex, size_t length) noexcept
 {
 	if (!(length > 0 && length <= characters.size() - Next))
@@ -274,13 +280,31 @@ void Lexer::LexLiteralNumber(std::vector<Token>& tokens) noexcept
 
 	// Accept a single decimal point in numbers.
 
-	if (Accept(LexerRegexes::GetDecimalPartRegex(), 2))
+	if (Accept(LexerRegexes::GetBeginDecimalPartRegex(), 2))
 	{
 		value += characters[Current];
 
 		while (Accept(digitRegex, 1))
 		{
 			value += characters[Current];
+		}
+
+		if (Accept(LexerRegexes::GetBeginDecimalExponentRegex(), 2))
+		{
+			value += characters[Current];
+
+			if (!Accept(LexerRegexes::GetBeginLiteralNumberRegex(), 2))
+			{
+				AddError(Error::Code::StringLiteralOpen, "Ill-formed literal decimal number.");
+				return;
+			}
+			
+			value += characters[Current];
+
+			while (Accept(digitRegex, 1))
+			{
+				value += characters[Current];
+			}
 		}
 
 		tokens.emplace_back(Token{ .type = Token::Type::LiteralDecimal, .value = std::move(value) });
