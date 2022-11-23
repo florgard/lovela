@@ -52,16 +52,4 @@ public:
 		static const std::regex re{ R"(\.\d)" };
 		return re;
 	}
-
-	static const std::regex& GetFirstCharRegex()
-	{
-		static const std::regex re{ R"([\d+.])" };
-		return re;
-	}
-
-	static const std::regex& GetFollowingCharsRegex()
-	{
-		static const std::regex re{ R"([\d#])" };
-		return re;
-	}
 };
