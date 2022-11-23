@@ -221,8 +221,38 @@ bool CodeGeneratorCppTest::ExportFailure(const char* name, std::string_view code
 	return true;
 }
 
-suite CodeGeneratorCpp_function_input_type_tests = [] {
-	"l_i1 input error"_test = [] { 
+suite CodeGeneratorCpp_function_literal_input_type_tests = [] {
+	"[1] input"_test = [] {
+		expect(s_test.Success("[1] input",
+			"[1] f",
+			R"cpp(auto f_f(lovela::context& context, l_i8 in);)cpp"
+		));
+	};
+
+	"[-200] input"_test = [] {
+		expect(s_test.Success("[-200] input",
+			"[-200] f",
+			R"cpp(auto f_f(lovela::context& context, l_i16 in);)cpp"
+		));
+	};
+
+	"[1.0e30] input"_test = [] {
+		expect(s_test.Success("[1.0e30] input",
+			"[1.0e30] f",
+			R"cpp(auto f_f(lovela::context& context, l_f32 in);)cpp"
+		));
+	};
+
+	"[1.0e300] input"_test = [] {
+		expect(s_test.Success("[1.0e300] input",
+			"[1.0e300] f",
+			R"cpp(auto f_f(lovela::context& context, l_f64 in);)cpp"
+		));
+	};
+};
+
+suite CodeGeneratorCpp_function_builtin_input_type_tests = [] {
+	"l_i1 input error"_test = [] {
 		expect(s_test.Failure("l_i1 input error",
 			"[/type/i1] f",
 			R"cpp(auto f_f(lovela::context& context, InvalidTypeName in);)cpp",
@@ -230,30 +260,30 @@ suite CodeGeneratorCpp_function_input_type_tests = [] {
 		));
 	};
 
-	"l_i8 input"_test = [] { 
-		expect(s_test.Success("l_i8 input", 
-			"[/type/i8] f", 
+	"l_i8 input"_test = [] {
+		expect(s_test.Success("l_i8 input",
+			"[/type/i8] f",
 			R"cpp(auto f_f(lovela::context& context, l_i8 in);)cpp"
 		));
 	};
 
-	"l_i16 input"_test = [] { 
-		expect(s_test.Success("l_i16 input", 
-			"[/type/i16] f", 
+	"l_i16 input"_test = [] {
+		expect(s_test.Success("l_i16 input",
+			"[/type/i16] f",
 			R"cpp(auto f_f(lovela::context& context, l_i16 in);)cpp"
 		));
 	};
 
-	"l_i32 input"_test = [] { 
-		expect(s_test.Success("l_i32 input", 
-			"[/type/i32] f", 
+	"l_i32 input"_test = [] {
+		expect(s_test.Success("l_i32 input",
+			"[/type/i32] f",
 			R"cpp(auto f_f(lovela::context& context, l_i32 in);)cpp"
 		));
 	};
 
-	"l_i64 input"_test = [] { 
-		expect(s_test.Success("l_i64 input", 
-			"[/type/i64] f", 
+	"l_i64 input"_test = [] {
+		expect(s_test.Success("l_i64 input",
+			"[/type/i64] f",
 			R"cpp(auto f_f(lovela::context& context, l_i64 in);)cpp"
 		));
 	};
@@ -266,72 +296,66 @@ suite CodeGeneratorCpp_function_input_type_tests = [] {
 		));
 	};
 
-	"l_u1 input error"_test = [] { 
+	"l_u1 input error"_test = [] {
 		expect(s_test.Failure("l_u1 input error",
-			"[/type/u1] f", 
+			"[/type/u1] f",
 			R"cpp(auto f_f(lovela::context& context, InvalidTypeName in);)cpp",
 			1
 		));
 	};
 
-	"l_u8 input"_test = [] { 
-		expect(s_test.Success("l_u8 input", 
-			"[/type/u8] f", 
+	"l_u8 input"_test = [] {
+		expect(s_test.Success("l_u8 input",
+			"[/type/u8] f",
 			R"cpp(auto f_f(lovela::context& context, l_u8 in);)cpp"
 		));
 	};
 
-	"l_u16 input"_test = [] { 
-		expect(s_test.Success("l_u16 input", 
-			"[/type/u16] f", 
+	"l_u16 input"_test = [] {
+		expect(s_test.Success("l_u16 input",
+			"[/type/u16] f",
 			R"cpp(auto f_f(lovela::context& context, l_u16 in);)cpp"
 		));
 	};
 
-	"l_u32 input"_test = [] { 
-		expect(s_test.Success("l_u32 input", 
-			"[/type/u32] f", 
+	"l_u32 input"_test = [] {
+		expect(s_test.Success("l_u32 input",
+			"[/type/u32] f",
 			R"cpp(auto f_f(lovela::context& context, l_u32 in);)cpp"
 		));
 	};
 
-	"l_u64 input"_test = [] { 
-		expect(s_test.Success("l_u64 input", 
-			"[/type/u64] f", 
+	"l_u64 input"_test = [] {
+		expect(s_test.Success("l_u64 input",
+			"[/type/u64] f",
 			R"cpp(auto f_f(lovela::context& context, l_u64 in);)cpp"
 		));
 	};
 
-	"l_f16 input error"_test = [] { 
-		expect(s_test.Failure("l_f16 input error", 
-			"[/type/f16] f", 
+	"l_f16 input error"_test = [] {
+		expect(s_test.Failure("l_f16 input error",
+			"[/type/f16] f",
 			R"cpp(auto f_f(lovela::context& context, InvalidTypeName in);)cpp",
 			1
 		));
 	};
 
-	"l_f32 input"_test = [] { 
-		expect(s_test.Success("l_f32 input", 
-			"[/type/f32] f", 
+	"l_f32 input"_test = [] {
+		expect(s_test.Success("l_f32 input",
+			"[/type/f32] f",
 			R"cpp(auto f_f(lovela::context& context, l_f32 in);)cpp"
 		));
 	};
 
-	"l_f64 input"_test = [] { 
-		expect(s_test.Success("l_f64 input", 
-			"[/type/f64] f", 
+	"l_f64 input"_test = [] {
+		expect(s_test.Success("l_f64 input",
+			"[/type/f64] f",
 			R"cpp(auto f_f(lovela::context& context, l_f64 in);)cpp"
 		));
 	};
+};
 
-	"[1] input"_test = [] {
-		expect(s_test.Success("[1] input",
-			"[1] f",
-			R"cpp(
-auto f_f(lovela::context& context, l_i8 in);)cpp"
-));
-	};
-
+suite CodeGeneratorCpp_function_tagged_input_type_tests = [] {
 	"[#1] input"_test = [] {
 		expect(s_test.Success("[#1] input",
 			"[#1] f",
@@ -342,7 +366,16 @@ auto f_f(lovela::context& context, Tag1 in);)cpp"
 	};
 };
 
-suite CodeGeneratorCpp_function_output_type_tests = [] {
+suite CodeGeneratorCpp_function_literal_output_type_tests = [] {
+	"[1] output"_test = [] {
+		expect(s_test.Success("[1] output",
+			"f [1]",
+			R"cpp(l_i8 f_f(lovela::context& context, auto in);)cpp"
+		));
+	};
+};
+
+suite CodeGeneratorCpp_function_builtin_output_type_tests = [] {
 	"l_i1 output error"_test = [] {
 		expect(s_test.Failure("l_i1 output error",
 			"f [/type/i1]",
@@ -444,26 +477,27 @@ suite CodeGeneratorCpp_function_output_type_tests = [] {
 			R"cpp(l_f64 f_f(lovela::context& context, auto in);)cpp"
 		));
 	};
+};
 
-	"[1] output"_test = [] {
-		expect(s_test.Success("[1] output",
-			"f [1]",
-			R"cpp(
-l_i8 f_f(lovela::context& context, auto in);)cpp"
-));
-	};
-
+suite CodeGeneratorCpp_function_tagged_output_type_tests = [] {
 	"[#1] output"_test = [] {
 		expect(s_test.Success("[#1] output",
 			"f [#1]",
-			R"cpp(
-template <typename Tag1>
-Tag1 f_f(lovela::context& context, auto in);)cpp"
-));
+			R"cpp(template <typename Tag1> Tag1 f_f(lovela::context& context, auto in);)cpp"
+		));
 	};
 };
 
-suite CodeGeneratorCpp_function_param_type_tests = [] {
+suite CodeGeneratorCpp_function_literal_param_type_tests = [] {
+	"[1] param"_test = [] {
+		expect(s_test.Success("[1] param",
+			"f ([1])",
+			R"cpp(auto f_f(lovela::context& context, auto in, l_i8 param1);)cpp"
+		));
+	};
+};
+
+suite CodeGeneratorCpp_function_builtin_param_type_tests = [] {
 	"l_i1 param error"_test = [] {
 		expect(s_test.Failure("l_i1 param error",
 			"f ([/type/i1])",
@@ -515,22 +549,21 @@ suite CodeGeneratorCpp_function_param_type_tests = [] {
 			R"cpp(auto f_f(lovela::context& context, auto in, l_f32 param1);)cpp"
 		));
 	};
+};
 
-	"[1] param"_test = [] {
-		expect(s_test.Success("[1] param",
-			"f ([1])",
-			R"cpp(
-auto f_f(lovela::context& context, auto in, l_i8 param1);)cpp"
-));
-	};
-
+suite CodeGeneratorCpp_function_tagged_param_type_tests = [] {
 	"[#1] param"_test = [] {
 		expect(s_test.Success("[#1] param",
 			"f ([#1])",
-			R"cpp(
-template <typename Tag1>
-auto f_f(lovela::context& context, auto in, Tag1 param1);)cpp"
-));
+			R"cpp(template <typename Tag1> auto f_f(lovela::context& context, auto in, Tag1 param1);)cpp"
+		));
+	};
+
+	"[#1] [#2] param"_test = [] {
+		expect(s_test.Success("[#1] [#2] param",
+			"f ([#1], [#2])",
+			R"cpp(template <typename Tag1, typename Tag2> auto f_f(lovela::context& context, auto in, Tag1 param1, Tag2 param2);)cpp"
+		));
 	};
 };
 
@@ -538,45 +571,35 @@ suite CodeGeneratorCpp_function_declaration_tests = [] {
 	"trivial function"_test = [] { 
 		expect(s_test.Success("trivial function", 
 			"func",
-			R"cpp(
-auto f_func(lovela::context& context, auto in);
-)cpp"
+			R"cpp(auto f_func(lovela::context& context, auto in);)cpp"
 		));
 	};
 
 	"function with return type"_test = [] { 
 		expect(s_test.Success("function with return type", 
 			"func [type]",
-			R"cpp(
-t_type f_func(lovela::context& context, auto in);
-)cpp"
+			R"cpp(t_type f_func(lovela::context& context, auto in);)cpp"
 		));
 	};
 
 	"function with object type"_test = [] { 
 		expect(s_test.Success("function with object type", 
 			"[type] func",
-			R"cpp(
-auto f_func(lovela::context& context, t_type in);
-)cpp"
+			R"cpp(auto f_func(lovela::context& context, t_type in);)cpp"
 		));
 	};
 
 	"function with untyped parameter"_test = [] { 
 		expect(s_test.Success("function with untyped parameter", 
 			"func (arg)",
-			R"cpp(
-auto f_func(lovela::context& context, auto in, auto p_arg);
-)cpp"
+			R"cpp(auto f_func(lovela::context& context, auto in, auto p_arg);)cpp"
 		));
 	};
 
 	"function with typed parameter"_test = [] { 
 		expect(s_test.Success("function with typed parameter", 
 			"func (arg [type])",
-			R"cpp(
-auto f_func(lovela::context& context, auto in, t_type p_arg);
-)cpp"
+			R"cpp(auto f_func(lovela::context& context, auto in, t_type p_arg);)cpp"
 		));
 	};
 
