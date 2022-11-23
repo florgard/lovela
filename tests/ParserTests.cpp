@@ -141,7 +141,7 @@ suite parser_function_declaration_input_types_tests = [] {
 	"function with built-in in type"_test = [] {
 		expect(s_test.Success("function with built-in in type",
 			"[/type/i32] func",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType {.kind = TypeSpec::Kind::Primitive, .nameSpace{.parts{"type"}, .isRoot = true}, .primitive{.bits = 32, .signedType = true}}}
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType {.kind = TypeSpec::Kind::Primitive, .nameSpace{.parts{"type"}, .root = true}, .primitive{.bits = 32, .signedType = true}}}
 		));
 	};
 };
@@ -162,13 +162,13 @@ suite parser_function_declaration_other_types_tests = [] {
 	"function with primitive types 1"_test = [] {
 		expect(s_test.Success("function with primitive types 1",
 			"[/type/i8]# func [/type/i32]",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Primitive, .nameSpace{.parts{"type"}, .isRoot = true}, .primitive{.bits = 32, .signedType = true}}, .inType{.kind = TypeSpec::Kind::Primitive, .nameSpace{.parts{"type"}, .isRoot = true}, .arrayDims{0}, .primitive{ .bits = 8, .signedType = true } }}
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Primitive, .nameSpace{.parts{"type"}, .root = true}, .primitive{.bits = 32, .signedType = true}}, .inType{.kind = TypeSpec::Kind::Primitive, .nameSpace{.parts{"type"}, .root = true}, .arrayDims{0}, .primitive{ .bits = 8, .signedType = true } }}
 		));
 	};
 	"function with primitive types 2"_test = [] {
 		expect(s_test.Success("function with primitive types 2",
 			"[/type/i32] func [/type/i8]",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Primitive, .nameSpace{.parts{"type"}, .isRoot = true}, .primitive{.bits = 8, .signedType = true }}, .inType{.kind = TypeSpec::Kind::Primitive, .nameSpace{.parts{"type"}, .isRoot = true}, .primitive{ .bits = 32, .signedType = true }} }
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .outType{.kind = TypeSpec::Kind::Primitive, .nameSpace{.parts{"type"}, .root = true}, .primitive{.bits = 8, .signedType = true }}, .inType{.kind = TypeSpec::Kind::Primitive, .nameSpace{.parts{"type"}, .root = true}, .primitive{ .bits = 32, .signedType = true }} }
 		));
 	};
 	"anonymous function"_test = [] {

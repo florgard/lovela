@@ -306,7 +306,7 @@ TypeSpec Parser::ParseTypeSpec()
 
 		if (t.Is(TypeSpec::Kind::Primitive))
 		{
-			t.nameSpace.isRoot = true;
+			t.nameSpace.root = true;
 			t.nameSpace.parts.emplace_back(Token::Constant::TypeNameSpace);
 		}
 	}

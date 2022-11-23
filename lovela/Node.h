@@ -4,13 +4,13 @@
 struct NameSpace
 {
 	std::vector<std::string> parts;
-	bool isRoot{};
+	bool root{};
 
 	[[nodiscard]] constexpr auto operator<=>(const NameSpace& rhs) const noexcept = default;
 
 	[[nodiscard]] void Print(std::ostream& stream) const
 	{
-		if (isRoot)
+		if (root)
 		{
 			stream << Token::Constant::NameSpaceSeparator;
 		}
