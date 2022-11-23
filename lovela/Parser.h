@@ -94,7 +94,7 @@ private:
 		return t;
 	}
 
-	[[nodiscard]] static constexpr TypeSpec GetPrimitiveTypeSpec(std::string_view value)
+	[[nodiscard]] static constexpr TypeSpec GetPrimitiveIntegerTypeSpec(std::string_view value)
 	{
 		const auto pair = to_int<int64_t>(value);
 
@@ -142,5 +142,11 @@ private:
 		}
 
 		return { .kind = TypeSpec::Kind::Invalid };
+	}
+
+	[[nodiscard]] static TypeSpec GetPrimitiveDecimalTypeSpec(std::string_view value)
+	{
+		static_cast<void>(value);
+		return {};
 	}
 };

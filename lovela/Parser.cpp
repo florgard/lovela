@@ -282,7 +282,12 @@ TypeSpec Parser::ParseTypeSpec()
 	// [1]
 	else if (Accept(Token::Type::LiteralInteger))
 	{
-		t = GetPrimitiveTypeSpec(currentToken.value);
+		t = GetPrimitiveIntegerTypeSpec(currentToken.value);
+	}
+	// [1.0]
+	else if (Accept(Token::Type::LiteralDecimal))
+	{
+		t = GetPrimitiveDecimalTypeSpec(currentToken.value);
 	}
 	// [#1]
 	else if (Accept(Token::Type::SeparatorHash))
@@ -745,11 +750,11 @@ std::unique_ptr<Node> Parser::ParseOperand(std::shared_ptr<Context> context)
 		switch (currentToken.type)
 		{
 		case Token::Type::LiteralInteger:
-			node->outType = GetPrimitiveTypeSpec(currentToken.value);
+			node->outType = GetPrimitiveIntegerTypeSpec(currentToken.value);
 			break;
 
 		case Token::Type::LiteralDecimal:
-			node->outType = GetPrimitiveTypeSpec(currentToken.value);
+			node->outType = GetPrimitiveDecimalTypeSpec(currentToken.value);
 			break;
 
 		case Token::Type::LiteralString:
