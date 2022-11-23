@@ -565,6 +565,20 @@ suite CodeGeneratorCpp_function_tagged_param_type_tests = [] {
 			R"cpp(template <typename Tag1, typename Tag2> auto f_f(lovela::context& context, auto in, Tag1 param1, Tag2 param2);)cpp"
 		));
 	};
+
+	"[#1] [#second] param"_test = [] {
+		expect(s_test.Success("[#1] [#second] param",
+			"f ([#1], [#second])",
+			R"cpp(template <typename Tag1, typename Tagsecond> auto f_f(lovela::context& context, auto in, Tag1 param1, Tagsecond param2);)cpp"
+		));
+	};
+
+	"[#first] [#second] param"_test = [] {
+		expect(s_test.Success("[#first] [#second] param",
+			"f ([#first], [#second])",
+			R"cpp(template <typename Tagfirst, typename Tagsecond> auto f_f(lovela::context& context, auto in, Tagfirst param1, Tagsecond param2);)cpp"
+		));
+	};
 };
 
 suite CodeGeneratorCpp_function_declaration_tests = [] {
