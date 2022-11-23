@@ -269,8 +269,11 @@ std::string CodeGeneratorCpp::ConvertTypeName(const TypeSpec& type)
 	case TypeSpec::Kind::Primitive:
 		return ConvertPrimitiveType(type).value_or(TypeNames::invalid);
 
+	case TypeSpec::Kind::Invalid:
+		return TypeNames::invalid;
+
 	default:
-		errors.emplace_back(std::format("Error: Unhandled kind of type when getting the type name: {}", static_cast<int>(type.kind)));
+		errors.emplace_back(std::format("Error: Unhandled type kind \"{}\" when getting the type name.", to_string(type.kind)));
 		return TypeNames::invalid;
 	}
 }

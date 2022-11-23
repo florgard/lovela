@@ -70,13 +70,15 @@ bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std:
 		return false;
 	}
 
-	success = codeGen->GetErrors().size() == expectedErrors;
+	const auto actualErrorCount = codeGen->GetErrors().size();
+	success = actualErrorCount == expectedErrors;
 
 	if (!success)
 	{
 		std::cerr << color.fail << "ERROR: " << color.none
 			<< "Code generator test \"" << color.name << name << color.none << "\": "
-			<< "The error count differs from the expected count.\nError messages:\n";
+			<< "The actual error count " << actualErrorCount << " differs from the expected count " << expectedErrors << ".\n"
+			<< "Error messages:\n";
 
 		for (auto& error : codeGen->GetErrors())
 		{
@@ -220,10 +222,11 @@ bool CodeGeneratorCppTest::ExportFailure(const char* name, std::string_view code
 }
 
 suite CodeGeneratorCpp_function_input_type_tests = [] {
-	"l_i1 input"_test = [] { 
-		expect(s_test.Success("l_i1 input",
+	"l_i1 input error"_test = [] { 
+		expect(s_test.Failure("l_i1 input error",
 			"[/type/i1] f",
-			R"cpp(auto f_f(lovela::context& context, l_i1 in);)cpp"
+			R"cpp(auto f_f(lovela::context& context, InvalidTypeName in);)cpp",
+			1
 		));
 	};
 
@@ -258,14 +261,15 @@ suite CodeGeneratorCpp_function_input_type_tests = [] {
 	"l_i2 input error"_test = [] {
 		expect(s_test.Failure("l_i2 input error",
 			"[/type/i2] f",
-			R"cpp(auto f_f(lovela::context& context, InvalidTypeName in);)cpp", 1
+			R"cpp(auto f_f(lovela::context& context, InvalidTypeName in);)cpp",
+			1
 		));
 	};
 
-	"l_u1 input"_test = [] { 
-		expect(s_test.Success("l_u1 input", 
+	"l_u1 input error"_test = [] { 
+		expect(s_test.Success("l_u1 input error", 
 			"[/type/u1] f", 
-			R"cpp(auto f_f(lovela::context& context, l_u1 in);)cpp"
+			R"cpp(auto f_f(lovela::context& context, InvalidTypeName in);)cpp"
 		));
 	};
 
@@ -300,7 +304,8 @@ suite CodeGeneratorCpp_function_input_type_tests = [] {
 	"l_f16 input error"_test = [] { 
 		expect(s_test.Failure("l_f16 input error", 
 			"[/type/f16] f", 
-			R"cpp(auto f_f(lovela::context& context, InvalidTypeName in);)cpp", 1
+			R"cpp(auto f_f(lovela::context& context, InvalidTypeName in);)cpp",
+			1
 		));
 	};
 
@@ -326,9 +331,9 @@ auto f_f(lovela::context& context, l_i8 in);)cpp"
 ));
 	};
 
-	"[/type/i1] input"_test = [] {
-		expect(s_test.Success("[/type/i1] input",
-			"[/type/i1] f",
+	"[#1] input"_test = [] {
+		expect(s_test.Success("[#1] input",
+			"[#1] f",
 			R"cpp(
 template <typename Tag1>
 auto f_f(lovela::context& context, Tag1 in);)cpp"
@@ -337,10 +342,11 @@ auto f_f(lovela::context& context, Tag1 in);)cpp"
 };
 
 suite CodeGeneratorCpp_function_output_type_tests = [] {
-	"l_i1 output"_test = [] {
-		expect(s_test.Success("l_i1 output",
+	"l_i1 output error"_test = [] {
+		expect(s_test.Failure("l_i1 output error",
 			"f [/type/i1]",
-			R"cpp(l_i1 f_f(lovela::context& context, auto in);)cpp"
+			R"cpp(InvalidTypeName f_f(lovela::context& context, auto in);)cpp",
+			1
 		));
 	};
 
@@ -375,14 +381,16 @@ suite CodeGeneratorCpp_function_output_type_tests = [] {
 	"l_i2 output error"_test = [] {
 		expect(s_test.Failure("l_i2 output error",
 			"f [/type/i2]",
-			R"cpp(InvalidTypeName f_f(lovela::context& context, auto in);)cpp", 1
+			R"cpp(InvalidTypeName f_f(lovela::context& context, auto in);)cpp",
+			1
 		));
 	};
 
-	"l_u1 output"_test = [] {
-		expect(s_test.Success("l_u1 output",
+	"l_u1 output error"_test = [] {
+		expect(s_test.Failure("l_u1 output error",
 			"f [/type/u1]",
-			R"cpp(l_u1 f_f(lovela::context& context, auto in);)cpp"
+			R"cpp(InvalidTypeName f_f(lovela::context& context, auto in);)cpp",
+			1
 		));
 	};
 
@@ -417,7 +425,8 @@ suite CodeGeneratorCpp_function_output_type_tests = [] {
 	"l_f16 output error"_test = [] {
 		expect(s_test.Failure("l_f16 output error",
 			"f [/type/f16]",
-			R"cpp(InvalidTypeName f_f(lovela::context& context, auto in);)cpp", 1
+			R"cpp(InvalidTypeName f_f(lovela::context& context, auto in);)cpp",
+			1
 		));
 	};
 
@@ -443,9 +452,9 @@ l_i8 f_f(lovela::context& context, auto in);)cpp"
 ));
 	};
 
-	"[/type/i1] output"_test = [] {
-		expect(s_test.Success("[/type/i1] output",
-			"f [/type/i1]",
+	"[#1] output"_test = [] {
+		expect(s_test.Success("[#1] output",
+			"f [#1]",
 			R"cpp(
 template <typename Tag1>
 Tag1 f_f(lovela::context& context, auto in);)cpp"
@@ -454,10 +463,11 @@ Tag1 f_f(lovela::context& context, auto in);)cpp"
 };
 
 suite CodeGeneratorCpp_function_param_type_tests = [] {
-	"l_i1 param"_test = [] {
-		expect(s_test.Success("l_i1 param",
+	"l_i1 param error"_test = [] {
+		expect(s_test.Failure("l_i1 param error",
 			"f ([/type/i1])",
-			R"cpp(auto f_f(lovela::context& context, auto in, l_i1 param1);)cpp"
+			R"cpp(auto f_f(lovela::context& context, auto in, InvalidTypeName param1);)cpp",
+			1
 		));
 	};
 
@@ -471,7 +481,8 @@ suite CodeGeneratorCpp_function_param_type_tests = [] {
 	"l_i2 param error"_test = [] {
 		expect(s_test.Failure("l_i2 param error",
 			"f ([/type/i2])",
-			R"cpp(auto f_f(lovela::context& context, auto in, InvalidTypeName param1);)cpp", 1
+			R"cpp(auto f_f(lovela::context& context, auto in, InvalidTypeName param1);)cpp",
+			1
 		));
 	};
 
@@ -492,7 +503,8 @@ suite CodeGeneratorCpp_function_param_type_tests = [] {
 	"l_f16 param error"_test = [] {
 		expect(s_test.Failure("l_f16 param error",
 			"f ([/type/f16])",
-			R"cpp(auto f_f(lovela::context& context, auto in, InvalidTypeName param1);)cpp", 1
+			R"cpp(auto f_f(lovela::context& context, auto in, InvalidTypeName param1);)cpp",
+			1
 		));
 	};
 
