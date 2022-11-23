@@ -508,15 +508,15 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 		}
 	}
 	// identifier
-	// namespace|identifier
-	// namespace|binaryOperator
+	// namespace/identifier
+	// namespace/binaryOperator
 	else if (IsToken(Token::Type::Identifier))
 	{
 		auto name = currentToken.value;
 
-		// namespace1|namespaceN|identifier
-		// namespace1|namespaceN|binaryOperator
-		while (Accept(Token::Type::SeparatorVerticalLine))
+		// namespace1/namespaceN/identifier
+		// namespace1/namespaceN/binaryOperator
+		while (Accept(Token::Type::SeparatorSlash))
 		{
 			node->nameSpace.parts.emplace_back(name);
 
@@ -527,7 +527,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 				break;
 			}
 			// identifier
-			// namespaceN|identifier
+			// namespaceN/identifier
 			else
 			{
 				Expect(Token::Type::Identifier);

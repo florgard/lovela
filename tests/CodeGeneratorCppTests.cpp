@@ -790,28 +790,28 @@ suite CodeGeneratorCpp_imported_standard_functions_tests = [] {
 
 	"imported function Standard C++ cstdio"_test = [] { 
 		expect(s_test.ImportSuccess("imported function Standard C++ cstdio", 
-			"-> 'Standard C++' std|puts", 
+			"-> 'Standard C++' std/puts", 
 			"cstdio"
 		));
 	};
 
 	"imported function Standard C++ cstlib"_test = [] { 
 		expect(s_test.ImportSuccess("imported function Standard C++ cstlib", 
-			"-> 'Standard C++' std|atof", 
+			"-> 'Standard C++' std/atof", 
 			"cstdlib"
 		));
 	};
 
 	"imported function Standard C++ cstring"_test = [] { 
 		expect(s_test.ImportSuccess("imported function Standard C++ cstring", 
-			"-> 'Standard C++' std|strcpy", 
+			"-> 'Standard C++' std/strcpy", 
 			"cstring"
 		));
 	};
 
 	"imported function Standard C++ cmath"_test = [] { 
 		expect(s_test.ImportSuccess("imported function Standard C++ cmath", 
-			"-> 'Standard C++' std|sin", 
+			"-> 'Standard C++' std/sin", 
 			"cmath"
 		));
 	};

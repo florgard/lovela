@@ -273,12 +273,12 @@ suite parser_import_export_tests = [] {
 suite parser_function_namespace_tests = [] {
 	"function with 1 namespace"_test = [] {
 		expect(s_test.Success("function with 1 namespace", 
-			"namespace|func", 
+			"namespace/func", 
 			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .nameSpace{.parts{"namespace"}} }));
 	};
 	"function with 2 namespaces"_test = [] {
 		expect(s_test.Success("function with 2 namespaces",
-			"namespace1|namespaceN|func",
+			"namespace1/namespaceN/func",
 			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .nameSpace{.parts{"namespace1", "namespaceN"}} }));
 	};
 };
@@ -294,7 +294,7 @@ suite parser_binary_operator_tests = [] {
 	};
 	"binary operator with namespace"_test = [] {
 		expect(s_test.Success("binary operator with namespace",
-			"namespace|< (operand)",
+			"namespace/< (operand)",
 			Node{ .type = Node::Type::FunctionDeclaration, .value = "<", .nameSpace{.parts{"namespace"}},
 			.parameters{make<VariableDeclaration>::shared({.name = "operand"})}
 			}
@@ -302,7 +302,7 @@ suite parser_binary_operator_tests = [] {
 	};
 	"invalid binary operator as namespace"_test = [] {
 		expect(s_test.Failure("invalid binary operator as namespace",
-			"namespace1|<|namespace2 (operand)",
+			"namespace1/</namespace2 (operand)",
 			std::array<Node, 3> {
 				Node{ .type = Node::Type::FunctionDeclaration, .value = "<", .nameSpace{.parts{"namespace1"}} },
 				Node{ .type = Node::Type::Error },

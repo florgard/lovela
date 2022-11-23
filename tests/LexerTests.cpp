@@ -601,10 +601,10 @@ suite lexer_function_declarations_tests = [] {
 	};
 	"function with namespace"_test = [] {
 		expect(s_test.Success("function with namespace",
-			"namespace|func",
+			"namespace/func",
 			{
 				{.type = ident, .value = "namespace"},
-				{.type = Token::Type::SeparatorVerticalLine, .value = "|"},
+				{.type = Token::Type::SeparatorSlash, .value = "/"},
 				{.type = ident, .value = "func"},
 				endToken
 			}
