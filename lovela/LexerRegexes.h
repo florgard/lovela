@@ -2,15 +2,15 @@
 
 struct LexerRegexes
 {
-	const std::regex& GetWhitespaceRegex();
-	const std::regex& GetSeparatorRegex();
-	const std::regex& GetDigitRegex();
+	const std::regex& GetWhitespace();
+	const std::regex& GetSeparator();
+	const std::regex& GetDigit();
 
-	const std::regex& GetBeginCommentRegex();
-	const std::regex& GetEndCommentRegex();
-	const std::regex& GetBeginLiteralNumberRegex();
-	const std::regex& GetBeginDecimalPartRegex();
-	const std::regex& GetBeginDecimalExponentRegex();
-	const std::regex& GetBeginStringRegex();
-	const std::regex& GetStringFieldRegex();
+	const std::regex& GetBeginComment();
+	const std::regex& GetEndComment();
+	const std::regex& GetBeginLiteralNumber();
+	const std::regex& GetBeginDecimalPart();
+	const std::regex& GetBeginDecimalExponent();
+	const std::regex& GetBeginString();
+	const std::regex& GetStringField();
 };

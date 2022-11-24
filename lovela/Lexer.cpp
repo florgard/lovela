@@ -34,25 +34,25 @@ TokenGenerator Lexer::Lex() noexcept
 
 	while (characters[Next])
 	{
-		if (Accept(regexes.GetBeginCommentRegex(), 2))
+		if (Accept(regexes.GetBeginComment(), 2))
 		{
 			AddCurrenToken();
 			LexComment();
 		}
-		else if (AcceptBegin(regexes.GetBeginStringRegex(), 1))
+		else if (AcceptBegin(regexes.GetBeginString(), 1))
 		{
 			LexLiteralString();
 		}
-		else if (AcceptBegin(regexes.GetBeginLiteralNumberRegex(), 2))
+		else if (AcceptBegin(regexes.GetBeginLiteralNumber(), 2))
 		{
 			LexLiteralNumber();
 		}
-		else if (Accept(regexes.GetSeparatorRegex(), 1))
+		else if (Accept(regexes.GetSeparator(), 1))
 		{
 			AddCurrenToken();
 			LexSeparator();
 		}
-		else if (Accept(regexes.GetWhitespaceRegex(), 1))
+		else if (Accept(regexes.GetWhitespace(), 1))
 		{
 			AddCurrenToken();
 			LexWhitespace();
@@ -219,7 +219,7 @@ void Lexer::LexLiteralString() noexcept
 					nextStringInterpolation++;
 				}
 			}
-			else if (Accept(regexes.GetDigitRegex(), 1))
+			else if (Accept(regexes.GetDigit(), 1))
 			{
 				char stringFieldCode = characters[Current];
 
@@ -236,7 +236,7 @@ void Lexer::LexLiteralString() noexcept
 					AddError(Error::Code::StringFieldIllformed, std::string("Ill-formed string field \"") + stringFieldCode + "\".");
 				}
 			}
-			else if (Accept(regexes.GetStringFieldRegex(), 1))
+			else if (Accept(regexes.GetStringField(), 1))
 			{
 				char stringFieldCode = characters[Current];
 
@@ -275,7 +275,7 @@ void Lexer::LexLiteralNumber() noexcept
 	std::string value;
 	value += characters[Current];
 
-	auto& digitRegex = regexes.GetDigitRegex();
+	auto& digitRegex = regexes.GetDigit();
 	while (Accept(digitRegex, 1))
 	{
 		value += characters[Current];
@@ -283,7 +283,7 @@ void Lexer::LexLiteralNumber() noexcept
 
 	// Accept a single decimal point in numbers.
 
-	if (Accept(regexes.GetBeginDecimalPartRegex(), 2))
+	if (Accept(regexes.GetBeginDecimalPart(), 2))
 	{
 		value += characters[Current];
 
@@ -292,11 +292,11 @@ void Lexer::LexLiteralNumber() noexcept
 			value += characters[Current];
 		}
 
-		if (Accept(regexes.GetBeginDecimalExponentRegex(), 2))
+		if (Accept(regexes.GetBeginDecimalExponent(), 2))
 		{
 			value += characters[Current];
 
-			if (!Accept(regexes.GetBeginLiteralNumberRegex(), 2))
+			if (!Accept(regexes.GetBeginLiteralNumber(), 2))
 			{
 				AddError(Error::Code::StringLiteralOpen, "Ill-formed literal decimal number.");
 				currentTokens.emplace_back(Token{ .type = Token::Type::Error, .value = "Ill-formed literal decimal number." });
@@ -329,7 +329,7 @@ void Lexer::LexComment() noexcept
 
 	for (;;)
 	{
-		if (Accept(regexes.GetEndCommentRegex(), 2))
+		if (Accept(regexes.GetEndComment(), 2))
 		{
 			while (Accept('>'))
 			{
@@ -342,7 +342,7 @@ void Lexer::LexComment() noexcept
 				return;
 			}
 		}
-		else if (Accept(regexes.GetBeginCommentRegex(), 2))
+		else if (Accept(regexes.GetBeginComment(), 2))
 		{
 			// Nested comment.
 

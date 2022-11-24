@@ -8,8 +8,8 @@ using namespace boost::ut;
 
 suite regex_tests = [] {
 	"separator"_test = [] {
-		LexerRegexes regex;
-		auto& re = regex.GetSeparatorRegex();
+		LexerRegexes regexes;
+		auto& re = regexes.GetSeparator();
 
 		expect(std::regex_match("(", re));
 		expect(std::regex_match(")", re));
