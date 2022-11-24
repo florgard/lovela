@@ -28,8 +28,6 @@ Token LexerBase::GetToken(const std::string_view& lexeme) noexcept
 	// ANSI token regexes
 	static const std::vector<std::pair<std::regex, Token::Type>> definitions
 	{
-		{ std::regex{ R"(\d+)" }, Token::Type::LiteralInteger },
-		{ std::regex{ R"(\d+\.\d+)" }, Token::Type::LiteralDecimal },
 		{ std::regex{ R"(<|>|<>|<=|>=|=)" }, Token::Type::OperatorComparison },
 		{ std::regex{ R"(\+|-|\*|/|/*)" }, Token::Type::OperatorArithmetic },
 		{ std::regex{ R"(\*\*|\+\+|--)" }, Token::Type::OperatorBitwise },

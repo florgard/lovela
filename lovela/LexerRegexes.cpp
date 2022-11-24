@@ -17,7 +17,7 @@ const std::regex& LexerRegexes::GetWhitespace()
 
 const std::regex& LexerRegexes::GetBeginLiteralNumber()
 {
-	static const std::regex re{ R"((\d\d?|[+\-]\d|\d\.))" };
+	static const std::regex re{ R"((\d.|[+\-]\d))" };
 	return re;
 }
 
