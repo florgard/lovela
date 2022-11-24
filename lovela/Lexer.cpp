@@ -3,6 +3,7 @@
 
 Lexer::Lexer(std::istream& charStream) noexcept : charStream(charStream >> std::noskipws)
 {
+	currentTokens.reserve(64);
 }
 
 void Lexer::AddCurrenToken() noexcept
@@ -45,9 +46,6 @@ TokenGenerator Lexer::Lex() noexcept
 	// Populate next and next after characters.
 	GetNextCharacter();
 	GetNextCharacter();
-
-	currentTokens.reserve(64);
-	expectWordBreak = false;
 
 	while (characters[Next])
 	{
