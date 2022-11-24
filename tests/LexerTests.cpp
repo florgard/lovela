@@ -78,7 +78,7 @@ bool LexerTest::Failure(const char* name, std::string_view code, const std::vect
 }
 
 static const Token endToken{ .type = Token::Type::End };
-static constexpr auto ident = Token::Type::Identifier;
+static constexpr auto idType = Token::Type::Identifier;
 
 suite lexer_rudimental_tests = [] {
 	"empty expression"_test = [] {
@@ -105,7 +105,7 @@ suite lexer_identifier_tests = [] {
 		expect(s_test.Success("simple identifier",
 			"abc",
 			{
-				{.type = ident, .value = "abc" },
+				{.type = idType, .value = "abc" },
 				endToken
 			}
 		));
@@ -114,8 +114,8 @@ suite lexer_identifier_tests = [] {
 		expect(s_test.Success("two identifiers",
 			"abc def",
 			{
-				{.type = ident, .value = "abc" },
-				{.type = ident, .value = "def" },
+				{.type = idType, .value = "abc" },
+				{.type = idType, .value = "def" },
 				endToken
 			}
 		));
@@ -124,7 +124,7 @@ suite lexer_identifier_tests = [] {
 		expect(s_test.Success("alphanumerical identifier",
 			"abc123",
 			{
-				{.type = ident, .value = "abc123" },
+				{.type = idType, .value = "abc123" },
 				endToken
 			}
 		));
@@ -133,7 +133,7 @@ suite lexer_identifier_tests = [] {
 		expect(s_test.Success("kebab case identifier",
 			"abc-123",
 			{
-				{.type = ident, .value = "abc-123" },
+				{.type = idType, .value = "abc-123" },
 				endToken
 			}
 		));
@@ -142,7 +142,7 @@ suite lexer_identifier_tests = [] {
 		expect(s_test.Success("snake case identifier",
 			"abc_123",
 			{
-				{.type = ident, .value = "abc_123" },
+				{.type = idType, .value = "abc_123" },
 				endToken
 			}
 		));
@@ -151,7 +151,7 @@ suite lexer_identifier_tests = [] {
 		expect(s_test.Success("operator character identifier",
 			"abc>=123",
 			{
-				{.type = ident, .value = "abc>=123" },
+				{.type = idType, .value = "abc>=123" },
 				endToken
 			}
 		));
@@ -160,7 +160,7 @@ suite lexer_identifier_tests = [] {
 		expect(s_test.Success("Unicode identifier",
 			"\xE6\x97\xA5\xE6\x9C\xAC", // Nihon in nihongo, U+65E5 U+672C
 			{
-				{.type = ident, .value = "\xE6\x97\xA5\xE6\x9C\xAC" },
+				{.type = idType, .value = "\xE6\x97\xA5\xE6\x9C\xAC" },
 				endToken
 			}
 		));
@@ -169,7 +169,7 @@ suite lexer_identifier_tests = [] {
 		expect(s_test.Success("Unicode combining mark identifier",
 			"a\xCC\x80", // a with combining mark, U+0300
 			{
-				{.type = ident, .value = "a\xCC\x80" },
+				{.type = idType, .value = "a\xCC\x80" },
 				endToken
 			}
 		));
@@ -180,7 +180,7 @@ suite lexer_identifier_tests = [] {
 			{
 				{.type = Token::Type::LiteralInteger, .value = "1"},
 				{.type = Token::Type::Error},
-				{.type = ident, .value = "abc"},
+				{.type = idType, .value = "abc"},
 				endToken
 			},
 			{
@@ -543,7 +543,7 @@ suite lexer_function_declarations_tests = [] {
 		expect(s_test.Success("trivial function declaration",
 			"func",
 			{
-				{.type = ident, .value = "func"},
+				{.type = idType, .value = "func"},
 				endToken
 			}
 		));
@@ -552,7 +552,7 @@ suite lexer_function_declarations_tests = [] {
 		expect(s_test.Success("trivial integer function",
 			"func: 123.",
 			{
-				{.type = ident, .value = "func"},
+				{.type = idType, .value = "func"},
 				{.type = Token::Type::SeparatorColon, .value = ":"},
 				{.type = Token::Type::LiteralInteger, .value = "123"},
 				{.type = Token::Type::SeparatorDot, .value = "."},
@@ -564,7 +564,7 @@ suite lexer_function_declarations_tests = [] {
 		expect(s_test.Success("trivial decimal function with whitespace",
 			"func : 123.4.",
 			{
-				{.type = ident, .value = "func"},
+				{.type = idType, .value = "func"},
 				{.type = Token::Type::SeparatorColon, .value = ":"},
 				{.type = Token::Type::LiteralDecimal, .value = "123.4"},
 				{.type = Token::Type::SeparatorDot, .value = "."},
@@ -576,7 +576,7 @@ suite lexer_function_declarations_tests = [] {
 		expect(s_test.Success("trivial decimal function with mixed name and group",
 			"\r\nfunc44: (123.4).",
 			{
-				{.type = ident, .value = "func44"},
+				{.type = idType, .value = "func44"},
 				{.type = Token::Type::SeparatorColon, .value = ":"},
 				{.type = Token::Type::ParenRoundOpen, .value = "("},
 				{.type = Token::Type::LiteralDecimal, .value = "123.4"},
@@ -591,7 +591,7 @@ suite lexer_function_declarations_tests = [] {
 			"-> func",
 			{
 				{.type = Token::Type::OperatorArrow, .value = "->"},
-				{.type = ident, .value = "func"},
+				{.type = idType, .value = "func"},
 				endToken
 			}
 		));
@@ -603,7 +603,7 @@ suite lexer_function_declarations_tests = [] {
 				{.type = Token::Type::OperatorArrow, .value = "<-"},
 				{.type = Token::Type::ParenSquareOpen, .value = "["},
 				{.type = Token::Type::ParenSquareClose, .value = "]"},
-				{.type = ident, .value = "func"},
+				{.type = idType, .value = "func"},
 				endToken
 			}
 		));
@@ -612,9 +612,9 @@ suite lexer_function_declarations_tests = [] {
 		expect(s_test.Success("function with namespace",
 			"namespace/func",
 			{
-				{.type = ident, .value = "namespace"},
+				{.type = idType, .value = "namespace"},
 				{.type = Token::Type::SeparatorSlash, .value = "/"},
-				{.type = ident, .value = "func"},
+				{.type = idType, .value = "func"},
 				endToken
 			}
 		));
@@ -626,7 +626,7 @@ suite lexer_comment_tests = [] {
 		expect(s_test.Success("mixed character identifier",
 			"ident123.",
 			{
-				{.type = ident, .value = "ident123"},
+				{.type = idType, .value = "ident123"},
 				{.type = Token::Type::SeparatorDot, .value = "."},
 				endToken
 			}
@@ -652,7 +652,7 @@ suite lexer_comment_tests = [] {
 		expect(s_test.Success("commented and non-commented identifier",
 			"<< ident123. >> ident456.",
 			{
-				{.type = ident, .value = "ident456"},
+				{.type = idType, .value = "ident456"},
 				{.type = Token::Type::SeparatorDot, .value = "."},
 				endToken
 			}
@@ -662,7 +662,7 @@ suite lexer_comment_tests = [] {
 		expect(s_test.Success("nested comments",
 			"<<<< 123 << 456 >>>>.>> ident456.",
 			{
-				{.type = ident, .value = "ident456"},
+				{.type = idType, .value = "ident456"},
 				{.type = Token::Type::SeparatorDot, .value = "."},
 				endToken
 			}
@@ -672,7 +672,7 @@ suite lexer_comment_tests = [] {
 		expect(s_test.Success("multiple comments",
 			"<<<<123>>ident234<<<<123<<456>>>:>>.",
 			{
-				{.type = ident, .value = "ident234"},
+				{.type = idType, .value = "ident234"},
 				{.type = Token::Type::SeparatorDot, .value = "."},
 				endToken
 			}
@@ -682,7 +682,7 @@ suite lexer_comment_tests = [] {
 		expect(s_test.Failure("non-closed comment",
 			"<<<<123>>ident234<<<<123<<456>>>:>.",
 			{
-				{.type = ident, .value = "ident234"},
+				{.type = idType, .value = "ident234"},
 				{.type = Token::Type::Error, },
 				endToken
 			},
@@ -711,7 +711,7 @@ suite lexer_comparison_tests = [] {
 			{
 				{.type = Token::Type::OperatorComparison, .value = "<"},
 				{.type = Token::Type::ParenRoundOpen, .value = "("},
-				{.type = ident, .value = "operand"},
+				{.type = idType, .value = "operand"},
 				{.type = Token::Type::ParenRoundClose, .value = ")"},
 				endToken
 			}
