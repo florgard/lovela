@@ -6,14 +6,8 @@ Lexer::Lexer(std::istream& charStream) noexcept : charStream(charStream >> std::
 	currentTokens.reserve(64);
 }
 
-void Lexer::AddCurrenToken() noexcept
+void Lexer::AddToken(Token&& token) noexcept
 {
-	if (currentLexeme.empty())
-	{
-		return;
-	}
-
-	auto token = GetToken(currentLexeme);
 	if (token)
 	{
 		token.line = currentLine;
@@ -21,6 +15,16 @@ void Lexer::AddCurrenToken() noexcept
 		token.code = std::string(currentCode.begin(), currentCode.end());
 		currentTokens.emplace_back(std::move(token));
 	}
+}
+
+void Lexer::AddCurrenToken() noexcept
+{
+	if (currentLexeme.empty())
+	{
+		return;
+	}
+
+	AddToken(GetToken(currentLexeme));
 
 	currentLexeme.clear();
 }

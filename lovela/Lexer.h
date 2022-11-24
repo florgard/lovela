@@ -14,6 +14,7 @@ public:
 
 private:
 	void GetNextCharacter() noexcept;
+	void AddToken(Token&& token) noexcept;
 	void AddCurrenToken() noexcept;
 	void WordBreak() noexcept;
 	void ExpectWordBreak() noexcept;
