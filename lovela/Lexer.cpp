@@ -68,6 +68,7 @@ TokenGenerator Lexer::Lex() noexcept
 		else if (AcceptBegin(regexes.GetBeginString(), 1))
 		{
 			LexLiteralString();
+			expectWordBreak = true;
 		}
 		else if (Accept())
 		{
