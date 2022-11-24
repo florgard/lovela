@@ -178,6 +178,9 @@ suite lexer_identifier_tests = [] {
 		expect(s_test.Failure("invalid identifier 1",
 			"1abc",
 			{
+				{.type = Token::Type::LiteralInteger, .value = "1"},
+				{.type = Token::Type::Error},
+				{.type = ident, .value = "abc"},
 				endToken
 			},
 			{

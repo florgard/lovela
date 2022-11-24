@@ -31,31 +31,43 @@ TokenGenerator Lexer::Lex() noexcept
 	GetNextCharacter();
 
 	currentTokens.reserve(64);
+	bool expectWordBreak = false;
 
 	while (characters[Next])
 	{
-		if (Accept(regexes.GetBeginComment(), 2))
+		if (Accept(regexes.GetWhitespace(), 1))
 		{
+			expectWordBreak = false;
+			AddCurrenToken();
+			LexWhitespace();
+		}
+		else if (Accept(regexes.GetSeparator(), 1))
+		{
+			expectWordBreak = false;
+			AddCurrenToken();
+			LexSeparator();
+		}
+		else if (Accept(regexes.GetBeginComment(), 2))
+		{
+			expectWordBreak = false;
 			AddCurrenToken();
 			LexComment();
 		}
-		else if (AcceptBegin(regexes.GetBeginString(), 1))
+		else if (expectWordBreak)
 		{
-			LexLiteralString();
+			expectWordBreak = false;
+			const auto message = std::format("Unexpected character \"{}\".", characters[Next]);
+			AddError(Error::Code::SyntaxError, message);
+			currentTokens.emplace_back(Token{ .type = Token::Type::Error, .value = message });
 		}
 		else if (AcceptBegin(regexes.GetBeginLiteralNumber(), 2))
 		{
 			LexLiteralNumber();
+			expectWordBreak = true;
 		}
-		else if (Accept(regexes.GetSeparator(), 1))
+		else if (AcceptBegin(regexes.GetBeginString(), 1))
 		{
-			AddCurrenToken();
-			LexSeparator();
-		}
-		else if (Accept(regexes.GetWhitespace(), 1))
-		{
-			AddCurrenToken();
-			LexWhitespace();
+			LexLiteralString();
 		}
 		else if (Accept())
 		{
