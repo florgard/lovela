@@ -73,7 +73,7 @@ TokenGenerator Lexer::Lex() noexcept
 			WordBreak();
 			const auto message = std::format("Unexpected character \"{}\".", characters[Next]);
 			AddError(Error::Code::SyntaxError, message);
-			currentTokens.emplace_back(Token{ .type = Token::Type::Error, .value = message });
+			AddToken({.type = Token::Type::Error, .value = message});
 		}
 		else if (AcceptBegin(regexes.GetBeginLiteralNumber(), 2))
 		{
@@ -102,7 +102,7 @@ TokenGenerator Lexer::Lex() noexcept
 	AddCurrenToken();
 
 	// Add the end token.
-	currentTokens.emplace_back(Token{ .type = Token::Type::End });
+	AddToken({.type = Token::Type::End});
 
 	for (auto& token : currentTokens)
 	{
@@ -220,7 +220,7 @@ void Lexer::LexLiteralString() noexcept
 			}
 			else
 			{
-				currentTokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = std::move(value) });
+				AddToken({.type = Token::Type::LiteralString, .value = std::move(value)});
 				return;
 			}
 		}
@@ -234,7 +234,7 @@ void Lexer::LexLiteralString() noexcept
 			else if (Accept('}'))
 			{
 				// Unindexed string interpolation. Add the string literal up to this point as a token.
-				currentTokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = std::move(value) });
+				AddToken({.type = Token::Type::LiteralString, .value = std::move(value)});
 
 				// Add a string literal interpolation token with the next free index.
 				if (nextStringInterpolation > '9')
@@ -243,7 +243,7 @@ void Lexer::LexLiteralString() noexcept
 				}
 				else
 				{
-					currentTokens.emplace_back(Token{ .type = Token::Type::LiteralStringInterpolation, .value = std::string(1, nextStringInterpolation) });
+					AddToken({.type = Token::Type::LiteralStringInterpolation, .value = std::string(1, nextStringInterpolation)});
 					nextStringInterpolation++;
 				}
 			}
@@ -254,10 +254,10 @@ void Lexer::LexLiteralString() noexcept
 				if (Accept('}'))
 				{
 					// Indexed string interpolation. Add the string literal up to this point as a token.
-					currentTokens.emplace_back(Token{ .type = Token::Type::LiteralString, .value = std::move(value) });
+					AddToken({.type = Token::Type::LiteralString, .value = std::move(value)});
 
 					// Add a string literal interpolation token with the given index.
-					currentTokens.emplace_back(Token{ .type = Token::Type::LiteralStringInterpolation, .value = std::string(1, stringFieldCode) });
+					AddToken({.type = Token::Type::LiteralStringInterpolation, .value = std::string(1, stringFieldCode)});
 				}
 				else
 				{
@@ -327,7 +327,7 @@ void Lexer::LexLiteralNumber() noexcept
 			if (!Accept(regexes.GetBeginLiteralNumber(), 2))
 			{
 				AddError(Error::Code::StringLiteralOpen, "Ill-formed literal decimal number.");
-				currentTokens.emplace_back(Token{ .type = Token::Type::Error, .value = "Ill-formed literal decimal number." });
+				AddToken({.type = Token::Type::Error, .value = "Ill-formed literal decimal number."});
 				return;
 			}
 			
@@ -339,11 +339,11 @@ void Lexer::LexLiteralNumber() noexcept
 			}
 		}
 
-		currentTokens.emplace_back(Token{ .type = Token::Type::LiteralDecimal, .value = std::move(value) });
+		AddToken({.type = Token::Type::LiteralDecimal, .value = std::move(value)});
 	}
 	else
 	{
-		currentTokens.emplace_back(Token{ .type = Token::Type::LiteralInteger, .value = std::move(value) });
+		AddToken({.type = Token::Type::LiteralInteger, .value = std::move(value)});
 	}
 }
 
@@ -387,7 +387,7 @@ void Lexer::LexComment() noexcept
 		else
 		{
 			AddError(Error::Code::CommentOpen, "A comment wasn't terminated.");
-			currentTokens.emplace_back(Token{ .type = Token::Type::Error, .value = "A comment wasn't terminated." });
+			AddToken({.type = Token::Type::Error, .value = "A comment wasn't terminated."});
 			return;
 		}
 	}
