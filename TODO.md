@@ -2,6 +2,8 @@
 
 ## Small
 
+Add comment tokens.
+
 /type/bool
 
 Identifiers beginning with number or operator
