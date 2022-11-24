@@ -24,11 +24,11 @@ private:
 	[[nodiscard]] bool Expect(char character) noexcept;
 	[[nodiscard]] bool Expect(const std::regex& regex, size_t length) noexcept;
 
-	[[nodiscard]] void LexLiteralString(std::vector<Token>& tokens) noexcept;
-	[[nodiscard]] void LexLiteralNumber(std::vector<Token>& tokens) noexcept;
-	[[nodiscard]] void LexComment(std::vector<Token>& tokens) noexcept;
-	[[nodiscard]] void LexSeparator(std::vector<Token>& tokens) noexcept;
-	[[nodiscard]] void LexWhitespace(std::vector<Token>& tokens) noexcept;
+	[[nodiscard]] void LexLiteralString() noexcept;
+	[[nodiscard]] void LexLiteralNumber() noexcept;
+	[[nodiscard]] void LexComment() noexcept;
+	[[nodiscard]] void LexSeparator() noexcept;
+	[[nodiscard]] void LexWhitespace() noexcept;
 
 	static constexpr size_t Current = 0;
 	static constexpr size_t Next = 1;
@@ -37,4 +37,5 @@ private:
 	std::istream& charStream;
 	std::array<char, 3> characters{};
 	std::string currentLexeme;
+	std::vector<Token> currentTokens;
 };
