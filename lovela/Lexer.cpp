@@ -38,7 +38,7 @@ TokenGenerator Lexer::Lex() noexcept
 		{
 			LexComment(tokens);
 		}
-		else if (AcceptBegin('\''))
+		else if (AcceptBegin(LexerRegexes::GetBeginStringRegex(), 1))
 		{
 			LexLiteralString(tokens);
 		}

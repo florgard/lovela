@@ -39,6 +39,12 @@ const std::regex& LexerRegexes::GetDigitRegex()
 	return re;
 }
 
+const std::regex& LexerRegexes::GetBeginStringRegex()
+{
+	static const std::regex re{ R"(')" };
+	return re;
+}
+
 const std::regex& LexerRegexes::GetStringFieldRegex()
 {
 	static const std::regex re{ R"([tnr])" };

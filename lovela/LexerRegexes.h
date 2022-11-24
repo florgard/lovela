@@ -12,5 +12,6 @@ public:
 	static const std::regex& GetDigitRegex();
 	static const std::regex& GetBeginDecimalPartRegex();
 	static const std::regex& GetBeginDecimalExponentRegex();
+	static const std::regex& GetBeginStringRegex();
 	static const std::regex& GetStringFieldRegex();
 };
