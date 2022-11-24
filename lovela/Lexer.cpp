@@ -8,6 +8,11 @@ Lexer::Lexer(std::istream& charStream) noexcept : charStream(charStream >> std::
 
 void Lexer::AddCurrenToken() noexcept
 {
+	if (currentLexeme.empty())
+	{
+		return;
+	}
+
 	auto token = GetToken(currentLexeme);
 	if (token)
 	{
@@ -58,7 +63,7 @@ TokenGenerator Lexer::Lex() noexcept
 			currentLexeme += characters[Current];
 		}
 
-		for (auto token : currentTokens)
+		for (auto& token : currentTokens)
 		{
 			co_yield token;
 		}
@@ -72,7 +77,7 @@ TokenGenerator Lexer::Lex() noexcept
 	// Add the end token.
 	currentTokens.emplace_back(Token{ .type = Token::Type::End });
 
-	for (auto token : currentTokens)
+	for (auto& token : currentTokens)
 	{
 		co_yield token;
 	}
