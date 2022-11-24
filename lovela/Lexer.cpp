@@ -23,7 +23,7 @@ Token Lexer::DecorateToken(Token token) const
 
 TokenGenerator Lexer::Lex() noexcept
 {
-	auto decorate = [this](auto& token) { return DecorateToken(std::move(token)); };
+	auto decorate = [this](auto&& token) { return DecorateToken(std::move(token)); };
 
 	// Populate next and next after characters.
 	GetNextCharacter();
