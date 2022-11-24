@@ -8,7 +8,7 @@ Lexer::Lexer(std::istream& charStream) noexcept : charStream(charStream >> std::
 
 Token Lexer::GetCurrenToken()
 {
-	auto token = GetToken(currentLexeme);
+	const auto token = GetToken(currentLexeme);
 	currentLexeme.clear();
 	return token;
 }
