@@ -1,17 +1,16 @@
 #pragma once
 
-class LexerRegexes
+struct LexerRegexes
 {
-public:
-	static const std::regex& GetSeparatorRegex();
-	static const std::regex& GetWhitespaceRegex();
+	const std::regex& GetWhitespaceRegex();
+	const std::regex& GetSeparatorRegex();
+	const std::regex& GetDigitRegex();
 
-	static const std::regex& GetBeginCommentRegex();
-	static const std::regex& GetEndCommentRegex();
-	static const std::regex& GetBeginLiteralNumberRegex();
-	static const std::regex& GetDigitRegex();
-	static const std::regex& GetBeginDecimalPartRegex();
-	static const std::regex& GetBeginDecimalExponentRegex();
-	static const std::regex& GetBeginStringRegex();
-	static const std::regex& GetStringFieldRegex();
+	const std::regex& GetBeginCommentRegex();
+	const std::regex& GetEndCommentRegex();
+	const std::regex& GetBeginLiteralNumberRegex();
+	const std::regex& GetBeginDecimalPartRegex();
+	const std::regex& GetBeginDecimalExponentRegex();
+	const std::regex& GetBeginStringRegex();
+	const std::regex& GetStringFieldRegex();
 };

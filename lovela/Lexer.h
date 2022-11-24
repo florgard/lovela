@@ -1,5 +1,6 @@
 #pragma once
 #include "LexerBase.h"
+#include "LexerRegexes.h"
 
 class Lexer : public LexerBase
 {
@@ -37,4 +38,5 @@ private:
 	std::array<char, 3> characters{};
 	std::string currentLexeme;
 	std::vector<Token> currentTokens;
+	LexerRegexes regexes;
 };

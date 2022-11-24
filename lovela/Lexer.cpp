@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Lexer.h"
-#include "LexerRegexes.h"
 
 Lexer::Lexer(std::istream& charStream) noexcept : charStream(charStream >> std::noskipws)
 {
@@ -35,25 +34,25 @@ TokenGenerator Lexer::Lex() noexcept
 
 	while (characters[Next])
 	{
-		if (Accept(LexerRegexes::GetBeginCommentRegex(), 2))
+		if (Accept(regexes.GetBeginCommentRegex(), 2))
 		{
 			AddCurrenToken();
 			LexComment();
 		}
-		else if (AcceptBegin(LexerRegexes::GetBeginStringRegex(), 1))
+		else if (AcceptBegin(regexes.GetBeginStringRegex(), 1))
 		{
 			LexLiteralString();
 		}
-		else if (AcceptBegin(LexerRegexes::GetBeginLiteralNumberRegex(), 2))
+		else if (AcceptBegin(regexes.GetBeginLiteralNumberRegex(), 2))
 		{
 			LexLiteralNumber();
 		}
-		else if (Accept(LexerRegexes::GetSeparatorRegex(), 1))
+		else if (Accept(regexes.GetSeparatorRegex(), 1))
 		{
 			AddCurrenToken();
 			LexSeparator();
 		}
-		else if (Accept(LexerRegexes::GetWhitespaceRegex(), 1))
+		else if (Accept(regexes.GetWhitespaceRegex(), 1))
 		{
 			AddCurrenToken();
 			LexWhitespace();
@@ -220,7 +219,7 @@ void Lexer::LexLiteralString() noexcept
 					nextStringInterpolation++;
 				}
 			}
-			else if (Accept(LexerRegexes::GetDigitRegex(), 1))
+			else if (Accept(regexes.GetDigitRegex(), 1))
 			{
 				char stringFieldCode = characters[Current];
 
@@ -237,7 +236,7 @@ void Lexer::LexLiteralString() noexcept
 					AddError(Error::Code::StringFieldIllformed, std::string("Ill-formed string field \"") + stringFieldCode + "\".");
 				}
 			}
-			else if (Accept(LexerRegexes::GetStringFieldRegex(), 1))
+			else if (Accept(regexes.GetStringFieldRegex(), 1))
 			{
 				char stringFieldCode = characters[Current];
 
@@ -276,7 +275,7 @@ void Lexer::LexLiteralNumber() noexcept
 	std::string value;
 	value += characters[Current];
 
-	auto& digitRegex = LexerRegexes::GetDigitRegex();
+	auto& digitRegex = regexes.GetDigitRegex();
 	while (Accept(digitRegex, 1))
 	{
 		value += characters[Current];
@@ -284,7 +283,7 @@ void Lexer::LexLiteralNumber() noexcept
 
 	// Accept a single decimal point in numbers.
 
-	if (Accept(LexerRegexes::GetBeginDecimalPartRegex(), 2))
+	if (Accept(regexes.GetBeginDecimalPartRegex(), 2))
 	{
 		value += characters[Current];
 
@@ -293,11 +292,11 @@ void Lexer::LexLiteralNumber() noexcept
 			value += characters[Current];
 		}
 
-		if (Accept(LexerRegexes::GetBeginDecimalExponentRegex(), 2))
+		if (Accept(regexes.GetBeginDecimalExponentRegex(), 2))
 		{
 			value += characters[Current];
 
-			if (!Accept(LexerRegexes::GetBeginLiteralNumberRegex(), 2))
+			if (!Accept(regexes.GetBeginLiteralNumberRegex(), 2))
 			{
 				AddError(Error::Code::StringLiteralOpen, "Ill-formed literal decimal number.");
 				currentTokens.emplace_back(Token{ .type = Token::Type::Error, .value = "Ill-formed literal decimal number." });
@@ -330,7 +329,7 @@ void Lexer::LexComment() noexcept
 
 	for (;;)
 	{
-		if (Accept(LexerRegexes::GetEndCommentRegex(), 2))
+		if (Accept(regexes.GetEndCommentRegex(), 2))
 		{
 			while (Accept('>'))
 			{
@@ -343,7 +342,7 @@ void Lexer::LexComment() noexcept
 				return;
 			}
 		}
-		else if (Accept(LexerRegexes::GetBeginCommentRegex(), 2))
+		else if (Accept(regexes.GetBeginCommentRegex(), 2))
 		{
 			// Nested comment.
 
