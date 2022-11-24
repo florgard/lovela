@@ -9,7 +9,8 @@
  
 ## Easy to use
 
-This fundamental principle should discourage complicated and inaccessible features. 
+This fundamental principle should discourage complicated and inaccessible features.
+
 It's still not easy to leverage considering the following principles.
 
 ## Accessible regardless of the user's cultural background
@@ -18,7 +19,8 @@ lovela should encourage ease of use regardless of the user's cultural background
 
 ### Keywords are avoided
 
-Language features that benefit from having readable names are implemented in the standard library. 
+Language features that benefit from having readable names are implemented in the standard library.
+
 The standard library can then be translated to various languages.
 
 ### Code can be arranged in left to right or right to left order
@@ -85,32 +87,51 @@ multi line'
 ### Literals
 
 `0`
+
 `123`
+
 `+123`
+
 `-123`
 
 ### Standard types
 
 `/type/i8`
+
 `/type/u8`
+
 `/type/i16`
+
 `/type/u16`
+
 `/type/i32`
+
 `/type/u32`
+
 `/type/i64`
+
 `/type/u64`
 
 ### Type definition
 
 `[n]` where `n` is a literal integer number that needs to fit in the data type.
+
 The most narrow supported integer type that fits the literal number will be used. Signed types will be used before unsigned types.
+
 Supported types are signed and unsigned 8, 16, 32, and 64 bit wide integer types.
+
 Examples:
+
 `[0]` yields a signed 8 bit integer type (for which the max value is 127). Same as `/type/i8`.
+
 `[100]` yields a signed 8 bit integer type (for which the max value is 127). Same as `/type/i8`.
+
 `[-100]` yields a signed 8 bit integer type (for which the min value is -128). Same as `/type/i8`.
+
 `[200]` yields an unsigned 8 bit integer type (a byte, for which the max value is 255). Same as `/type/u8`.
+
 `[100000]` yields a signed 32 bit integer type (for which the max value is 2147483647). Same as `/type/i32`.
+
 `[10000000000000000000]` yields an unsigned 64 bit integer type (for which the max value is 18446744073709551615). Same as `/type/u64`.
 
 ## Floating point (real) types
@@ -118,26 +139,39 @@ Examples:
 ### Literals
 
 `0.0`
+
 `123.45`
+
 `+123.45`
+
 `-123.45`
+
 `1.0e6`
+
 `1.0e+6`
+
 `1.0e-6`
 
 ### Standard types
 
 `/type/f32`
+
 `/type/f64`
 
 ### Type definition
 
 `[n]` where `n` is a literal real number that needs to fit in the data type.
+
 The most narrow supported floating point type that fits the literal number will be used.
+
 Supported types are 32 and 64 bit wide floating point types.
+
 Examples:
+
 `[0.0]` yields a 32 bit floating point type (for which the max value is in the order 1.0e38). Same as `/type/f32`.
+
 `[1.0e30]` yields a 32 bit floating point type (for which the max value is in the order 1.0e38). Same as `/type/f32`.
+
 `[1.0e300]` yields a 64 bit floating point (for which the min value is in the order 1.0e308). Same as `/type/f64`.
 
 # Functions
@@ -306,6 +340,7 @@ Numberic types are implicitly cast if the source type fits in the target type.
 ## I/O
 
 `/io/print_line` prints a line of text to the standard output stream.
+
 `/io/print` prints text to the standard output stream.
 
 ## Memory
@@ -321,6 +356,7 @@ Numberic types are implicitly cast if the source type fits in the target type.
 Single variable type.
 
 Syntax:
+
 `type`
 
 ## Fixed array
@@ -328,9 +364,11 @@ Syntax:
 Fixed-size (static) homogeneous (single-type) array.
 
 Syntax:
+
 `type#size`
 
 C++ equivalent:
+
 `std::array`
 
 ## Dynamic array
@@ -338,9 +376,11 @@ C++ equivalent:
 Dynamic (resizable), homogeneous (single-type) array.
 
 Syntax:
+
 `type#`
 
 C++ equivalent:
+
 `std::vector`
 
 ## Dynamic named array
@@ -348,9 +388,11 @@ C++ equivalent:
 Associative, dynamic (resizable), homogeneous (single-type) array. Keys are of type string.
 
 Syntax:
+
 `type#`
 
 C++ equivalent:
+
 `std::map`
 
 ## Fixed tuple
@@ -358,6 +400,7 @@ C++ equivalent:
 Fixed-size (static) heterogeneous (multi-type) tuple.
 
 C++ equivalent:
+
 `std::tuple`
 
 ## Named tuple
@@ -365,6 +408,7 @@ C++ equivalent:
 Associative, fixed-size (static) heterogeneous (multi-type) tuple.
 
 C++ equivalent:
+
 `std::tuple` with compile-time defined `std::array` of names.
 
 ## Dynamic tuple
