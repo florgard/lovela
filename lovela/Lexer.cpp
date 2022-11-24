@@ -24,6 +24,22 @@ void Lexer::AddCurrenToken() noexcept
 	currentLexeme.clear();
 }
 
+void Lexer::WordBreak() noexcept
+{
+	AddCurrenToken();
+	expectWordBreak = false;
+}
+
+void Lexer::ExpectWordBreak() noexcept
+{
+	expectWordBreak = true;
+}
+
+bool Lexer::IsWordBreakExpected() const noexcept
+{
+	return expectWordBreak;
+}
+
 TokenGenerator Lexer::Lex() noexcept
 {
 	// Populate next and next after characters.
@@ -31,31 +47,28 @@ TokenGenerator Lexer::Lex() noexcept
 	GetNextCharacter();
 
 	currentTokens.reserve(64);
-	bool expectWordBreak = false;
+	expectWordBreak = false;
 
 	while (characters[Next])
 	{
 		if (Accept(regexes.GetWhitespace(), 1))
 		{
-			expectWordBreak = false;
-			AddCurrenToken();
+			WordBreak();
 			LexWhitespace();
 		}
 		else if (Accept(regexes.GetSeparator(), 1))
 		{
-			expectWordBreak = false;
-			AddCurrenToken();
+			WordBreak();
 			LexSeparator();
 		}
 		else if (Accept(regexes.GetBeginComment(), 2))
 		{
-			expectWordBreak = false;
-			AddCurrenToken();
+			WordBreak();
 			LexComment();
 		}
-		else if (expectWordBreak)
+		else if (IsWordBreakExpected())
 		{
-			expectWordBreak = false;
+			WordBreak();
 			const auto message = std::format("Unexpected character \"{}\".", characters[Next]);
 			AddError(Error::Code::SyntaxError, message);
 			currentTokens.emplace_back(Token{ .type = Token::Type::Error, .value = message });
@@ -63,12 +76,12 @@ TokenGenerator Lexer::Lex() noexcept
 		else if (AcceptBegin(regexes.GetBeginLiteralNumber(), 2))
 		{
 			LexLiteralNumber();
-			expectWordBreak = true;
+			ExpectWordBreak();
 		}
 		else if (AcceptBegin(regexes.GetBeginString(), 1))
 		{
 			LexLiteralString();
-			expectWordBreak = true;
+			ExpectWordBreak();
 		}
 		else if (Accept())
 		{

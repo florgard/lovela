@@ -15,6 +15,9 @@ public:
 private:
 	void GetNextCharacter() noexcept;
 	void AddCurrenToken() noexcept;
+	void WordBreak() noexcept;
+	void ExpectWordBreak() noexcept;
+	[[nodiscard]] bool IsWordBreakExpected() const noexcept;
 
 	[[nodiscard]] bool Accept() noexcept;
 	[[nodiscard]] bool Accept(char character) noexcept;
@@ -39,4 +42,5 @@ private:
 	std::string currentLexeme;
 	std::vector<Token> currentTokens;
 	LexerRegexes regexes;
+	bool expectWordBreak{};
 };
