@@ -189,7 +189,7 @@ bool Lexer::Expect(char character) noexcept
 		return true;
 	}
 
-	AddError(Error::Code::SyntaxError, std::string("Unexpected character \"") + characters[Next] + "\", expected \"" + character + " \".");
+	AddError(Error::Code::SyntaxError, std::format("Unexpected character \"{}\", expected \"{}\".", characters[Next], character));
 	return false;
 }
 
@@ -200,7 +200,7 @@ bool Lexer::Expect(const std::regex& regex, size_t length) noexcept
 		return true;
 	}
 
-	AddError(Error::Code::SyntaxError, std::string("Unexpected character \"") + characters[Next] + " \".");
+	AddError(Error::Code::SyntaxError, std::format("Unexpected character \"{}\".", characters[Next]));
 	return false;
 }
 
@@ -261,7 +261,7 @@ void Lexer::LexLiteralString() noexcept
 				}
 				else
 				{
-					AddError(Error::Code::StringFieldIllformed, std::string("Ill-formed string field \"") + stringFieldCode + "\".");
+					AddError(Error::Code::StringFieldIllformed, std::format("Ill-formed string field \"{}\".", stringFieldCode));
 				}
 			}
 			else if (Accept(regexes.GetStringField(), 1))
@@ -275,12 +275,12 @@ void Lexer::LexLiteralString() noexcept
 				}
 				else
 				{
-					AddError(Error::Code::StringFieldIllformed, std::string("Ill-formed string field \"") + stringFieldCode + "\".");
+					AddError(Error::Code::StringFieldIllformed, std::format("Ill-formed string field \"{}\".", stringFieldCode));
 				}
 			}
 			else
 			{
-				AddError(Error::Code::StringFieldUnknown, std::string("Unknown string field code \"") + characters[Next] + "\".");
+				AddError(Error::Code::StringFieldUnknown, std::format("Unknown string field code \"{}\".", characters[Next]));
 			}
 		}
 		else if (Accept())
