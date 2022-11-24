@@ -13,8 +13,7 @@ public:
 
 private:
 	void GetNextCharacter() noexcept;
-	void AddCurrenToken();
-	[[nodiscard]] Token DecorateToken(Token token) const;
+	void AddCurrenToken() noexcept;
 
 	[[nodiscard]] bool Accept() noexcept;
 	[[nodiscard]] bool Accept(char character) noexcept;

@@ -6,24 +6,22 @@ Lexer::Lexer(std::istream& charStream) noexcept : charStream(charStream >> std::
 {
 }
 
-void Lexer::AddCurrenToken()
+void Lexer::AddCurrenToken() noexcept
 {
-	currentTokens.emplace_back(GetToken(currentLexeme));
-	currentLexeme.clear();
-}
+	auto token = GetToken(currentLexeme);
+	if (token)
+	{
+		token.line = currentLine;
+		token.column = currentColumn;
+		token.code = std::string(currentCode.begin(), currentCode.end());
+		currentTokens.emplace_back(std::move(token));
+	}
 
-Token Lexer::DecorateToken(Token token) const
-{
-	token.line = currentLine;
-	token.column = currentColumn;
-	token.code = std::string(currentCode.begin(), currentCode.end());
-	return token;
+	currentLexeme.clear();
 }
 
 TokenGenerator Lexer::Lex() noexcept
 {
-	auto decorate = [this](auto&& token) { return DecorateToken(std::move(token)); };
-
 	// Populate next and next after characters.
 	GetNextCharacter();
 	GetNextCharacter();
@@ -60,7 +58,7 @@ TokenGenerator Lexer::Lex() noexcept
 			currentLexeme += characters[Current];
 		}
 
-		for (auto token : currentTokens | std::views::filter(not_empty<Token>) | std::views::transform(decorate))
+		for (auto token : currentTokens)
 		{
 			co_yield token;
 		}
@@ -72,9 +70,9 @@ TokenGenerator Lexer::Lex() noexcept
 	AddCurrenToken();
 
 	// Add the end token.
-	currentTokens.push_back({ .type = Token::Type::End });
+	currentTokens.emplace_back(Token{ .type = Token::Type::End });
 
-	for (auto token : currentTokens | std::views::filter(not_empty<Token>) | std::views::transform(decorate))
+	for (auto token : currentTokens)
 	{
 		co_yield token;
 	}
