@@ -29,7 +29,6 @@ private:
 	[[nodiscard]] void LexComment(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexSeparator(std::vector<Token>& tokens) noexcept;
 	[[nodiscard]] void LexWhitespace(std::vector<Token>& tokens) noexcept;
-	[[nodiscard]] void LexPrimitiveType(std::vector<Token>& tokens) noexcept;
 
 	static constexpr size_t Current = 0;
 	static constexpr size_t Next = 1;
