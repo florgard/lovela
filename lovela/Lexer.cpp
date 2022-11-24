@@ -6,11 +6,10 @@ Lexer::Lexer(std::istream& charStream) noexcept : charStream(charStream >> std::
 {
 }
 
-Token Lexer::GetCurrenToken()
+void Lexer::AddCurrenToken()
 {
-	const auto token = GetToken(currentLexeme);
+	currentTokens.emplace_back(GetToken(currentLexeme));
 	currentLexeme.clear();
-	return token;
 }
 
 Token Lexer::DecorateToken(Token token) const
@@ -35,6 +34,7 @@ TokenGenerator Lexer::Lex() noexcept
 	{
 		if (Accept(LexerRegexes::GetBeginCommentRegex(), 2))
 		{
+			AddCurrenToken();
 			LexComment();
 		}
 		else if (AcceptBegin(LexerRegexes::GetBeginStringRegex(), 1))
@@ -47,10 +47,12 @@ TokenGenerator Lexer::Lex() noexcept
 		}
 		else if (Accept(LexerRegexes::GetSeparatorRegex(), 1))
 		{
+			AddCurrenToken();
 			LexSeparator();
 		}
 		else if (Accept(LexerRegexes::GetWhitespaceRegex(), 1))
 		{
+			AddCurrenToken();
 			LexWhitespace();
 		}
 		else if (Accept())
@@ -66,8 +68,8 @@ TokenGenerator Lexer::Lex() noexcept
 		currentTokens.clear();
 	}
 
-	// Get the possible token at the very end of the stream.	
-	currentTokens.push_back(GetCurrenToken());
+	// Add the possible token at the very end of the stream.
+	AddCurrenToken();
 
 	// Add the end token.
 	currentTokens.push_back({ .type = Token::Type::End });
@@ -317,9 +319,6 @@ void Lexer::LexLiteralNumber() noexcept
 
 void Lexer::LexComment() noexcept
 {
-	// Add the token before the comment.
-	currentTokens.emplace_back(GetCurrenToken());
-
 	while (Accept('<'))
 	{
 	}
@@ -366,19 +365,13 @@ void Lexer::LexComment() noexcept
 
 void Lexer::LexSeparator() noexcept
 {
-	// Add the token before the separator.
-	currentTokens.emplace_back(GetCurrenToken());
-
 	// Add the separator token.
 	currentLexeme = characters[Current];
-	currentTokens.emplace_back(GetCurrenToken());
+	AddCurrenToken();
 }
 
 void Lexer::LexWhitespace() noexcept
 {
-	// Add the token before the whitespace.
-	currentTokens.emplace_back(GetCurrenToken());
-
 	if (characters[Current] == '\n')
 	{
 		currentLine++;

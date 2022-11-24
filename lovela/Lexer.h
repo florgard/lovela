@@ -12,10 +12,10 @@ public:
 	[[nodiscard]] TokenGenerator Lex() noexcept override;
 
 private:
-	[[nodiscard]] Token GetCurrenToken();
+	void GetNextCharacter() noexcept;
+	void AddCurrenToken();
 	[[nodiscard]] Token DecorateToken(Token token) const;
 
-	void GetNextCharacter() noexcept;
 	[[nodiscard]] bool Accept() noexcept;
 	[[nodiscard]] bool Accept(char character) noexcept;
 	[[nodiscard]] bool Accept(const std::regex& regex, size_t length) noexcept;
