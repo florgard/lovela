@@ -296,6 +296,7 @@ void Lexer::LexLiteralNumber(std::vector<Token>& tokens) noexcept
 			if (!Accept(LexerRegexes::GetBeginLiteralNumberRegex(), 2))
 			{
 				AddError(Error::Code::StringLiteralOpen, "Ill-formed literal decimal number.");
+				tokens.emplace_back(Token{ .type = Token::Type::Error, .value = "Ill-formed literal decimal number." });
 				return;
 			}
 			
@@ -358,6 +359,7 @@ void Lexer::LexComment(std::vector<Token>& tokens) noexcept
 		else
 		{
 			AddError(Error::Code::CommentOpen, "A comment wasn't terminated.");
+			tokens.emplace_back(Token{ .type = Token::Type::Error, .value = "A comment wasn't terminated." });
 			return;
 		}
 	}

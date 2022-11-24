@@ -29,5 +29,5 @@ public:
 	virtual ~ILexer() = default;
 
 	[[nodiscard]] virtual TokenGenerator Lex() noexcept = 0;
-	[[nodiscard]] virtual const std::vector<Error>& GetErrors() noexcept = 0;
+	[[nodiscard]] virtual const std::vector<Error>& GetErrors() const noexcept = 0;
 };

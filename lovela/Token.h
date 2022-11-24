@@ -11,6 +11,7 @@ struct Token
 	enum class Type
 	{
 		Empty,
+		Error,
 		End,
 		Identifier,
 		LiteralString,

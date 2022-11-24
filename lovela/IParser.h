@@ -23,5 +23,5 @@ public:
 	virtual ~IParser() = default;
 
 	[[nodiscard]] virtual NodeGenerator Parse() noexcept = 0;
-	[[nodiscard]] virtual const std::vector<Error>& GetErrors() noexcept = 0;
+	[[nodiscard]] virtual const std::vector<Error>& GetErrors() const noexcept = 0;
 };

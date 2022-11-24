@@ -8,7 +8,7 @@ class ParserBase : public IParser
 public:
 	ParserBase(TokenGenerator&& tokenGenerator) noexcept;
 
-	[[nodiscard]] const std::vector<Error>& GetErrors() noexcept override
+	[[nodiscard]] const std::vector<Error>& GetErrors() const noexcept override
 	{
 		return errors;
 	}

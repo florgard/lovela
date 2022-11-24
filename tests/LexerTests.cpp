@@ -26,15 +26,20 @@ bool LexerTest::Failure(const char* name, std::string_view code, const std::vect
 	auto tokens = to_vector(lexer->Lex());
 
 	bool success = true;
+	const Token emptyToken{};
 
 	auto actualCount = tokens.size();
 	auto expectedCount = expectedTokens.size();
 	auto count = std::max(actualCount, expectedCount);
 	for (int i = 0; i < count; i++)
 	{
-		const auto actual = i < actualCount ? tokens[i] : Token{};
-		const auto expected = i < expectedCount ? expectedTokens[i] : Token{};
-		if (actual != expected)
+		const auto& actual = i < actualCount ? tokens[i] : emptyToken;
+		const auto& expected = i < expectedCount ? expectedTokens[i] : emptyToken;
+		if (actual.type == Token::Type::Error && expected.type == Token::Type::Error)
+		{
+			// Don't test the values of Error tokens (containing error messages).
+		}
+		else if (actual != expected)
 		{
 			success = false;
 			std::cerr << color.fail << "ERROR: " << color.none
@@ -44,14 +49,15 @@ bool LexerTest::Failure(const char* name, std::string_view code, const std::vect
 	}
 
 	auto& errors = lexer->GetErrors();
+	const ILexer::Error emptyError{};
 
 	actualCount = errors.size();
 	expectedCount = expectedErrors.size();
 	count = std::max(actualCount, expectedCount);
 	for (int i = 0; i < count; i++)
 	{
-		const auto actual = i < actualCount ? errors[i] : ILexer::Error{};
-		const auto expected = i < expectedCount ? expectedErrors[i] : ILexer::Error{};
+		const auto& actual = i < actualCount ? errors[i] : emptyError;
+		const auto& expected = i < expectedCount ? expectedErrors[i] : emptyError;
 		if (actual.code != expected.code)
 		{
 			success = false;
@@ -674,6 +680,7 @@ suite lexer_comment_tests = [] {
 			"<<<<123>>ident234<<<<123<<456>>>:>.",
 			{
 				{.type = ident, .value = "ident234"},
+				{.type = Token::Type::Error, },
 				endToken
 			},
 			{
