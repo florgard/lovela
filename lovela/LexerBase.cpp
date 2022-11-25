@@ -18,7 +18,7 @@ Token LexerBase::GetToken(char lexeme) noexcept
 	return { .type = type, .value = std::string(1, lexeme) };
 }
 
-Token LexerBase::GetToken(const std::string_view& lexeme) noexcept
+Token LexerBase::GetToken(std::string_view lexeme) noexcept
 {
 	// https://en.cppreference.com/w/cpp/regex/ecmascript
 	// https://www.regular-expressions.info/posixbrackets.html

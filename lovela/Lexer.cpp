@@ -99,7 +99,7 @@ TokenGenerator Lexer::Lex() noexcept
 	}
 
 	// Add the possible token at the very end of the stream.
-	AddCurrenToken();
+	WordBreak();
 
 	// Add the end token.
 	AddToken({.type = Token::Type::End});
@@ -395,9 +395,7 @@ void Lexer::LexComment() noexcept
 
 void Lexer::LexSeparator() noexcept
 {
-	// Add the separator token.
-	currentLexeme = characters[Current];
-	AddCurrenToken();
+	AddToken(GetToken(characters[Current]));
 }
 
 void Lexer::LexWhitespace() noexcept

@@ -76,7 +76,7 @@ public:
 
 protected:
 	[[nodiscard]] Token GetToken(char lexeme) noexcept;
-	[[nodiscard]] Token GetToken(const std::string_view& lexeme) noexcept;
+	[[nodiscard]] Token GetToken(std::string_view lexeme) noexcept;
 	void AddError(Error::Code code, const std::string& message);
 
 	std::vector<Error> errors;
