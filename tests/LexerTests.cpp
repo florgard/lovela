@@ -78,6 +78,7 @@ bool LexerTest::Failure(const char* name, std::string_view code, const std::vect
 }
 
 static const Token endToken{ .type = Token::Type::End };
+static const Token errorToken{ .type = Token::Type::Error };
 static constexpr auto idType = Token::Type::Identifier;
 
 suite lexer_rudimental_tests = [] {
@@ -322,6 +323,7 @@ suite lexer_string_literal_tests = [] {
 		expect(s_test.Failure("non-closed string literal",
 			"'",
 			{
+				errorToken,
 				endToken
 			},
 			{
@@ -333,6 +335,7 @@ suite lexer_string_literal_tests = [] {
 		expect(s_test.Failure("non-closed string literal on line 1",
 			"'abc",
 			{
+				errorToken,
 				endToken
 			},
 			{
@@ -340,10 +343,11 @@ suite lexer_string_literal_tests = [] {
 			}
 		));
 	};
-	"non-closed string literal on line 2"_test = [] {
-		expect(s_test.Failure("non-closed string literal on line 2",
+	"non-closed string literal on line 2 CRLF"_test = [] {
+		expect(s_test.Failure("non-closed string literal on line 2 CRLF",
 			"\r\n'abc",
 			{
+				errorToken,
 				endToken
 			},
 			{
@@ -351,9 +355,10 @@ suite lexer_string_literal_tests = [] {
 			}
 		));
 	};
-	"non-closed string literal on line 2"_test = [] {
-		expect(s_test.Failure("non-closed string literal on line 2", "\n'abc",
+	"non-closed string literal on line 2 LF"_test = [] {
+		expect(s_test.Failure("non-closed string literal on line 2 LF", "\n'abc",
 			{
+				errorToken,
 				endToken
 			},
 			{
@@ -361,10 +366,11 @@ suite lexer_string_literal_tests = [] {
 			}
 		));
 	};
-	"non-closed string literal on line 1"_test = [] {
-		expect(s_test.Failure("non-closed string literal on line 1",
+	"non-closed string literal on line 1 CR"_test = [] {
+		expect(s_test.Failure("non-closed string literal on line 1 CR",
 			"\r'abc",
 			{
+				errorToken,
 				endToken
 			},
 			{
@@ -442,6 +448,7 @@ suite lexer_string_field_tests = [] {
 		expect(s_test.Failure("non-closed string field",
 			"'{n'",
 			{
+				errorToken,
 				{.type = Token::Type::LiteralString},
 				endToken
 			},
@@ -454,6 +461,7 @@ suite lexer_string_field_tests = [] {
 		expect(s_test.Failure("ill-formed string field",
 			"'{nn}'",
 			{
+				errorToken,
 				{.type = Token::Type::LiteralString, .value = "n}"},
 				endToken
 			},
@@ -466,6 +474,7 @@ suite lexer_string_field_tests = [] {
 		expect(s_test.Failure("unknown string field",
 			"'{m}'",
 			{
+				errorToken,
 				{.type = Token::Type::LiteralString, .value = "m}"},
 				endToken
 			},

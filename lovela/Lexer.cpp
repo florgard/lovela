@@ -160,6 +160,7 @@ bool Lexer::Accept(const std::regex& regex, size_t length) noexcept
 	if (!(length > 0 && length <= characters.size() - Next))
 	{
 		AddError(Error::Code::InternalError, "Regex match out of bounds.");
+		AddToken({ .type = Token::Type::Error, .value = "Regex match out of bounds." });
 		return false;
 	}
 
@@ -190,6 +191,7 @@ bool Lexer::Expect(char character) noexcept
 	}
 
 	AddError(Error::Code::SyntaxError, std::format("Unexpected character \"{}\", expected \"{}\".", characters[Next], character));
+	AddToken({ .type = Token::Type::Error, .value = std::format("Unexpected character \"{}\", expected \"{}\".", characters[Next], character) });
 	return false;
 }
 
@@ -201,6 +203,7 @@ bool Lexer::Expect(const std::regex& regex, size_t length) noexcept
 	}
 
 	AddError(Error::Code::SyntaxError, std::format("Unexpected character \"{}\".", characters[Next]));
+	AddToken({ .type = Token::Type::Error, .value = std::format("Unexpected character \"{}\".", characters[Next]) });
 	return false;
 }
 
@@ -239,7 +242,8 @@ void Lexer::LexLiteralString() noexcept
 				// Add a string literal interpolation token with the next free index.
 				if (nextStringInterpolation > '9')
 				{
-					AddError(Error::Code::StringInterpolationOverflow, std::string("Too many string interpolations, index out of bounds (greater than 9)."));
+					AddError(Error::Code::StringInterpolationOverflow, "Too many string interpolations, index out of bounds (greater than 9).");
+					AddToken({ .type = Token::Type::Error, .value = "Too many string interpolations, index out of bounds (greater than 9)." });
 				}
 				else
 				{
@@ -262,6 +266,7 @@ void Lexer::LexLiteralString() noexcept
 				else
 				{
 					AddError(Error::Code::StringFieldIllformed, std::format("Ill-formed string field \"{}\".", stringFieldCode));
+					AddToken({ .type = Token::Type::Error, .value = std::format("Ill-formed string field \"{}\".", stringFieldCode) });
 				}
 			}
 			else if (Accept(regexes.GetStringField(), 1))
@@ -276,11 +281,13 @@ void Lexer::LexLiteralString() noexcept
 				else
 				{
 					AddError(Error::Code::StringFieldIllformed, std::format("Ill-formed string field \"{}\".", stringFieldCode));
+					AddToken({ .type = Token::Type::Error, .value = std::format("Ill-formed string field \"{}\".", stringFieldCode) });
 				}
 			}
 			else
 			{
 				AddError(Error::Code::StringFieldUnknown, std::format("Unknown string field code \"{}\".", characters[Next]));
+				AddToken({ .type = Token::Type::Error, .value = std::format("Unknown string field code \"{}\".", characters[Next]) });
 			}
 		}
 		else if (Accept())
@@ -291,6 +298,7 @@ void Lexer::LexLiteralString() noexcept
 		else
 		{
 			AddError(Error::Code::StringLiteralOpen, "A string literal wasn't terminated.");
+			AddToken({ .type = Token::Type::Error, .value = "A string literal wasn't terminated." });
 			return;
 		}
 	}
