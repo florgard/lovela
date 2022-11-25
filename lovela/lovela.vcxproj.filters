@@ -91,5 +91,6 @@
       <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="LexerRegexes.h" />
+    <ClInclude Include="LexerError.h" />
   </ItemGroup>
 </Project>

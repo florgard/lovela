@@ -35,16 +35,18 @@ bool LexerTest::Failure(const char* name, std::string_view code, const std::vect
 	{
 		const auto& actual = i < actualCount ? tokens[i] : emptyToken;
 		const auto& expected = i < expectedCount ? expectedTokens[i] : emptyToken;
-		if (actual.type == Token::Type::Error && expected.type == Token::Type::Error)
-		{
-			// Don't test the values of Error tokens (containing error messages).
-		}
-		else if (actual != expected)
+		if (actual != expected)
 		{
 			success = false;
 			std::cerr << color.fail << "ERROR: " << color.none
 				<< "Lexer test \"" << color.name << name << color.none << "\": "
-				<< "Token " << i + 1 << " is " << to_string(actual.type) << " \"" << actual.value << "\", expected " << to_string(expected.type) << " \"" << expected.value << "\".\n";
+				<< "Token " << i + 1 << " is " << to_string(actual.type) << " \"" << actual.value << "\", expected " << to_string(expected.type) << " \"" << expected.value << "\".\n"
+				<< "Actual:\n" << color.actual;
+			actual.Print(std::cerr);
+			std::cerr << color.none << '\n'
+				<< "Expected:\n" << color.expect;
+			expected.Print(std::cerr);
+			std::cerr << color.none << '\n';
 		}
 	}
 
@@ -74,12 +76,21 @@ bool LexerTest::Failure(const char* name, std::string_view code, const std::vect
 		}
 	}
 
+	if (!success)
+	{
+		std::cerr << '\n';
+	}
+
 	return success;
 }
 
 static const Token endToken{ .type = Token::Type::End };
-static const Token errorToken{ .type = Token::Type::Error };
 static constexpr auto idType = Token::Type::Identifier;
+
+static constexpr Token ErrorToken(LexerError error)
+{
+	return {.type = Token::Type::Error, .error = error};
+}
 
 suite lexer_rudimental_tests = [] {
 	"empty expression"_test = [] {
@@ -180,7 +191,7 @@ suite lexer_identifier_tests = [] {
 			"1abc",
 			{
 				{.type = Token::Type::LiteralInteger, .value = "1"},
-				{.type = Token::Type::Error},
+				{.type = Token::Type::Error, .error = LexerError::SyntaxError },
 				{.type = idType, .value = "abc"},
 				endToken
 			},
@@ -323,7 +334,7 @@ suite lexer_string_literal_tests = [] {
 		expect(s_test.Failure("non-closed string literal",
 			"'",
 			{
-				errorToken,
+				ErrorToken(LexerError::StringLiteralOpen),
 				endToken
 			},
 			{
@@ -335,7 +346,7 @@ suite lexer_string_literal_tests = [] {
 		expect(s_test.Failure("non-closed string literal on line 1",
 			"'abc",
 			{
-				errorToken,
+				ErrorToken(LexerError::StringLiteralOpen),
 				endToken
 			},
 			{
@@ -347,7 +358,7 @@ suite lexer_string_literal_tests = [] {
 		expect(s_test.Failure("non-closed string literal on line 2 CRLF",
 			"\r\n'abc",
 			{
-				errorToken,
+				ErrorToken(LexerError::StringLiteralOpen),
 				endToken
 			},
 			{
@@ -358,7 +369,7 @@ suite lexer_string_literal_tests = [] {
 	"non-closed string literal on line 2 LF"_test = [] {
 		expect(s_test.Failure("non-closed string literal on line 2 LF", "\n'abc",
 			{
-				errorToken,
+				ErrorToken(LexerError::StringLiteralOpen),
 				endToken
 			},
 			{
@@ -370,7 +381,7 @@ suite lexer_string_literal_tests = [] {
 		expect(s_test.Failure("non-closed string literal on line 1 CR",
 			"\r'abc",
 			{
-				errorToken,
+				ErrorToken(LexerError::StringLiteralOpen),
 				endToken
 			},
 			{
@@ -448,7 +459,7 @@ suite lexer_string_field_tests = [] {
 		expect(s_test.Failure("non-closed string field",
 			"'{n'",
 			{
-				errorToken,
+				ErrorToken(LexerError::StringFieldIllformed),
 				{.type = Token::Type::LiteralString},
 				endToken
 			},
@@ -461,7 +472,7 @@ suite lexer_string_field_tests = [] {
 		expect(s_test.Failure("ill-formed string field",
 			"'{nn}'",
 			{
-				errorToken,
+				ErrorToken(LexerError::StringFieldIllformed),
 				{.type = Token::Type::LiteralString, .value = "n}"},
 				endToken
 			},
@@ -474,7 +485,7 @@ suite lexer_string_field_tests = [] {
 		expect(s_test.Failure("unknown string field",
 			"'{m}'",
 			{
-				errorToken,
+				ErrorToken(LexerError::StringFieldUnknown),
 				{.type = Token::Type::LiteralString, .value = "m}"},
 				endToken
 			},
@@ -692,7 +703,7 @@ suite lexer_comment_tests = [] {
 			"<<<<123>>ident234<<<<123<<456>>>:>.",
 			{
 				{.type = idType, .value = "ident234"},
-				{.type = Token::Type::Error, },
+				ErrorToken(LexerError::CommentOpen),
 				endToken
 			},
 			{

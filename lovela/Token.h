@@ -1,5 +1,7 @@
 #pragma once
 
+#include "LexerError.h"
+
 struct Token
 {
 	struct Constant
@@ -38,6 +40,7 @@ struct Token
 		OperatorArrow,
 	} type{};
 
+	LexerError error{};
 	std::string value;
 
 	int line{};
@@ -46,8 +49,8 @@ struct Token
 
 	[[nodiscard]] constexpr bool operator==(const Token& rhs) const noexcept
 	{
-		// Compare everything but the code location
-		return rhs.type == type && rhs.value == value;
+		// Don't compare the code location. If this is an error token, then also don't compare the value (containing the error message).
+		return rhs.type == type && rhs.error == error && (type == Type::Error || rhs.value == value);
 	}
 
 	[[nodiscard]] constexpr bool operator!=(const Token& rhs) const noexcept
@@ -62,6 +65,6 @@ struct Token
 
 	[[nodiscard]] void Print(std::ostream& stream) const
 	{
-		stream << '[' << to_string(type) << ',' << value << ']';
+		stream << '[' << to_string(type) << ',' << to_string(error) << ',' << value << ']';
 	}
 };
