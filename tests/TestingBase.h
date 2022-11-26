@@ -59,14 +59,14 @@ protected:
 	void PrintAST(int& index, const Node& node, int indent);
 
 	template <typename Code>
-	void PrintIncorrectErrorCodeMessage(std::ostream& stream, const char* phase, const char* name, int index, Code actual, Code expected)
+	void PrintIncorrectErrorCodeMessage(std::ostream& stream, const char* phase, const char* name, size_t index, Code actual, Code expected)
 	{
 		stream << color.fail << "ERROR: " << color.none
 			<< phase << " test \"" << color.name << name << color.none << "\": "
 			<< "Error " << index + 1 << " code is " << color.actual << to_string(actual) << color.none << ", expected " << color.expect << to_string(expected) << color.none << ".\n";
 	}
 
-	void PrintIncorrectErrorLineMessage(std::ostream& stream, const char* phase, const char* name, int index, int actual, int expected)
+	void PrintIncorrectErrorLineMessage(std::ostream& stream, const char* phase, const char* name, size_t index, int actual, int expected)
 	{
 		stream << color.fail << "ERROR: " << color.none
 			<< phase << " test \"" << color.name << name << color.none << "\": "
@@ -77,6 +77,11 @@ protected:
 	void PrintErrorMessage(std::ostream& stream, const ErrorType& error)
 	{
 		stream << to_string(error.code) << ": " << error.message << '\n' << '(' << error.token.line << ':' << error.token.column << ") \"..." << error.token.code << "\" <-- At this place" << '\n';
+	}
+
+	void PrintErrorMessage(std::ostream& stream, const Token& error)
+	{
+		stream << to_string(error.code) << ": " << error.value << '\n' << '(' << error.line << ':' << error.column << ") \"..." << error.code << "\" <-- At this place" << '\n';
 	}
 
 	struct Color

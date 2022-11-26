@@ -4,11 +4,6 @@
 class LexerBase : public ILexer
 {
 public:
-	[[nodiscard]] const std::vector<Error>& GetErrors() const noexcept override
-	{
-		return errors;
-	}
-
 	[[nodiscard]] static constexpr std::string_view Trim(const std::string_view& input) noexcept
 	{
 		constexpr std::array<char, 7> whitespace{ ' ', '\t', '\r', '\n', '\f', '\v', '\0' };
@@ -77,9 +72,7 @@ public:
 protected:
 	[[nodiscard]] Token GetToken(char lexeme) noexcept;
 	[[nodiscard]] Token GetToken(std::string_view lexeme) noexcept;
-	void AddError(Error::Code code, const std::string& message);
 
-	std::vector<Error> errors;
 	int currentLine = 1;
 	int currentColumn = 1;
 	std::deque<char> currentCode;

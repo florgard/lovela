@@ -82,12 +82,7 @@ Token LexerBase::GetToken(std::string_view lexeme) noexcept
 		}
 	}
 
-	AddError(Error::Code::SyntaxError, "Syntax error near \"" + std::string(trimmed.data(), trimmed.size()) + "\".");
+	AddToken({ .type = Token::Type::Error, .error = LexerError::SyntaxError, .value = std::format("Syntax error near \"{}\".", std::string(trimmed.data(), trimmed.size())) });
 
 	return {};
-}
-
-void LexerBase::AddError(Error::Code code, const std::string& message)
-{
-	errors.emplace_back(Error{ .code = code, .message = message, .token{.line = currentLine, .column = currentColumn, .code{currentCode.begin(), currentCode.end()} } });
 }

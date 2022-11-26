@@ -31,13 +31,6 @@ public:
 
 		std::istringstream input(code);
 		auto lexer = LexerFactory::Create(input);
-		for (auto& error : lexer->GetErrors())
-		{
-			std::cerr << error.message << '\n';
-		}
-
-		expect(lexer->GetErrors().empty());
-
 		auto parser = ParserFactory::Create(lexer->Lex());
 		auto nodes = to_vector(parser->Parse());
 

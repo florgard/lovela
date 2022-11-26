@@ -7,7 +7,7 @@ constexpr bool not_empty(const auto& x)
 
 constexpr auto to_vector(std::ranges::range auto&& range)
 {
-	std::vector<std::remove_reference_t<decltype(*range.begin())>> v;
+	std::vector<std::decay_t<decltype(*range.begin())>> v;
 
 	for (auto&& item : range)
 	{
@@ -15,6 +15,11 @@ constexpr auto to_vector(std::ranges::range auto&& range)
 	}
 
 	return v;
+}
+
+constexpr auto to_vector(std::ranges::range auto& range)
+{
+	return std::vector<std::decay_t<decltype(*range.begin())>>(range.begin(), range.end());
 }
 
 template <typename T>

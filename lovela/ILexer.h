@@ -6,28 +6,10 @@ using TokenGenerator = tl::generator<Token>;
 class ILexer
 {
 public:
-	struct Error
-	{
-		enum class Code
-		{
-			NoError,
-			InternalError,
-			SyntaxError,
-			CommentOpen,
-			StringLiteralOpen,
-			StringFieldIllformed,
-			StringFieldUnknown,
-			StringInterpolationOverflow,
-		} code{};
-
-		std::string message;
-		Token token;
-
-		[[nodiscard]] auto operator<=>(const Error& rhs) const noexcept = default;
-	};
-
 	virtual ~ILexer() = default;
 
 	[[nodiscard]] virtual TokenGenerator Lex() noexcept = 0;
-	[[nodiscard]] virtual const std::vector<Error>& GetErrors() const noexcept = 0;
+
+protected:
+	virtual void AddToken(Token&& token) noexcept = 0;
 };

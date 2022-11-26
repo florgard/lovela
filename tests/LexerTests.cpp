@@ -14,12 +14,12 @@ public:
 		return Failure(name, code, expectedTokens, {});
 	}
 
-	bool Failure(const char* name, std::string_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors);
+	bool Failure(const char* name, std::string_view code, const std::vector<Token>& expectedTokens, const std::vector<Token>& expectedErrors);
 };
 
 static LexerTest s_test;
 
-bool LexerTest::Failure(const char* name, std::string_view code, const std::vector<Token>& expectedTokens, const std::vector<ILexer::Error>& expectedErrors)
+bool LexerTest::Failure(const char* name, std::string_view code, const std::vector<Token>& expectedTokens, const std::vector<Token>& expectedErrors)
 {
 	std::istringstream input(std::string(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
@@ -31,7 +31,7 @@ bool LexerTest::Failure(const char* name, std::string_view code, const std::vect
 	auto actualCount = tokens.size();
 	auto expectedCount = expectedTokens.size();
 	auto count = std::max(actualCount, expectedCount);
-	for (int i = 0; i < count; i++)
+	for (size_t i = 0; i < count; i++)
 	{
 		const auto& actual = i < actualCount ? tokens[i] : emptyToken;
 		const auto& expected = i < expectedCount ? expectedTokens[i] : emptyToken;
@@ -50,28 +50,27 @@ bool LexerTest::Failure(const char* name, std::string_view code, const std::vect
 		}
 	}
 
-	auto& errors = lexer->GetErrors();
-	const ILexer::Error emptyError{};
+	const auto errors = to_vector(tokens | std::views::filter([](auto& t) { return t.type == Token::Type::Error; }));
 
 	actualCount = errors.size();
 	expectedCount = expectedErrors.size();
 	count = std::max(actualCount, expectedCount);
-	for (int i = 0; i < count; i++)
+	for (size_t i = 0; i < count; i++)
 	{
-		const auto& actual = i < actualCount ? errors[i] : emptyError;
-		const auto& expected = i < expectedCount ? expectedErrors[i] : emptyError;
-		if (actual.code != expected.code)
+		const auto& actual = i < actualCount ? errors[i] : emptyToken;
+		const auto& expected = i < expectedCount ? expectedErrors[i] : emptyToken;
+		if (actual.error != expected.error)
 		{
 			success = false;
 
-			PrintIncorrectErrorCodeMessage(std::cerr, "Lexer", name, i, actual.code, expected.code);
+			PrintIncorrectErrorCodeMessage(std::cerr, "Lexer", name, i, actual.error, expected.error);
 			PrintErrorMessage(std::cerr, actual);
 		}
-		else if (expected.token.line && actual.token.line != expected.token.line)
+		else if (expected.line && actual.line != expected.line)
 		{
 			success = false;
 
-			PrintIncorrectErrorLineMessage(std::cerr, "Lexer", name, i, actual.token.line, expected.token.line);
+			PrintIncorrectErrorLineMessage(std::cerr, "Lexer", name, i, actual.line, expected.line);
 			PrintErrorMessage(std::cerr, actual);
 		}
 	}
@@ -196,7 +195,7 @@ suite lexer_identifier_tests = [] {
 				endToken
 			},
 			{
-				{.code = ILexer::Error::Code::SyntaxError}
+				{.error = LexerError::SyntaxError}
 			}
 		));
 	};
@@ -204,10 +203,11 @@ suite lexer_identifier_tests = [] {
 		expect(s_test.Failure("invalid identifier 2",
 			"=abc",
 			{
+				{.type = Token::Type::Error, .error = LexerError::SyntaxError },
 				endToken
 			},
 			{
-				{.code = ILexer::Error::Code::SyntaxError}
+				{.error = LexerError::SyntaxError}
 			}
 		));
 	};
@@ -338,7 +338,7 @@ suite lexer_string_literal_tests = [] {
 				endToken
 			},
 			{
-				{.code = ILexer::Error::Code::StringLiteralOpen }
+				{.error = LexerError::StringLiteralOpen }
 			}
 		));
 	};
@@ -350,7 +350,7 @@ suite lexer_string_literal_tests = [] {
 				endToken
 			},
 			{
-				{.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 1} }
+				{.error = LexerError::StringLiteralOpen, .line = 1}
 			}
 		));
 	};
@@ -362,7 +362,7 @@ suite lexer_string_literal_tests = [] {
 				endToken
 			},
 			{
-				{.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 2} }
+				{.error = LexerError::StringLiteralOpen, .line = 2}
 			}
 		));
 	};
@@ -373,7 +373,7 @@ suite lexer_string_literal_tests = [] {
 				endToken
 			},
 			{
-				{.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 2} }
+				{.error = LexerError::StringLiteralOpen, .line = 2}
 			}
 		));
 	};
@@ -385,7 +385,7 @@ suite lexer_string_literal_tests = [] {
 				endToken
 			},
 			{
-				{.code = ILexer::Error::Code::StringLiteralOpen, .token{.line = 1} }
+				{.error = LexerError::StringLiteralOpen, .line = 1}
 			}
 		));
 	};
@@ -464,7 +464,7 @@ suite lexer_string_field_tests = [] {
 				endToken
 			},
 			{
-				{.code = ILexer::Error::Code::StringFieldIllformed}
+				{.error = LexerError::StringFieldIllformed}
 			}
 		));
 	};
@@ -477,7 +477,7 @@ suite lexer_string_field_tests = [] {
 				endToken
 			},
 			{
-				{.code = ILexer::Error::Code::StringFieldIllformed}
+				{.error = LexerError::StringFieldIllformed}
 			}
 		));
 	};
@@ -490,7 +490,7 @@ suite lexer_string_field_tests = [] {
 				endToken
 			},
 			{
-				{.code = ILexer::Error::Code::StringFieldUnknown}
+				{.error = LexerError::StringFieldUnknown}
 			}
 		));
 	};
@@ -707,7 +707,7 @@ suite lexer_comment_tests = [] {
 				endToken
 			},
 			{
-				{.code = ILexer::Error::Code::CommentOpen, .token{.line = 1}}
+				{.error = LexerError::CommentOpen, .line = 1}
 			}
 		));
 	};
