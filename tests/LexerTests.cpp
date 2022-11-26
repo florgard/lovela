@@ -11,15 +11,15 @@ class LexerTest : public TestingBase
 public:
 	bool Success(const char* name, std::string_view code, const std::vector<Token>& expectedTokens)
 	{
-		return Failure(name, code, expectedTokens, {});
+		return Failure(name, code, expectedTokens);
 	}
 
-	bool Failure(const char* name, std::string_view code, const std::vector<Token>& expectedTokens, const std::vector<Token>& expectedErrors);
+	bool Failure(const char* name, std::string_view code, const std::vector<Token>& expectedTokens);
 };
 
 static LexerTest s_test;
 
-bool LexerTest::Failure(const char* name, std::string_view code, const std::vector<Token>& expectedTokens, const std::vector<Token>& expectedErrors)
+bool LexerTest::Failure(const char* name, std::string_view code, const std::vector<Token>& expectedTokens)
 {
 	std::istringstream input(std::string(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
@@ -51,6 +51,7 @@ bool LexerTest::Failure(const char* name, std::string_view code, const std::vect
 	}
 
 	const auto errors = to_vector(tokens | std::views::filter([](auto& t) { return t.IsError(); }));
+	const auto expectedErrors = to_vector(expectedTokens | std::views::filter([](auto& t) { return t.IsError(); }));
 
 	actualCount = errors.size();
 	expectedCount = expectedErrors.size();
@@ -79,6 +80,7 @@ bool LexerTest::Failure(const char* name, std::string_view code, const std::vect
 
 	if (!success)
 	{
+		std::cerr << color.none << "Input code:\n" << color.code << code << color.none << '\n';
 		std::cerr << '\n';
 	}
 
@@ -88,9 +90,9 @@ bool LexerTest::Failure(const char* name, std::string_view code, const std::vect
 static const Token endToken{ .type = Token::Type::End };
 static constexpr auto idType = Token::Type::Identifier;
 
-static constexpr Token ErrorToken(LexerError error)
+static constexpr Token ErrorToken(LexerError error, size_t line = 1)
 {
-	return { .type = Token::Type::Error, .error{.code = error} };
+	return { .type = Token::Type::Error, .error{.code = error, .line = line} };
 }
 
 suite lexer_rudimental_tests = [] {
@@ -192,12 +194,9 @@ suite lexer_identifier_tests = [] {
 			"1abc",
 			{
 				{.type = Token::Type::LiteralInteger, .value = "1"},
-				{.type = Token::Type::Error, .error{.code = LexerError::SyntaxError}},
+				ErrorToken(LexerError::SyntaxError),
 				{.type = idType, .value = "abc"},
 				endToken
-			},
-			{
-				{.error{.code = LexerError::SyntaxError}}
 			}
 		));
 	};
@@ -205,11 +204,8 @@ suite lexer_identifier_tests = [] {
 		expect(s_test.Failure("invalid identifier 2",
 			"=abc",
 			{
-				{.type = Token::Type::Error, .error{.code = LexerError::SyntaxError}},
+				ErrorToken(LexerError::SyntaxError),
 				endToken
-			},
-			{
-				{.error{.code = LexerError::SyntaxError}}
 			}
 		));
 	};
@@ -338,9 +334,6 @@ suite lexer_string_literal_tests = [] {
 			{
 				ErrorToken(LexerError::StringLiteralOpen),
 				endToken
-			},
-			{
-				{.error{.code = LexerError::StringLiteralOpen}}
 			}
 		));
 	};
@@ -350,9 +343,6 @@ suite lexer_string_literal_tests = [] {
 			{
 				ErrorToken(LexerError::StringLiteralOpen),
 				endToken
-			},
-			{
-				{.error{.code = LexerError::StringLiteralOpen, .line = 1}}
 			}
 		));
 	};
@@ -360,22 +350,16 @@ suite lexer_string_literal_tests = [] {
 		expect(s_test.Failure("non-closed string literal on line 2 CRLF",
 			"\r\n'abc",
 			{
-				ErrorToken(LexerError::StringLiteralOpen),
+				ErrorToken(LexerError::StringLiteralOpen, 2),
 				endToken
-			},
-			{
-				{.error{.code = LexerError::StringLiteralOpen, .line = 2}}
 			}
 		));
 	};
 	"non-closed string literal on line 2 LF"_test = [] {
 		expect(s_test.Failure("non-closed string literal on line 2 LF", "\n'abc",
 			{
-				ErrorToken(LexerError::StringLiteralOpen),
+				ErrorToken(LexerError::StringLiteralOpen, 2),
 				endToken
-			},
-			{
-				{.error{.code = LexerError::StringLiteralOpen, .line = 2}}
 			}
 		));
 	};
@@ -385,9 +369,6 @@ suite lexer_string_literal_tests = [] {
 			{
 				ErrorToken(LexerError::StringLiteralOpen),
 				endToken
-			},
-			{
-				{.error{.code = LexerError::StringLiteralOpen, .line = 1}}
 			}
 		));
 	};
@@ -464,9 +445,6 @@ suite lexer_string_field_tests = [] {
 				ErrorToken(LexerError::StringFieldIllformed),
 				{.type = Token::Type::LiteralString},
 				endToken
-			},
-			{
-				{.error{.code = LexerError::StringFieldIllformed}}
 			}
 		));
 	};
@@ -477,9 +455,6 @@ suite lexer_string_field_tests = [] {
 				ErrorToken(LexerError::StringFieldIllformed),
 				{.type = Token::Type::LiteralString, .value = "n}"},
 				endToken
-			},
-			{
-				{.error{.code = LexerError::StringFieldIllformed}}
 			}
 		));
 	};
@@ -490,9 +465,6 @@ suite lexer_string_field_tests = [] {
 				ErrorToken(LexerError::StringFieldUnknown),
 				{.type = Token::Type::LiteralString, .value = "m}"},
 				endToken
-			},
-			{
-				{.error{.code = LexerError::StringFieldUnknown}}
 			}
 		));
 	};
@@ -707,9 +679,6 @@ suite lexer_comment_tests = [] {
 				{.type = idType, .value = "ident234"},
 				ErrorToken(LexerError::CommentOpen),
 				endToken
-			},
-			{
-				{.error{.code = LexerError::CommentOpen, .line = 1}}
 			}
 		));
 	};

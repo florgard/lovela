@@ -81,16 +81,15 @@ protected:
 
 	struct Color
 	{
-		// Copied from ut.hpp (c) Kris Jusiak 
 		std::string_view none = "\033[0m";
 		std::string_view pass = "\033[32m";
 		std::string_view warn = "\033[33m";
 		std::string_view fail = "\033[31m";
 		std::string_view name = "\033[33m";
-		std::string_view code = "\033[1;36m";
+		std::string_view code = "\033[96m";
 		std::string_view output = "\033[36m";
-		std::string_view expect = "\033[1;32m";
-		std::string_view actual = "\033[1;33m";
+		std::string_view expect = "\033[92m";
+		std::string_view actual = "\033[93m";
 	} color;
 
 private:

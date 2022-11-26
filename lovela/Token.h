@@ -45,28 +45,23 @@ struct Token
 	struct Error
 	{
 		LexerError code{};
+		size_t line = 1;
+		size_t column = 1;
 		std::string message;
-		size_t line{};
-		size_t column{};
+
+		[[nodiscard]] constexpr bool operator==(const Error& rhs) const noexcept
+		{
+			// Compare the error line only on error. Don't compare the error column and message.
+			return code == rhs.code && (code == LexerError::NoError || line == rhs.line);
+		}
+
+		[[nodiscard]] constexpr bool operator!=(const Error& rhs) const noexcept
+		{
+			return !operator==(rhs);
+		}
 	} error;
 
-	[[nodiscard]] constexpr bool operator==(const Token& rhs) const noexcept
-	{
-		if (type == Type::Error || rhs.type == Type::Error)
-		{
-			// Don't compare the value (containing the error message). Don't compare the code location.
-			return rhs.type == type && rhs.error.code == error.code;
-		}
-		else
-		{
-			return rhs.type == type && rhs.value == value;
-		}
-	}
-
-	[[nodiscard]] constexpr bool operator!=(const Token& rhs) const noexcept
-	{
-		return !operator==(rhs);
-	}
+	[[nodiscard]] constexpr auto operator<=>(const Token& rhs) const noexcept = default;
 
 	[[nodiscard]] constexpr operator bool() const noexcept
 	{
@@ -80,6 +75,6 @@ struct Token
 
 	[[nodiscard]] void Print(std::ostream& stream) const
 	{
-		stream << '[' << to_string(type) << ',' << to_string(error.code) << ',' << value << ']';
+		stream << '[' << to_string(type) << ',' << value << ',' << to_string(error.code) << ',' << error.line << ',' << error.column << ',' << error.message << ']';
 	}
 };
