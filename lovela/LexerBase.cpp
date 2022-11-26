@@ -125,4 +125,13 @@ void LexerBase::PrintErrorSourceCode(std::ostream& stream, const Token& token) n
 	}
 	
 	stream << '\n';
+
+	// Drop all lines before the requested one to avoid keeping a lot of lines in memory.
+	// It's assumed that errors are always printed in a forward order.
+
+	while (firstSourceCodeLine < line)
+	{
+		sourceCodeLines.pop_front();
+		++firstSourceCodeLine;
+	}
 }
