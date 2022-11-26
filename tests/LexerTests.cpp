@@ -767,9 +767,9 @@ suite lexer_builtin_types_tests = [] {
 			{
 				{.type = Token::Type::ParenSquareOpen, .value = "["},
 				{.type = Token::Type::SeparatorSlash, .value = "/"},
-				{.type = Token::Type::Identifier, .value = "type"},
+				IdToken("type"),
 				{.type = Token::Type::SeparatorSlash, .value = "/"},
-				{.type = Token::Type::Identifier, .value = "i32"},
+				IdToken("i32"),
 				{.type = Token::Type::ParenSquareClose, .value = "]"},
 				EndToken()
 			}
