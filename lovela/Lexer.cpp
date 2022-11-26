@@ -346,9 +346,7 @@ void Lexer::LexLiteralNumber() noexcept
 
 void Lexer::LexComment() noexcept
 {
-	while (Accept('<'))
-	{
-	}
+	while (Accept('<'));
 
 	int commentLevel = 1;
 
@@ -356,9 +354,7 @@ void Lexer::LexComment() noexcept
 	{
 		if (Accept(regexes.GetEndComment(), 2))
 		{
-			while (Accept('>'))
-			{
-			}
+			while (Accept('>'));
 
 			commentLevel--;
 
@@ -371,9 +367,7 @@ void Lexer::LexComment() noexcept
 		{
 			// Nested comment.
 
-			while (Accept('<'))
-			{
-			}
+			while (Accept('<'));
 
 			commentLevel++;
 		}
