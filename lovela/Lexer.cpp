@@ -14,7 +14,9 @@ void Lexer::AddToken(Token&& token) noexcept
 	}
 
 	token.error.line = currentLine;
-	token.error.column = currentColumn;
+	token.error.column = currentTokenColumn;
+
+	currentTokenColumn = nextTokenColumn;
 
 	currentTokens.emplace_back(std::move(token));
 }
@@ -126,7 +128,8 @@ void Lexer::AddCodeLine() noexcept
 	sourceCodeLines.push_back(currentSourceCode.str());
 	currentSourceCode.clear();
 	currentLine++;
-	currentColumn = 1;
+	currentTokenColumn = 1;
+	nextTokenColumn = 1;
 }
 
 bool Lexer::Accept() noexcept
@@ -145,7 +148,7 @@ bool Lexer::Accept() noexcept
 	else
 	{
 		currentSourceCode << characters[Current];
-		currentColumn++;
+		nextTokenColumn++;
 	}
 
 	return true;

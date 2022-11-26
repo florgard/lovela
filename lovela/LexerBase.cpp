@@ -102,18 +102,20 @@ void LexerBase::PrintErrorSourceCode(std::ostream& stream, const Token& token) n
 
 	const auto length = sourceCode.length();
 	const auto begin = std::min(column - 1, length);
-	const auto end = std::min(begin + token.value.length(), length);
+	auto end = std::min(begin + token.value.length(), length);
+	const auto count = end - begin;
 
-	stream << '(' << line << ':' << column << ") " << sourceCode.substr(0, begin) << color.fail;
+	stream << '(' << line << ':' << column << ") " << color.code << sourceCode.substr(0, begin) << color.fail;
 
 	if (begin < end)
 	{
-		stream << sourceCode.substr(begin, end);
+		stream << sourceCode.substr(begin, count);
 	}
 	else if (end < length)
 	{
 		// Highlight the character after if the token is empty.
-		stream << sourceCode.substr(begin, end + 1);
+		++end;
+		stream << sourceCode.substr(begin, 1);
 	}
 	else
 	{
@@ -121,15 +123,15 @@ void LexerBase::PrintErrorSourceCode(std::ostream& stream, const Token& token) n
 		stream << ' ';
 	}
 
-	stream << color.none;
+	stream << color.none << color.code;
 
 	// Write the remaining part of the line, if any.
 	if (end < length)
 	{
 		stream << sourceCode.substr(end);
 	}
-	
-	stream << '\n';
+
+	stream << color.none << '\n';
 
 	// Drop all lines before the requested one to avoid keeping a lot of lines in memory.
 	// It's assumed that errors are always printed in a forward order.

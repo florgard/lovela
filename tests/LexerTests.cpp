@@ -42,6 +42,7 @@ bool LexerTest::YieldsTokens(const char* name, std::string_view code, const std:
 				<< "Expected:\n" << color.expect;
 			expected.Print(std::cerr);
 			std::cerr << color.none << '\n';
+			lexer->PrintErrorSourceCode(std::cerr, actual);
 		}
 	}
 

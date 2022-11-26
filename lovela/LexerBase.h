@@ -76,7 +76,8 @@ protected:
 	[[nodiscard]] Token GetToken(std::string_view lexeme) noexcept;
 
 	size_t currentLine = 1;
-	size_t currentColumn = 1;
+	size_t currentTokenColumn = 1;
+	size_t nextTokenColumn = 1;
 	std::ostringstream currentSourceCode;
 
 	size_t firstSourceCodeLine = 1;
@@ -86,5 +87,6 @@ protected:
 	{
 		std::string_view none = "\033[0m";
 		std::string_view fail = "\033[97m\033[41m";
+		std::string_view code = "\033[96m";
 	} color;
 };
