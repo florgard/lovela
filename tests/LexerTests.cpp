@@ -12,7 +12,7 @@ public:
 	bool YieldsTokens(const char* name, std::string_view code, const std::vector<Token>& expectedTokens);
 };
 
-static LexerTest s_test;
+static LexerTest lexerTest;
 
 bool LexerTest::YieldsTokens(const char* name, std::string_view code, const std::vector<Token>& expectedTokens)
 {
@@ -92,7 +92,7 @@ static constexpr Token ErrorToken(LexerError error, size_t line = 1)
 
 suite lexer_rudimental_tests = [] {
 	"empty expression"_test = [] {
-		expect(s_test.YieldsTokens("empty expression",
+		expect(lexerTest.YieldsTokens("empty expression",
 			"",
 			{
 				endToken
@@ -100,7 +100,7 @@ suite lexer_rudimental_tests = [] {
 		));
 	};
 	"single character"_test = [] {
-		expect(s_test.YieldsTokens("single character",
+		expect(lexerTest.YieldsTokens("single character",
 			".",
 			{
 				{.type = Token::Type::SeparatorDot, .value = "." },
@@ -112,7 +112,7 @@ suite lexer_rudimental_tests = [] {
 
 suite lexer_identifier_tests = [] {
 	"simple identifier"_test = [] {
-		expect(s_test.YieldsTokens("simple identifier",
+		expect(lexerTest.YieldsTokens("simple identifier",
 			"abc",
 			{
 				{.type = idType, .value = "abc" },
@@ -121,7 +121,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"two identifiers"_test = [] {
-		expect(s_test.YieldsTokens("two identifiers",
+		expect(lexerTest.YieldsTokens("two identifiers",
 			"abc def",
 			{
 				{.type = idType, .value = "abc" },
@@ -131,7 +131,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"alphanumerical identifier"_test = [] {
-		expect(s_test.YieldsTokens("alphanumerical identifier",
+		expect(lexerTest.YieldsTokens("alphanumerical identifier",
 			"abc123",
 			{
 				{.type = idType, .value = "abc123" },
@@ -140,7 +140,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"kebab case identifier"_test = [] {
-		expect(s_test.YieldsTokens("kebab case identifier",
+		expect(lexerTest.YieldsTokens("kebab case identifier",
 			"abc-123",
 			{
 				{.type = idType, .value = "abc-123" },
@@ -149,7 +149,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"snake case identifier"_test = [] {
-		expect(s_test.YieldsTokens("snake case identifier",
+		expect(lexerTest.YieldsTokens("snake case identifier",
 			"abc_123",
 			{
 				{.type = idType, .value = "abc_123" },
@@ -158,7 +158,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"operator character identifier"_test = [] {
-		expect(s_test.YieldsTokens("operator character identifier",
+		expect(lexerTest.YieldsTokens("operator character identifier",
 			"abc>=123",
 			{
 				{.type = idType, .value = "abc>=123" },
@@ -167,7 +167,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"Unicode identifier"_test = [] {
-		expect(s_test.YieldsTokens("Unicode identifier",
+		expect(lexerTest.YieldsTokens("Unicode identifier",
 			"\xE6\x97\xA5\xE6\x9C\xAC", // Nihon in nihongo, U+65E5 U+672C
 			{
 				{.type = idType, .value = "\xE6\x97\xA5\xE6\x9C\xAC" },
@@ -176,7 +176,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"Unicode combining mark identifier"_test = [] {
-		expect(s_test.YieldsTokens("Unicode combining mark identifier",
+		expect(lexerTest.YieldsTokens("Unicode combining mark identifier",
 			"a\xCC\x80", // a with combining mark, U+0300
 			{
 				{.type = idType, .value = "a\xCC\x80" },
@@ -185,7 +185,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"invalid identifier 1"_test = [] {
-		expect(s_test.YieldsTokens("invalid identifier 1",
+		expect(lexerTest.YieldsTokens("invalid identifier 1",
 			"1abc",
 			{
 				{.type = Token::Type::LiteralInteger, .value = "1"},
@@ -196,7 +196,7 @@ suite lexer_identifier_tests = [] {
 		));
 	};
 	"invalid identifier 2"_test = [] {
-		expect(s_test.YieldsTokens("invalid identifier 2",
+		expect(lexerTest.YieldsTokens("invalid identifier 2",
 			"=abc",
 			{
 				ErrorToken(LexerError::SyntaxError),
@@ -208,7 +208,7 @@ suite lexer_identifier_tests = [] {
 
 suite lexer_numeric_literals_tests = [] {
 	"integer literal"_test = [] {
-		expect(s_test.YieldsTokens("integer literal",
+		expect(lexerTest.YieldsTokens("integer literal",
 			"123",
 			{
 				{.type = Token::Type::LiteralInteger, .value = "123" },
@@ -217,7 +217,7 @@ suite lexer_numeric_literals_tests = [] {
 		));
 	};
 	"integer literal and full stop"_test = [] {
-		expect(s_test.YieldsTokens("integer literal and full stop",
+		expect(lexerTest.YieldsTokens("integer literal and full stop",
 			"123.",
 			{
 				{.type = Token::Type::LiteralInteger, .value = "123"},
@@ -227,7 +227,7 @@ suite lexer_numeric_literals_tests = [] {
 		));
 	};
 	"decimal literal"_test = [] {
-		expect(s_test.YieldsTokens("decimal literal",
+		expect(lexerTest.YieldsTokens("decimal literal",
 			"123.456",
 			{
 				{.type = Token::Type::LiteralDecimal, .value = "123.456" },
@@ -236,7 +236,7 @@ suite lexer_numeric_literals_tests = [] {
 		));
 	};
 	"decimal literal and full stop"_test = [] {
-		expect(s_test.YieldsTokens("decimal literal and full stop",
+		expect(lexerTest.YieldsTokens("decimal literal and full stop",
 			"123.456.",
 			{
 				{.type = Token::Type::LiteralDecimal, .value = "123.456"},
@@ -246,7 +246,7 @@ suite lexer_numeric_literals_tests = [] {
 		));
 	};
 	"decimal literal, full stop, digit"_test = [] {
-		expect(s_test.YieldsTokens("decimal literal, full stop, digit",
+		expect(lexerTest.YieldsTokens("decimal literal, full stop, digit",
 			"123.456.7",
 			{
 				{.type = Token::Type::LiteralDecimal, .value = "123.456"},
@@ -260,7 +260,7 @@ suite lexer_numeric_literals_tests = [] {
 
 suite lexer_string_literal_tests = [] {
 	"empty string literal"_test = [] {
-		expect(s_test.YieldsTokens("empty string literal",
+		expect(lexerTest.YieldsTokens("empty string literal",
 			"''",
 			{
 				{.type = Token::Type::LiteralString, .value = "" },
@@ -269,7 +269,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"single escaped quotation mark"_test = [] {
-		expect(s_test.YieldsTokens("single escaped quotation mark",
+		expect(lexerTest.YieldsTokens("single escaped quotation mark",
 			"''''",
 			{
 				{.type = Token::Type::LiteralString, .value = "'" },
@@ -278,7 +278,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"simple string literal"_test = [] {
-		expect(s_test.YieldsTokens("simple string literal",
+		expect(lexerTest.YieldsTokens("simple string literal",
 			"'abc'",
 			{
 				{.type = Token::Type::LiteralString, .value = "abc" },
@@ -287,7 +287,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"string literal with whitespace"_test = [] {
-		expect(s_test.YieldsTokens("string literal with whitespace",
+		expect(lexerTest.YieldsTokens("string literal with whitespace",
 			"'ab c'",
 			{
 				{.type = Token::Type::LiteralString, .value = "ab c" },
@@ -296,7 +296,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"string literal with escaped quotation mark"_test = [] {
-		expect(s_test.YieldsTokens("string literal with escaped quotation mark",
+		expect(lexerTest.YieldsTokens("string literal with escaped quotation mark",
 			"'ab''c'",
 			{
 				{.type = Token::Type::LiteralString, .value = "ab'c" },
@@ -305,7 +305,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"separated string literals"_test = [] {
-		expect(s_test.YieldsTokens("separated string literals",
+		expect(lexerTest.YieldsTokens("separated string literals",
 			"'ab' 'c'",
 			{
 				{.type = Token::Type::LiteralString, .value = "ab"},
@@ -315,7 +315,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"comment in string literal"_test = [] {
-		expect(s_test.YieldsTokens("comment in string literal",
+		expect(lexerTest.YieldsTokens("comment in string literal",
 			"'<< abc >>'",
 			{
 				{.type = Token::Type::LiteralString, .value = "<< abc >>" },
@@ -324,7 +324,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"non-closed string literal"_test = [] {
-		expect(s_test.YieldsTokens("non-closed string literal",
+		expect(lexerTest.YieldsTokens("non-closed string literal",
 			"'",
 			{
 				ErrorToken(LexerError::StringLiteralOpen),
@@ -333,7 +333,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"non-closed string literal on line 1"_test = [] {
-		expect(s_test.YieldsTokens("non-closed string literal on line 1",
+		expect(lexerTest.YieldsTokens("non-closed string literal on line 1",
 			"'abc",
 			{
 				ErrorToken(LexerError::StringLiteralOpen),
@@ -342,7 +342,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"non-closed string literal on line 2 CRLF"_test = [] {
-		expect(s_test.YieldsTokens("non-closed string literal on line 2 CRLF",
+		expect(lexerTest.YieldsTokens("non-closed string literal on line 2 CRLF",
 			"\r\n'abc",
 			{
 				ErrorToken(LexerError::StringLiteralOpen, 2),
@@ -351,7 +351,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"non-closed string literal on line 2 LF"_test = [] {
-		expect(s_test.YieldsTokens("non-closed string literal on line 2 LF", "\n'abc",
+		expect(lexerTest.YieldsTokens("non-closed string literal on line 2 LF", "\n'abc",
 			{
 				ErrorToken(LexerError::StringLiteralOpen, 2),
 				endToken
@@ -359,7 +359,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"non-closed string literal on line 1 CR"_test = [] {
-		expect(s_test.YieldsTokens("non-closed string literal on line 1 CR",
+		expect(lexerTest.YieldsTokens("non-closed string literal on line 1 CR",
 			"\r'abc",
 			{
 				ErrorToken(LexerError::StringLiteralOpen),
@@ -368,7 +368,7 @@ suite lexer_string_literal_tests = [] {
 		));
 	};
 	"whitespace outside and within string literal"_test = [] {
-		expect(s_test.YieldsTokens("whitespace outside and within string literal",
+		expect(lexerTest.YieldsTokens("whitespace outside and within string literal",
 			"\t'ab\r\n\tc'\r\n",
 			{
 				{.type = Token::Type::LiteralString, .value = "ab\r\n\tc" },
@@ -380,7 +380,7 @@ suite lexer_string_literal_tests = [] {
 
 suite lexer_string_field_tests = [] {
 	"escaped curly bracket"_test = [] {
-		expect(s_test.YieldsTokens("escaped curly bracket",
+		expect(lexerTest.YieldsTokens("escaped curly bracket",
 			"'{{'",
 			{
 				{.type = Token::Type::LiteralString, .value = "{" },
@@ -389,7 +389,7 @@ suite lexer_string_field_tests = [] {
 		));
 	};
 	"escaped curly bracket"_test = [] {
-		expect(s_test.YieldsTokens("escaped curly bracket",
+		expect(lexerTest.YieldsTokens("escaped curly bracket",
 			"'{{}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "{}" },
@@ -398,7 +398,7 @@ suite lexer_string_field_tests = [] {
 		));
 	};
 	"single closing curly bracket"_test = [] {
-		expect(s_test.YieldsTokens("single closing curly bracket",
+		expect(lexerTest.YieldsTokens("single closing curly bracket",
 			"'}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "}" },
@@ -407,7 +407,7 @@ suite lexer_string_field_tests = [] {
 		));
 	};
 	"string field"_test = [] {
-		expect(s_test.YieldsTokens("string field",
+		expect(lexerTest.YieldsTokens("string field",
 			"'{n}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "\n" },
@@ -416,7 +416,7 @@ suite lexer_string_field_tests = [] {
 		));
 	};
 	"string fields"_test = [] {
-		expect(s_test.YieldsTokens("string fields",
+		expect(lexerTest.YieldsTokens("string fields",
 			"'{t}{n}{r}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "\t\n\r" },
@@ -425,7 +425,7 @@ suite lexer_string_field_tests = [] {
 		));
 	};
 	"embedded string fields"_test = [] {
-		expect(s_test.YieldsTokens("embedded string fields",
+		expect(lexerTest.YieldsTokens("embedded string fields",
 			"'abc{r}{n}def'",
 			{
 				{.type = Token::Type::LiteralString, .value = "abc\r\ndef" },
@@ -434,7 +434,7 @@ suite lexer_string_field_tests = [] {
 		));
 	};
 	"non-closed string field"_test = [] {
-		expect(s_test.YieldsTokens("non-closed string field",
+		expect(lexerTest.YieldsTokens("non-closed string field",
 			"'{n'",
 			{
 				ErrorToken(LexerError::StringFieldIllformed),
@@ -444,7 +444,7 @@ suite lexer_string_field_tests = [] {
 		));
 	};
 	"ill-formed string field"_test = [] {
-		expect(s_test.YieldsTokens("ill-formed string field",
+		expect(lexerTest.YieldsTokens("ill-formed string field",
 			"'{nn}'",
 			{
 				ErrorToken(LexerError::StringFieldIllformed),
@@ -454,7 +454,7 @@ suite lexer_string_field_tests = [] {
 		));
 	};
 	"unknown string field"_test = [] {
-		expect(s_test.YieldsTokens("unknown string field",
+		expect(lexerTest.YieldsTokens("unknown string field",
 			"'{m}'",
 			{
 				ErrorToken(LexerError::StringFieldUnknown),
@@ -467,7 +467,7 @@ suite lexer_string_field_tests = [] {
 
 suite lexer_string_interpolation_tests = [] {
 	"unindexed string interpolation"_test = [] {
-		expect(s_test.YieldsTokens("unindexed string interpolation",
+		expect(lexerTest.YieldsTokens("unindexed string interpolation",
 			"'{}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "" },
@@ -478,7 +478,7 @@ suite lexer_string_interpolation_tests = [] {
 		));
 	};
 	"embedded unindexed string interpolation"_test = [] {
-		expect(s_test.YieldsTokens("embedded unindexed string interpolation",
+		expect(lexerTest.YieldsTokens("embedded unindexed string interpolation",
 			"'abc{}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "abc" },
@@ -489,7 +489,7 @@ suite lexer_string_interpolation_tests = [] {
 		));
 	};
 	"unindexed string interpolations"_test = [] {
-		expect(s_test.YieldsTokens("unindexed string interpolations",
+		expect(lexerTest.YieldsTokens("unindexed string interpolations",
 			"'abc{}{}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "abc" },
@@ -502,7 +502,7 @@ suite lexer_string_interpolation_tests = [] {
 		));
 	};
 	"indexed string interpolation"_test = [] {
-		expect(s_test.YieldsTokens("indexed string interpolation",
+		expect(lexerTest.YieldsTokens("indexed string interpolation",
 			"'{2}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "" },
@@ -513,7 +513,7 @@ suite lexer_string_interpolation_tests = [] {
 		));
 	};
 	"indexed string interpolations"_test = [] {
-		expect(s_test.YieldsTokens("indexed string interpolations",
+		expect(lexerTest.YieldsTokens("indexed string interpolations",
 			"'abc{4}{1}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "abc" },
@@ -529,7 +529,7 @@ suite lexer_string_interpolation_tests = [] {
 
 suite lexer_function_declarations_tests = [] {
 	"trivial function declaration"_test = [] {
-		expect(s_test.YieldsTokens("trivial function declaration",
+		expect(lexerTest.YieldsTokens("trivial function declaration",
 			"func",
 			{
 				{.type = idType, .value = "func"},
@@ -538,7 +538,7 @@ suite lexer_function_declarations_tests = [] {
 		));
 	};
 	"trivial integer function"_test = [] {
-		expect(s_test.YieldsTokens("trivial integer function",
+		expect(lexerTest.YieldsTokens("trivial integer function",
 			"func: 123.",
 			{
 				{.type = idType, .value = "func"},
@@ -550,7 +550,7 @@ suite lexer_function_declarations_tests = [] {
 		));
 	};
 	"trivial decimal function with whitespace"_test = [] {
-		expect(s_test.YieldsTokens("trivial decimal function with whitespace",
+		expect(lexerTest.YieldsTokens("trivial decimal function with whitespace",
 			"func : 123.4.",
 			{
 				{.type = idType, .value = "func"},
@@ -562,7 +562,7 @@ suite lexer_function_declarations_tests = [] {
 		));
 	};
 	"trivial decimal function with mixed name and group"_test = [] {
-		expect(s_test.YieldsTokens("trivial decimal function with mixed name and group",
+		expect(lexerTest.YieldsTokens("trivial decimal function with mixed name and group",
 			"\r\nfunc44: (123.4).",
 			{
 				{.type = idType, .value = "func44"},
@@ -576,7 +576,7 @@ suite lexer_function_declarations_tests = [] {
 		));
 	};
 	"imported function"_test = [] {
-		expect(s_test.YieldsTokens("imported function",
+		expect(lexerTest.YieldsTokens("imported function",
 			"-> func",
 			{
 				{.type = Token::Type::OperatorArrow, .value = "->"},
@@ -586,7 +586,7 @@ suite lexer_function_declarations_tests = [] {
 		));
 	};
 	"exported function"_test = [] {
-		expect(s_test.YieldsTokens("exported function",
+		expect(lexerTest.YieldsTokens("exported function",
 			"<- []func",
 			{
 				{.type = Token::Type::OperatorArrow, .value = "<-"},
@@ -598,7 +598,7 @@ suite lexer_function_declarations_tests = [] {
 		));
 	};
 	"function with namespace"_test = [] {
-		expect(s_test.YieldsTokens("function with namespace",
+		expect(lexerTest.YieldsTokens("function with namespace",
 			"namespace/func",
 			{
 				{.type = idType, .value = "namespace"},
@@ -612,7 +612,7 @@ suite lexer_function_declarations_tests = [] {
 
 suite lexer_comment_tests = [] {
 	"mixed character identifier"_test = [] {
-		expect(s_test.YieldsTokens("mixed character identifier",
+		expect(lexerTest.YieldsTokens("mixed character identifier",
 			"ident123.",
 			{
 				{.type = idType, .value = "ident123"},
@@ -622,7 +622,7 @@ suite lexer_comment_tests = [] {
 		));
 	};
 	"commented out identifier"_test = [] {
-		expect(s_test.YieldsTokens("commented out identifier",
+		expect(lexerTest.YieldsTokens("commented out identifier",
 			"<< ident123. >>",
 			{
 				endToken
@@ -630,7 +630,7 @@ suite lexer_comment_tests = [] {
 		));
 	};
 	"commented out identifier and whitespace"_test = [] {
-		expect(s_test.YieldsTokens("commented out identifier and whitespace",
+		expect(lexerTest.YieldsTokens("commented out identifier and whitespace",
 			"<<\r\nident123.\r\n>>",
 			{
 				endToken
@@ -638,7 +638,7 @@ suite lexer_comment_tests = [] {
 		));
 	};
 	"commented and non-commented identifier"_test = [] {
-		expect(s_test.YieldsTokens("commented and non-commented identifier",
+		expect(lexerTest.YieldsTokens("commented and non-commented identifier",
 			"<< ident123. >> ident456.",
 			{
 				{.type = idType, .value = "ident456"},
@@ -648,7 +648,7 @@ suite lexer_comment_tests = [] {
 		));
 	};
 	"nested comments"_test = [] {
-		expect(s_test.YieldsTokens("nested comments",
+		expect(lexerTest.YieldsTokens("nested comments",
 			"<<<< 123 << 456 >>>>.>> ident456.",
 			{
 				{.type = idType, .value = "ident456"},
@@ -658,7 +658,7 @@ suite lexer_comment_tests = [] {
 		));
 	};
 	"multiple comments"_test = [] {
-		expect(s_test.YieldsTokens("multiple comments",
+		expect(lexerTest.YieldsTokens("multiple comments",
 			"<<<<123>>ident234<<<<123<<456>>>:>>.",
 			{
 				{.type = idType, .value = "ident234"},
@@ -668,7 +668,7 @@ suite lexer_comment_tests = [] {
 		));
 	};
 	"non-closed comment"_test = [] {
-		expect(s_test.YieldsTokens("non-closed comment",
+		expect(lexerTest.YieldsTokens("non-closed comment",
 			"<<<<123>>ident234<<<<123<<456>>>:>.",
 			{
 				{.type = idType, .value = "ident234"},
@@ -681,7 +681,7 @@ suite lexer_comment_tests = [] {
 
 suite lexer_comparison_tests = [] {
 	"comparison operator"_test = [] {
-		expect(s_test.YieldsTokens("comparison operator",
+		expect(lexerTest.YieldsTokens("comparison operator",
 			"1 < 2",
 			{
 				{.type = Token::Type::LiteralInteger, .value = "1"},
@@ -692,7 +692,7 @@ suite lexer_comparison_tests = [] {
 		));
 	};
 	"comparison declaration"_test = [] {
-		expect(s_test.YieldsTokens("comparison declaration",
+		expect(lexerTest.YieldsTokens("comparison declaration",
 			"<(operand)",
 			{
 				{.type = Token::Type::OperatorComparison, .value = "<"},
@@ -707,7 +707,7 @@ suite lexer_comparison_tests = [] {
 
 suite lexer_primitive_types_tests = [] {
 	"primitive type, int"_test = [] {
-		expect(s_test.YieldsTokens("primitive type, int",
+		expect(lexerTest.YieldsTokens("primitive type, int",
 			"[1000000]",
 			{
 				{.type = Token::Type::ParenSquareOpen, .value = "["},
@@ -718,7 +718,7 @@ suite lexer_primitive_types_tests = [] {
 		));
 	};
 	"primitive type, negative int"_test = [] {
-		expect(s_test.YieldsTokens("primitive type, negative int",
+		expect(lexerTest.YieldsTokens("primitive type, negative int",
 			"[-1000000]",
 			{
 				{.type = Token::Type::ParenSquareOpen, .value = "["},
@@ -729,7 +729,7 @@ suite lexer_primitive_types_tests = [] {
 		));
 	};
 	"primitive type, double"_test = [] {
-		expect(s_test.YieldsTokens("primitive type, double",
+		expect(lexerTest.YieldsTokens("primitive type, double",
 			"[1.0e300]",
 			{
 				{.type = Token::Type::ParenSquareOpen, .value = "["},
@@ -740,7 +740,7 @@ suite lexer_primitive_types_tests = [] {
 		));
 	};
 	"primitive type, int8 array"_test = [] {
-		expect(s_test.YieldsTokens("primitive type, int8 array",
+		expect(lexerTest.YieldsTokens("primitive type, int8 array",
 			"[100]#",
 			{
 				{.type = Token::Type::ParenSquareOpen, .value = "["},
@@ -752,7 +752,7 @@ suite lexer_primitive_types_tests = [] {
 		));
 	};
 	"primitive type, int8 array of arrays"_test = [] {
-		expect(s_test.YieldsTokens("primitive type, int8 array of arrays",
+		expect(lexerTest.YieldsTokens("primitive type, int8 array of arrays",
 			"[100]##",
 			{
 				{.type = Token::Type::ParenSquareOpen, .value = "["},
@@ -765,7 +765,7 @@ suite lexer_primitive_types_tests = [] {
 		));
 	};
 	"primitive type, int32 array size 8"_test = [] {
-		expect(s_test.YieldsTokens("primitive type, int32 array size 8",
+		expect(lexerTest.YieldsTokens("primitive type, int32 array size 8",
 			"[100000]#8",
 			{
 				{.type = Token::Type::ParenSquareOpen, .value = "["},
@@ -781,7 +781,7 @@ suite lexer_primitive_types_tests = [] {
 
 suite lexer_builtin_types_tests = [] {
 	"built-in type, /type/i32"_test = [] {
-		expect(s_test.YieldsTokens("built-in type, /type/i32",
+		expect(lexerTest.YieldsTokens("built-in type, /type/i32",
 			"[/type/i32]",
 			{
 				{.type = Token::Type::ParenSquareOpen, .value = "["},
