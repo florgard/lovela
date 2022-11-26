@@ -8,13 +8,6 @@ Add comment tokens.
 
 /type/bool
 
-Identifiers beginning with number or operator
-* 6.28 -> 2pi
-* 50 -> %approved
-* -20 -> -4_fahrenheit
-* What about floats? Exponential notation?
-  * OK: Dot (separator) not accepted in identifier.
-
 Operators require whitespace
 * max-min << identifier >>
 * max - min << difference >>
