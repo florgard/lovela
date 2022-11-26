@@ -13,8 +13,9 @@ public:
 	[[nodiscard]] TokenGenerator Lex() noexcept override;
 
 private:
-	void GetNextCharacter() noexcept;
 	void AddToken(Token&& token) noexcept override;
+
+	void GetNextCharacter() noexcept;
 	void AddCurrenToken() noexcept;
 	void WordBreak() noexcept;
 	void ExpectWordBreak() noexcept;
