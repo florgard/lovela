@@ -110,9 +110,14 @@ void LexerBase::PrintErrorSourceCode(std::ostream& stream, const Token& token) n
 	{
 		stream << sourceCode.substr(begin, end);
 	}
+	else if (end < length)
+	{
+		// Highlight the character after if the token is empty.
+		stream << sourceCode.substr(begin, end + 1);
+	}
 	else
 	{
-		// Add padding if the token is empty.
+		// Add highlighted padding at the end of the line.
 		stream << ' ';
 	}
 
