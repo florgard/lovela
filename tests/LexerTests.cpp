@@ -21,11 +21,12 @@ bool LexerTest::YieldsTokens(const char* name, std::string_view code, const std:
 	auto tokens = to_vector(lexer->Lex());
 
 	bool success = true;
-	const Token emptyToken{};
 
 	auto actualCount = tokens.size();
 	auto expectedCount = expectedTokens.size();
 	auto count = std::max(actualCount, expectedCount);
+	const Token emptyToken{};
+
 	for (size_t i = 0; i < count; i++)
 	{
 		const auto& actual = i < actualCount ? tokens[i] : emptyToken;
@@ -43,34 +44,6 @@ bool LexerTest::YieldsTokens(const char* name, std::string_view code, const std:
 			expected.Print(std::cerr);
 			std::cerr << color.none << '\n';
 			lexer->PrintErrorSourceCode(std::cerr, actual);
-		}
-	}
-
-	const auto errors = to_vector(tokens | std::views::filter([](auto& t) { return t.IsError(); }));
-	const auto expectedErrors = to_vector(expectedTokens | std::views::filter([](auto& t) { return t.IsError(); }));
-
-	actualCount = errors.size();
-	expectedCount = expectedErrors.size();
-	count = std::max(actualCount, expectedCount);
-	for (size_t i = 0; i < count; i++)
-	{
-		const auto& actual = i < actualCount ? errors[i].error : emptyToken.error;
-		const auto& expected = i < expectedCount ? expectedErrors[i].error : emptyToken.error;
-		if (actual.code != expected.code)
-		{
-			success = false;
-
-			PrintIncorrectErrorCodeMessage(std::cerr, "Lexer", name, i, actual.code, expected.code);
-			PrintErrorMessage(std::cerr, actual);
-			lexer->PrintErrorSourceCode(std::cerr, errors[i]);
-		}
-		else if (expected.line && actual.line != expected.line)
-		{
-			success = false;
-
-			PrintIncorrectErrorLineMessage(std::cerr, "Lexer", name, i, actual.line, expected.line);
-			PrintErrorMessage(std::cerr, actual);
-			lexer->PrintErrorSourceCode(std::cerr, errors[i]);
 		}
 	}
 
