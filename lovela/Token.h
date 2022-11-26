@@ -40,17 +40,28 @@ struct Token
 		OperatorArrow,
 	} type{};
 
-	LexerError error{};
 	std::string value;
 
-	int line{};
-	int column{};
-	std::string code;
+	struct Error
+	{
+		LexerError code{};
+		std::string_view message;
+		int line{};
+		int column{};
+		std::string sourceCode;
+	} error;
 
 	[[nodiscard]] constexpr bool operator==(const Token& rhs) const noexcept
 	{
-		// Don't compare the code location. If this is an error token, then also don't compare the value (containing the error message).
-		return rhs.type == type && rhs.error == error && (type == Type::Error || rhs.value == value);
+		if (type == Type::Error || rhs.type == Type::Error)
+		{
+			// Don't compare the value (containing the error message). Don't compare the code location.
+			return rhs.type == type && rhs.error.code == error.code;
+		}
+		else
+		{
+			return rhs.type == type && rhs.value == value;
+		}
 	}
 
 	[[nodiscard]] constexpr bool operator!=(const Token& rhs) const noexcept
@@ -63,8 +74,13 @@ struct Token
 		return type != Type::Empty;
 	}
 
+	[[nodiscard]] constexpr bool IsError() const noexcept
+	{
+		return type == Type::Error;
+	}
+
 	[[nodiscard]] void Print(std::ostream& stream) const
 	{
-		stream << '[' << to_string(type) << ',' << to_string(error) << ',' << value << ']';
+		stream << '[' << to_string(type) << ',' << to_string(error.code) << ',' << value << ']';
 	}
 };

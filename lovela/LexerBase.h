@@ -75,5 +75,5 @@ protected:
 
 	int currentLine = 1;
 	int currentColumn = 1;
-	std::deque<char> currentCode;
+	std::deque<char> currentSourceCode;
 };

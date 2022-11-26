@@ -57,13 +57,13 @@ bool LexerTest::Failure(const char* name, std::string_view code, const std::vect
 	count = std::max(actualCount, expectedCount);
 	for (size_t i = 0; i < count; i++)
 	{
-		const auto& actual = i < actualCount ? errors[i] : emptyToken;
-		const auto& expected = i < expectedCount ? expectedErrors[i] : emptyToken;
-		if (actual.error != expected.error)
+		const auto& actual = i < actualCount ? errors[i].error : emptyToken.error;
+		const auto& expected = i < expectedCount ? expectedErrors[i].error : emptyToken.error;
+		if (actual.code != expected.code)
 		{
 			success = false;
 
-			PrintIncorrectErrorCodeMessage(std::cerr, "Lexer", name, i, actual.error, expected.error);
+			PrintIncorrectErrorCodeMessage(std::cerr, "Lexer", name, i, actual.code, expected.code);
 			PrintErrorMessage(std::cerr, actual);
 		}
 		else if (expected.line && actual.line != expected.line)
@@ -88,7 +88,7 @@ static constexpr auto idType = Token::Type::Identifier;
 
 static constexpr Token ErrorToken(LexerError error)
 {
-	return {.type = Token::Type::Error, .error = error};
+	return { .type = Token::Type::Error, .error{.code = error} };
 }
 
 suite lexer_rudimental_tests = [] {
@@ -190,12 +190,12 @@ suite lexer_identifier_tests = [] {
 			"1abc",
 			{
 				{.type = Token::Type::LiteralInteger, .value = "1"},
-				{.type = Token::Type::Error, .error = LexerError::SyntaxError },
+				{.type = Token::Type::Error, .error{.code = LexerError::SyntaxError}},
 				{.type = idType, .value = "abc"},
 				endToken
 			},
 			{
-				{.error = LexerError::SyntaxError}
+				{.error{.code = LexerError::SyntaxError}}
 			}
 		));
 	};
@@ -203,11 +203,11 @@ suite lexer_identifier_tests = [] {
 		expect(s_test.Failure("invalid identifier 2",
 			"=abc",
 			{
-				{.type = Token::Type::Error, .error = LexerError::SyntaxError },
+				{.type = Token::Type::Error, .error{.code = LexerError::SyntaxError}},
 				endToken
 			},
 			{
-				{.error = LexerError::SyntaxError}
+				{.error{.code = LexerError::SyntaxError}}
 			}
 		));
 	};
@@ -338,7 +338,7 @@ suite lexer_string_literal_tests = [] {
 				endToken
 			},
 			{
-				{.error = LexerError::StringLiteralOpen }
+				{.error{.code = LexerError::StringLiteralOpen}}
 			}
 		));
 	};
@@ -350,7 +350,7 @@ suite lexer_string_literal_tests = [] {
 				endToken
 			},
 			{
-				{.error = LexerError::StringLiteralOpen, .line = 1}
+				{.error{.code = LexerError::StringLiteralOpen, .line = 1}}
 			}
 		));
 	};
@@ -362,7 +362,7 @@ suite lexer_string_literal_tests = [] {
 				endToken
 			},
 			{
-				{.error = LexerError::StringLiteralOpen, .line = 2}
+				{.error{.code = LexerError::StringLiteralOpen, .line = 2}}
 			}
 		));
 	};
@@ -373,7 +373,7 @@ suite lexer_string_literal_tests = [] {
 				endToken
 			},
 			{
-				{.error = LexerError::StringLiteralOpen, .line = 2}
+				{.error{.code = LexerError::StringLiteralOpen, .line = 2}}
 			}
 		));
 	};
@@ -385,7 +385,7 @@ suite lexer_string_literal_tests = [] {
 				endToken
 			},
 			{
-				{.error = LexerError::StringLiteralOpen, .line = 1}
+				{.error{.code = LexerError::StringLiteralOpen, .line = 1}}
 			}
 		));
 	};
@@ -464,7 +464,7 @@ suite lexer_string_field_tests = [] {
 				endToken
 			},
 			{
-				{.error = LexerError::StringFieldIllformed}
+				{.error{.code = LexerError::StringFieldIllformed}}
 			}
 		));
 	};
@@ -477,7 +477,7 @@ suite lexer_string_field_tests = [] {
 				endToken
 			},
 			{
-				{.error = LexerError::StringFieldIllformed}
+				{.error{.code = LexerError::StringFieldIllformed}}
 			}
 		));
 	};
@@ -490,7 +490,7 @@ suite lexer_string_field_tests = [] {
 				endToken
 			},
 			{
-				{.error = LexerError::StringFieldUnknown}
+				{.error{.code = LexerError::StringFieldUnknown}}
 			}
 		));
 	};
@@ -707,7 +707,7 @@ suite lexer_comment_tests = [] {
 				endToken
 			},
 			{
-				{.error = LexerError::CommentOpen, .line = 1}
+				{.error{.code = LexerError::CommentOpen, .line = 1}}
 			}
 		));
 	};
