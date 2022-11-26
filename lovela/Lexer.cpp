@@ -16,11 +16,6 @@ void Lexer::AddToken(Token&& token) noexcept
 	token.error.line = currentLine;
 	token.error.column = currentColumn;
 
-	if (token.IsError())
-	{
-		token.error.message = token.value;
-	}
-
 	currentTokens.emplace_back(std::move(token));
 }
 
@@ -78,7 +73,7 @@ TokenGenerator Lexer::Lex() noexcept
 		else if (IsWordBreakExpected())
 		{
 			WordBreak();
-			AddToken({ .type = Token::Type::Error, .value = std::format("Unexpected character \"{}\".", characters[Next]), .error{.code = LexerError::SyntaxError} });
+			AddToken({ .type = Token::Type::Error, .error{.code = LexerError::SyntaxError, .message = std::format("Unexpected character \"{}\".", characters[Next]) } });
 		}
 		else if (AcceptBegin(regexes.GetBeginLiteralNumber(), 2))
 		{
@@ -176,7 +171,7 @@ bool Lexer::Accept(const std::regex& regex, size_t length) noexcept
 {
 	if (!(length > 0 && length <= characters.size() - Next))
 	{
-		AddToken({ .type = Token::Type::Error, .value = "Regex match out of bounds.", .error{.code = LexerError::InternalError } });
+		AddToken({ .type = Token::Type::Error, .error{.code = LexerError::InternalError, .message = "Regex match out of bounds." } });
 		return false;
 	}
 
@@ -206,7 +201,7 @@ bool Lexer::Expect(char character) noexcept
 		return true;
 	}
 
-	AddToken({ .type = Token::Type::Error, .value = std::format("Unexpected character \"{}\", expected \"{}\".", characters[Next], character), .error{.code = LexerError::SyntaxError} });
+	AddToken({ .type = Token::Type::Error, .error{.code = LexerError::SyntaxError, .message = std::format("Unexpected character \"{}\", expected \"{}\".", characters[Next], character) } });
 	return false;
 }
 
@@ -256,7 +251,7 @@ void Lexer::LexLiteralString() noexcept
 				// Add a string literal interpolation token with the next free index.
 				if (nextStringInterpolation > '9')
 				{
-					AddToken({ .type = Token::Type::Error, .value = "Too many string interpolations, index out of bounds (greater than 9).", .error{.code = LexerError::StringInterpolationOverflow} });
+					AddToken({ .type = Token::Type::Error, .error{.code = LexerError::StringInterpolationOverflow, .message = "Too many string interpolations, index out of bounds (greater than 9)." } });
 				}
 				else
 				{
@@ -278,7 +273,7 @@ void Lexer::LexLiteralString() noexcept
 				}
 				else
 				{
-					AddToken({ .type = Token::Type::Error, .value = std::format("Ill-formed string field \"{}\".", stringFieldCode), .error{.code = LexerError::StringFieldIllformed} });
+					AddToken({ .type = Token::Type::Error, .error{.code = LexerError::StringFieldIllformed, .message = std::format("Ill-formed string field \"{}\".", stringFieldCode), } });
 				}
 			}
 			else if (Accept(regexes.GetStringField(), 1))
@@ -292,12 +287,12 @@ void Lexer::LexLiteralString() noexcept
 				}
 				else
 				{
-					AddToken({ .type = Token::Type::Error, .value = std::format("Ill-formed string field \"{}\".", stringFieldCode), .error{.code = LexerError::StringFieldIllformed} });
+					AddToken({ .type = Token::Type::Error, .error{.code = LexerError::StringFieldIllformed, .message = std::format("Ill-formed string field \"{}\".", stringFieldCode) } });
 				}
 			}
 			else
 			{
-				AddToken({ .type = Token::Type::Error, .value = std::format("Unknown string field code \"{}\".", characters[Next]),.error{.code = LexerError::StringFieldUnknown} });
+				AddToken({ .type = Token::Type::Error, .error{.code = LexerError::StringFieldUnknown, .message = std::format("Unknown string field code \"{}\".", characters[Next]) } });
 			}
 		}
 		else if (Accept())
@@ -307,7 +302,7 @@ void Lexer::LexLiteralString() noexcept
 		}
 		else
 		{
-			AddToken({ .type = Token::Type::Error, .value = "A string literal wasn't terminated.", .error{.code = LexerError::StringLiteralOpen} });
+			AddToken({ .type = Token::Type::Error, .error{.code = LexerError::StringLiteralOpen, .message = "A string literal wasn't terminated." } });
 			return;
 		}
 	}
@@ -343,7 +338,7 @@ void Lexer::LexLiteralNumber() noexcept
 
 			if (!Accept(regexes.GetBeginLiteralNumber(), 2))
 			{
-				AddToken({ .type = Token::Type::Error, .value = "Ill-formed literal decimal number.", .error{.code = LexerError::StringLiteralOpen} });
+				AddToken({ .type = Token::Type::Error, .error{.code = LexerError::StringLiteralOpen, .message = "Ill-formed literal decimal number." } });
 				return;
 			}
 			
@@ -396,7 +391,7 @@ void Lexer::LexComment() noexcept
 		}
 		else
 		{
-			AddToken({ .type = Token::Type::Error, .value = "A comment wasn't terminated.", .error{.code = LexerError::CommentOpen} });
+			AddToken({ .type = Token::Type::Error, .error{.code = LexerError::CommentOpen, .message = "A comment wasn't terminated." } });
 			return;
 		}
 	}
