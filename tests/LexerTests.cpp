@@ -50,7 +50,7 @@ bool LexerTest::Failure(const char* name, std::string_view code, const std::vect
 		}
 	}
 
-	const auto errors = to_vector(tokens | std::views::filter([](auto& t) { return t.type == Token::Type::Error; }));
+	const auto errors = to_vector(tokens | std::views::filter([](auto& t) { return t.IsError(); }));
 
 	actualCount = errors.size();
 	expectedCount = expectedErrors.size();
