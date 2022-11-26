@@ -66,7 +66,7 @@ protected:
 			<< "Error " << index + 1 << " code is " << color.actual << to_string(actual) << color.none << ", expected " << color.expect << to_string(expected) << color.none << ".\n";
 	}
 
-	void PrintIncorrectErrorLineMessage(std::ostream& stream, const char* phase, const char* name, size_t index, int actual, int expected)
+	void PrintIncorrectErrorLineMessage(std::ostream& stream, const char* phase, const char* name, size_t index, size_t actual, size_t expected)
 	{
 		stream << color.fail << "ERROR: " << color.none
 			<< phase << " test \"" << color.name << name << color.none << "\": "

@@ -46,8 +46,8 @@ struct Token
 	{
 		LexerError code{};
 		std::string_view message;
-		int line{};
-		int column{};
+		size_t line{};
+		size_t column{};
 		std::string sourceCode;
 	} error;
 
