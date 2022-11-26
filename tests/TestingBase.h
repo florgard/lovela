@@ -76,14 +76,7 @@ protected:
 	template <typename ErrorType>
 	void PrintErrorMessage(std::ostream& stream, const ErrorType& error)
 	{
-		stream << to_string(error.code) << ": " << error.message << '\n'
-			<< '(' << error.token.error.line << ':' << error.token.error.column << ") \"..." << error.token.error.sourceCode << "\" <-- At this place" << '\n';
-	}
-
-	void PrintErrorMessage(std::ostream& stream, const Token::Error& error)
-	{
-		stream << to_string(error.code) << ": " << error.message << '\n'
-			<< '(' << error.line << ':' << error.column << ") \"..." << error.sourceCode << "\" <-- At this place" << '\n';
+		stream << to_string(error.code) << ": " << error.message << '\n';
 	}
 
 	struct Color

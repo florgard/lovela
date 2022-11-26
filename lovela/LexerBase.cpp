@@ -86,3 +86,43 @@ Token LexerBase::GetToken(std::string_view lexeme) noexcept
 
 	return {};
 }
+
+void LexerBase::PrintErrorSourceCode(std::ostream& stream, const Token& token) noexcept
+{
+	const auto line = token.error.line;
+	const auto column = token.error.column;
+
+	if (line < firstSourceCodeLine || line > firstSourceCodeLine + sourceCodeLines.size() - 1)
+	{
+		stream << "No source code available for line " << line << ".\n";
+		return;
+	}
+
+	const auto& sourceCode = sourceCodeLines[line - firstSourceCodeLine];
+
+	const auto length = sourceCode.length();
+	const auto begin = std::min(column - 1, length);
+	const auto end = std::min(begin + token.value.length(), length);
+
+	stream << '(' << line << ':' << column << ") " << sourceCode.substr(0, begin) << color.fail;
+
+	if (begin < end)
+	{
+		stream << sourceCode.substr(begin, end);
+	}
+	else
+	{
+		// Add padding if the token is empty.
+		stream << ' ';
+	}
+
+	stream << color.none;
+
+	// Write the remaining part of the line, if any.
+	if (end < length)
+	{
+		stream << sourceCode.substr(end);
+	}
+	
+	stream << '\n';
+}

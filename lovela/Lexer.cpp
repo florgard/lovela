@@ -13,12 +13,12 @@ void Lexer::AddToken(Token&& token) noexcept
 		return;
 	}
 
+	token.error.line = currentLine;
+	token.error.column = currentColumn;
+
 	if (token.IsError())
 	{
 		token.error.message = token.value;
-		token.error.line = currentLine;
-		token.error.column = currentColumn;
-		token.error.sourceCode = std::string(currentSourceCode.begin(), currentSourceCode.end());
 	}
 
 	currentTokens.emplace_back(std::move(token));
@@ -109,6 +109,9 @@ TokenGenerator Lexer::Lex() noexcept
 	// Add the end token.
 	AddToken({.type = Token::Type::End});
 
+	// Add the last code line.
+	AddCodeLine();
+
 	for (auto& token : currentTokens)
 	{
 		co_yield token;
@@ -123,6 +126,14 @@ void Lexer::GetNextCharacter() noexcept
 	charStream >> characters[NextAfter];
 }
 
+void Lexer::AddCodeLine() noexcept
+{
+	sourceCodeLines.push_back(currentSourceCode.str());
+	currentSourceCode.clear();
+	currentLine++;
+	currentColumn = 1;
+}
+
 bool Lexer::Accept() noexcept
 {
 	GetNextCharacter();
@@ -132,13 +143,14 @@ bool Lexer::Accept() noexcept
 		return false;
 	}
 
-	currentColumn++;
-
-	static constexpr size_t codeSampleCharacterCount = 20;
-	currentSourceCode.push_back(characters[Current]);
-	while (currentSourceCode.size() > codeSampleCharacterCount)
+	if (characters[Current] == '\n')
 	{
-		currentSourceCode.pop_front();
+		AddCodeLine();
+	}
+	else
+	{
+		currentSourceCode << characters[Current];
+		currentColumn++;
 	}
 
 	return true;
@@ -397,9 +409,4 @@ void Lexer::LexSeparator() noexcept
 
 void Lexer::LexWhitespace() noexcept
 {
-	if (characters[Current] == '\n')
-	{
-		currentLine++;
-		currentColumn = 1;
-	}
 }

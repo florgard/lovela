@@ -17,6 +17,7 @@ private:
 
 	void GetNextCharacter() noexcept;
 	void AddCurrenToken() noexcept;
+	void AddCodeLine() noexcept;
 	void WordBreak() noexcept;
 	void ExpectWordBreak() noexcept;
 	[[nodiscard]] bool IsWordBreakExpected() const noexcept;

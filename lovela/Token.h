@@ -48,7 +48,6 @@ struct Token
 		std::string_view message;
 		size_t line{};
 		size_t column{};
-		std::string sourceCode;
 	} error;
 
 	[[nodiscard]] constexpr bool operator==(const Token& rhs) const noexcept

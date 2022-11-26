@@ -83,6 +83,7 @@ bool ParserTest::Failure(const char* name, std::string_view code, const std::ran
 
 			PrintIncorrectErrorCodeMessage(std::cerr, "Parser", name, i, actual.code, expected.code);
 			PrintErrorMessage(std::cerr, actual);
+			lexer->PrintErrorSourceCode(std::cerr, errors[i].token);
 		}
 		else if (expected.token.error.line && actual.token.error.line != expected.token.error.line)
 		{
@@ -90,6 +91,7 @@ bool ParserTest::Failure(const char* name, std::string_view code, const std::ran
 
 			PrintIncorrectErrorLineMessage(std::cerr, "Parser", name, i, actual.token.error.line, expected.token.error.line);
 			PrintErrorMessage(std::cerr, actual);
+			lexer->PrintErrorSourceCode(std::cerr, errors[i].token);
 		}
 	}
 

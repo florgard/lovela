@@ -65,6 +65,7 @@ bool LexerTest::Failure(const char* name, std::string_view code, const std::vect
 
 			PrintIncorrectErrorCodeMessage(std::cerr, "Lexer", name, i, actual.code, expected.code);
 			PrintErrorMessage(std::cerr, actual);
+			lexer->PrintErrorSourceCode(std::cerr, errors[i]);
 		}
 		else if (expected.line && actual.line != expected.line)
 		{
@@ -72,6 +73,7 @@ bool LexerTest::Failure(const char* name, std::string_view code, const std::vect
 
 			PrintIncorrectErrorLineMessage(std::cerr, "Lexer", name, i, actual.line, expected.line);
 			PrintErrorMessage(std::cerr, actual);
+			lexer->PrintErrorSourceCode(std::cerr, errors[i]);
 		}
 	}
 
