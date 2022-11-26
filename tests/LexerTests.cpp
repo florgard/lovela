@@ -56,8 +56,15 @@ bool LexerTest::YieldsTokens(const char* name, std::string_view code, const std:
 	return success;
 }
 
-static const Token endToken{ .type = Token::Type::End };
-static constexpr auto idType = Token::Type::Identifier;
+static constexpr Token EndToken()
+{
+	return { .type = Token::Type::End };
+}
+
+static constexpr Token IdToken(std::string&& identifier)
+{
+	return { .type = Token::Type::Identifier, .value = std::move(identifier) };
+}
 
 static constexpr Token ErrorToken(LexerError error, size_t line = 1)
 {
@@ -69,7 +76,7 @@ suite lexer_rudimental_tests = [] {
 		expect(lexerTest.YieldsTokens("empty expression",
 			"",
 			{
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -78,7 +85,7 @@ suite lexer_rudimental_tests = [] {
 			".",
 			{
 				{.type = Token::Type::SeparatorDot, .value = "." },
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -89,8 +96,8 @@ suite lexer_identifier_tests = [] {
 		expect(lexerTest.YieldsTokens("simple identifier",
 			"abc",
 			{
-				{.type = idType, .value = "abc" },
-				endToken
+				IdToken("abc"),
+				EndToken()
 			}
 		));
 	};
@@ -98,9 +105,9 @@ suite lexer_identifier_tests = [] {
 		expect(lexerTest.YieldsTokens("two identifiers",
 			"abc def",
 			{
-				{.type = idType, .value = "abc" },
-				{.type = idType, .value = "def" },
-				endToken
+				IdToken("abc"),
+				IdToken("def"),
+				EndToken()
 			}
 		));
 	};
@@ -108,8 +115,8 @@ suite lexer_identifier_tests = [] {
 		expect(lexerTest.YieldsTokens("alphanumerical identifier",
 			"abc123",
 			{
-				{.type = idType, .value = "abc123" },
-				endToken
+				IdToken("abc123"),
+				EndToken()
 			}
 		));
 	};
@@ -117,8 +124,8 @@ suite lexer_identifier_tests = [] {
 		expect(lexerTest.YieldsTokens("kebab case identifier",
 			"abc-123",
 			{
-				{.type = idType, .value = "abc-123" },
-				endToken
+				IdToken("abc-123"),
+				EndToken()
 			}
 		));
 	};
@@ -126,8 +133,8 @@ suite lexer_identifier_tests = [] {
 		expect(lexerTest.YieldsTokens("snake case identifier",
 			"abc_123",
 			{
-				{.type = idType, .value = "abc_123" },
-				endToken
+				IdToken("abc_123"),
+				EndToken()
 			}
 		));
 	};
@@ -135,8 +142,8 @@ suite lexer_identifier_tests = [] {
 		expect(lexerTest.YieldsTokens("operator character identifier",
 			"abc>=123",
 			{
-				{.type = idType, .value = "abc>=123" },
-				endToken
+				IdToken("abc>=123"),
+				EndToken()
 			}
 		));
 	};
@@ -144,8 +151,8 @@ suite lexer_identifier_tests = [] {
 		expect(lexerTest.YieldsTokens("Unicode identifier",
 			"\xE6\x97\xA5\xE6\x9C\xAC", // Nihon in nihongo, U+65E5 U+672C
 			{
-				{.type = idType, .value = "\xE6\x97\xA5\xE6\x9C\xAC" },
-				endToken
+				IdToken("\xE6\x97\xA5\xE6\x9C\xAC"),
+				EndToken()
 			}
 		));
 	};
@@ -153,8 +160,8 @@ suite lexer_identifier_tests = [] {
 		expect(lexerTest.YieldsTokens("Unicode combining mark identifier",
 			"a\xCC\x80", // a with combining mark, U+0300
 			{
-				{.type = idType, .value = "a\xCC\x80" },
-				endToken
+				IdToken("a\xCC\x80"),
+				EndToken()
 			}
 		));
 	};
@@ -164,8 +171,8 @@ suite lexer_identifier_tests = [] {
 			{
 				{.type = Token::Type::LiteralInteger, .value = "1"},
 				ErrorToken(LexerError::SyntaxError),
-				{.type = idType, .value = "abc"},
-				endToken
+				IdToken("abc"),
+				EndToken()
 			}
 		));
 	};
@@ -174,7 +181,7 @@ suite lexer_identifier_tests = [] {
 			"=abc",
 			{
 				ErrorToken(LexerError::SyntaxError),
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -186,7 +193,7 @@ suite lexer_numeric_literals_tests = [] {
 			"123",
 			{
 				{.type = Token::Type::LiteralInteger, .value = "123" },
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -196,7 +203,7 @@ suite lexer_numeric_literals_tests = [] {
 			{
 				{.type = Token::Type::LiteralInteger, .value = "123"},
 				{.type = Token::Type::SeparatorDot, .value = "."},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -205,7 +212,7 @@ suite lexer_numeric_literals_tests = [] {
 			"123.456",
 			{
 				{.type = Token::Type::LiteralDecimal, .value = "123.456" },
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -215,7 +222,7 @@ suite lexer_numeric_literals_tests = [] {
 			{
 				{.type = Token::Type::LiteralDecimal, .value = "123.456"},
 				{.type = Token::Type::SeparatorDot, .value = "."},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -226,7 +233,7 @@ suite lexer_numeric_literals_tests = [] {
 				{.type = Token::Type::LiteralDecimal, .value = "123.456"},
 				{.type = Token::Type::SeparatorDot, .value = "."},
 				{.type = Token::Type::LiteralInteger, .value = "7"},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -238,7 +245,7 @@ suite lexer_string_literal_tests = [] {
 			"''",
 			{
 				{.type = Token::Type::LiteralString, .value = "" },
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -247,7 +254,7 @@ suite lexer_string_literal_tests = [] {
 			"''''",
 			{
 				{.type = Token::Type::LiteralString, .value = "'" },
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -256,7 +263,7 @@ suite lexer_string_literal_tests = [] {
 			"'abc'",
 			{
 				{.type = Token::Type::LiteralString, .value = "abc" },
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -265,7 +272,7 @@ suite lexer_string_literal_tests = [] {
 			"'ab c'",
 			{
 				{.type = Token::Type::LiteralString, .value = "ab c" },
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -274,7 +281,7 @@ suite lexer_string_literal_tests = [] {
 			"'ab''c'",
 			{
 				{.type = Token::Type::LiteralString, .value = "ab'c" },
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -284,7 +291,7 @@ suite lexer_string_literal_tests = [] {
 			{
 				{.type = Token::Type::LiteralString, .value = "ab"},
 				{.type = Token::Type::LiteralString, .value = "c"},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -293,7 +300,7 @@ suite lexer_string_literal_tests = [] {
 			"'<< abc >>'",
 			{
 				{.type = Token::Type::LiteralString, .value = "<< abc >>" },
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -302,7 +309,7 @@ suite lexer_string_literal_tests = [] {
 			"'",
 			{
 				ErrorToken(LexerError::StringLiteralOpen),
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -311,7 +318,7 @@ suite lexer_string_literal_tests = [] {
 			"'abc",
 			{
 				ErrorToken(LexerError::StringLiteralOpen),
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -320,7 +327,7 @@ suite lexer_string_literal_tests = [] {
 			"\r\n'abc",
 			{
 				ErrorToken(LexerError::StringLiteralOpen, 2),
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -328,7 +335,7 @@ suite lexer_string_literal_tests = [] {
 		expect(lexerTest.YieldsTokens("non-closed string literal on line 2 LF", "\n'abc",
 			{
 				ErrorToken(LexerError::StringLiteralOpen, 2),
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -337,7 +344,7 @@ suite lexer_string_literal_tests = [] {
 			"\r'abc",
 			{
 				ErrorToken(LexerError::StringLiteralOpen),
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -346,7 +353,7 @@ suite lexer_string_literal_tests = [] {
 			"\t'ab\r\n\tc'\r\n",
 			{
 				{.type = Token::Type::LiteralString, .value = "ab\r\n\tc" },
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -358,7 +365,7 @@ suite lexer_string_field_tests = [] {
 			"'{{'",
 			{
 				{.type = Token::Type::LiteralString, .value = "{" },
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -367,7 +374,7 @@ suite lexer_string_field_tests = [] {
 			"'{{}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "{}" },
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -376,7 +383,7 @@ suite lexer_string_field_tests = [] {
 			"'}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "}" },
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -385,7 +392,7 @@ suite lexer_string_field_tests = [] {
 			"'{n}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "\n" },
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -394,7 +401,7 @@ suite lexer_string_field_tests = [] {
 			"'{t}{n}{r}'",
 			{
 				{.type = Token::Type::LiteralString, .value = "\t\n\r" },
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -403,7 +410,7 @@ suite lexer_string_field_tests = [] {
 			"'abc{r}{n}def'",
 			{
 				{.type = Token::Type::LiteralString, .value = "abc\r\ndef" },
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -413,7 +420,7 @@ suite lexer_string_field_tests = [] {
 			{
 				ErrorToken(LexerError::StringFieldIllformed),
 				{.type = Token::Type::LiteralString},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -423,7 +430,7 @@ suite lexer_string_field_tests = [] {
 			{
 				ErrorToken(LexerError::StringFieldIllformed),
 				{.type = Token::Type::LiteralString, .value = "n}"},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -433,7 +440,7 @@ suite lexer_string_field_tests = [] {
 			{
 				ErrorToken(LexerError::StringFieldUnknown),
 				{.type = Token::Type::LiteralString, .value = "m}"},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -447,7 +454,7 @@ suite lexer_string_interpolation_tests = [] {
 				{.type = Token::Type::LiteralString, .value = "" },
 				{.type = Token::Type::LiteralStringInterpolation, .value = "1" },
 				{.type = Token::Type::LiteralString, .value = "" },
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -458,7 +465,7 @@ suite lexer_string_interpolation_tests = [] {
 				{.type = Token::Type::LiteralString, .value = "abc" },
 				{.type = Token::Type::LiteralStringInterpolation, .value = "1" },
 				{.type = Token::Type::LiteralString, .value = "" },
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -471,7 +478,7 @@ suite lexer_string_interpolation_tests = [] {
 				{.type = Token::Type::LiteralString, .value = "" },
 				{.type = Token::Type::LiteralStringInterpolation, .value = "2" },
 				{.type = Token::Type::LiteralString, .value = "" },
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -482,7 +489,7 @@ suite lexer_string_interpolation_tests = [] {
 				{.type = Token::Type::LiteralString, .value = "" },
 				{.type = Token::Type::LiteralStringInterpolation, .value = "2" },
 				{.type = Token::Type::LiteralString, .value = "" },
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -495,7 +502,7 @@ suite lexer_string_interpolation_tests = [] {
 				{.type = Token::Type::LiteralString, .value = "" },
 				{.type = Token::Type::LiteralStringInterpolation, .value = "1" },
 				{.type = Token::Type::LiteralString, .value = "" },
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -506,8 +513,8 @@ suite lexer_function_declarations_tests = [] {
 		expect(lexerTest.YieldsTokens("trivial function declaration",
 			"func",
 			{
-				{.type = idType, .value = "func"},
-				endToken
+				IdToken("func"),
+				EndToken()
 			}
 		));
 	};
@@ -515,11 +522,11 @@ suite lexer_function_declarations_tests = [] {
 		expect(lexerTest.YieldsTokens("trivial integer function",
 			"func: 123.",
 			{
-				{.type = idType, .value = "func"},
+				IdToken("func"),
 				{.type = Token::Type::SeparatorColon, .value = ":"},
 				{.type = Token::Type::LiteralInteger, .value = "123"},
 				{.type = Token::Type::SeparatorDot, .value = "."},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -527,11 +534,11 @@ suite lexer_function_declarations_tests = [] {
 		expect(lexerTest.YieldsTokens("trivial decimal function with whitespace",
 			"func : 123.4.",
 			{
-				{.type = idType, .value = "func"},
+				IdToken("func"),
 				{.type = Token::Type::SeparatorColon, .value = ":"},
 				{.type = Token::Type::LiteralDecimal, .value = "123.4"},
 				{.type = Token::Type::SeparatorDot, .value = "."},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -539,13 +546,13 @@ suite lexer_function_declarations_tests = [] {
 		expect(lexerTest.YieldsTokens("trivial decimal function with mixed name and group",
 			"\r\nfunc44: (123.4).",
 			{
-				{.type = idType, .value = "func44"},
+				IdToken("func44"),
 				{.type = Token::Type::SeparatorColon, .value = ":"},
 				{.type = Token::Type::ParenRoundOpen, .value = "("},
 				{.type = Token::Type::LiteralDecimal, .value = "123.4"},
 				{.type = Token::Type::ParenRoundClose, .value = ")"},
 				{.type = Token::Type::SeparatorDot, .value = "."},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -554,8 +561,8 @@ suite lexer_function_declarations_tests = [] {
 			"-> func",
 			{
 				{.type = Token::Type::OperatorArrow, .value = "->"},
-				{.type = idType, .value = "func"},
-				endToken
+				IdToken("func"),
+				EndToken()
 			}
 		));
 	};
@@ -566,8 +573,8 @@ suite lexer_function_declarations_tests = [] {
 				{.type = Token::Type::OperatorArrow, .value = "<-"},
 				{.type = Token::Type::ParenSquareOpen, .value = "["},
 				{.type = Token::Type::ParenSquareClose, .value = "]"},
-				{.type = idType, .value = "func"},
-				endToken
+				IdToken("func"),
+				EndToken()
 			}
 		));
 	};
@@ -575,10 +582,10 @@ suite lexer_function_declarations_tests = [] {
 		expect(lexerTest.YieldsTokens("function with namespace",
 			"namespace/func",
 			{
-				{.type = idType, .value = "namespace"},
+				IdToken("namespace"),
 				{.type = Token::Type::SeparatorSlash, .value = "/"},
-				{.type = idType, .value = "func"},
-				endToken
+				IdToken("func"),
+				EndToken()
 			}
 		));
 	};
@@ -589,9 +596,9 @@ suite lexer_comment_tests = [] {
 		expect(lexerTest.YieldsTokens("mixed character identifier",
 			"ident123.",
 			{
-				{.type = idType, .value = "ident123"},
+				IdToken("ident123"),
 				{.type = Token::Type::SeparatorDot, .value = "."},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -599,7 +606,7 @@ suite lexer_comment_tests = [] {
 		expect(lexerTest.YieldsTokens("commented out identifier",
 			"<< ident123. >>",
 			{
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -607,7 +614,7 @@ suite lexer_comment_tests = [] {
 		expect(lexerTest.YieldsTokens("commented out identifier and whitespace",
 			"<<\r\nident123.\r\n>>",
 			{
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -615,9 +622,9 @@ suite lexer_comment_tests = [] {
 		expect(lexerTest.YieldsTokens("commented and non-commented identifier",
 			"<< ident123. >> ident456.",
 			{
-				{.type = idType, .value = "ident456"},
+				IdToken("ident456"),
 				{.type = Token::Type::SeparatorDot, .value = "."},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -625,9 +632,9 @@ suite lexer_comment_tests = [] {
 		expect(lexerTest.YieldsTokens("nested comments",
 			"<<<< 123 << 456 >>>>.>> ident456.",
 			{
-				{.type = idType, .value = "ident456"},
+				IdToken("ident456"),
 				{.type = Token::Type::SeparatorDot, .value = "."},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -635,9 +642,9 @@ suite lexer_comment_tests = [] {
 		expect(lexerTest.YieldsTokens("multiple comments",
 			"<<<<123>>ident234<<<<123<<456>>>:>>.",
 			{
-				{.type = idType, .value = "ident234"},
+				IdToken("ident234"),
 				{.type = Token::Type::SeparatorDot, .value = "."},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -645,9 +652,9 @@ suite lexer_comment_tests = [] {
 		expect(lexerTest.YieldsTokens("non-closed comment",
 			"<<<<123>>ident234<<<<123<<456>>>:>.",
 			{
-				{.type = idType, .value = "ident234"},
+				IdToken("ident234"),
 				ErrorToken(LexerError::CommentOpen),
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -661,7 +668,7 @@ suite lexer_comparison_tests = [] {
 				{.type = Token::Type::LiteralInteger, .value = "1"},
 				{.type = Token::Type::OperatorComparison, .value = "<"},
 				{.type = Token::Type::LiteralInteger, .value = "2"},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -671,9 +678,9 @@ suite lexer_comparison_tests = [] {
 			{
 				{.type = Token::Type::OperatorComparison, .value = "<"},
 				{.type = Token::Type::ParenRoundOpen, .value = "("},
-				{.type = idType, .value = "operand"},
+				IdToken("operand"),
 				{.type = Token::Type::ParenRoundClose, .value = ")"},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -687,7 +694,7 @@ suite lexer_primitive_types_tests = [] {
 				{.type = Token::Type::ParenSquareOpen, .value = "["},
 				{.type = Token::Type::LiteralInteger, .value = "1000000"},
 				{.type = Token::Type::ParenSquareClose, .value = "]"},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -698,7 +705,7 @@ suite lexer_primitive_types_tests = [] {
 				{.type = Token::Type::ParenSquareOpen, .value = "["},
 				{.type = Token::Type::LiteralInteger, .value = "-1000000"},
 				{.type = Token::Type::ParenSquareClose, .value = "]"},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -709,7 +716,7 @@ suite lexer_primitive_types_tests = [] {
 				{.type = Token::Type::ParenSquareOpen, .value = "["},
 				{.type = Token::Type::LiteralDecimal, .value = "1.0e300"},
 				{.type = Token::Type::ParenSquareClose, .value = "]"},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -721,7 +728,7 @@ suite lexer_primitive_types_tests = [] {
 				{.type = Token::Type::LiteralInteger, .value = "100"},
 				{.type = Token::Type::ParenSquareClose, .value = "]"},
 				{.type = Token::Type::SeparatorHash, .value = "#"},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -734,7 +741,7 @@ suite lexer_primitive_types_tests = [] {
 				{.type = Token::Type::ParenSquareClose, .value = "]"},
 				{.type = Token::Type::SeparatorHash, .value = "#"},
 				{.type = Token::Type::SeparatorHash, .value = "#"},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -747,7 +754,7 @@ suite lexer_primitive_types_tests = [] {
 				{.type = Token::Type::ParenSquareClose, .value = "]"},
 				{.type = Token::Type::SeparatorHash, .value = "#"},
 				{.type = Token::Type::LiteralInteger, .value = "8"},
-				endToken
+				EndToken()
 			}
 		));
 	};
@@ -764,7 +771,7 @@ suite lexer_builtin_types_tests = [] {
 				{.type = Token::Type::SeparatorSlash, .value = "/"},
 				{.type = Token::Type::Identifier, .value = "i32"},
 				{.type = Token::Type::ParenSquareClose, .value = "]"},
-				endToken
+				EndToken()
 			}
 		));
 	};
