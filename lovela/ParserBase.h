@@ -140,9 +140,21 @@ public:
 
 	// Checks whether there's a next token.
 	// Returns true if there's a token, false otherwise.
+	// Throws ErrorTokenException if the next token is an error token.
 	[[nodiscard]] bool Peek()
 	{
-		return _tokenIterator != _tokenGenerator.end();
+		if (_tokenIterator == _tokenGenerator.end())
+		{
+			return false;
+		}
+
+		const auto nextType = NextToken().type;
+		if (nextType == Token::Type::Error)
+		{
+			throw ErrorTokenException(NextToken());
+		}
+
+		return true;
 	}
 
 	// Checks whether the next token is of the given type.

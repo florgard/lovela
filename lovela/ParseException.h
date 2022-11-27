@@ -40,3 +40,8 @@ struct InvalidCurrentTokenException : public ParseException
 {
 	InvalidCurrentTokenException(const Token& token) noexcept;
 };
+
+struct ErrorTokenException : public ParseException
+{
+	ErrorTokenException(const Token& token) noexcept;
+};

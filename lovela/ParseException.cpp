@@ -61,3 +61,11 @@ InvalidCurrentTokenException::InvalidCurrentTokenException(const Token& token) n
 	s << "Invalid current token " << to_string(token.type);
 	message = s.str();
 }
+
+ErrorTokenException::ErrorTokenException(const Token& token) noexcept
+	: ParseException(token)
+{
+	std::ostringstream s;
+	s << "Error token encountered. Message: " << token.error.message;
+	message = s.str();
+}
