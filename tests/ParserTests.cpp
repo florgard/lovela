@@ -102,6 +102,24 @@ bool ParserTest::Failure(const char* name, std::string_view code, const std::ran
 	return success;
 }
 
+suite parser_lexer_error_test = [] {
+	"invalid identifier"_test = [] {
+		expect(s_test.Failure("invalid identifier",
+			"1abc",
+			std::array<Node, 3>
+			{
+				Node{ .type = Node::Type::Error },
+				Node{ .type = Node::Type::Error },
+				Node{ .type = Node::Type::FunctionDeclaration, .value = "abc" },
+			},
+			{
+				IParser::Error{.code = IParser::Error::Code::ParseError },
+				IParser::Error{.code = IParser::Error::Code::ParseError },
+			}
+		));
+	};
+};
+
 suite parser_function_declaration_input_types_tests = [] {
 	"trivial function declaration"_test = [] {
 		expect(s_test.Success("trivial function declaration",

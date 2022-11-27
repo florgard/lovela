@@ -216,7 +216,9 @@ NodeGenerator Parser::Parse() noexcept
 	auto context = make<Context>::shared();
 	// TODO: add built-in functions?
 
-	while (Peek())
+	bool parsing = true;
+
+	while (parsing)
 	{
 		Node n;
 
@@ -244,7 +246,7 @@ NodeGenerator Parser::Parse() noexcept
 			}
 			else
 			{
-				throw ParseException({}, "Unexpected end of token stream.");
+				throw NoTokenException();
 			}
 		}
 		catch (const InvalidCurrentTokenException& e)
@@ -254,6 +256,22 @@ NodeGenerator Parser::Parse() noexcept
 
 			// Skip faulty token.
 			Skip();
+		}
+		catch (const ErrorTokenException& e)
+		{
+			errors.emplace_back(Error{ .code = IParser::Error::Code::ParseError, .message = e.message, .token = e.token });
+			n = { .type = Node::Type::Error, .error = {.code = Node::Error::Code::ParseError, .message = e.message } };
+
+			// Skip faulty token.
+			Skip();
+		}
+		catch (const NoTokenException& e)
+		{
+			errors.emplace_back(Error{ .code = IParser::Error::Code::ParseError, .message = e.message, .token = e.token });
+			n = { .type = Node::Type::Error, .error = {.code = Node::Error::Code::ParseError, .message = e.message } };
+
+			// Stop parsing after yielding the error node.
+			parsing = false;
 		}
 		catch (const ParseException& e)
 		{

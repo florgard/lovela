@@ -50,3 +50,8 @@ struct ErrorTokenException : public ParseException
 {
 	ErrorTokenException(const Token& token) noexcept;
 };
+
+struct NoTokenException : public ParseException
+{
+	NoTokenException() noexcept;
+};

@@ -69,3 +69,9 @@ ErrorTokenException::ErrorTokenException(const Token& token) noexcept
 	s << "Error token encountered. Message: " << token.error.message;
 	message = s.str();
 }
+
+NoTokenException::NoTokenException() noexcept
+	: ParseException({})
+{
+	message = "Unexpected end of token stream.";
+}
