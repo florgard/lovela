@@ -67,6 +67,93 @@ bool LexerBase::IsWordBreakExpected() const noexcept
 	return expectWordBreak;
 }
 
+bool LexerBase::Accept() noexcept
+{
+	GetNextCharacter();
+
+	if (!characters[Current])
+	{
+		return false;
+	}
+
+	if (characters[Current] == '\n')
+	{
+		AddCodeLine();
+	}
+	else
+	{
+		currentSourceCode << characters[Current];
+		nextTokenColumn++;
+	}
+
+	return true;
+}
+
+bool LexerBase::Accept(char character) noexcept
+{
+	if (characters[Next] == character)
+	{
+		return Accept();
+	}
+
+	return false;
+}
+
+/// <summary>
+/// Checks if the next 1 or 2 characters match the given regex.
+/// </summary>
+/// <param name="regex"></param>
+/// <param name="length">The number of characters to match. Must be 1 or 2.</param>
+/// <returns>true on match, false on mismatch or error (length out of bounds).</returns>
+bool LexerBase::Accept(const std::regex& regex, size_t length) noexcept
+{
+	if (!(length > 0 && length <= characters.size() - Next))
+	{
+		AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::InternalError, .message = "Regex match out of bounds." } });
+		return false;
+	}
+
+	const auto* str = &characters[Next];
+	if (std::regex_match(str, str + length, regex))
+	{
+		return Accept();
+	}
+
+	return false;
+}
+
+bool LexerBase::AcceptBegin(char character) noexcept
+{
+	return currentLexeme.empty() && Accept(character);
+}
+
+bool LexerBase::AcceptBegin(const std::regex& regex, size_t length) noexcept
+{
+	return currentLexeme.empty() && Accept(regex, length);
+}
+
+bool LexerBase::Expect(char character) noexcept
+{
+	if (Accept(character))
+	{
+		return true;
+	}
+
+	AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = std::format("Unexpected character \"{}\", expected \"{}\".", characters[Next], character) } });
+	return false;
+}
+
+bool LexerBase::Expect(const std::regex& regex, size_t length) noexcept
+{
+	if (Accept(regex, length))
+	{
+		return true;
+	}
+
+	AddToken({ .type = Token::Type::Error, .value = std::format("Unexpected character \"{}\".", characters[Next]) });
+	return false;
+}
+
 void LexerBase::PrintErrorSourceCode(std::ostream& stream, const Token& token) noexcept
 {
 	const auto line = token.error.line;
