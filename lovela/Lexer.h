@@ -7,7 +7,6 @@ class Lexer : public LexerBase
 	friend class LexerFactory;
 	friend class LexerTest;
 
-protected:
 	Lexer(std::istream& charStream) noexcept;
 
 public:
@@ -19,6 +18,9 @@ private:
 	[[nodiscard]] void LexComment() noexcept;
 	[[nodiscard]] void LexSeparator() noexcept;
 	[[nodiscard]] void LexWhitespace() noexcept;
+
+	[[nodiscard]] Token GetToken(char lexeme) noexcept override;
+	[[nodiscard]] Token GetToken(std::string_view lexeme) noexcept override;
 
 	[[nodiscard]] static constexpr Token::Type GetTokenType(char lexeme) noexcept
 	{
@@ -43,9 +45,6 @@ private:
 		constexpr auto map = static_map<char, Token::Type, values.size()>{ {values} };
 		return map.at_or(lexeme, Token::Type::Empty);
 	}
-
-	[[nodiscard]] Token GetToken(char lexeme) noexcept override;
-	[[nodiscard]] Token GetToken(std::string_view lexeme) noexcept override;
 
 	[[nodiscard]] constexpr static std::string_view GetStringField(char code) noexcept
 	{

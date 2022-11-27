@@ -3,14 +3,33 @@
 
 class LexerBase : public ILexer
 {
-public:
+protected:
 	LexerBase(std::istream& charStream) noexcept;
 
-protected:
 	void PrintErrorSourceCode(std::ostream& stream, const Token& token) noexcept override;
 
 	[[nodiscard]] virtual Token GetToken(char lexeme) noexcept = 0;
 	[[nodiscard]] virtual Token GetToken(std::string_view lexeme) noexcept = 0;
+
+	[[nodiscard]] constexpr char GetCharacter(size_t index) const noexcept
+	{
+		return characters[index];
+	}
+
+	[[nodiscard]] constexpr void AddCharacter(char ch) noexcept
+	{
+		currentLexeme += ch;
+	}
+
+	[[nodiscard]] constexpr std::vector<Token>& GetCurrentTokens() noexcept
+	{
+		return currentTokens;
+	}
+
+	[[nodiscard]] constexpr void ClearCurrentTokens() noexcept
+	{
+		currentTokens.clear();
+	}
 
 	void GetNextCharacter() noexcept;
 	void AddCodeLine() noexcept;
@@ -29,11 +48,11 @@ protected:
 	[[nodiscard]] bool Expect(char character) noexcept;
 	[[nodiscard]] bool Expect(const std::regex& regex, size_t length) noexcept;
 
-protected:
 	static constexpr size_t Current = 0;
 	static constexpr size_t Next = 1;
 	static constexpr size_t NextAfter = 2;
 
+private:
 	std::istream& charStream;
 	std::array<char, 3> characters{};
 	std::string currentLexeme;
