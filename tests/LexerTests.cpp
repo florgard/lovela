@@ -66,7 +66,7 @@ static constexpr Token IdToken(std::string&& identifier)
 	return { .type = Token::Type::Identifier, .value = std::move(identifier) };
 }
 
-static constexpr Token ErrorToken(LexerError error, size_t line = 1)
+static constexpr Token ErrorToken(Token::Error::Code error, size_t line = 1)
 {
 	return { .type = Token::Type::Error, .error{.code = error, .line = line} };
 }
@@ -170,7 +170,7 @@ suite lexer_identifier_tests = [] {
 			"1abc",
 			{
 				{.type = Token::Type::LiteralInteger, .value = "1"},
-				ErrorToken(LexerError::SyntaxError),
+				ErrorToken(Token::Error::Code::SyntaxError),
 				IdToken("abc"),
 				EndToken()
 			}
@@ -180,7 +180,7 @@ suite lexer_identifier_tests = [] {
 		expect(lexerTest.YieldsTokens("invalid identifier 2",
 			"=abc",
 			{
-				ErrorToken(LexerError::SyntaxError),
+				ErrorToken(Token::Error::Code::SyntaxError),
 				EndToken()
 			}
 		));
@@ -308,7 +308,7 @@ suite lexer_string_literal_tests = [] {
 		expect(lexerTest.YieldsTokens("non-closed string literal",
 			"'",
 			{
-				ErrorToken(LexerError::StringLiteralOpen),
+				ErrorToken(Token::Error::Code::StringLiteralOpen),
 				EndToken()
 			}
 		));
@@ -317,7 +317,7 @@ suite lexer_string_literal_tests = [] {
 		expect(lexerTest.YieldsTokens("non-closed string literal on line 1",
 			"'abc",
 			{
-				ErrorToken(LexerError::StringLiteralOpen),
+				ErrorToken(Token::Error::Code::StringLiteralOpen),
 				EndToken()
 			}
 		));
@@ -326,7 +326,7 @@ suite lexer_string_literal_tests = [] {
 		expect(lexerTest.YieldsTokens("non-closed string literal on line 2 CRLF",
 			"\r\n'abc",
 			{
-				ErrorToken(LexerError::StringLiteralOpen, 2),
+				ErrorToken(Token::Error::Code::StringLiteralOpen, 2),
 				EndToken()
 			}
 		));
@@ -334,7 +334,7 @@ suite lexer_string_literal_tests = [] {
 	"non-closed string literal on line 2 LF"_test = [] {
 		expect(lexerTest.YieldsTokens("non-closed string literal on line 2 LF", "\n'abc",
 			{
-				ErrorToken(LexerError::StringLiteralOpen, 2),
+				ErrorToken(Token::Error::Code::StringLiteralOpen, 2),
 				EndToken()
 			}
 		));
@@ -343,7 +343,7 @@ suite lexer_string_literal_tests = [] {
 		expect(lexerTest.YieldsTokens("non-closed string literal on line 1 CR",
 			"\r'abc",
 			{
-				ErrorToken(LexerError::StringLiteralOpen),
+				ErrorToken(Token::Error::Code::StringLiteralOpen),
 				EndToken()
 			}
 		));
@@ -418,7 +418,7 @@ suite lexer_string_field_tests = [] {
 		expect(lexerTest.YieldsTokens("non-closed string field",
 			"'{n'",
 			{
-				ErrorToken(LexerError::StringFieldIllformed),
+				ErrorToken(Token::Error::Code::StringFieldIllformed),
 				{.type = Token::Type::LiteralString},
 				EndToken()
 			}
@@ -428,7 +428,7 @@ suite lexer_string_field_tests = [] {
 		expect(lexerTest.YieldsTokens("ill-formed string field",
 			"'{nn}'",
 			{
-				ErrorToken(LexerError::StringFieldIllformed),
+				ErrorToken(Token::Error::Code::StringFieldIllformed),
 				{.type = Token::Type::LiteralString, .value = "n}"},
 				EndToken()
 			}
@@ -438,7 +438,7 @@ suite lexer_string_field_tests = [] {
 		expect(lexerTest.YieldsTokens("unknown string field",
 			"'{m}'",
 			{
-				ErrorToken(LexerError::StringFieldUnknown),
+				ErrorToken(Token::Error::Code::StringFieldUnknown),
 				{.type = Token::Type::LiteralString, .value = "m}"},
 				EndToken()
 			}
@@ -653,7 +653,7 @@ suite lexer_comment_tests = [] {
 			"<<<<123>>ident234<<<<123<<456>>>:>.",
 			{
 				IdToken("ident234"),
-				ErrorToken(LexerError::CommentOpen),
+				ErrorToken(Token::Error::Code::CommentOpen),
 				EndToken()
 			}
 		));

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "LexerError.h"
-
 struct Token
 {
 	struct Constant
@@ -44,7 +42,18 @@ struct Token
 
 	struct Error
 	{
-		LexerError code{};
+		enum class Code
+		{
+			NoError,
+			InternalError,
+			SyntaxError,
+			CommentOpen,
+			StringLiteralOpen,
+			StringFieldIllformed,
+			StringFieldUnknown,
+			StringInterpolationOverflow,
+		} code{};
+
 		size_t line = 1;
 		size_t column = 1;
 		std::string message;
@@ -52,7 +61,7 @@ struct Token
 		[[nodiscard]] constexpr bool operator==(const Error& rhs) const noexcept
 		{
 			// Compare the error line only on error. Don't compare the error column and message.
-			return code == rhs.code && (code == LexerError::NoError || line == rhs.line);
+			return code == rhs.code && (code == Token::Error::Code::NoError || line == rhs.line);
 		}
 
 		[[nodiscard]] constexpr bool operator!=(const Error& rhs) const noexcept

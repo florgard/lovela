@@ -106,9 +106,6 @@
     <ClInclude Include="LexerBase.h">
       <Filter>Lexer</Filter>
     </ClInclude>
-    <ClInclude Include="LexerError.h">
-      <Filter>Lexer</Filter>
-    </ClInclude>
     <ClInclude Include="LexerRegexes.h">
       <Filter>Lexer</Filter>
     </ClInclude>
