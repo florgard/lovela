@@ -6,19 +6,19 @@ struct ParseException
 	std::string message;
 	Token token;
 
-	ParseException(const Token& token);
-	ParseException(const Token& token, std::string_view message);
+	ParseException(const Token& token) noexcept;
+	ParseException(const Token& token, std::string_view message) noexcept;
 };
 
 struct UnexpectedTokenException : public ParseException
 {
-	UnexpectedTokenException(const Token& token);
-	UnexpectedTokenException(const Token& token, Token::Type expectedType);
-	UnexpectedTokenException(const Token& token, Token::Type expectedType, std::string_view expectedValue);
-	UnexpectedTokenException(const Token& token, const std::set<Token::Type>& expectedTypes);
+	UnexpectedTokenException(const Token& token) noexcept;
+	UnexpectedTokenException(const Token& token, Token::Type expectedType) noexcept;
+	UnexpectedTokenException(const Token& token, Token::Type expectedType, std::string_view expectedValue) noexcept;
+	UnexpectedTokenException(const Token& token, const std::set<Token::Type>& expectedTypes) noexcept;
 
 	template <size_t Size>
-	constexpr UnexpectedTokenException(const Token& token, const static_set<Token::Type, Size>& expectedTypes) : ParseException(token)
+	constexpr UnexpectedTokenException(const Token& token, const static_set<Token::Type, Size>& expectedTypes) noexcept : ParseException(token)
 	{
 		std::ostringstream s;
 		s << "Unexpected token " << to_string(token.type) << ", expected ";
@@ -38,5 +38,5 @@ struct UnexpectedTokenException : public ParseException
 
 struct InvalidCurrentTokenException : public ParseException
 {
-	InvalidCurrentTokenException(const Token& token);
+	InvalidCurrentTokenException(const Token& token) noexcept;
 };

@@ -1,36 +1,43 @@
 #include "pch.h"
 #include "ParseException.h"
 
-ParseException::ParseException(const Token& token) : token(token)
+ParseException::ParseException(const Token& token) noexcept
+	: token(token)
 {
 }
 
-ParseException::ParseException(const Token& token, std::string_view message) : token(token), message(message)
+ParseException::ParseException(const Token& token, std::string_view message) noexcept
+	: token(token)
+	, message(message)
 {
 }
 
-UnexpectedTokenException::UnexpectedTokenException(const Token& token) : ParseException(token)
+UnexpectedTokenException::UnexpectedTokenException(const Token& token) noexcept
+	: ParseException(token)
 {
 	std::ostringstream s;
 	s << "Unexpected token " << to_string(token.type);
 	message = s.str();
 }
 
-UnexpectedTokenException::UnexpectedTokenException(const Token& token, Token::Type expectedTypes) : ParseException(token)
+UnexpectedTokenException::UnexpectedTokenException(const Token& token, Token::Type expectedTypes) noexcept
+	: ParseException(token)
 {
 	std::ostringstream s;
 	s << "Unexpected token " << to_string(token.type) << ", expected " << to_string(expectedTypes);
 	message = s.str();
 }
 
-UnexpectedTokenException::UnexpectedTokenException(const Token& token, Token::Type expectedType, std::string_view expectedValue) : ParseException(token)
+UnexpectedTokenException::UnexpectedTokenException(const Token& token, Token::Type expectedType, std::string_view expectedValue) noexcept
+	: ParseException(token)
 {
 	std::ostringstream s;
 	s << "Unexpected token " << to_string(token.type) << " = \"" << token.value << "\", expected " << to_string(expectedType) << " = \"" << expectedValue << "\"";
 	message = s.str();
 }
 
-UnexpectedTokenException::UnexpectedTokenException(const Token& token, const std::set<Token::Type>& expectedTypes) : ParseException(token)
+UnexpectedTokenException::UnexpectedTokenException(const Token& token, const std::set<Token::Type>& expectedTypes) noexcept
+	: ParseException(token)
 {
 	std::ostringstream s;
 	s << "Unexpected token " << to_string(token.type) << ", expected ";
@@ -47,7 +54,8 @@ UnexpectedTokenException::UnexpectedTokenException(const Token& token, const std
 	message = s.str();
 }
 
-InvalidCurrentTokenException::InvalidCurrentTokenException(const Token& token) : ParseException(token)
+InvalidCurrentTokenException::InvalidCurrentTokenException(const Token& token) noexcept
+	: ParseException(token)
 {
 	std::ostringstream s;
 	s << "Invalid current token " << to_string(token.type);
