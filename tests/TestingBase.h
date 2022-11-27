@@ -32,7 +32,7 @@ protected:
 	/// <param name="node"></param>
 	/// <param name="expectedNode"></param>
 	/// <returns>true if the actual and expected AST match, false otherwise.</returns>
-	bool TestAST(int& index, const char* name, const Node& node, const Node& expectedNode);
+	bool TestAST(int& index, const char* name, const Node& node, const Node& expectedNode, Token& failingToken);
 
 	/// <summary>
 	/// Compares each AST in the actual range with the corresponding one in the expected range.
@@ -42,12 +42,12 @@ protected:
 	/// <param name="range"></param>
 	/// <param name="expectedRange"></param>
 	/// <returns>true if the actual and expected AST match, false otherwise.</returns>
-	bool TestAST(int& index, const char* name, std::ranges::range auto& range, const std::ranges::range auto& expectedRange)
+	bool TestAST(int& index, const char* name, std::ranges::range auto& range, const std::ranges::range auto& expectedRange, Token& failingToken)
 	{
 		auto expected = expectedRange.begin();
 		for (auto it = range.begin(), end = range.end(); it != end; it++, expected++)
 		{
-			if (!TestAST(index, name, *it, *expected))
+			if (!TestAST(index, name, *it, *expected, failingToken))
 			{
 				return false;
 			}

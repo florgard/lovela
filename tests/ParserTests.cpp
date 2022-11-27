@@ -13,26 +13,26 @@ public:
 	bool Success(const char* name, std::string_view code, const Node& expectedTree)
 	{
 		// Success is failure with no errors.
-		return Failure(name, code, expectedTree, {});
+		return Failure(name, code, expectedTree);
 	}
 
-	bool Failure(const char* name, std::string_view code, const Node& expectedTree, const std::vector<IParser::Error>& expectedErrors)
+	bool Failure(const char* name, std::string_view code, const Node& expectedTree)
 	{
-		return Failure(name, code, std::initializer_list<std::reference_wrapper<const Node>> { expectedTree }, expectedErrors);
+		return Failure(name, code, std::initializer_list<std::reference_wrapper<const Node>> { expectedTree });
 	}
 
 	bool Success(const char* name, std::string_view code, const std::ranges::range auto& expectedRange)
 	{
 		// Success is failure with no errors.
-		return Failure(name, code, expectedRange, {});
+		return Failure(name, code, expectedRange);
 	}
 
-	bool Failure(const char* name, std::string_view code, const std::ranges::range auto& expectedRange, const std::vector<IParser::Error>& expectedErrors);
+	bool Failure(const char* name, std::string_view code, const std::ranges::range auto& expectedRange);
 };
 
 static ParserTest s_test;
 
-bool ParserTest::Failure(const char* name, std::string_view code, const std::ranges::range auto& expectedRange, const std::vector<IParser::Error>& expectedErrors)
+bool ParserTest::Failure(const char* name, std::string_view code, const std::ranges::range auto& expectedRange)
 {
 	std::istringstream input(std::string(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
@@ -52,7 +52,8 @@ bool ParserTest::Failure(const char* name, std::string_view code, const std::ran
 	else
 	{
 		int index = 0;
-		success = TestAST(index, name, nodes, expectedRange);
+		Token failingToken{};
+		success = TestAST(index, name, nodes, expectedRange, failingToken);
 
 		if (!success)
 		{
@@ -63,33 +64,7 @@ bool ParserTest::Failure(const char* name, std::string_view code, const std::ran
 			PrintAST(nodes);
 			std::cerr <<  color.none << "Expected:\n" << color.expect;
 			PrintAST(expectedRange);
-		}
-	}
-
-	auto& errors = parser->GetErrors();
-	const auto actualCount = errors.size();
-	const auto expectedCount = expectedErrors.size();
-	const auto count = std::max(actualCount, expectedCount);
-
-	for (int i = 0; i < count; i++)
-	{
-		const auto actual = i < actualCount ? errors[i] : IParser::Error{};
-		const auto expected = i < expectedCount ? expectedErrors[i] : IParser::Error{};
-		if (actual.code != expected.code)
-		{
-			success = false;
-
-			PrintIncorrectErrorCodeMessage(std::cerr, "Parser", name, i, actual.code, expected.code);
-			PrintErrorMessage(std::cerr, actual);
-			lexer->PrintErrorSourceCode(std::cerr, errors[i].token);
-		}
-		else if (expected.token.error.line && actual.token.error.line != expected.token.error.line)
-		{
-			success = false;
-
-			PrintIncorrectErrorLineMessage(std::cerr, "Parser", name, i, actual.token.error.line, expected.token.error.line);
-			PrintErrorMessage(std::cerr, actual);
-			lexer->PrintErrorSourceCode(std::cerr, errors[i].token);
+			lexer->PrintErrorSourceCode(std::cerr, failingToken);
 		}
 	}
 
@@ -111,10 +86,6 @@ suite parser_lexer_error_test = [] {
 				Node{ .type = Node::Type::Error, .error{.code = Node::Error::Code::ParseError } },
 				Node{ .type = Node::Type::Error, .error{.code = Node::Error::Code::ParseError } },
 				Node{ .type = Node::Type::FunctionDeclaration, .value = "abc" },
-			},
-			{
-				IParser::Error{.code = IParser::Error::Code::ParseError },
-				IParser::Error{.code = IParser::Error::Code::ParseError },
 			}
 		));
 	};
@@ -283,8 +254,7 @@ suite parser_import_export_tests = [] {
 			{
 				Node{ .type = Node::Type::Error, .error{.code = Node::Error::Code::ParseError } },
 				Node{ .type = Node::Type::FunctionDeclaration, .value = "func2" },
-			},
-			{ IParser::Error{.code = IParser::Error::Code::ParseError } }
+			}
 		));
 	};
 };
@@ -326,8 +296,7 @@ suite parser_binary_operator_tests = [] {
 				Node{ .type = Node::Type::FunctionDeclaration, .value = "<", .nameSpace{.parts{"namespace1"}} },
 				Node{ .type = Node::Type::Error, .error{.code = Node::Error::Code::ParseError } },
 				Node{ .type = Node::Type::FunctionDeclaration, .value = "namespace2", .parameters{make<VariableDeclaration>::shared({.name = "operand"})} }
-			},
-			{ IParser::Error{.code = IParser::Error::Code::ParseError } }
+			}
 		));
 	};
 };

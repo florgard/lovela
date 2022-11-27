@@ -5,10 +5,12 @@
 #include "ut.hpp"
 using namespace boost::ut;
 
-bool TestingBase::TestAST(int& index, const char* name, const Node& node, const Node& expectedNode)
+bool TestingBase::TestAST(int& index, const char* name, const Node& node, const Node& expectedNode, Token& failingToken)
 {
 	if (node != expectedNode)
 	{
+		failingToken = node.token;
+
 		std::cerr << color.fail << "ERROR: " << color.none
 			<< "Parser test \"" << color.name << name << color.none << "\": "
 			<< "Some property of node " << index + 1 << " of type " << color.actual << to_string(node.type) << color.none
@@ -19,6 +21,7 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& node, const 
 			<< "Expected:\n" << color.expect;
 		expectedNode.Print(std::cerr);
 		std::cerr << color.none << '\n';
+
 		return false;
 	}
 
@@ -27,15 +30,16 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& node, const 
 	// Fail if one pointer is set but not the other
 	if (!!node.left != !!expectedNode.left || !!node.right != !!expectedNode.right)
 	{
+		failingToken = node.token;
 		return false;
 	}
 
-	if (node.left && !TestAST(index, name, *node.left, *expectedNode.left))
+	if (node.left && !TestAST(index, name, *node.left, *expectedNode.left, failingToken))
 	{
 		return false;
 	}
 
-	if (node.right && !TestAST(index, name, *node.right, *expectedNode.right))
+	if (node.right && !TestAST(index, name, *node.right, *expectedNode.right, failingToken))
 	{
 		return false;
 	}
