@@ -48,23 +48,39 @@ struct Node
 
 		std::string message;
 
-		[[nodiscard]] constexpr auto operator<=>(const Error& rhs) const noexcept = default;
+		[[nodiscard]] constexpr bool operator==(const Error& rhs) const noexcept
+		{
+			return code == rhs.code;
+		}
+
+		[[nodiscard]] constexpr bool operator!=(const Error& rhs) const noexcept
+		{
+			return !operator==(rhs);
+		}
 	} error{};
 
-	[[nodiscard]] bool operator==(const Node& rhs) const noexcept
+	[[nodiscard]] constexpr bool operator==(const Node& rhs) const noexcept
 	{
 		// Compare owned data (not the child nodes, token or callee)
-		return rhs.type == type
-			&& rhs.value == value
-			&& rhs.outType == outType
-			&& rhs.nameSpace == nameSpace
-			&& rhs.inType == inType
-			&& rhs.api == api
-			&& std::equal(rhs.parameters.begin(), rhs.parameters.end(), parameters.begin(), [](const auto& v1, const auto& v2) { return *v1 == *v2; });
+		return type == rhs.type
+			&& value == rhs.value
+			&& outType == rhs.outType
+			&& nameSpace == rhs.nameSpace
+			&& inType == rhs.inType
+			&& api == rhs.api
+			&& error == rhs.error
+			&& std::equal(parameters.begin(), parameters.end(), rhs.parameters.begin(), [](auto& p1, auto& p2) { return *p1 == *p2; });
 	}
 
-	[[nodiscard]] bool operator!=(const Node& rhs) const noexcept { return !operator==(rhs); }
-	[[nodiscard]] operator bool() const noexcept { return type != Type::Empty; }
+	[[nodiscard]] constexpr bool operator!=(const Node& rhs) const noexcept
+	{
+		return !operator==(rhs);
+	}
+
+	[[nodiscard]] constexpr operator bool() const noexcept
+	{
+		return type != Type::Empty;
+	}
 
 	[[nodiscard]] FunctionDeclaration ToFunctionDeclaration() const
 	{

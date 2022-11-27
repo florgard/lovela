@@ -108,8 +108,8 @@ suite parser_lexer_error_test = [] {
 			"1abc",
 			std::array<Node, 3>
 			{
-				Node{ .type = Node::Type::Error },
-				Node{ .type = Node::Type::Error },
+				Node{ .type = Node::Type::Error, .error{.code = Node::Error::Code::ParseError } },
+				Node{ .type = Node::Type::Error, .error{.code = Node::Error::Code::ParseError } },
 				Node{ .type = Node::Type::FunctionDeclaration, .value = "abc" },
 			},
 			{
@@ -281,7 +281,7 @@ suite parser_import_export_tests = [] {
 			"-> 'Standard Something' func1 func2", // func2 added to have any output
 			std::array<Node, 2>
 			{
-				Node{ .type = Node::Type::Error },
+				Node{ .type = Node::Type::Error, .error{.code = Node::Error::Code::ParseError } },
 				Node{ .type = Node::Type::FunctionDeclaration, .value = "func2" },
 			},
 			{ IParser::Error{.code = IParser::Error::Code::ParseError } }
@@ -324,7 +324,7 @@ suite parser_binary_operator_tests = [] {
 			"namespace1/</namespace2 (operand)",
 			std::array<Node, 3> {
 				Node{ .type = Node::Type::FunctionDeclaration, .value = "<", .nameSpace{.parts{"namespace1"}} },
-				Node{ .type = Node::Type::Error },
+				Node{ .type = Node::Type::Error, .error{.code = Node::Error::Code::ParseError } },
 				Node{ .type = Node::Type::FunctionDeclaration, .value = "namespace2", .parameters{make<VariableDeclaration>::shared({.name = "operand"})} }
 			},
 			{ IParser::Error{.code = IParser::Error::Code::ParseError } }
