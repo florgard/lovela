@@ -4,9 +4,34 @@
 class LexerBase : public ILexer
 {
 public:
-	void PrintErrorSourceCode(std::ostream& stream, const Token& token) noexcept override;
+	LexerBase(std::istream& charStream) noexcept;
 
 protected:
+	void PrintErrorSourceCode(std::ostream& stream, const Token& token) noexcept override;
+
+	[[nodiscard]] virtual Token GetToken(char lexeme) noexcept = 0;
+	[[nodiscard]] virtual Token GetToken(std::string_view lexeme) noexcept = 0;
+
+	void GetNextCharacter() noexcept;
+	void AddCodeLine() noexcept;
+	void AddToken(Token&& token) noexcept;
+	void AddCurrenToken() noexcept;
+
+	void WordBreak() noexcept;
+	void ExpectWordBreak() noexcept;
+	[[nodiscard]] bool IsWordBreakExpected() const noexcept;
+
+protected:
+	static constexpr size_t Current = 0;
+	static constexpr size_t Next = 1;
+	static constexpr size_t NextAfter = 2;
+
+	std::istream& charStream;
+	std::array<char, 3> characters{};
+	std::string currentLexeme;
+	std::vector<Token> currentTokens;
+	bool expectWordBreak{};
+
 	size_t currentLine = 1;
 	size_t currentTokenColumn = 1;
 	size_t nextTokenColumn = 1;

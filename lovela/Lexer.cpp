@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "Lexer.h"
 
-Lexer::Lexer(std::istream& charStream) noexcept : charStream(charStream >> std::noskipws)
+Lexer::Lexer(std::istream& charStream) noexcept
+	: LexerBase(charStream)
 {
-	currentTokens.reserve(64);
 }
 
 Token Lexer::GetToken(char lexeme) noexcept
@@ -86,49 +86,6 @@ Token Lexer::GetToken(std::string_view lexeme) noexcept
 	return {};
 }
 
-void Lexer::AddToken(Token&& token) noexcept
-{
-	if (!token)
-	{
-		return;
-	}
-
-	token.error.line = currentLine;
-	token.error.column = currentTokenColumn;
-
-	currentTokenColumn = nextTokenColumn;
-
-	currentTokens.emplace_back(std::move(token));
-}
-
-void Lexer::AddCurrenToken() noexcept
-{
-	if (currentLexeme.empty())
-	{
-		return;
-	}
-
-	AddToken(GetToken(currentLexeme));
-
-	currentLexeme.clear();
-}
-
-void Lexer::WordBreak() noexcept
-{
-	AddCurrenToken();
-	expectWordBreak = false;
-}
-
-void Lexer::ExpectWordBreak() noexcept
-{
-	expectWordBreak = true;
-}
-
-bool Lexer::IsWordBreakExpected() const noexcept
-{
-	return expectWordBreak;
-}
-
 TokenGenerator Lexer::Lex() noexcept
 {
 	// Populate next and next after characters.
@@ -193,23 +150,6 @@ TokenGenerator Lexer::Lex() noexcept
 	{
 		co_yield token;
 	}
-}
-
-void Lexer::GetNextCharacter() noexcept
-{
-	characters[Current] = characters[Next];
-	characters[Next] = characters[NextAfter];
-	characters[NextAfter] = 0;
-	charStream >> characters[NextAfter];
-}
-
-void Lexer::AddCodeLine() noexcept
-{
-	sourceCodeLines.push_back(currentSourceCode.str());
-	currentSourceCode.clear();
-	currentLine++;
-	currentTokenColumn = 1;
-	nextTokenColumn = 1;
 }
 
 bool Lexer::Accept() noexcept

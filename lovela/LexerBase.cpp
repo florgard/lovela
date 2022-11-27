@@ -1,6 +1,72 @@
 #include "pch.h"
 #include "LexerBase.h"
 
+LexerBase::LexerBase(std::istream& charStream) noexcept
+	: charStream(charStream >> std::noskipws)
+{
+	currentTokens.reserve(64);
+}
+
+void LexerBase::GetNextCharacter() noexcept
+{
+	characters[Current] = characters[Next];
+	characters[Next] = characters[NextAfter];
+	characters[NextAfter] = 0;
+	charStream >> characters[NextAfter];
+}
+
+void LexerBase::AddCodeLine() noexcept
+{
+	sourceCodeLines.push_back(currentSourceCode.str());
+	currentSourceCode.clear();
+	currentLine++;
+	currentTokenColumn = 1;
+	nextTokenColumn = 1;
+}
+
+void LexerBase::AddToken(Token&& token) noexcept
+{
+	if (!token)
+	{
+		return;
+	}
+
+	token.error.line = currentLine;
+	token.error.column = currentTokenColumn;
+
+	currentTokenColumn = nextTokenColumn;
+
+	currentTokens.emplace_back(std::move(token));
+}
+
+void LexerBase::AddCurrenToken() noexcept
+{
+	if (currentLexeme.empty())
+	{
+		return;
+	}
+
+	AddToken(GetToken(currentLexeme));
+
+	currentLexeme.clear();
+}
+
+void LexerBase::WordBreak() noexcept
+{
+	AddCurrenToken();
+	expectWordBreak = false;
+}
+
+void LexerBase::ExpectWordBreak() noexcept
+{
+	expectWordBreak = true;
+}
+
+bool LexerBase::IsWordBreakExpected() const noexcept
+{
+	return expectWordBreak;
+}
+
 void LexerBase::PrintErrorSourceCode(std::ostream& stream, const Token& token) noexcept
 {
 	const auto line = token.error.line;

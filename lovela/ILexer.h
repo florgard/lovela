@@ -11,7 +11,4 @@ public:
 	[[nodiscard]] virtual TokenGenerator Lex() noexcept = 0;
 
 	virtual void PrintErrorSourceCode(std::ostream& stream, const Token& token) noexcept = 0;
-
-protected:
-	virtual void AddToken(Token&& token) noexcept = 0;
 };
