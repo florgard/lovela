@@ -123,6 +123,6 @@ struct Node
 		}
 		stream << ']' << ',';
 		api.Print(stream);
-		stream << ']';
+		stream << ',' << to_string(error.code) << ']';
 	}
 };
