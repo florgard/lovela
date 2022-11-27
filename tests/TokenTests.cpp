@@ -1,14 +1,11 @@
 #include "pch.h"
-#include "../lovela/LexerBase.h"
+#include "../lovela/Token.h"
 
 #define BOOST_UT_DISABLE_MODULE
 #include "ut.hpp"
 using namespace boost::ut;
 
 suite token_tests = [] {
-	"ParenRoundOpen type"_test = [] { expect(LexerBase::GetTokenType('(') == Token::Type::ParenRoundOpen); };
-	"SeparatorDot type"_test = [] { expect(LexerBase::GetTokenType('.') == Token::Type::SeparatorDot); };
-	"Empty type"_test = [] { expect(LexerBase::GetTokenType(' ') == Token::Type::Empty); };
 	"Compare empty"_test = [] { expect(Token{} == Token{}); };
 	"Non-empty type"_test = [] { expect(Token{ .type = Token::Type::Identifier } != Token{}); };
 	"Named empty"_test = [] { expect(Token{ .value = "a" } != Token{}); };

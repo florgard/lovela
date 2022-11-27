@@ -23,6 +23,7 @@
     <ClCompile Include="TargetsCppMain.cpp" />
     <ClCompile Include="LexerRegexesTests.cpp" />
     <ClCompile Include="ParserInternalsTests.cpp" />
+    <ClCompile Include="LexerInternalsTests.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestingBase.h" />

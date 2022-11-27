@@ -8,7 +8,7 @@ using namespace boost::ut;
 class ParserTest
 {
 public:
-	// Internal parser function forwarding
+	// Internal function forwarding
 
 	[[nodiscard]] static constexpr TypeSpec GetBuiltinTypeSpec(std::string_view value)
 	{
