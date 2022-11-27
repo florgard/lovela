@@ -1,11 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Lexer.cpp" />
-    <ClCompile Include="Parser.cpp" />
-    <ClCompile Include="LexerBase.cpp" />
-    <ClCompile Include="ParseException.cpp" />
-    <ClCompile Include="ParserBase.cpp" />
     <ClCompile Include="CodeGeneratorCpp.cpp">
       <Filter>CodeGeneratorCpp</Filter>
     </ClCompile>
@@ -21,7 +16,24 @@
     <ClCompile Include="pch.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="LexerRegexes.cpp" />
+    <ClCompile Include="Lexer.cpp">
+      <Filter>Lexer</Filter>
+    </ClCompile>
+    <ClCompile Include="LexerBase.cpp">
+      <Filter>Lexer</Filter>
+    </ClCompile>
+    <ClCompile Include="LexerRegexes.cpp">
+      <Filter>Lexer</Filter>
+    </ClCompile>
+    <ClCompile Include="ParseException.cpp">
+      <Filter>Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="Parser.cpp">
+      <Filter>Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="ParserBase.cpp">
+      <Filter>Parser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CodeGeneratorCpp">
@@ -36,22 +48,20 @@
     <Filter Include="Libraries\utf8">
       <UniqueIdentifier>{31a3b2d8-5a84-4a1a-a62c-18c928061f72}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Lexer">
+      <UniqueIdentifier>{995675ee-0fdb-4b18-bc01-7d901c98481a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Parser">
+      <UniqueIdentifier>{b9a7ff04-20f6-421e-9b31-f235775c1cb1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CodeGeneratorFactory.h" />
-    <ClInclude Include="DataType.h" />
     <ClInclude Include="ICodeGenerator.h" />
     <ClInclude Include="ILexer.h" />
     <ClInclude Include="IParser.h" />
-    <ClInclude Include="Lexer.h" />
-    <ClInclude Include="LexerBase.h" />
     <ClInclude Include="LexerFactory.h" />
-    <ClInclude Include="Node.h" />
-    <ClInclude Include="ParseException.h" />
-    <ClInclude Include="Parser.h" />
-    <ClInclude Include="ParserBase.h" />
     <ClInclude Include="ParserFactory.h" />
-    <ClInclude Include="Token.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="CodeGeneratorCpp.h">
       <Filter>CodeGeneratorCpp</Filter>
@@ -90,7 +100,35 @@
     <ClInclude Include="lovela-dependencies.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="LexerRegexes.h" />
-    <ClInclude Include="LexerError.h" />
+    <ClInclude Include="Lexer.h">
+      <Filter>Lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="LexerBase.h">
+      <Filter>Lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="LexerError.h">
+      <Filter>Lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="LexerRegexes.h">
+      <Filter>Lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="Token.h">
+      <Filter>Lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="DataType.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Node.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="ParseException.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Parser.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="ParserBase.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
