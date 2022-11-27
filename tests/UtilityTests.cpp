@@ -4,6 +4,14 @@
 #include "ut.hpp"
 using namespace boost::ut;
 
+suite trim_tests = [] {
+	using namespace std::literals::string_view_literals;
+
+	static_assert(Trim(""sv) == ""sv);
+	static_assert(Trim(" \t\r\n\f\v"sv) == ""sv);
+	static_assert(Trim("a b c \r\n"sv) == "a b c"sv);
+};
+
 suite is_int_tests = [] {
 	static_assert(is_int("0"));
 	static_assert(is_int("1"));

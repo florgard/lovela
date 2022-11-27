@@ -1,6 +1,34 @@
 #pragma once
 #include "magic_enum.hpp"
 
+[[nodiscard]] static constexpr std::string_view Trim(const std::string_view& input) noexcept
+{
+	constexpr std::array<char, 7> whitespace{ ' ', '\t', '\r', '\n', '\f', '\v', '\0' };
+
+	const auto start = input.find_first_not_of(whitespace.data());
+	if (start == input.npos)
+	{
+		return {};
+	}
+
+	const auto end = input.find_last_not_of(whitespace.data(), input.npos, whitespace.size());
+	return input.substr(start, end - start + 1);
+}
+
+[[nodiscard]] static constexpr std::wstring_view Trim(const std::wstring_view& input) noexcept
+{
+	constexpr std::array<wchar_t, 7> whitespace{ L' ', L'\t', L'\r', L'\n', L'\f', L'\v', L'\0' };
+
+	const auto start = input.find_first_not_of(whitespace.data());
+	if (start == input.npos)
+	{
+		return {};
+	}
+
+	const auto end = input.find_last_not_of(whitespace.data(), input.npos, whitespace.size());
+	return input.substr(start, end - start + 1);
+}
+
 [[nodiscard]] constexpr bool is_int(std::string_view value) noexcept
 {
 	if (value.empty())

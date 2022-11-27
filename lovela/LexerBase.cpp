@@ -1,13 +1,6 @@
 #include "pch.h"
 #include "LexerBase.h"
 
-using namespace std::literals::string_view_literals;
-
-static_assert(LexerBase::Trim(""sv) == ""sv);
-static_assert(LexerBase::Trim(" \t\r\n\f\v"sv) == ""sv);
-static_assert(LexerBase::Trim("a b c \r\n"sv) == "a b c"sv);
-
-
 void LexerBase::PrintErrorSourceCode(std::ostream& stream, const Token& token) noexcept
 {
 	const auto line = token.error.line;
