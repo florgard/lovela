@@ -2,8 +2,6 @@
 
 ## Small
 
-Make error nodes for error tokens.
-
 Add comment tokens.
 
 /type/bool
