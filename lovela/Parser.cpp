@@ -297,6 +297,7 @@ TypeSpec Parser::GetPrimitiveDecimalTypeSpec(const std::string& value)
 	bool requireDouble = false;
 
 	// Convert to integer and check the limit for 32 bit float.
+	// https://blog.demofox.org/2017/11/21/floating-point-precision/
 	const auto trimmedDigits = trimmedMatch[1].str();
 	const auto mantissa = to_int<uint64_t>(trimmedDigits).unsignedValue.value_or(std::numeric_limits<uint64_t>::max());
 	if (mantissa >= 8388608) // 2^23 = 23 bit mantissa for 32 bit float
