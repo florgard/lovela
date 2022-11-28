@@ -294,33 +294,45 @@ TypeSpec Parser::GetPrimitiveDecimalTypeSpec(const std::string& value)
 		return { .kind = TypeSpec::Kind::Invalid };
 	}
 
+	bool requireDouble = false;
+
 	// Convert to integer and check the limit for 32 bit float.
 	const auto trimmedDigits = trimmedMatch[1].str();
 	const auto mantissa = to_int<uint64_t>(trimmedDigits).unsignedValue.value_or(std::numeric_limits<uint64_t>::max());
 	if (mantissa >= 8388608) // 2^23 = 23 bit mantissa for 32 bit float
 	{
 		// Higher precision requires a double.
-		return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 64, .floatType = true} };
+		requireDouble = true;
 	}
+
+	// Check which range the literal will fit in.
+
+	if (!requireDouble)
+	{
+		// Maybe a float will suffice, check if within range.
+
+		float f{};
+		auto [ptrFloat, errorFloat] = std::from_chars(value.data(), value.data() + value.size(), f);
+
+		if (errorFloat == std::errc{})
+		{
+			return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 32, .floatType = true} };
+		}
+	}
+
+	// A double is required, but check if within range.
 
 	double d{};
-	auto [ptr1, error1] = std::from_chars(value.data(), value.data() + value.size(), d);
+	auto [ptrDouble, errorDouble] = std::from_chars(value.data(), value.data() + value.size(), d);
 
-	if (error1 != std::errc{})
-	{
-		// FIXME: Throw?
-		// Not a number or out of range.
-		return { .kind = TypeSpec::Kind::Invalid };
-	}
-
-	if (std::fabs(d) > static_cast<double>(std::numeric_limits<float>::max()))
+	if (errorDouble == std::errc{})
 	{
 		return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 64, .floatType = true} };
 	}
-	else
-	{
-		return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 32, .floatType = true} };
-	}
+
+	// FIXME: Throw?
+	// Not a number or out of range.
+	return { .kind = TypeSpec::Kind::Invalid };
 }
 
 TypeSpec Parser::ParseTypeSpec()
