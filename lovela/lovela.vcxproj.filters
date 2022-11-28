@@ -34,6 +34,9 @@
     <ClCompile Include="ParserBase.cpp">
       <Filter>Parser</Filter>
     </ClCompile>
+    <ClCompile Include="ParserRegexes.cpp">
+      <Filter>Parser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CodeGeneratorCpp">
@@ -141,6 +144,9 @@
     </ClInclude>
     <ClInclude Include="VariableDeclaration.h">
       <Filter>Lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="ParserRegexes.h">
+      <Filter>Parser</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

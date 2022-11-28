@@ -1,5 +1,6 @@
 #pragma once
 #include "ParserBase.h"
+#include "ParserRegexes.h"
 
 class Parser : public ParserBase
 {
@@ -144,5 +145,7 @@ private:
 		return { .kind = TypeSpec::Kind::Invalid };
 	}
 
-	[[nodiscard]] static TypeSpec GetPrimitiveDecimalTypeSpec(std::string_view value);
+	[[nodiscard]] TypeSpec GetPrimitiveDecimalTypeSpec(const std::string& value);
+
+	ParserRegexes regexes;
 };

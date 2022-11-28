@@ -268,18 +268,19 @@ NodeGenerator Parser::Parse() noexcept
 	}
 }
 
-TypeSpec Parser::GetPrimitiveDecimalTypeSpec(std::string_view value)
+TypeSpec Parser::GetPrimitiveDecimalTypeSpec(const std::string& value)
 {
-	const auto separator = value.find('.');
-	if (separator == value.npos)
+	const auto& literalRegex = regexes.GetLiteralDecimal();
+	std::smatch match;
+	if (!std::regex_match(value, match, literalRegex))
 	{
-		// Decimal part missing.
+		// FIXME: Throw?
+		// Not a valid decimal literal.
 		return { .kind = TypeSpec::Kind::Invalid };
 	}
 
-	const auto start = separator + 1;
-	const auto end = value.find_first_not_of("0123456789", start);
-	const auto decimals = end == value.npos ? value.length() - start : end - start;
+	// The decimal digits part is group 3.
+	const auto decimals = match[3].length();
 
 	if (decimals > 6)
 	{
@@ -292,6 +293,7 @@ TypeSpec Parser::GetPrimitiveDecimalTypeSpec(std::string_view value)
 
 	if (error1 != std::errc{})
 	{
+		// FIXME: Throw?
 		// Not a number or out of range.
 		return { .kind = TypeSpec::Kind::Invalid };
 	}
