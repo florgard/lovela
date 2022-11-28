@@ -249,20 +249,6 @@ NodeGenerator Parser::Parse() noexcept
 				throw NoTokenException();
 			}
 		}
-		catch (const InvalidCurrentTokenException& e)
-		{
-			n = { .type = Node::Type::Error, .error = {.code = Node::Error::Code::ParseError, .message = e.message } };
-
-			// Skip faulty token.
-			Skip();
-		}
-		catch (const ErrorTokenException& e)
-		{
-			n = { .type = Node::Type::Error, .error = {.code = Node::Error::Code::ParseError, .message = e.message } };
-
-			// Skip faulty token.
-			Skip();
-		}
 		catch (const NoTokenException& e)
 		{
 			n = { .type = Node::Type::Error, .error = {.code = Node::Error::Code::ParseError, .message = e.message } };
