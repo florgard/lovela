@@ -194,7 +194,7 @@ void Lexer::LexLiteralNumber() noexcept
 
 			if (!Accept(regexes.GetBeginLiteralNumber(), 2))
 			{
-				AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::StringLiteralOpen, .message = "Ill-formed literal decimal number." } });
+				AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::DecimalLiteralIllformed, .message = "Ill-formed literal decimal number." } });
 				return;
 			}
 			

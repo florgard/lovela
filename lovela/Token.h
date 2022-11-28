@@ -48,6 +48,8 @@ struct Token
 			InternalError,
 			SyntaxError,
 			CommentOpen,
+			IntegerLiteralIllformed,
+			DecimalLiteralIllformed,
 			StringLiteralOpen,
 			StringFieldIllformed,
 			StringFieldUnknown,
