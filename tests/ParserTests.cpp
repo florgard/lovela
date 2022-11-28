@@ -112,18 +112,30 @@ suite parser_function_declaration_input_types_tests = [] {
 	};
 	"function with literal decimal in type 1"_test = [] {
 		expect(parserTest.YieldsNodes("function with literal decimal in type 1",
-			"[123.456789] func",
+			"[8.388607] func",
 			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType {.kind = TypeSpec::Kind::Primitive, .primitive{.bits = 32, .floatType = true}} }
 		));
 	};
 	"function with literal decimal in type 2"_test = [] {
 		expect(parserTest.YieldsNodes("function with literal decimal in type 2",
-			"[123.4567891] func",
+			"[8.388608] func",
 			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType {.kind = TypeSpec::Kind::Primitive, .primitive{.bits = 64, .floatType = true}} }
 		));
 	};
 	"function with literal decimal in type 3"_test = [] {
 		expect(parserTest.YieldsNodes("function with literal decimal in type 3",
+			"[838860.7] func",
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType {.kind = TypeSpec::Kind::Primitive, .primitive{.bits = 32, .floatType = true}} }
+		));
+	};
+	"function with literal decimal in type 4"_test = [] {
+		expect(parserTest.YieldsNodes("function with literal decimal in type 4",
+			"[838860.8] func",
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType {.kind = TypeSpec::Kind::Primitive, .primitive{.bits = 64, .floatType = true}} }
+		));
+	};
+	"function with literal decimal in type 5"_test = [] {
+		expect(parserTest.YieldsNodes("function with literal decimal in type 5",
 			"[-123.4567891e-6] func",
 			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType {.kind = TypeSpec::Kind::Primitive, .primitive{.bits = 64, .floatType = true}} }
 		));

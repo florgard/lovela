@@ -270,21 +270,36 @@ NodeGenerator Parser::Parse() noexcept
 
 TypeSpec Parser::GetPrimitiveDecimalTypeSpec(const std::string& value)
 {
+	// Check the mantissa precision to see whether a double is requried.
+
 	const auto& literalRegex = regexes.GetLiteralDecimal();
-	std::smatch match;
-	if (!std::regex_match(value, match, literalRegex))
+	std::smatch literalMatch;
+	if (!std::regex_match(value, literalMatch, literalRegex))
 	{
 		// FIXME: Throw?
 		// Not a valid decimal literal.
 		return { .kind = TypeSpec::Kind::Invalid };
 	}
 
-	// The decimal digits part is group 3.
-	const auto decimals = match[3].length();
+	// The integer mantissa is all the digits.
+	const auto digits = literalMatch[1].str() + literalMatch[2].str();
 
-	if (decimals > 6)
+	// Remove the leading and trailing zeros.
+	const auto& trimmedRegex = regexes.GetLiteralIntegerTrimZeros();
+	std::smatch trimmedMatch;
+	if (!std::regex_match(digits, trimmedMatch, trimmedRegex))
 	{
-		// Higher precision than 6 decimal places requires a double.
+		// FIXME: Throw?
+		// Invalid regex?
+		return { .kind = TypeSpec::Kind::Invalid };
+	}
+
+	// Convert to integer and check the limit for 32 bit float.
+	const auto trimmedDigits = trimmedMatch[1].str();
+	const auto mantissa = to_int<uint64_t>(trimmedDigits).unsignedValue.value_or(std::numeric_limits<uint64_t>::max());
+	if (mantissa >= 8388608) // 2^23 = 23 bit mantissa for 32 bit float
+	{
+		// Higher precision requires a double.
 		return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 64, .floatType = true} };
 	}
 
