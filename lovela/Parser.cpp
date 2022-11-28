@@ -251,7 +251,6 @@ NodeGenerator Parser::Parse() noexcept
 		}
 		catch (const InvalidCurrentTokenException& e)
 		{
-			errors.emplace_back(Error{ .code = IParser::Error::Code::ParseError, .message = e.message, .token = e.token });
 			n = { .type = Node::Type::Error, .error = {.code = Node::Error::Code::ParseError, .message = e.message } };
 
 			// Skip faulty token.
@@ -259,7 +258,6 @@ NodeGenerator Parser::Parse() noexcept
 		}
 		catch (const ErrorTokenException& e)
 		{
-			errors.emplace_back(Error{ .code = IParser::Error::Code::ParseError, .message = e.message, .token = e.token });
 			n = { .type = Node::Type::Error, .error = {.code = Node::Error::Code::ParseError, .message = e.message } };
 
 			// Skip faulty token.
@@ -267,7 +265,6 @@ NodeGenerator Parser::Parse() noexcept
 		}
 		catch (const NoTokenException& e)
 		{
-			errors.emplace_back(Error{ .code = IParser::Error::Code::ParseError, .message = e.message, .token = e.token });
 			n = { .type = Node::Type::Error, .error = {.code = Node::Error::Code::ParseError, .message = e.message } };
 
 			// Stop parsing after yielding the error node.
@@ -275,7 +272,6 @@ NodeGenerator Parser::Parse() noexcept
 		}
 		catch (const ParseException& e)
 		{
-			errors.emplace_back(Error{ .code = IParser::Error::Code::ParseError, .message = e.message, .token = e.token });
 			n = { .type = Node::Type::Error, .error = {.code = Node::Error::Code::ParseError, .message = e.message } };
 
 			// Skip faulty token.

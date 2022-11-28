@@ -34,12 +34,15 @@ public:
 		auto parser = ParserFactory::Create(lexer->Lex());
 		auto nodes = to_vector(parser->Parse());
 
-		for (auto& error : parser->GetErrors())
+		bool parseErrors = false;
+
+		for (auto& errorNode : nodes | std::views::filter([](Node& n) { return n.type == Node::Type::Error; }))
 		{
-			std::cerr << error.message << '\n';
+			parseErrors = true;
+			std::cerr << errorNode.error.message << '\n';
 		}
 
-		expect(parser->GetErrors().empty());
+		expect(!parseErrors);
 
 		std::cout << "AST:\n" << color.output;
 		PrintAST(nodes);

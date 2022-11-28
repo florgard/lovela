@@ -8,11 +8,6 @@ class ParserBase : public IParser
 public:
 	ParserBase(TokenGenerator&& tokenGenerator) noexcept;
 
-	[[nodiscard]] const std::vector<Error>& GetErrors() const noexcept override
-	{
-		return errors;
-	}
-
 	// Throws InvalidCurrentTokenException.
 	void Assert()
 	{
@@ -186,7 +181,6 @@ public:
 
 protected:
 	Token currentToken;
-	std::vector<Error> errors;
 
 protected:
 	[[nodiscard]] Token& NextToken() noexcept { return *_tokenIterator; }
