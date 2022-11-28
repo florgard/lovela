@@ -6,16 +6,6 @@ Add comment tokens.
 
 /type/bool
 
-Operators require whitespace
-* max-min << identifier >>
-* max - min << difference >>
-
-What is an operator?
-* +-*/%
-
-What is a separator?
-* .:,;!?|()[]<>
-
 Bind operator
 * Bind type
 * Bind function
