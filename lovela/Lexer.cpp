@@ -14,17 +14,17 @@ TokenGenerator Lexer::Lex() noexcept
 
 	while (GetCharacter(Next))
 	{
-		if (Accept(regexes.whitespace))
+		if (Accept(patterns.whitespace))
 		{
 			WordBreak();
 			LexWhitespace();
 		}
-		else if (Accept(regexes.separator))
+		else if (Accept(patterns.separator))
 		{
 			WordBreak();
 			LexSeparator();
 		}
-		else if (Accept(regexes.beginComment))
+		else if (Accept(patterns.beginComment))
 		{
 			WordBreak();
 			LexComment();
@@ -34,12 +34,12 @@ TokenGenerator Lexer::Lex() noexcept
 			WordBreak();
 			AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = fmt::format("Unexpected character \"{}\".", GetCharacter(Next)) } });
 		}
-		else if (AcceptBegin(regexes.beginLiteralNumber))
+		else if (AcceptBegin(patterns.beginLiteralNumber))
 		{
 			LexLiteralNumber();
 			ExpectWordBreak();
 		}
-		else if (AcceptBegin(regexes.beginString))
+		else if (AcceptBegin(patterns.beginString))
 		{
 			LexLiteralString();
 			ExpectWordBreak();
@@ -115,7 +115,7 @@ void Lexer::LexLiteralString() noexcept
 					nextStringInterpolation++;
 				}
 			}
-			else if (Accept(regexes.digit))
+			else if (Accept(patterns.digit))
 			{
 				char stringFieldCode = GetCharacter(Current);
 
@@ -132,7 +132,7 @@ void Lexer::LexLiteralString() noexcept
 					AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::StringFieldIllformed, .message = fmt::format("Ill-formed string field \"{}\".", stringFieldCode), } });
 				}
 			}
-			else if (Accept(regexes.stringField))
+			else if (Accept(patterns.stringField))
 			{
 				char stringFieldCode = GetCharacter(Current);
 
@@ -171,27 +171,27 @@ void Lexer::LexLiteralNumber() noexcept
 	std::string value;
 	value += GetCharacter(Current);
 
-	while (Accept(regexes.digit))
+	while (Accept(patterns.digit))
 	{
 		value += GetCharacter(Current);
 	}
 
 	// Accept a single decimal point in numbers.
 
-	if (Accept(regexes.beginDecimalPart))
+	if (Accept(patterns.beginDecimalPart))
 	{
 		value += GetCharacter(Current);
 
-		while (Accept(regexes.digit))
+		while (Accept(patterns.digit))
 		{
 			value += GetCharacter(Current);
 		}
 
-		if (Accept(regexes.beginDecimalExponent))
+		if (Accept(patterns.beginDecimalExponent))
 		{
 			value += GetCharacter(Current);
 
-			if (!Accept(regexes.beginLiteralNumber))
+			if (!Accept(patterns.beginLiteralNumber))
 			{
 				AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::LiteralDecimalIllformed, .message = "Ill-formed literal decimal number." } });
 				return;
@@ -199,7 +199,7 @@ void Lexer::LexLiteralNumber() noexcept
 			
 			value += GetCharacter(Current);
 
-			while (Accept(regexes.digit))
+			while (Accept(patterns.digit))
 			{
 				value += GetCharacter(Current);
 			}
@@ -221,7 +221,7 @@ void Lexer::LexComment() noexcept
 
 	for (;;)
 	{
-		if (Accept(regexes.endComment))
+		if (Accept(patterns.endComment))
 		{
 			while (Accept('>'));
 
@@ -232,7 +232,7 @@ void Lexer::LexComment() noexcept
 				return;
 			}
 		}
-		else if (Accept(regexes.beginComment))
+		else if (Accept(patterns.beginComment))
 		{
 			// Nested comment.
 
@@ -279,7 +279,7 @@ Token Lexer::GetToken(std::string_view lexeme) noexcept
 	// https://www.regular-expressions.info/unicode.html
 	// https://en.wikipedia.org/wiki/Combining_character
 
-	// ANSI token regexes
+	// ANSI token patterns
 	static const std::vector<std::pair<std::regex, Token::Type>> definitions
 	{
 		{ std::regex{ R"(<|>|<>|<=|>=|=)" }, Token::Type::OperatorComparison },
@@ -289,7 +289,7 @@ Token Lexer::GetToken(std::string_view lexeme) noexcept
 		{ std::regex{ R"([[:alpha:]][\w<>=\+\-\*/]*)" }, Token::Type::Identifier },
 	};
 
-	// Additional Unicode token regexes
+	// Additional Unicode token patterns
 	static const std::vector<std::pair<std::wregex, Token::Type>> unicodeDefinitions
 	{
 		{ std::wregex{ LR"([[:alpha:]][\w<>=\+\-\*/\u0300–\u036F\u1AB0–\u1AFF\u1DC0–\u1DFF\u20D0–\u20FF\uFE20–\uFE2F]*)" }, Token::Type::Identifier },

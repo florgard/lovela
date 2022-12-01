@@ -6,8 +6,8 @@ using namespace boost::ut;
 
 suite regex_tests = [] {
 	"separator"_test = [] {
-		LexerPatterns regexes;
-		auto& re = regexes.separator.regex;
+		LexerPatterns patterns;
+		auto& re = patterns.separator.regex;
 
 		expect(std::regex_match("(", re));
 		expect(std::regex_match(")", re));
