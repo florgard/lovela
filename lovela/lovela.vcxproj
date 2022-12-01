@@ -160,7 +160,7 @@
     <ClCompile Include="Lexer.cpp" />
     <ClCompile Include="LexerBase.cpp" />
     <ClCompile Include="LexerFactory.cpp" />
-    <ClCompile Include="LexerRegexes.cpp" />
+    <ClCompile Include="LexerPatterns.cpp" />
     <ClCompile Include="ParseException.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="ParserBase.cpp" />
@@ -187,7 +187,7 @@
     <ClInclude Include="Lexer.h" />
     <ClInclude Include="LexerBase.h" />
     <ClInclude Include="LexerFactory.h" />
-    <ClInclude Include="LexerRegexes.h" />
+    <ClInclude Include="LexerPatterns.h" />
     <ClInclude Include="lovela-dependencies.h" />
     <ClInclude Include="magic_enum.hpp" />
     <ClInclude Include="NameSpace.h" />

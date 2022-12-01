@@ -22,9 +22,6 @@
     <ClCompile Include="LexerBase.cpp">
       <Filter>Lexer</Filter>
     </ClCompile>
-    <ClCompile Include="LexerPatterns.cpp">
-      <Filter>Lexer</Filter>
-    </ClCompile>
     <ClCompile Include="ParseException.cpp">
       <Filter>Parser</Filter>
     </ClCompile>
@@ -37,6 +34,7 @@
     <ClCompile Include="ParserRegexes.cpp">
       <Filter>Parser</Filter>
     </ClCompile>
+    <ClCompile Include="LexerPatterns.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CodeGeneratorCpp">
@@ -109,9 +107,6 @@
     <ClInclude Include="LexerBase.h">
       <Filter>Lexer</Filter>
     </ClInclude>
-    <ClInclude Include="LexerPatterns.h">
-      <Filter>Lexer</Filter>
-    </ClInclude>
     <ClInclude Include="Token.h">
       <Filter>Lexer</Filter>
     </ClInclude>
@@ -148,5 +143,6 @@
     <ClInclude Include="ParserRegexes.h">
       <Filter>Parser</Filter>
     </ClInclude>
+    <ClInclude Include="LexerPatterns.h" />
   </ItemGroup>
 </Project>

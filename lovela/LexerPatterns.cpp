@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "LexerRegexes.h"
+#include "LexerPatterns.h"
 
 const std::regex& LexerPatterns::GetBeginLiteralNumber()
 {

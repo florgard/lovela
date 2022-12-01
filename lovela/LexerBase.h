@@ -1,6 +1,6 @@
 #pragma once
 #include "ILexer.h"
-#include "LexerRegexes.h"
+#include "LexerPatterns.h"
 
 class LexerBase : public ILexer
 {

@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "TestingBase.h"
-#include "../lovela/LexerRegexes.h"
+#include "../lovela/LexerPatterns.h"
 
 #define BOOST_UT_DISABLE_MODULE
 #include "ut.hpp"
