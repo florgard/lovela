@@ -58,5 +58,5 @@ private:
 		return map.at_or(code, {});
 	}
 
-	LexerRegexes regexes;
+	LexerPatterns regexes;
 };

@@ -22,7 +22,7 @@
     <ClCompile Include="LexerBase.cpp">
       <Filter>Lexer</Filter>
     </ClCompile>
-    <ClCompile Include="LexerRegexes.cpp">
+    <ClCompile Include="LexerPatterns.cpp">
       <Filter>Lexer</Filter>
     </ClCompile>
     <ClCompile Include="ParseException.cpp">
@@ -109,7 +109,7 @@
     <ClInclude Include="LexerBase.h">
       <Filter>Lexer</Filter>
     </ClInclude>
-    <ClInclude Include="LexerRegexes.h">
+    <ClInclude Include="LexerPatterns.h">
       <Filter>Lexer</Filter>
     </ClInclude>
     <ClInclude Include="Token.h">

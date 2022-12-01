@@ -128,7 +128,7 @@ bool LexerBase::Accept(const std::regex& regex, size_t length) noexcept
 /// <param name="pattern"></param>
 /// <param name="length">The number of characters to match. Must be 1 or 2.</param>
 /// <returns>true on match, false on mismatch or error (length out of bounds).</returns>
-bool LexerBase::Accept(const LexerRegexes::Regex& pattern) noexcept
+bool LexerBase::Accept(const LexerPatterns::Regex& pattern) noexcept
 {
 	if (!(pattern.length > 0 && pattern.length <= characters.size() - Next))
 	{

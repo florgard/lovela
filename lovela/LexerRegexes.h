@@ -1,6 +1,6 @@
 #pragma once
 
-struct LexerRegexes
+struct LexerPatterns
 {
 	struct Regex
 	{

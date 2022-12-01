@@ -1,43 +1,43 @@
 #include "pch.h"
 #include "LexerRegexes.h"
 
-const std::regex& LexerRegexes::GetBeginLiteralNumber()
+const std::regex& LexerPatterns::GetBeginLiteralNumber()
 {
 	static const std::regex re{ R"((\d.|[+\-]\d))" };
 	return re;
 }
 
-const std::regex& LexerRegexes::GetBeginComment()
+const std::regex& LexerPatterns::GetBeginComment()
 {
 	static const std::regex re{ R"(<<)" };
 	return re;
 }
 
-const std::regex& LexerRegexes::GetEndComment()
+const std::regex& LexerPatterns::GetEndComment()
 {
 	static const std::regex re{ R"(>>)" };
 	return re;
 }
 
-const std::regex& LexerRegexes::GetBeginString()
+const std::regex& LexerPatterns::GetBeginString()
 {
 	static const std::regex re{ R"(')" };
 	return re;
 }
 
-const std::regex& LexerRegexes::GetStringField()
+const std::regex& LexerPatterns::GetStringField()
 {
 	static const std::regex re{ R"([tnr])" };
 	return re;
 }
 
-const std::regex& LexerRegexes::GetBeginDecimalPart()
+const std::regex& LexerPatterns::GetBeginDecimalPart()
 {
 	static const std::regex re{ R"(\.\d)" };
 	return re;
 }
 
-const std::regex& LexerRegexes::GetBeginDecimalExponent()
+const std::regex& LexerPatterns::GetBeginDecimalExponent()
 {
 	static const std::regex re{ R"([eE][+\-\d])" };
 	return re;
