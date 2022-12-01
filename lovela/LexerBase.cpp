@@ -89,9 +89,19 @@ bool LexerBase::Accept() noexcept
 	return true;
 }
 
-bool LexerBase::Accept(char character) noexcept
+bool LexerBase::Accept(char pattern) noexcept
 {
-	if (characters[Next] == character)
+	if (characters[Next] == pattern)
+	{
+		return Accept();
+	}
+
+	return false;
+}
+
+bool LexerBase::Accept(LexerPatterns::Chars pattern) noexcept
+{
+	if (characters[Next] == pattern.first && characters[NextAfter] == pattern.second)
 	{
 		return Accept();
 	}
@@ -121,9 +131,14 @@ bool LexerBase::Accept(const LexerPatterns::Regex& pattern) noexcept
 	return false;
 }
 
-bool LexerBase::AcceptBegin(char character) noexcept
+bool LexerBase::AcceptBegin(char pattern) noexcept
 {
-	return currentLexeme.empty() && Accept(character);
+	return currentLexeme.empty() && Accept(pattern);
+}
+
+bool LexerBase::AcceptBegin(LexerPatterns::Chars pattern) noexcept
+{
+	return currentLexeme.empty() && Accept(pattern);
 }
 
 bool LexerBase::AcceptBegin(const LexerPatterns::Regex& pattern) noexcept
@@ -131,14 +146,25 @@ bool LexerBase::AcceptBegin(const LexerPatterns::Regex& pattern) noexcept
 	return currentLexeme.empty() && Accept(pattern);
 }
 
-bool LexerBase::Expect(char character) noexcept
+bool LexerBase::Expect(char pattern) noexcept
 {
-	if (Accept(character))
+	if (Accept(pattern))
 	{
 		return true;
 	}
 
-	AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = fmt::format("Unexpected character \"{}\", expected \"{}\".", characters[Next], character) } });
+	AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = fmt::format("Unexpected character \"{}\", expected \"{}\".", characters[Next], pattern) } });
+	return false;
+}
+
+bool LexerBase::Expect(LexerPatterns::Chars pattern) noexcept
+{
+	if (Accept(pattern))
+	{
+		return true;
+	}
+
+	AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = fmt::format("Unexpected characters \"{}{}\", expected \"{}{}\".", characters[Next], characters[NextAfter], pattern.first, pattern.second) } });
 	return false;
 }
 

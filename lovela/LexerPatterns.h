@@ -2,6 +2,12 @@
 
 struct LexerPatterns
 {
+	struct Chars
+	{
+		char first;
+		char second;
+	};
+
 	struct Regex
 	{
 		/// <summary>
@@ -20,13 +26,13 @@ struct LexerPatterns
 	const Regex separator{ std::regex(R"([()[\]{}.,:;!?/|#])"), 1 };
 	const Regex digit{ std::regex(R"(\d)"), 1 };
 
-	const Regex beginComment{ std::regex(R"(<<)"), 2 };
-	const Regex endComment{ std::regex(R"(>>)"), 2 };
+	const Chars beginComment{ '<', '<' };
+	const Chars endComment{ '>', '>' };
 
 	const Regex beginLiteralNumber{ std::regex(R"((\d.|[+\-]\d))"), 2 };
 	const Regex beginDecimalPart{ std::regex(R"(\.\d)"), 2 };
 	const Regex beginDecimalExponent{ std::regex(R"([eE][+\-\d])"), 2 };
 
-	const Regex beginString{ std::regex(R"(')"), 1 };
+	const char beginString{ '\'' };
 	const Regex stringField{ std::regex(R"([tnr])"), 1 };
 };
