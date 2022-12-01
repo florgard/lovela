@@ -4,8 +4,8 @@ struct LexerPatterns
 {
 	struct Chars
 	{
-		char first;
-		char second;
+		const char first;
+		const char second;
 	};
 
 	struct Regex
