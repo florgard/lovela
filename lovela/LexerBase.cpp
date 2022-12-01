@@ -155,6 +155,11 @@ bool LexerBase::AcceptBegin(const std::regex& regex, size_t length) noexcept
 	return currentLexeme.empty() && Accept(regex, length);
 }
 
+bool LexerBase::AcceptBegin(const LexerPatterns::Regex& pattern) noexcept
+{
+	return currentLexeme.empty() && Accept(pattern);
+}
+
 bool LexerBase::Expect(char character) noexcept
 {
 	if (Accept(character))

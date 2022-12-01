@@ -24,7 +24,7 @@ TokenGenerator Lexer::Lex() noexcept
 			WordBreak();
 			LexSeparator();
 		}
-		else if (Accept(regexes.GetBeginComment(), 2))
+		else if (Accept(regexes.beginComment))
 		{
 			WordBreak();
 			LexComment();
@@ -34,12 +34,12 @@ TokenGenerator Lexer::Lex() noexcept
 			WordBreak();
 			AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = fmt::format("Unexpected character \"{}\".", GetCharacter(Next)) } });
 		}
-		else if (AcceptBegin(regexes.GetBeginLiteralNumber(), 2))
+		else if (AcceptBegin(regexes.beginLiteralNumber))
 		{
 			LexLiteralNumber();
 			ExpectWordBreak();
 		}
-		else if (AcceptBegin(regexes.GetBeginString(), 1))
+		else if (AcceptBegin(regexes.beginString))
 		{
 			LexLiteralString();
 			ExpectWordBreak();
@@ -132,7 +132,7 @@ void Lexer::LexLiteralString() noexcept
 					AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::StringFieldIllformed, .message = fmt::format("Ill-formed string field \"{}\".", stringFieldCode), } });
 				}
 			}
-			else if (Accept(regexes.GetStringField(), 1))
+			else if (Accept(regexes.stringField))
 			{
 				char stringFieldCode = GetCharacter(Current);
 
@@ -178,7 +178,7 @@ void Lexer::LexLiteralNumber() noexcept
 
 	// Accept a single decimal point in numbers.
 
-	if (Accept(regexes.GetBeginDecimalPart(), 2))
+	if (Accept(regexes.beginDecimalPart))
 	{
 		value += GetCharacter(Current);
 
@@ -187,11 +187,11 @@ void Lexer::LexLiteralNumber() noexcept
 			value += GetCharacter(Current);
 		}
 
-		if (Accept(regexes.GetBeginDecimalExponent(), 2))
+		if (Accept(regexes.beginDecimalExponent))
 		{
 			value += GetCharacter(Current);
 
-			if (!Accept(regexes.GetBeginLiteralNumber(), 2))
+			if (!Accept(regexes.beginLiteralNumber))
 			{
 				AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::LiteralDecimalIllformed, .message = "Ill-formed literal decimal number." } });
 				return;
@@ -221,7 +221,7 @@ void Lexer::LexComment() noexcept
 
 	for (;;)
 	{
-		if (Accept(regexes.GetEndComment(), 2))
+		if (Accept(regexes.endComment))
 		{
 			while (Accept('>'));
 
@@ -232,7 +232,7 @@ void Lexer::LexComment() noexcept
 				return;
 			}
 		}
-		else if (Accept(regexes.GetBeginComment(), 2))
+		else if (Accept(regexes.beginComment))
 		{
 			// Nested comment.
 
