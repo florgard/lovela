@@ -32,7 +32,7 @@ TokenGenerator Lexer::Lex() noexcept
 		else if (IsWordBreakExpected())
 		{
 			WordBreak();
-			AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = std::format("Unexpected character \"{}\".", GetCharacter(Next)) } });
+			AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = fmt::format("Unexpected character \"{}\".", GetCharacter(Next)) } });
 		}
 		else if (AcceptBegin(regexes.GetBeginLiteralNumber(), 2))
 		{
@@ -129,7 +129,7 @@ void Lexer::LexLiteralString() noexcept
 				}
 				else
 				{
-					AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::StringFieldIllformed, .message = std::format("Ill-formed string field \"{}\".", stringFieldCode), } });
+					AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::StringFieldIllformed, .message = fmt::format("Ill-formed string field \"{}\".", stringFieldCode), } });
 				}
 			}
 			else if (Accept(regexes.GetStringField(), 1))
@@ -143,12 +143,12 @@ void Lexer::LexLiteralString() noexcept
 				}
 				else
 				{
-					AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::StringFieldIllformed, .message = std::format("Ill-formed string field \"{}\".", stringFieldCode) } });
+					AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::StringFieldIllformed, .message = fmt::format("Ill-formed string field \"{}\".", stringFieldCode) } });
 				}
 			}
 			else
 			{
-				AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::StringFieldUnknown, .message = std::format("Unknown string field code \"{}\".", GetCharacter(Next)) } });
+				AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::StringFieldUnknown, .message = fmt::format("Unknown string field code \"{}\".", GetCharacter(Next)) } });
 			}
 		}
 		else if (Accept())
@@ -336,7 +336,7 @@ Token Lexer::GetToken(std::string_view lexeme) noexcept
 		}
 	}
 
-	AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = std::format("Syntax error near \"{}\".", std::string(trimmed.data(), trimmed.size()))} });
+	AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = fmt::format("Syntax error near \"{}\".", std::string(trimmed.data(), trimmed.size()))} });
 
 	return {};
 }

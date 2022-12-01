@@ -162,7 +162,7 @@ bool LexerBase::Expect(char character) noexcept
 		return true;
 	}
 
-	AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = std::format("Unexpected character \"{}\", expected \"{}\".", characters[Next], character) } });
+	AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = fmt::format("Unexpected character \"{}\", expected \"{}\".", characters[Next], character) } });
 	return false;
 }
 
@@ -173,7 +173,7 @@ bool LexerBase::Expect(const std::regex& regex, size_t length) noexcept
 		return true;
 	}
 
-	AddToken({ .type = Token::Type::Error, .value = std::format("Unexpected character \"{}\".", characters[Next]) });
+	AddToken({ .type = Token::Type::Error, .value = fmt::format("Unexpected character \"{}\".", characters[Next]) });
 	return false;
 }
 

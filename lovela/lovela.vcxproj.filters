@@ -35,6 +35,9 @@
       <Filter>Parser</Filter>
     </ClCompile>
     <ClCompile Include="LexerPatterns.cpp" />
+    <ClCompile Include="fmt\format.cc">
+      <Filter>Libraries\fmt</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="CodeGeneratorCpp">
@@ -54,6 +57,9 @@
     </Filter>
     <Filter Include="Parser">
       <UniqueIdentifier>{b9a7ff04-20f6-421e-9b31-f235775c1cb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Libraries\fmt">
+      <UniqueIdentifier>{5696b848-4614-4a91-9a90-ed73a9ff4334}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -144,5 +150,44 @@
       <Filter>Parser</Filter>
     </ClInclude>
     <ClInclude Include="LexerPatterns.h" />
+    <ClInclude Include="fmt\fmt\args.h">
+      <Filter>Libraries\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\fmt\chrono.h">
+      <Filter>Libraries\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\fmt\color.h">
+      <Filter>Libraries\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\fmt\compile.h">
+      <Filter>Libraries\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\fmt\core.h">
+      <Filter>Libraries\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\fmt\format.h">
+      <Filter>Libraries\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\fmt\format-inl.h">
+      <Filter>Libraries\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\fmt\os.h">
+      <Filter>Libraries\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\fmt\ostream.h">
+      <Filter>Libraries\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\fmt\printf.h">
+      <Filter>Libraries\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\fmt\ranges.h">
+      <Filter>Libraries\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\fmt\std.h">
+      <Filter>Libraries\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\fmt\xchar.h">
+      <Filter>Libraries\fmt</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

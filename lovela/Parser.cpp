@@ -518,7 +518,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 				}
 				else
 				{
-					throw ParseException(currentToken, std::format("Invalid import/export API specification token \"{}\".", apiToken));
+					throw ParseException(currentToken, fmt::format("Invalid import/export API specification token \"{}\".", apiToken));
 				}
 			}
 		}

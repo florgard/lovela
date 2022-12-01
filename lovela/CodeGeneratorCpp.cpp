@@ -274,7 +274,7 @@ std::string CodeGeneratorCpp::ConvertTypeName(const TypeSpec& type)
 		return TypeNames::invalid;
 
 	default:
-		errors.emplace_back(std::format("Error: Unhandled type kind \"{}\" when getting the target type name.", to_string(type.kind)));
+		errors.emplace_back(fmt::format("Error: Unhandled type kind \"{}\" when getting the target type name.", to_string(type.kind)));
 		return TypeNames::invalid;
 	}
 }
