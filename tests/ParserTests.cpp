@@ -3,10 +3,6 @@
 #include "../lovela/LexerFactory.h"
 #include "../lovela/ParserFactory.h"
 
-#define BOOST_UT_DISABLE_MODULE
-#include "ut.hpp"
-using namespace boost::ut;
-
 class ParserTest : public TestingBase
 {
 public:
@@ -64,6 +60,8 @@ bool ParserTest::YieldsNodes(const char* name, std::string_view code, const std:
 
 	return success;
 }
+
+using namespace boost::ut;
 
 suite parser_lexer_error_test = [] {
 	"invalid identifier"_test = [] {

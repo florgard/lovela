@@ -1,10 +1,6 @@
 #include "pch.h"
 #include "../targets/cpp/lovela-runtime/lovela.h"
 
-#define BOOST_UT_DISABLE_MODULE
-#include "ut.hpp"
-using namespace boost::ut;
-
 auto f_ReturnInput(lovela::context& context, const auto& in)
 {
 	static_cast<void>(context);
@@ -19,6 +15,8 @@ auto f_ReturnInputIncremented(lovela::context& context, const auto& in)
 	auto v2 = v1 + 1;
 	return v2;
 }
+
+using namespace boost::ut;
 
 suite FunctionCalls = [] {
 	"ReturnInput"_test = [] {

@@ -1,10 +1,6 @@
 #include "pch.h"
 #include "../lovela/Lexer.h"
 
-#define BOOST_UT_DISABLE_MODULE
-#include "ut.hpp"
-using namespace boost::ut;
-
 class LexerTest
 {
 public:
@@ -15,6 +11,8 @@ public:
 		return Lexer::GetTokenType(lexeme);
 	}
 };
+
+using namespace boost::ut;
 
 suite lexer_GetTokenType_tests = [] {
 	"ParenRoundOpen type"_test = [] { expect(LexerTest::GetTokenType('(') == Token::Type::ParenRoundOpen); };

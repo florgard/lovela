@@ -1,10 +1,6 @@
 #include "pch.h"
 #include "../lovela/Parser.h"
 
-#define BOOST_UT_DISABLE_MODULE
-#include "ut.hpp"
-using namespace boost::ut;
-
 class ParserTest
 {
 public:
@@ -20,6 +16,8 @@ public:
 		return Parser::GetPrimitiveIntegerTypeSpec(value);
 	}
 };
+
+using namespace boost::ut;
 
 suite parser_GetBuiltinTypeSpec_tests = [] {
 	static_assert(ParserTest::GetBuiltinTypeSpec("i8") == TypeSpec{ .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 8, .signedType = true} });

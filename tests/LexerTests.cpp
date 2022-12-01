@@ -2,10 +2,6 @@
 #include "TestingBase.h"
 #include "../lovela/LexerFactory.h"
 
-#define BOOST_UT_DISABLE_MODULE
-#include "ut.hpp"
-using namespace boost::ut;
-
 class LexerTest : public TestingBase
 {
 public:
@@ -70,6 +66,8 @@ static constexpr Token ErrorToken(Token::Error::Code error, size_t line = 1)
 {
 	return { .type = Token::Type::Error, .error{.code = error, .line = line} };
 }
+
+using namespace boost::ut;
 
 suite lexer_rudimental_tests = [] {
 	"empty expression"_test = [] {

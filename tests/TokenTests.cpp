@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "../lovela/Token.h"
 
-#define BOOST_UT_DISABLE_MODULE
-#include "ut.hpp"
 using namespace boost::ut;
 
 suite token_tests = [] {

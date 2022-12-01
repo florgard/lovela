@@ -2,8 +2,6 @@
 #include "TestingBase.h"
 #include "../lovela/LexerPatterns.h"
 
-#define BOOST_UT_DISABLE_MODULE
-#include "ut.hpp"
 using namespace boost::ut;
 
 suite regex_tests = [] {

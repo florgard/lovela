@@ -4,10 +4,6 @@
 #include "../lovela/ParserFactory.h"
 #include "../lovela/CodeGeneratorFactory.h"
 
-#define BOOST_UT_DISABLE_MODULE
-#include "ut.hpp"
-using namespace boost::ut;
-
 class CodeGeneratorCppTest : public TestingBase
 {
 public:
@@ -220,6 +216,8 @@ bool CodeGeneratorCppTest::ExportFailure(const char* name, std::string_view code
 
 	return true;
 }
+
+using namespace boost::ut;
 
 suite CodeGeneratorCpp_function_literal_input_type_tests = [] {
 	"[1] input"_test = [] {
