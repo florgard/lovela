@@ -21,7 +21,7 @@
     <ClCompile Include="TargetsCppErrorHandling.cpp" />
     <ClCompile Include="TargetsCppFunctionCalls.cpp" />
     <ClCompile Include="TargetsCppMain.cpp" />
-    <ClCompile Include="LexerRegexesTests.cpp" />
+    <ClCompile Include="LexerPatternsTests.cpp" />
     <ClCompile Include="ParserInternalsTests.cpp" />
     <ClCompile Include="LexerInternalsTests.cpp" />
   </ItemGroup>

@@ -150,7 +150,7 @@
     <ClCompile Include="CodeGeneratorCppProgramTests.cpp" />
     <ClCompile Include="CodeGeneratorCppTests.cpp" />
     <ClCompile Include="LexerInternalsTests.cpp" />
-    <ClCompile Include="LexerRegexesTests.cpp" />
+    <ClCompile Include="LexerPatternsTests.cpp" />
     <ClCompile Include="LexerTests.cpp" />
     <ClCompile Include="ParserInternalsTests.cpp" />
     <ClCompile Include="ParserTests.cpp" />
