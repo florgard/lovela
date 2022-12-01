@@ -109,39 +109,12 @@ bool LexerBase::Accept(LexerPatterns::Chars pattern) noexcept
 	return false;
 }
 
-/// <summary>
-/// Checks if the next 1 or 2 characters match the given regex.
-/// </summary>
-/// <param name="pattern">The pattern containing the regex and length to match.</param>
-/// <returns>true on match, false on mismatch or error (length out of bounds).</returns>
-bool LexerBase::Accept(const LexerPatterns::Regex& pattern) noexcept
-{
-	if (!(pattern.length > 0 && pattern.length <= characters.size() - Next))
-	{
-		AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::InternalError, .message = "Pattern match out of bounds." } });
-		return false;
-	}
-
-	const auto* str = &characters[Next];
-	if (std::regex_match(str, str + pattern.length, pattern.regex))
-	{
-		return Accept();
-	}
-
-	return false;
-}
-
 bool LexerBase::AcceptBegin(char pattern) noexcept
 {
 	return currentLexeme.empty() && Accept(pattern);
 }
 
 bool LexerBase::AcceptBegin(LexerPatterns::Chars pattern) noexcept
-{
-	return currentLexeme.empty() && Accept(pattern);
-}
-
-bool LexerBase::AcceptBegin(const LexerPatterns::Regex& pattern) noexcept
 {
 	return currentLexeme.empty() && Accept(pattern);
 }
@@ -165,17 +138,6 @@ bool LexerBase::Expect(LexerPatterns::Chars pattern) noexcept
 	}
 
 	AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = fmt::format("Unexpected characters \"{}{}\", expected \"{}{}\".", characters[Next], characters[NextAfter], pattern.first, pattern.second) } });
-	return false;
-}
-
-bool LexerBase::Expect(const LexerPatterns::Regex& pattern) noexcept
-{
-	if (Accept(pattern))
-	{
-		return true;
-	}
-
-	AddToken({ .type = Token::Type::Error, .value = fmt::format("Unexpected character \"{}\".", characters[Next]) });
 	return false;
 }
 

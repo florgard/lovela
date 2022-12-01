@@ -42,15 +42,57 @@ protected:
 	[[nodiscard]] bool IsWordBreakExpected() const noexcept;
 
 	[[nodiscard]] bool Accept() noexcept;
+
 	[[nodiscard]] bool Accept(char pattern) noexcept;
-	[[nodiscard]] bool Accept(LexerPatterns::Chars pattern) noexcept;
-	[[nodiscard]] bool Accept(const LexerPatterns::Regex& pattern) noexcept;
 	[[nodiscard]] bool AcceptBegin(char pattern) noexcept;
-	[[nodiscard]] bool AcceptBegin(LexerPatterns::Chars pattern) noexcept;
-	[[nodiscard]] bool AcceptBegin(const LexerPatterns::Regex& pattern) noexcept;
 	[[nodiscard]] bool Expect(char pattern) noexcept;
+
+	[[nodiscard]] bool Accept(LexerPatterns::Chars pattern) noexcept;
+	[[nodiscard]] bool AcceptBegin(LexerPatterns::Chars pattern) noexcept;
 	[[nodiscard]] bool Expect(LexerPatterns::Chars pattern) noexcept;
-	[[nodiscard]] bool Expect(const LexerPatterns::Regex& pattern) noexcept;
+
+	/// <summary>
+	/// Checks if the next 1 or 2 characters match the given regex.
+	/// </summary>
+	/// <param name="pattern">The pattern containing the regex and length to match.</param>
+	/// <returns>true on match, false on mismatch or error (length out of bounds).</returns>
+	template <int length>
+	bool Accept(const LexerPatterns::Regex<length>& pattern) noexcept
+	{
+		const auto* str = &characters[Next];
+		if (std::regex_match(str, str + length, pattern.regex))
+		{
+			return Accept();
+		}
+
+		return false;
+	}
+
+	template <size_t length>
+	[[nodiscard]] bool AcceptBegin(const LexerPatterns::Regex<length>& pattern) noexcept
+	{
+		return currentLexeme.empty() && Accept(pattern);
+	}
+
+	template <size_t length>
+	[[nodiscard]] bool Expect(const LexerPatterns::Regex<length>& pattern) noexcept
+	{
+		if (Accept(pattern))
+		{
+			return true;
+		}
+
+		if constexpr (length > 1)
+		{
+			AddToken({ .type = Token::Type::Error, .value = fmt::format("Unexpected characters \"{}{}\".", characters[Next], characters[NextAfter]) });
+		}
+		else
+		{
+			AddToken({ .type = Token::Type::Error, .value = fmt::format("Unexpected character \"{}\".", characters[Next]) });
+		}
+
+		return false;
+	}
 
 	static constexpr size_t Current = 0;
 	static constexpr size_t Next = 1;

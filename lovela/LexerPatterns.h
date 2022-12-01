@@ -8,31 +8,26 @@ struct LexerPatterns
 		const char second;
 	};
 
+	template <size_t length>
 	struct Regex
 	{
-		/// <summary>
-		/// The regular expression to match.
-		/// </summary>
+		static_assert(length >= 1 && length <= 2, "The number of characters to match must be 1 or 2");
 		const std::regex regex;
-		/// <summary>
-		/// The number of characters to match. Must be 1 or 2.
-		/// </summary>
-		const size_t length;
 	};
 
 	// https://stackoverflow.com/questions/399078/what-special-characters-must-be-escaped-in-regular-expressions
 
-	const Regex whitespace{ std::regex(R"(\s)"), 1 };
-	const Regex separator{ std::regex(R"([()[\]{}.,:;!?/|#])"), 1 };
-	const Regex digit{ std::regex(R"(\d)"), 1 };
+	const Regex<1> whitespace{ std::regex(R"(\s)") };
+	const Regex<1> separator{ std::regex(R"([()[\]{}.,:;!?/|#])") };
+	const Regex<1> digit{ std::regex(R"(\d)") };
 
 	const Chars beginComment{ '<', '<' };
 	const Chars endComment{ '>', '>' };
 
-	const Regex beginLiteralNumber{ std::regex(R"((\d.|[+\-]\d))"), 2 };
-	const Regex beginDecimalPart{ std::regex(R"(\.\d)"), 2 };
-	const Regex beginDecimalExponent{ std::regex(R"([eE][+\-\d])"), 2 };
+	const Regex<2> beginLiteralNumber{ std::regex(R"((\d.|[+\-]\d))") };
+	const Regex<2> beginDecimalPart{ std::regex(R"(\.\d)") };
+	const Regex<2> beginDecimalExponent{ std::regex(R"([eE][+\-\d])") };
 
 	const char beginString{ '\'' };
-	const Regex stringField{ std::regex(R"([tnr])"), 1 };
+	const Regex<1> stringField{ std::regex(R"([tnr])") };
 };
