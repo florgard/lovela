@@ -1,6 +1,5 @@
 #pragma once
 #include "LexerBase.h"
-#include "LexerRegexes.h"
 
 class Lexer : public LexerBase
 {

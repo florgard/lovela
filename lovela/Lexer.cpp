@@ -14,12 +14,12 @@ TokenGenerator Lexer::Lex() noexcept
 
 	while (GetCharacter(Next))
 	{
-		if (Accept(regexes.GetWhitespace(), 1))
+		if (Accept(regexes.whitespace))
 		{
 			WordBreak();
 			LexWhitespace();
 		}
-		else if (Accept(regexes.GetSeparator(), 1))
+		else if (Accept(regexes.separator))
 		{
 			WordBreak();
 			LexSeparator();
@@ -115,7 +115,7 @@ void Lexer::LexLiteralString() noexcept
 					nextStringInterpolation++;
 				}
 			}
-			else if (Accept(regexes.GetDigit(), 1))
+			else if (Accept(regexes.digit))
 			{
 				char stringFieldCode = GetCharacter(Current);
 
@@ -171,8 +171,7 @@ void Lexer::LexLiteralNumber() noexcept
 	std::string value;
 	value += GetCharacter(Current);
 
-	auto& digitRegex = regexes.GetDigit();
-	while (Accept(digitRegex, 1))
+	while (Accept(regexes.digit))
 	{
 		value += GetCharacter(Current);
 	}
@@ -183,7 +182,7 @@ void Lexer::LexLiteralNumber() noexcept
 	{
 		value += GetCharacter(Current);
 
-		while (Accept(digitRegex, 1))
+		while (Accept(regexes.digit))
 		{
 			value += GetCharacter(Current);
 		}
@@ -200,7 +199,7 @@ void Lexer::LexLiteralNumber() noexcept
 			
 			value += GetCharacter(Current);
 
-			while (Accept(digitRegex, 1))
+			while (Accept(regexes.digit))
 			{
 				value += GetCharacter(Current);
 			}

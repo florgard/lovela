@@ -9,7 +9,7 @@ using namespace boost::ut;
 suite regex_tests = [] {
 	"separator"_test = [] {
 		LexerRegexes regexes;
-		auto& re = regexes.GetSeparator();
+		auto& re = regexes.separator.regex;
 
 		expect(std::regex_match("(", re));
 		expect(std::regex_match(")", re));
