@@ -102,31 +102,7 @@ bool LexerBase::Accept(char character) noexcept
 /// <summary>
 /// Checks if the next 1 or 2 characters match the given regex.
 /// </summary>
-/// <param name="regex"></param>
-/// <param name="length">The number of characters to match. Must be 1 or 2.</param>
-/// <returns>true on match, false on mismatch or error (length out of bounds).</returns>
-bool LexerBase::Accept(const std::regex& regex, size_t length) noexcept
-{
-	if (!(length > 0 && length <= characters.size() - Next))
-	{
-		AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::InternalError, .message = "Regex match out of bounds." } });
-		return false;
-	}
-
-	const auto* str = &characters[Next];
-	if (std::regex_match(str, str + length, regex))
-	{
-		return Accept();
-	}
-
-	return false;
-}
-
-/// <summary>
-/// Checks if the next 1 or 2 characters match the given regex.
-/// </summary>
-/// <param name="pattern"></param>
-/// <param name="length">The number of characters to match. Must be 1 or 2.</param>
+/// <param name="pattern">The pattern containing the regex and length to match.</param>
 /// <returns>true on match, false on mismatch or error (length out of bounds).</returns>
 bool LexerBase::Accept(const LexerPatterns::Regex& pattern) noexcept
 {
@@ -150,11 +126,6 @@ bool LexerBase::AcceptBegin(char character) noexcept
 	return currentLexeme.empty() && Accept(character);
 }
 
-bool LexerBase::AcceptBegin(const std::regex& regex, size_t length) noexcept
-{
-	return currentLexeme.empty() && Accept(regex, length);
-}
-
 bool LexerBase::AcceptBegin(const LexerPatterns::Regex& pattern) noexcept
 {
 	return currentLexeme.empty() && Accept(pattern);
@@ -171,9 +142,9 @@ bool LexerBase::Expect(char character) noexcept
 	return false;
 }
 
-bool LexerBase::Expect(const std::regex& regex, size_t length) noexcept
+bool LexerBase::Expect(const LexerPatterns::Regex& pattern) noexcept
 {
-	if (Accept(regex, length))
+	if (Accept(pattern))
 	{
 		return true;
 	}

@@ -43,13 +43,11 @@ protected:
 
 	[[nodiscard]] bool Accept() noexcept;
 	[[nodiscard]] bool Accept(char character) noexcept;
-	[[nodiscard]] bool Accept(const std::regex& regex, size_t length) noexcept;
 	[[nodiscard]] bool Accept(const LexerPatterns::Regex& pattern) noexcept;
 	[[nodiscard]] bool AcceptBegin(char character) noexcept;
-	[[nodiscard]] bool AcceptBegin(const std::regex& regex, size_t length) noexcept;
 	[[nodiscard]] bool AcceptBegin(const LexerPatterns::Regex& pattern) noexcept;
 	[[nodiscard]] bool Expect(char character) noexcept;
-	[[nodiscard]] bool Expect(const std::regex& regex, size_t length) noexcept;
+	[[nodiscard]] bool Expect(const LexerPatterns::Regex& pattern) noexcept;
 
 	static constexpr size_t Current = 0;
 	static constexpr size_t Next = 1;
