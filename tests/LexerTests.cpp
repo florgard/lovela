@@ -45,7 +45,7 @@ bool LexerTest::YieldsTokens(const char* name, std::string_view code, const std:
 
 	if (!success)
 	{
-		std::cerr << color.none << "Input code:\n" << color.code << code << color.none << '\n';
+		std::cerr << "Input code:\n" << color.code << code << color.none << '\n';
 		std::cerr << '\n';
 	}
 

@@ -12,6 +12,7 @@ struct Node
 	{
 		Empty,
 		Error,
+		Comment,
 		FunctionDeclaration,
 		Expression,
 		ExpressionInput,

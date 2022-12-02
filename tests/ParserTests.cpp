@@ -32,6 +32,7 @@ bool ParserTest::YieldsNodes(const char* name, std::string_view code, const std:
 			<< "The parser didn't yield an AST.\n"
 			<< "Expected:\n" << color.expect;
 		PrintAST(expectedRange);
+		std::cerr << color.none;
 	}
 	else
 	{
@@ -48,13 +49,14 @@ bool ParserTest::YieldsNodes(const char* name, std::string_view code, const std:
 			PrintAST(nodes);
 			std::cerr <<  color.none << "Expected:\n" << color.expect;
 			PrintAST(expectedRange);
+			std::cerr << color.none;
 			lexer->PrintErrorSourceCode(std::cerr, failingToken);
 		}
 	}
 
 	if (!success)
 	{
-		std::cerr << color.none << "Input code:\n" << color.code << code << color.none << '\n';
+		std::cerr << "Input code:\n" << color.code << code << color.none << '\n';
 		std::cerr << '\n';
 	}
 
@@ -63,7 +65,22 @@ bool ParserTest::YieldsNodes(const char* name, std::string_view code, const std:
 
 using namespace boost::ut;
 
-suite parser_lexer_error_test = [] {
+suite parser_comments_tests = [] {
+	"multiple comments"_test = [] {
+		expect(parserTest.YieldsNodes("multiple comments",
+			"<<<<123>>ident234<<<<123<<456>>>:>>.",
+			std::array<Node, 4>
+			{
+				Node{ .type = Node::Type::Comment, .value = "123" },
+				Node{ .type = Node::Type::FunctionDeclaration, .value = "ident234" },
+				Node{ .type = Node::Type::Comment, .value = "123:" },
+				Node{ .type = Node::Type::Comment, .value = "456" },
+			}
+		));
+	};
+};
+
+suite parser_lexer_error_tests = [] {
 	"invalid identifier"_test = [] {
 		expect(parserTest.YieldsNodes("invalid identifier",
 			"1abc",

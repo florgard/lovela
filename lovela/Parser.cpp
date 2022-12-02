@@ -207,7 +207,8 @@ void Parser::Context::AddVariableSymbol(std::shared_ptr<VariableDeclaration> dec
 
 // Parser
 
-Parser::Parser(TokenGenerator&& tokenGenerator) noexcept : ParserBase(std::move(tokenGenerator))
+Parser::Parser(TokenGenerator&& tokenGenerator) noexcept
+	: ParserBase(std::move(tokenGenerator))
 {
 }
 
@@ -224,7 +225,11 @@ NodeGenerator Parser::Parse() noexcept
 
 		try
 		{
-			if (Accept(GetFunctionDeclarationTokens()))
+			if (Accept(Token::Type::Comment))
+			{
+				n = Node{ .type = Node::Type::Comment, .value = currentToken.value, .token = currentToken };
+			}
+			else if (Accept(GetFunctionDeclarationTokens()))
 			{
 				auto p = ParseFunctionDeclaration(context);
 				n = std::move(*p);
