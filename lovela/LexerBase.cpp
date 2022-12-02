@@ -71,18 +71,19 @@ bool LexerBase::Accept() noexcept
 {
 	GetNextCharacter();
 
-	if (!characters[Current])
+	const auto currentChar = GetCharacter(Current);
+	if (!currentChar)
 	{
 		return false;
 	}
 
-	if (characters[Current] == '\n')
+	if (currentChar == LexerPatterns::separatorNewLine)
 	{
 		AddCodeLine();
 	}
 	else
 	{
-		currentSourceCode << characters[Current];
+		currentSourceCode << currentChar;
 		nextTokenColumn++;
 	}
 
@@ -91,7 +92,7 @@ bool LexerBase::Accept() noexcept
 
 bool LexerBase::Accept(char pattern) noexcept
 {
-	if (characters[Next] == pattern)
+	if (GetCharacter(Next) == pattern)
 	{
 		return Accept();
 	}
@@ -101,7 +102,7 @@ bool LexerBase::Accept(char pattern) noexcept
 
 bool LexerBase::Accept(LexerPatterns::Chars pattern) noexcept
 {
-	if (characters[Next] == pattern.first && characters[NextAfter] == pattern.second)
+	if (GetCharacter(Next) == pattern.first && GetCharacter(NextAfter) == pattern.second)
 	{
 		return Accept();
 	}

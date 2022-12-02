@@ -41,8 +41,20 @@ struct LexerPatterns
 	static constexpr Char separatorColon{ ':' };
 	static constexpr Char separatorHash{ '#' };
 	static constexpr Char separatorQuote{ '\'' };
+	static constexpr Char separatorNewLine{ '\n' };
 
-	// Token patterns
+	// Token specific characters
+
+	static constexpr Char commentOpen{ parenAngleOpen };
+	static constexpr Char commentClose{ parenAngleClose };
+
+	static constexpr Char stringOpen{ separatorQuote };
+	static constexpr Char stringClose{ separatorQuote };
+
+	static constexpr Char stringFieldOpen{ parenCurlyOpen };
+	static constexpr Char stringFieldClose{ parenCurlyClose };
+
+	// Compound token patterns
 
 	// https://stackoverflow.com/questions/399078/what-special-characters-must-be-escaped-in-regular-expressions
 
@@ -50,13 +62,13 @@ struct LexerPatterns
 	const Regex<1> separator{ R"([()[\]{}.,:;!?/|#])" };
 	const Regex<1> digit{ R"(\d)" };
 
-	const Chars beginComment{ parenAngleOpen, parenAngleOpen };
-	const Chars endComment{ parenAngleClose, parenAngleClose };
+	const Chars beginComment{ commentOpen, commentOpen };
+	const Chars endComment{ commentClose, commentClose };
 
 	const Regex<2> beginLiteralNumber{ R"((\d.|[+\-]\d))" };
 	const Regex<2> beginDecimalPart{ R"(\.\d)" };
 	const Regex<2> beginDecimalExponent{ R"([eE][+\-\d])" };
 
-	const Char beginString{ separatorQuote };
+	static constexpr Char beginString{ stringOpen };
 	const Regex<1> stringField{ R"([tnr])" };
 };

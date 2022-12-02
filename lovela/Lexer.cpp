@@ -79,9 +79,9 @@ void Lexer::LexLiteralString() noexcept
 
 	for (;;)
 	{
-		if (Accept('\''))
+		if (Accept(patterns.stringOpen))
 		{
-			if (Accept('\''))
+			if (Accept(patterns.stringOpen))
 			{
 				// Keep a single escaped quotation mark
 				value += GetCharacter(Current);
@@ -92,14 +92,14 @@ void Lexer::LexLiteralString() noexcept
 				return;
 			}
 		}
-		else if (Accept('{'))
+		else if (Accept(patterns.stringFieldOpen))
 		{
-			if (Accept('{'))
+			if (Accept(patterns.stringFieldOpen))
 			{
 				// Keep a single escaped curly bracket
 				value += GetCharacter(Current);
 			}
-			else if (Accept('}'))
+			else if (Accept(patterns.stringFieldClose))
 			{
 				// Unindexed string interpolation. Add the string literal up to this point as a token.
 				AddToken({.type = Token::Type::LiteralString, .value = std::move(value)});
@@ -119,7 +119,7 @@ void Lexer::LexLiteralString() noexcept
 			{
 				char stringFieldCode = GetCharacter(Current);
 
-				if (Accept('}'))
+				if (Accept(patterns.stringFieldClose))
 				{
 					// Indexed string interpolation. Add the string literal up to this point as a token.
 					AddToken({.type = Token::Type::LiteralString, .value = std::move(value)});
@@ -136,7 +136,7 @@ void Lexer::LexLiteralString() noexcept
 			{
 				char stringFieldCode = GetCharacter(Current);
 
-				if (Accept('}'))
+				if (Accept(patterns.stringFieldClose))
 				{
 					// Add the string field value to the string literal.
 					value += GetStringField(stringFieldCode);
@@ -215,7 +215,7 @@ void Lexer::LexLiteralNumber() noexcept
 
 void Lexer::LexComment() noexcept
 {
-	while (Accept('<'));
+	while (Accept(patterns.commentOpen));
 
 	int commentLevel = 1;
 
@@ -223,7 +223,7 @@ void Lexer::LexComment() noexcept
 	{
 		if (Accept(patterns.endComment))
 		{
-			while (Accept('>'));
+			while (Accept(patterns.commentClose));
 
 			commentLevel--;
 
@@ -236,7 +236,7 @@ void Lexer::LexComment() noexcept
 		{
 			// Nested comment.
 
-			while (Accept('<'));
+			while (Accept(patterns.commentOpen));
 
 			commentLevel++;
 		}
