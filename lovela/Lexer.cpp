@@ -219,18 +219,13 @@ void Lexer::LexComment() noexcept
 
 	int commentLevel = 1;
 
-	for (;;)
+	while (commentLevel > 0)
 	{
 		if (Accept(patterns.endComment))
 		{
 			while (Accept(patterns.commentClose));
 
-			commentLevel--;
-
-			if (!commentLevel)
-			{
-				return;
-			}
+			--commentLevel;
 		}
 		else if (Accept(patterns.beginComment))
 		{
@@ -238,7 +233,7 @@ void Lexer::LexComment() noexcept
 
 			while (Accept(patterns.commentOpen));
 
-			commentLevel++;
+			++commentLevel;
 		}
 		else if (Accept())
 		{
