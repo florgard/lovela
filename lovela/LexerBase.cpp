@@ -102,7 +102,7 @@ bool LexerBase::Accept(char pattern) noexcept
 
 bool LexerBase::Accept(LexerPatterns::Chars pattern) noexcept
 {
-	if (GetCharacter(Next) == pattern.first && GetCharacter(NextAfter) == pattern.second)
+	if (GetCharacter(Next) == pattern.next && GetCharacter(NextAfter) == pattern.nextAfter)
 	{
 		return Accept();
 	}
@@ -138,7 +138,7 @@ bool LexerBase::Expect(LexerPatterns::Chars pattern) noexcept
 		return true;
 	}
 
-	AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = fmt::format("Unexpected characters \"{}{}\", expected \"{}{}\".", characters[Next], characters[NextAfter], pattern.first, pattern.second) } });
+	AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = fmt::format("Unexpected characters \"{}{}\", expected \"{}{}\".", characters[Next], characters[NextAfter], pattern.next, pattern.nextAfter) } });
 	return false;
 }
 

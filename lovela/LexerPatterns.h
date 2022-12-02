@@ -7,8 +7,8 @@ struct LexerPatterns
 
 	struct Chars
 	{
-		const char first;
-		const char second;
+		const char next;
+		const char nextAfter;
 	};
 
 	template <size_t length>
