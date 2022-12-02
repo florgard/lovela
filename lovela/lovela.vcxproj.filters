@@ -148,7 +148,6 @@
     <ClInclude Include="ParserRegexes.h">
       <Filter>Parser</Filter>
     </ClInclude>
-    <ClInclude Include="LexerPatterns.h" />
     <ClInclude Include="fmt\fmt\args.h">
       <Filter>Libraries\fmt</Filter>
     </ClInclude>
@@ -187,6 +186,9 @@
     </ClInclude>
     <ClInclude Include="fmt\fmt\xchar.h">
       <Filter>Libraries\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="LexerPatterns.h">
+      <Filter>Lexer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
