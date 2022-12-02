@@ -40,10 +40,19 @@ protected:
 	/// <returns>true if the actual and expected AST match, false otherwise.</returns>
 	bool TestAST(int& index, const char* name, std::ranges::range auto& range, const std::ranges::range auto& expectedRange, Token& failingToken)
 	{
-		auto expected = expectedRange.begin();
-		for (auto it = range.begin(), end = range.end(); it != end; it++, expected++)
+		static const Node emptyNode{};
+
+		auto actualIt = range.begin();
+		auto actualEnd = range.end();
+		auto expectedIt = expectedRange.begin();
+		auto expectedEnd = expectedRange.end();
+
+		while (actualIt != actualEnd || expectedIt != expectedEnd)
 		{
-			if (!TestAST(index, name, *it, *expected, failingToken))
+			const auto& actual = actualIt != actualEnd ? *actualIt++ : emptyNode;
+			const auto& expected = expectedIt != expectedEnd ? static_cast<const Node&>(*expectedIt++) : emptyNode;
+
+			if (!TestAST(index, name, actual, expected, failingToken))
 			{
 				return false;
 			}
