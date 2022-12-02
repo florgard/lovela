@@ -54,8 +54,9 @@ protected:
 	/// <summary>
 	/// Checks if the next 1 or 2 characters match the given regex.
 	/// </summary>
-	/// <param name="pattern">The pattern containing the regex and length to match.</param>
-	/// <returns>true on match, false on mismatch or error (length out of bounds).</returns>
+	/// <typeparam name="length">The number of characters to match. Must be 1 or 2.</typeparam>
+	/// <param name="pattern">The pattern with a regex and length to match.</param>
+	/// <returns>true on match, false owtherwise.</returns>
 	template <int length>
 	bool Accept(const LexerPatterns::Regex<length>& pattern) noexcept
 	{
