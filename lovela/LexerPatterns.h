@@ -97,11 +97,35 @@ struct LexerPatterns
 	const LexemeRegex<char> identifierAnsi{ R"([[:alpha:]][\w<>=\+\-\*/]*)" };
 	const LexemeRegex<wchar_t> identifierUnicode{ LR"([[:alpha:]][\w<>=\+\-\*/\u0300–\u036F\u1AB0–\u1AFF\u1DC0–\u1DFF\u20D0–\u20FF\uFE20–\uFE2F]*)" };
 
+	// Character pattern to token type mapping
+	
+	using CharPattern = std::pair<Char, Token::Type>;
+
+	static constexpr std::array<CharPattern, 14> charPatterns
+	{ {
+		{ parenRoundOpen , Token::Type::ParenRoundOpen },
+		{ parenRoundClose, Token::Type::ParenRoundClose },
+		{ parenSquareOpen, Token::Type::ParenSquareOpen },
+		{ parenSquareClose, Token::Type::ParenSquareClose },
+		{ parenCurlyOpen, Token::Type::ParenCurlyOpen },
+		{ parenCurlyClose, Token::Type::ParenCurlyClose },
+		{ separatorDot, Token::Type::SeparatorDot },
+		{ separatorComma, Token::Type::SeparatorComma },
+		{ separatorExclamation, Token::Type::SeparatorExclamation },
+		{ separatorQuestion, Token::Type::SeparatorQuestion },
+		{ separatorVerticalLine, Token::Type::SeparatorVerticalLine },
+		{ separatorSlash, Token::Type::SeparatorSlash },
+		{ separatorColon, Token::Type::SeparatorColon },
+		{ separatorHash, Token::Type::SeparatorHash },
+	} };
+
+	// Lexeme pattern to token type mapping
+
 	template <typename CharT>
 	struct LexemePattern
 	{
 		const LexemeRegex<CharT>& pattern;
-		Token::Type tokenType;
+		const Token::Type tokenType;
 	};
 
 	const std::array<LexemePattern<char>, 5> lexemePatternsAnsi
@@ -117,5 +141,4 @@ struct LexerPatterns
 	{ {
 		{ identifierUnicode, Token::Type::Identifier },
 	} };
-
 };

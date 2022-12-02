@@ -23,25 +23,7 @@ private:
 
 	[[nodiscard]] static constexpr Token::Type GetTokenType(char lexeme) noexcept
 	{
-		constexpr std::array<std::pair<LexerPatterns::Char, Token::Type>, 14> values
-		{ {
-			{ LexerPatterns::parenRoundOpen , Token::Type::ParenRoundOpen },
-			{ LexerPatterns::parenRoundClose, Token::Type::ParenRoundClose },
-			{ LexerPatterns::parenSquareOpen, Token::Type::ParenSquareOpen },
-			{ LexerPatterns::parenSquareClose, Token::Type::ParenSquareClose },
-			{ LexerPatterns::parenCurlyOpen, Token::Type::ParenCurlyOpen },
-			{ LexerPatterns::parenCurlyClose, Token::Type::ParenCurlyClose },
-			{ LexerPatterns::separatorDot, Token::Type::SeparatorDot },
-			{ LexerPatterns::separatorComma, Token::Type::SeparatorComma },
-			{ LexerPatterns::separatorExclamation, Token::Type::SeparatorExclamation },
-			{ LexerPatterns::separatorQuestion, Token::Type::SeparatorQuestion },
-			{ LexerPatterns::separatorVerticalLine, Token::Type::SeparatorVerticalLine },
-			{ LexerPatterns::separatorSlash, Token::Type::SeparatorSlash },
-			{ LexerPatterns::separatorColon, Token::Type::SeparatorColon },
-			{ LexerPatterns::separatorHash, Token::Type::SeparatorHash },
-		} };
-
-		constexpr auto map = static_map<char, Token::Type, values.size()>{ {values} };
+		constexpr auto map = static_map<char, Token::Type, LexerPatterns::charPatterns.size()>{ {LexerPatterns::charPatterns} };
 		return map.at_or(lexeme, Token::Type::Empty);
 	}
 
