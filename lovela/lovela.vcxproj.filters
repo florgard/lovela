@@ -34,7 +34,6 @@
     <ClCompile Include="ParserRegexes.cpp">
       <Filter>Parser</Filter>
     </ClCompile>
-    <ClCompile Include="LexerPatterns.cpp" />
     <ClCompile Include="fmt\format.cc">
       <Filter>Libraries\fmt</Filter>
     </ClCompile>

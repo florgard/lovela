@@ -164,7 +164,6 @@
     <ClCompile Include="Lexer.cpp" />
     <ClCompile Include="LexerBase.cpp" />
     <ClCompile Include="LexerFactory.cpp" />
-    <ClCompile Include="LexerPatterns.cpp" />
     <ClCompile Include="ParseException.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="ParserBase.cpp" />
