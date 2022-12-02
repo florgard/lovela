@@ -46,6 +46,7 @@ TokenGenerator Lexer::Lex() noexcept
 		}
 		else if (Accept())
 		{
+			// Append to the current lexeme.
 			AddCharacter(GetCharacter(Current));
 		}
 
@@ -215,29 +216,29 @@ void Lexer::LexLiteralNumber() noexcept
 
 void Lexer::LexComment() noexcept
 {
+	// Consume consecutive angle brackets.
 	while (Accept(patterns.commentOpen));
 
-	int commentLevel = 1;
+	AddToken({ .type = Token::Type::Comment });
+	auto& token = GetCurrentToken();
 
-	while (commentLevel > 0)
+	for (;;)
 	{
 		if (Accept(patterns.endComment))
 		{
+			// Consume consecutive angle brackets.
 			while (Accept(patterns.commentClose));
-
-			--commentLevel;
+			return;
 		}
 		else if (Accept(patterns.beginComment))
 		{
 			// Nested comment.
-
-			while (Accept(patterns.commentOpen));
-
-			++commentLevel;
+			LexComment();
 		}
 		else if (Accept())
 		{
 			// Consume the comment.
+			token.value += GetCharacter(Current);
 		}
 		else
 		{

@@ -36,6 +36,8 @@ protected:
 	void AddCodeLine() noexcept;
 	void AddToken(Token&& token) noexcept;
 	void AddCurrenToken() noexcept;
+	Token& GetCurrentToken() noexcept;
+	const Token& GetCurrentToken() const noexcept;
 
 	void WordBreak() noexcept;
 	void ExpectWordBreak() noexcept;

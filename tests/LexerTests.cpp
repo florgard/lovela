@@ -604,6 +604,7 @@ suite lexer_comment_tests = [] {
 		expect(lexerTest.YieldsTokens("commented out identifier",
 			"<< ident123. >>",
 			{
+				{.type = Token::Type::Comment, .value = " ident123. "},
 				EndToken()
 			}
 		));
@@ -612,6 +613,7 @@ suite lexer_comment_tests = [] {
 		expect(lexerTest.YieldsTokens("commented out identifier and whitespace",
 			"<<\r\nident123.\r\n>>",
 			{
+				{.type = Token::Type::Comment, .value = "\r\nident123.\r\n"},
 				EndToken()
 			}
 		));
@@ -620,6 +622,7 @@ suite lexer_comment_tests = [] {
 		expect(lexerTest.YieldsTokens("commented and non-commented identifier",
 			"<< ident123. >> ident456.",
 			{
+				{.type = Token::Type::Comment, .value = " ident123. "},
 				IdToken("ident456"),
 				{.type = Token::Type::SeparatorDot, .value = "."},
 				EndToken()
@@ -630,6 +633,8 @@ suite lexer_comment_tests = [] {
 		expect(lexerTest.YieldsTokens("nested comments",
 			"<<<< 123 << 456 >>>>.>> ident456.",
 			{
+				{.type = Token::Type::Comment, .value = " 123 ."},
+				{.type = Token::Type::Comment, .value = " 456 "},
 				IdToken("ident456"),
 				{.type = Token::Type::SeparatorDot, .value = "."},
 				EndToken()
@@ -640,7 +645,10 @@ suite lexer_comment_tests = [] {
 		expect(lexerTest.YieldsTokens("multiple comments",
 			"<<<<123>>ident234<<<<123<<456>>>:>>.",
 			{
+				{.type = Token::Type::Comment, .value = "123"},
 				IdToken("ident234"),
+				{.type = Token::Type::Comment, .value = "123:"},
+				{.type = Token::Type::Comment, .value = "456"},
 				{.type = Token::Type::SeparatorDot, .value = "."},
 				EndToken()
 			}
@@ -650,7 +658,10 @@ suite lexer_comment_tests = [] {
 		expect(lexerTest.YieldsTokens("non-closed comment",
 			"<<<<123>>ident234<<<<123<<456>>>:>.",
 			{
+				{.type = Token::Type::Comment, .value = "123"},
 				IdToken("ident234"),
+				{.type = Token::Type::Comment, .value = "123:>."},
+				{.type = Token::Type::Comment, .value = "456"},
 				ErrorToken(Token::Error::Code::CommentOpen),
 				EndToken()
 			}

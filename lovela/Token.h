@@ -13,6 +13,7 @@ struct Token
 		Empty,
 		Error,
 		End,
+		Comment,
 		Identifier,
 		LiteralString,
 		LiteralStringInterpolation,

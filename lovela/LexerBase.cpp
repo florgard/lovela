@@ -51,6 +51,16 @@ void LexerBase::AddCurrenToken() noexcept
 	currentLexeme.clear();
 }
 
+Token& LexerBase::GetCurrentToken() noexcept
+{
+	return currentTokens.back();
+}
+
+const Token& LexerBase::GetCurrentToken() const noexcept
+{
+	return currentTokens.back();
+}
+
 void LexerBase::WordBreak() noexcept
 {
 	AddCurrenToken();
