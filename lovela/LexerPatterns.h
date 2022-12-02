@@ -1,39 +1,17 @@
 #pragma once
 #include "Token.h"
 
+// https://stackoverflow.com/questions/399078/what-special-characters-must-be-escaped-in-regular-expressions
+// https://en.cppreference.com/w/cpp/regex/ecmascript
+// https://www.regular-expressions.info/posixbrackets.html
+// https://www.regular-expressions.info/unicode.html
+// https://en.wikipedia.org/wiki/Combining_character
+
 struct LexerPatterns
 {
-	using Char = char;
-
-	struct Chars
-	{
-		const char next;
-		const char nextAfter;
-	};
-
-	template <size_t length>
-	struct Regex
-	{
-		static_assert(length >= 1 && length <= 2, "The number of characters to match must be 1 or 2");
-
-		const std::regex regex;
-
-		constexpr Regex(const char* re) noexcept : regex(re)
-		{
-		}
-	};
-
-	template <typename CharT>
-	struct LexemeRegex
-	{
-		const std::basic_regex<CharT> regex;
-
-		constexpr LexemeRegex(const CharT* re) noexcept : regex(re)
-		{
-		}
-	};
-
 	// Special characters
+
+	using Char = char;
 
 	static constexpr Char parenRoundOpen{ '(' };
 	static constexpr Char parenRoundClose{ ')' };
@@ -67,7 +45,23 @@ struct LexerPatterns
 
 	// Compound token identification patterns
 
-	// https://stackoverflow.com/questions/399078/what-special-characters-must-be-escaped-in-regular-expressions
+	struct Chars
+	{
+		const char next;
+		const char nextAfter;
+	};
+
+	template <size_t length>
+	struct Regex
+	{
+		static_assert(length >= 1 && length <= 2, "The number of characters to match must be 1 or 2");
+
+		const std::regex regex;
+
+		constexpr Regex(const char* re) noexcept : regex(re)
+		{
+		}
+	};
 
 	const Regex<1> whitespace{ R"(\s)" };
 	const Regex<1> separator{ R"([()[\]{}.,:;!?/|#])" };
@@ -85,10 +79,15 @@ struct LexerPatterns
 
 	// Lexeme patterns
 
-	// https://en.cppreference.com/w/cpp/regex/ecmascript
-	// https://www.regular-expressions.info/posixbrackets.html
-	// https://www.regular-expressions.info/unicode.html
-	// https://en.wikipedia.org/wiki/Combining_character
+	template <typename CharT>
+	struct LexemeRegex
+	{
+		const std::basic_regex<CharT> regex;
+
+		constexpr LexemeRegex(const CharT* re) noexcept : regex(re)
+		{
+		}
+	};
 
 	const LexemeRegex<char> operatorComparison{ R"(<|>|<>|<=|>=|=)" };
 	const LexemeRegex<char> operatorArithmetic{ R"(\+|-|\*|/|/*)" };
