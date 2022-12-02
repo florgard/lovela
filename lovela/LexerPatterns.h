@@ -1,4 +1,5 @@
 #pragma once
+#include "Token.h"
 
 struct LexerPatterns
 {
@@ -18,6 +19,16 @@ struct LexerPatterns
 		const std::regex regex;
 
 		constexpr Regex(const char* re) noexcept : regex(re)
+		{
+		}
+	};
+
+	template <typename CharT>
+	struct LexemeRegex
+	{
+		const std::basic_regex<CharT> regex;
+
+		constexpr LexemeRegex(const CharT* re) noexcept : regex(re)
 		{
 		}
 	};
@@ -54,7 +65,7 @@ struct LexerPatterns
 	static constexpr Char stringFieldOpen{ parenCurlyOpen };
 	static constexpr Char stringFieldClose{ parenCurlyClose };
 
-	// Compound token patterns
+	// Compound token identification patterns
 
 	// https://stackoverflow.com/questions/399078/what-special-characters-must-be-escaped-in-regular-expressions
 
@@ -71,4 +82,40 @@ struct LexerPatterns
 
 	static constexpr Char beginString{ stringOpen };
 	const Regex<1> stringField{ R"([tnr])" };
+
+	// Lexeme patterns
+
+	// https://en.cppreference.com/w/cpp/regex/ecmascript
+	// https://www.regular-expressions.info/posixbrackets.html
+	// https://www.regular-expressions.info/unicode.html
+	// https://en.wikipedia.org/wiki/Combining_character
+
+	const LexemeRegex<char> operatorComparison{ R"(<|>|<>|<=|>=|=)" };
+	const LexemeRegex<char> operatorArithmetic{ R"(\+|-|\*|/|/*)" };
+	const LexemeRegex<char> operatorBitwise{ R"(\*\*|\+\+|--)" };
+	const LexemeRegex<char> operatorArrow{ R"(<-|->)" };
+	const LexemeRegex<char> identifierAnsi{ R"([[:alpha:]][\w<>=\+\-\*/]*)" };
+	const LexemeRegex<wchar_t> identifierUnicode{ LR"([[:alpha:]][\w<>=\+\-\*/\u0300–\u036F\u1AB0–\u1AFF\u1DC0–\u1DFF\u20D0–\u20FF\uFE20–\uFE2F]*)" };
+
+	template <typename CharT>
+	struct LexemePattern
+	{
+		const LexemeRegex<CharT>& pattern;
+		Token::Type tokenType;
+	};
+
+	const std::array<LexemePattern<char>, 5> lexemePatternsAnsi
+	{ {
+		{ operatorComparison, Token::Type::OperatorComparison },
+		{ operatorArithmetic, Token::Type::OperatorArithmetic },
+		{ operatorBitwise, Token::Type::OperatorBitwise },
+		{ operatorArrow, Token::Type::OperatorArrow },
+		{ identifierAnsi, Token::Type::Identifier },
+	} };
+
+	const std::array<LexemePattern<wchar_t>, 1> lexemePatternsUnicode
+	{ {
+		{ identifierUnicode, Token::Type::Identifier },
+	} };
+
 };
