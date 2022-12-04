@@ -6,7 +6,14 @@
 class ParserBase : public IParser
 {
 public:
+	ParserBase() noexcept = default;
 	ParserBase(TokenGenerator&& tokenGenerator) noexcept;
+
+	void Initialize(TokenGenerator&& tokenGenerator) noexcept
+	{
+		_tokenGenerator = std::move(tokenGenerator);
+		_tokenIterator = _tokenGenerator.begin();
+	}
 
 	// Throws InvalidCurrentTokenException.
 	void Assert()

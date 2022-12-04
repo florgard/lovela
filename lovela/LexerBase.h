@@ -4,7 +4,16 @@
 
 class LexerBase : public ILexer
 {
+public:
+	void Initialize(std::istream& charStream) noexcept
+	{
+		_charStream = &charStream;
+		*_charStream >> std::noskipws;
+		currentTokens.reserve(64);
+	}
+
 protected:
+	LexerBase() noexcept = default;
 	LexerBase(std::istream& charStream) noexcept;
 
 	void PrintErrorSourceCode(std::ostream& stream, const Token& token) noexcept override;
@@ -102,7 +111,7 @@ protected:
 	static constexpr size_t NextAfter = 2;
 
 private:
-	std::istream& charStream;
+	std::istream* _charStream;
 	std::array<char, 3> characters{};
 	std::string currentLexeme;
 	std::vector<Token> currentTokens;

@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "TestingBase.h"
+#include "../lovela/Lexer.h"
+#include "../lovela/Parser.h"
 #include "../lovela/LexerFactory.h"
 #include "../lovela/ParserFactory.h"
 #include "../lovela/CodeGeneratorFactory.h"
@@ -32,9 +34,10 @@ static CodeGeneratorCppTest s_test;
 bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
 	std::istringstream input(std::string(code.data(), code.size()));
-	auto lexer = LexerFactory::Create(input);
-	auto parser = ParserFactory::Create(lexer->Lex());
-	auto nodes = to_vector(parser->Parse());
+	Lexer lexer;
+	Parser parser;
+	std::vector<Node> nodes;
+	input >> lexer >> parser >> nodes;
 
 	std::ostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");

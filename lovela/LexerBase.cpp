@@ -2,8 +2,9 @@
 #include "LexerBase.h"
 
 LexerBase::LexerBase(std::istream& charStream) noexcept
-	: charStream(charStream >> std::noskipws)
+	: _charStream(&charStream)
 {
+	*_charStream >> std::noskipws;
 	currentTokens.reserve(64);
 }
 
@@ -12,7 +13,7 @@ void LexerBase::GetNextCharacter() noexcept
 	characters[Current] = characters[Next];
 	characters[Next] = characters[NextAfter];
 	characters[NextAfter] = 0;
-	charStream >> characters[NextAfter];
+	*_charStream >> characters[NextAfter];
 }
 
 void LexerBase::AddCodeLine() noexcept

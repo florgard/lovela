@@ -11,6 +11,8 @@ protected:
 	Parser(TokenGenerator&& tokenGenerator) noexcept;
 
 public:
+	Parser() noexcept = default;
+
 	[[nodiscard]] NodeGenerator Parse() noexcept override;
 
 private:
@@ -149,3 +151,15 @@ private:
 
 	ParserRegexes regexes;
 };
+
+inline NodeGenerator operator>>(TokenGenerator&& input, Parser& parser)
+{
+	parser.Initialize(std::move(input));
+	return parser.Parse();
+}
+
+inline std::vector<Node>& operator>>(NodeGenerator&& input, std::vector<Node>& v)
+{
+	v = std::move(to_vector(std::move(input)));
+	return v;
+}

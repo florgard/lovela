@@ -9,6 +9,8 @@ class Lexer : public LexerBase
 	Lexer(std::istream& charStream) noexcept;
 
 public:
+	Lexer() noexcept = default;
+
 	[[nodiscard]] TokenGenerator Lex() noexcept override;
 
 private:
@@ -42,3 +44,9 @@ private:
 
 	LexerPatterns patterns;
 };
+
+inline TokenGenerator operator>>(std::istream& input, Lexer& lexer)
+{
+	lexer.Initialize(input);
+	return lexer.Lex();
+}
