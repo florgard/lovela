@@ -28,7 +28,7 @@ public:
 		std::cout << "Input code:\n" << color.code << code << color.none << '\n';
 
 		std::istringstream input(code);
-		StreamLexer lexer(std::ranges::istream_view<char>(input >> std::noskipws));
+		StreamLexer lexer(input);
 		RangeParser parser;
 		parser.Initialize(lexer.Lex());
 		auto nodes = to_vector(parser.Parse());

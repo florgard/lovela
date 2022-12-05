@@ -6,7 +6,7 @@
 
 int main_utf8(int argc, char** argv)
 {
-	StreamLexer lexer(std::ranges::istream_view<char>(std::cin >> std::noskipws));
+	StreamLexer lexer(std::cin);
 	RangeParser parser;
 	parser.Initialize(lexer.Lex());
 	auto nodes = to_vector(parser.Parse());

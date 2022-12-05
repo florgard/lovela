@@ -19,7 +19,7 @@ static ParserTest parserTest;
 bool ParserTest::YieldsNodes(const char* name, std::string_view code, const std::ranges::range auto& expectedRange)
 {
 	std::istringstream input(std::string(code.data(), code.size()));
-	StreamLexer lexer(std::ranges::istream_view<char>(input >> std::noskipws));
+	StreamLexer lexer(input);
 	RangeParser parser;
 	parser.Initialize(lexer.Lex());
 	auto nodes = to_vector(parser.Parse());

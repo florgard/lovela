@@ -91,7 +91,7 @@ bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std:
 bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
 	std::istringstream input(std::string(code.data(), code.size()));
-	StreamLexer lexer(std::ranges::istream_view<char>(input >> std::noskipws));
+	StreamLexer lexer(input);
 	RangeParser parser;
 	parser.Initialize(lexer.Lex());
 	auto nodes = to_vector(parser.Parse());
@@ -157,7 +157,7 @@ bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code
 bool CodeGeneratorCppTest::ExportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
 	std::istringstream input(std::string(code.data(), code.size()));
-	StreamLexer lexer(std::ranges::istream_view<char>(input >> std::noskipws));
+	StreamLexer lexer(input);
 	RangeParser parser;
 	parser.Initialize(lexer.Lex());
 	auto nodes = to_vector(parser.Parse());
