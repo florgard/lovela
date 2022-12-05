@@ -156,11 +156,11 @@ inline std::vector<Node>& operator>>(Parser::Generator&& input, std::vector<Node
 	return v;
 }
 
-template <class BaseT, std::ranges::range RangeT>
+template <class BaseT, std::ranges::range RangeT, class ItemT = std::decay_t<decltype(*RangeT().begin())>>
+	requires std::is_base_of_v<IEnumerator<ItemT>, BaseT>
 class RangeEnumerator : public BaseT
 {
 	using IteratorT = decltype(RangeT().begin());
-	using ItemT = decltype(*IteratorT());
 
 public:
 	void Initialize(RangeT&& range) noexcept
