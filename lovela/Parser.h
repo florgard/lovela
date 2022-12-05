@@ -1,5 +1,5 @@
 #pragma once
-#include "ILexer.h"
+#include "Lexer.h"
 #include "ParserBase.h"
 #include "ParserRegexes.h"
 
@@ -156,9 +156,9 @@ inline std::vector<Node>& operator>>(Parser::Generator&& input, std::vector<Node
 	return v;
 }
 
-using RangeParser = RangeEnumerator<Parser, TokenGenerator>;
+using RangeParser = RangeEnumerator<Parser, Lexer::Generator>;
 
-inline auto operator>>(TokenGenerator&& input, RangeParser& parser)
+inline auto operator>>(Lexer::Generator&& input, RangeParser& parser)
 {
 	parser.Initialize(std::move(input));
 	return parser.Parse();

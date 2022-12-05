@@ -1,11 +1,10 @@
 #pragma once
-#include "ILexer.h"
 #include "LexerPatterns.h"
 
-class LexerBase : public ILexer, public IEnumerator<char>
+class LexerBase : public IEnumerator<char>
 {
 public:
-	void PrintErrorSourceCode(std::ostream& stream, const Token& token) noexcept override;
+	void PrintErrorSourceCode(std::ostream& stream, const Token& token) noexcept;
 
 protected:
 	LexerBase() noexcept;

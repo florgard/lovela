@@ -62,7 +62,6 @@
   <ItemGroup>
     <ClInclude Include="CodeGeneratorFactory.h" />
     <ClInclude Include="ICodeGenerator.h" />
-    <ClInclude Include="ILexer.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="CodeGeneratorCpp.h">
       <Filter>CodeGeneratorCpp</Filter>
