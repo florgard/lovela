@@ -222,7 +222,7 @@ Parser::Generator Parser::Parse() noexcept
 		{
 			if (Accept(Token::Type::Comment))
 			{
-				n = Node{ .type = Node::Type::Comment, .value = currentToken.value, .token = currentToken };
+				n = Node{ .type = Node::Type::Comment, .value = GetCurrent().value, .token = GetCurrent() };
 			}
 			else if (Accept(GetFunctionDeclarationTokens()))
 			{
@@ -350,19 +350,19 @@ TypeSpec Parser::ParseTypeSpec()
 	// [1]
 	else if (Accept(Token::Type::LiteralInteger))
 	{
-		t = GetPrimitiveIntegerTypeSpec(currentToken.value);
+		t = GetPrimitiveIntegerTypeSpec(GetCurrent().value);
 	}
 	// [1.0]
 	else if (Accept(Token::Type::LiteralDecimal))
 	{
-		t = GetPrimitiveDecimalTypeSpec(currentToken.value);
+		t = GetPrimitiveDecimalTypeSpec(GetCurrent().value);
 	}
 	// [#1]
 	else if (Accept(Token::Type::SeparatorHash))
 	{
 		if (Accept(GetTaggedTypeSpecTokens()))
 		{
-			t = { .kind = TypeSpec::Kind::Tagged, .name = currentToken.value };
+			t = { .kind = TypeSpec::Kind::Tagged, .name = GetCurrent().value };
 		}
 		else
 		{
@@ -375,7 +375,7 @@ TypeSpec Parser::ParseTypeSpec()
 		Expect(Token::Type::Identifier, Token::Constant::TypeNameSpace);
 		Expect(Token::Type::SeparatorSlash);
 		Expect(Token::Type::Identifier);
-		t = GetBuiltinTypeSpec(currentToken.value);
+		t = GetBuiltinTypeSpec(GetCurrent().value);
 
 		if (t.Is(TypeSpec::Kind::Primitive))
 		{
@@ -386,7 +386,7 @@ TypeSpec Parser::ParseTypeSpec()
 	// [identifier]
 	else if (Accept(Token::Type::Identifier))
 	{
-		t = { .kind = TypeSpec::Kind::Named, .name = currentToken.value };
+		t = { .kind = TypeSpec::Kind::Named, .name = GetCurrent().value };
 	}
 	// [()]
 	else if (Accept(Token::Type::ParenRoundOpen))
@@ -408,12 +408,12 @@ TypeSpec Parser::ParseTypeSpec()
 
 		if (Accept(Token::Type::LiteralInteger))
 		{
-			t.arrayDims.back() = to_int<int64_t>(currentToken.value).unsignedValue.value_or(0);
+			t.arrayDims.back() = to_int<int64_t>(GetCurrent().value).unsignedValue.value_or(0);
 
 			if (!t.arrayDims.back())
 			{
 				// The given array length must be greater than zero.
-				throw UnexpectedTokenException(currentToken);
+				throw UnexpectedTokenException(GetCurrent());
 			}
 		}
 	}
@@ -441,7 +441,7 @@ ParameterList Parser::ParseParameterList()
 		// Optional name
 		if (Accept(Token::Type::Identifier))
 		{
-			parameter->name = currentToken.value;
+			parameter->name = GetCurrent().value;
 			defined = true;
 		}
 
@@ -463,7 +463,7 @@ ParameterList Parser::ParseParameterList()
 		}
 		else
 		{
-			throw UnexpectedTokenException(currentToken);
+			throw UnexpectedTokenException(GetCurrent());
 		}
 
 		if (Accept(Token::Type::SeparatorComma))
@@ -475,7 +475,7 @@ ParameterList Parser::ParseParameterList()
 		}
 		else
 		{
-			throw UnexpectedTokenException(currentToken);
+			throw UnexpectedTokenException(GetCurrent());
 		}
 	}
 
@@ -484,17 +484,17 @@ ParameterList Parser::ParseParameterList()
 
 std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> context)
 {
-	auto node = make<Node>::unique({ .type = Node::Type::FunctionDeclaration, .token = currentToken });
+	auto node = make<Node>::unique({ .type = Node::Type::FunctionDeclaration, .token = GetCurrent() });
 
 	// <-
 	// ->
 	if (IsToken(Token::Type::OperatorArrow))
 	{
-		if (currentToken.value == "<-")
+		if (GetCurrent().value == "<-")
 		{
 			node->api = ApiSpec::Export;
 		}
-		else if (currentToken.value == "->")
+		else if (GetCurrent().value == "->")
 		{
 			node->api = ApiSpec::Import;
 		}
@@ -509,7 +509,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 				{ "C++", ApiSpec::Cpp },
 			};
 
-			const auto apiTokens = split(currentToken.value, L' ');
+			const auto apiTokens = split(GetCurrent().value, L' ');
 			for (auto& apiToken : apiTokens)
 			{
 				if (validApiTokens.contains(apiToken))
@@ -518,7 +518,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 				}
 				else
 				{
-					throw ParseException(currentToken, fmt::format("Invalid import/export API specification token \"{}\".", apiToken));
+					throw ParseException(GetCurrent(), fmt::format("Invalid import/export API specification token \"{}\".", apiToken));
 				}
 			}
 		}
@@ -534,7 +534,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 		// [inType] identifier
 		if (Accept(Token::Type::Identifier))
 		{
-			node->value = currentToken.value;
+			node->value = GetCurrent().value;
 		}
 	}
 	// identifier
@@ -542,7 +542,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 	// namespace/binaryOperator
 	else if (IsToken(Token::Type::Identifier))
 	{
-		auto name = currentToken.value;
+		auto name = GetCurrent().value;
 
 		// namespace1/namespaceN/identifier
 		// namespace1/namespaceN/binaryOperator
@@ -553,7 +553,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 			// binaryOperator
 			if (Accept(GetBinaryOperatorTokens()))
 			{
-				name = currentToken.value;
+				name = GetCurrent().value;
 				break;
 			}
 			// identifier
@@ -561,7 +561,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 			else
 			{
 				Expect(Token::Type::Identifier);
-				name = currentToken.value;
+				name = GetCurrent().value;
 			}
 		}
 
@@ -572,7 +572,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 	// binaryOperator
 	else if (IsToken(GetBinaryOperatorTokens()))
 	{
-		node->value = currentToken.value;
+		node->value = GetCurrent().value;
 	}
 	// :
 	else if (IsToken(Token::Type::SeparatorColon))
@@ -651,7 +651,7 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		}
 		else if (Accept(Token::Type::Identifier))
 		{
-			if (context->HasVariableSymbol(currentToken.value))
+			if (context->HasVariableSymbol(GetCurrent().value))
 			{
 				nodes.emplace_back(ParseVariableReference(innerContext));
 			}
@@ -789,7 +789,7 @@ std::unique_ptr<Node> Parser::ParseTuple(std::shared_ptr<Context> context)
 
 	if (Accept(Token::Type::SeparatorComma))
 	{
-		auto tuple = make<Node>::unique({ .type = Node::Type::Tuple, .token = currentToken });
+		auto tuple = make<Node>::unique({ .type = Node::Type::Tuple, .token = GetCurrent() });
 		tuple->left = std::move(node);
 		tuple->right = ParseTuple(context);
 		node = std::move(tuple);
@@ -811,18 +811,18 @@ std::unique_ptr<Node> Parser::ParseOperand(std::shared_ptr<Context> context)
 		node = make<Node>::unique(
 			{
 				.type = Node::Type::Literal,
-				.value = currentToken.value,
-				.token = currentToken
+				.value = GetCurrent().value,
+				.token = GetCurrent()
 			});
 
-		switch (currentToken.type)
+		switch (GetCurrent().type)
 		{
 		case Token::Type::LiteralInteger:
-			node->outType = GetPrimitiveIntegerTypeSpec(currentToken.value);
+			node->outType = GetPrimitiveIntegerTypeSpec(GetCurrent().value);
 			break;
 
 		case Token::Type::LiteralDecimal:
-			node->outType = GetPrimitiveDecimalTypeSpec(currentToken.value);
+			node->outType = GetPrimitiveDecimalTypeSpec(GetCurrent().value);
 			break;
 
 		case Token::Type::LiteralString:
@@ -841,7 +841,7 @@ std::unique_ptr<Node> Parser::ParseFunctionCall(std::shared_ptr<Context> context
 {
 	Assert(Token::Type::Identifier);
 
-	auto node = make<Node>::unique({ .type = Node::Type::FunctionCall, .value = currentToken.value, .token = currentToken });
+	auto node = make<Node>::unique({ .type = Node::Type::FunctionCall, .value = GetCurrent().value, .token = GetCurrent() });
 
 	// TODO: nameSpace
 
@@ -857,12 +857,12 @@ std::unique_ptr<Node> Parser::ParseBinaryOperation(std::shared_ptr<Context> cont
 {
 	Assert(GetBinaryOperatorTokens());
 
-	return make<Node>::unique({ .type = Node::Type::BinaryOperation, .value = currentToken.value, .token = currentToken });
+	return make<Node>::unique({ .type = Node::Type::BinaryOperation, .value = GetCurrent().value, .token = GetCurrent() });
 }
 
 std::unique_ptr<Node> Parser::ParseVariableReference(std::shared_ptr<Context> context)
 {
 	Assert(Token::Type::Identifier);
 
-	return make<Node>::unique({ .type = Node::Type::VariableReference, .value = currentToken.value, .token = currentToken });
+	return make<Node>::unique({ .type = Node::Type::VariableReference, .value = GetCurrent().value, .token = GetCurrent() });
 }

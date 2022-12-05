@@ -4,14 +4,21 @@
 
 class ParserBase : public IEnumerator<Token>
 {
+	Token currentToken;
+
 protected:
 	// Prohibit creation.
 	ParserBase() = default;
 
+	[[nodiscard]] constexpr Token& GetCurrent() noexcept
+	{
+		return currentToken;
+	}
+
 	// Throws InvalidCurrentTokenException.
 	void Assert()
 	{
-		throw InvalidCurrentTokenException(currentToken);
+		throw InvalidCurrentTokenException(GetCurrent());
 	}
 
 	// Asserts that the current token is of the given type.
@@ -20,7 +27,7 @@ protected:
 	{
 		if (!IsToken(type))
 		{
-			throw InvalidCurrentTokenException(currentToken);
+			throw InvalidCurrentTokenException(GetCurrent());
 		}
 	}
 
@@ -31,7 +38,7 @@ protected:
 	{
 		if (!IsToken(types))
 		{
-			throw InvalidCurrentTokenException(currentToken);
+			throw InvalidCurrentTokenException(GetCurrent());
 		}
 	}
 
@@ -65,7 +72,7 @@ protected:
 	// Returns true if the token is of the given type, false otherwise.
 	[[nodiscard]] constexpr bool IsToken(Token::Type type)
 	{
-		return currentToken.type == type;
+		return GetCurrent().type == type;
 	}
 
 	// Checks whether the current token is of one of the given types.
@@ -73,7 +80,7 @@ protected:
 	template <size_t Size>
 	[[nodiscard]] constexpr bool IsToken(const static_set<Token::Type, Size>& types)
 	{
-		return types.contains(currentToken.type);
+		return types.contains(GetCurrent().type);
 	}
 
 	// Sets the current token to the next token that is expected to be of the given type.
@@ -95,7 +102,7 @@ protected:
 			throw UnexpectedTokenException(GetNext(), type);
 		}
 
-		if (currentToken.value != value)
+		if (GetCurrent().value != value)
 		{
 			throw UnexpectedTokenException(GetNext(), type, value);
 		}
@@ -178,7 +185,4 @@ protected:
 		const auto nextType = GetNext().type;
 		return types.contains(nextType);
 	}
-
-protected:
-	Token currentToken;
 };
