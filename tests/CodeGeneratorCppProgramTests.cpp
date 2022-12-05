@@ -2,7 +2,7 @@
 #include "TestingBase.h"
 #include "../lovela/Lexer.h"
 #include "../lovela/Parser.h"
-#include "../lovela/CodeGeneratorFactory.h"
+#include "../lovela/CodeGeneratorCpp.h"
 
 class CodeGeneratorCppTest : public TestingBase
 {
@@ -47,29 +47,29 @@ public:
 		std::cout << color.none << '\n';
 
 		std::stringstream stream;
-		auto codeGen = CodeGeneratorFactory::Create(stream, "Cpp");
-		nodes >> *codeGen;
+		CodeGeneratorCpp codeGen(stream);
+		nodes >> codeGen;
 
-		for (auto& error : codeGen->GetErrors())
+		for (auto& error : codeGen.GetErrors())
 		{
 			std::cerr << error << '\n';
 		}
 
-		expect(codeGen->GetErrors().empty());
+		expect(codeGen.GetErrors().empty());
 
 		auto genCode = stream.str();
 		std::cout << "Generated code:\n" << color.output << genCode << color.none;
 
 		std::ofstream program(R"(..\targets\cpp\program\lovela-program.cpp)");
-		codeGen->GenerateProgramFile(program);
+		codeGen.GenerateProgramFile(program);
 		program.close();
 
 		std::ofstream imports(R"(..\targets\cpp\program\lovela-imports.h)");
-		codeGen->GenerateImportsFile(imports);
+		codeGen.GenerateImportsFile(imports);
 		imports.close();
 
 		std::ofstream exports(R"(..\targets\cpp\program\lovela-exports.h)");
-		codeGen->GenerateExportsFile(exports);
+		codeGen.GenerateExportsFile(exports);
 		exports.close();
 	}
 };

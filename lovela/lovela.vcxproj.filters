@@ -10,7 +10,6 @@
     <ClCompile Include="StandardCppDeclarations.cpp">
       <Filter>CodeGeneratorCpp</Filter>
     </ClCompile>
-    <ClCompile Include="CodeGeneratorFactory.cpp" />
     <ClCompile Include="pch.cpp">
       <Filter>Main</Filter>
     </ClCompile>
@@ -60,7 +59,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CodeGeneratorFactory.h" />
     <ClInclude Include="ICodeGenerator.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="CodeGeneratorCpp.h">

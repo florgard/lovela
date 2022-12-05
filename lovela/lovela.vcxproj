@@ -156,7 +156,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CodeGeneratorCpp.cpp" />
-    <ClCompile Include="CodeGeneratorFactory.cpp" />
     <ClCompile Include="fmt\format.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -178,7 +177,6 @@
     <ClInclude Include="Algorithm.h" />
     <ClInclude Include="ApiSpec.h" />
     <ClInclude Include="CodeGeneratorCpp.h" />
-    <ClInclude Include="CodeGeneratorFactory.h" />
     <ClInclude Include="DataType.h" />
     <ClInclude Include="fmt\fmt\args.h" />
     <ClInclude Include="fmt\fmt\chrono.h" />

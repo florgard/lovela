@@ -3,12 +3,9 @@
 
 class CodeGeneratorCpp : public ICodeGenerator
 {
-	friend class CodeGeneratorFactory;
-
-protected:
+public:
 	CodeGeneratorCpp(std::ostream& stream);
 
-public:
 	[[nodiscard]] const std::vector<std::string>& GetErrors() const noexcept override { return errors; }
 	[[nodiscard]] const std::vector<std::string>& GetImports() const noexcept override { return headers; }
 	[[nodiscard]] const std::vector<std::string>& GetExports() const noexcept override { return exports; }
