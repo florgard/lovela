@@ -9,6 +9,39 @@ protected:
 	virtual void Advance() noexcept = 0;
 };
 
+template <class BaseT, std::ranges::range RangeT, class ItemT = std::decay_t<decltype(*RangeT().begin())>>
+	requires std::is_base_of_v<IEnumerator<ItemT>, BaseT>
+class RangeEnumerator : public BaseT
+{
+	using IteratorT = decltype(RangeT().begin());
+
+public:
+	void Initialize(RangeT&& range) noexcept
+	{
+		_range = std::move(range);
+		_iterator = _range.begin();
+	}
+
+private:
+	[[nodiscard]] ItemT& GetNext() noexcept override
+	{
+		return *_iterator;
+	}
+
+	[[nodiscard]] bool IsDone() noexcept override
+	{
+		return _iterator == _range.end();
+	}
+
+	[[nodiscard]] void Advance() noexcept override
+	{
+		_iterator++;
+	}
+
+	RangeT _range;
+	IteratorT _iterator;
+};
+
 constexpr bool not_empty(const auto& x)
 {
 	return !!x;
