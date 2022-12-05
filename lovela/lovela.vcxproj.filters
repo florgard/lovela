@@ -59,7 +59,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ICodeGenerator.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="CodeGeneratorCpp.h">
       <Filter>CodeGeneratorCpp</Filter>

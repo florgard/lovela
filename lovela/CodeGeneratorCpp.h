@@ -1,20 +1,31 @@
 #pragma once
-#include "ICodeGenerator.h"
+#include "Parser.h"
 
-class CodeGeneratorCpp : public ICodeGenerator
+class CodeGeneratorCpp
 {
 public:
 	CodeGeneratorCpp(std::ostream& stream);
 
-	[[nodiscard]] const std::vector<std::string>& GetErrors() const noexcept override { return errors; }
-	[[nodiscard]] const std::vector<std::string>& GetImports() const noexcept override { return headers; }
-	[[nodiscard]] const std::vector<std::string>& GetExports() const noexcept override { return exports; }
+	[[nodiscard]] const std::vector<std::string>& GetErrors() const noexcept
+	{
+		return errors;
+	}
 
-	void Visit(Node& node) override;
+	[[nodiscard]] const std::vector<std::string>& GetImports() const noexcept
+	{
+		return headers;
+	}
 
-	void GenerateProgramFile(std::ostream& file) const override;
-	void GenerateImportsFile(std::ostream& file) const override;
-	void GenerateExportsFile(std::ostream& file) const override;
+	[[nodiscard]] const std::vector<std::string>& GetExports() const noexcept
+	{
+		return exports;
+	}
+
+	void Visit(Node& node);
+
+	void GenerateProgramFile(std::ostream& file) const;
+	void GenerateImportsFile(std::ostream& file) const;
+	void GenerateExportsFile(std::ostream& file) const;
 
 private:
 	struct Context
@@ -81,3 +92,13 @@ private:
 		static constexpr const char* invalid{ "InvalidTypeName" };
 	};
 };
+
+inline void operator>>(std::ranges::range auto& input, CodeGeneratorCpp& codeGen)
+{
+	Traverse<Node>::DepthFirstPostorder(input, [&](Node& node) { codeGen.Visit(node); });
+}
+
+inline void operator>>(Parser::Generator input, CodeGeneratorCpp& codeGen)
+{
+	Traverse<Node>::DepthFirstPostorder(input, [&](Node& node) { codeGen.Visit(node); });
+}

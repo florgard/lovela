@@ -193,7 +193,6 @@
     <ClInclude Include="fmt\fmt\xchar.h" />
     <ClInclude Include="FunctionDeclaration.h" />
     <ClInclude Include="generator.hpp" />
-    <ClInclude Include="ICodeGenerator.h" />
     <ClInclude Include="Lexer.h" />
     <ClInclude Include="LexerBase.h" />
     <ClInclude Include="LexerPatterns.h" />
