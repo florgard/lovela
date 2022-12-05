@@ -34,7 +34,7 @@ bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std:
 {
 	std::istringstream input(std::string(code.data(), code.size()));
 	Lexer lexer;
-	RangeParser<Parser, TokenGenerator> parser;
+	RangeParser parser;
 	std::vector<Node> nodes;
 	input >> lexer >> parser >> nodes;
 
@@ -93,7 +93,7 @@ bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code
 {
 	std::istringstream input(std::string(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
-	RangeParser<Parser, TokenGenerator> parser;
+	RangeParser parser;
 	parser.Initialize(lexer->Lex());
 	auto nodes = to_vector(parser.Parse());
 
@@ -159,7 +159,7 @@ bool CodeGeneratorCppTest::ExportFailure(const char* name, std::string_view code
 {
 	std::istringstream input(std::string(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
-	RangeParser<Parser, TokenGenerator> parser;
+	RangeParser parser;
 	parser.Initialize(lexer->Lex());
 	auto nodes = to_vector(parser.Parse());
 

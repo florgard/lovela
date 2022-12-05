@@ -20,7 +20,7 @@ bool ParserTest::YieldsNodes(const char* name, std::string_view code, const std:
 {
 	std::istringstream input(std::string(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
-	RangeParser<Parser, TokenGenerator> parser;
+	RangeParser parser;
 	parser.Initialize(lexer->Lex());
 	auto nodes = to_vector(parser.Parse());
 

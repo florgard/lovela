@@ -29,7 +29,7 @@ public:
 
 		std::istringstream input(code);
 		auto lexer = LexerFactory::Create(input);
-		RangeParser<Parser, TokenGenerator> parser;
+		RangeParser parser;
 		parser.Initialize(lexer->Lex());
 		auto nodes = to_vector(parser.Parse());
 

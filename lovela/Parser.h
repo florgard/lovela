@@ -156,18 +156,21 @@ inline std::vector<Node>& operator>>(Parser::Generator&& input, std::vector<Node
 	return v;
 }
 
-template <class ParserT, std::ranges::range TokenRangeT>
-class RangeParser : public ParserT
+template <class BaseT, std::ranges::range RangeT>
+class RangeEnumerator : public BaseT
 {
+	using IteratorT = decltype(RangeT().begin());
+	using ItemT = decltype(*IteratorT());
+
 public:
-	void Initialize(TokenRangeT&& range) noexcept
+	void Initialize(RangeT&& range) noexcept
 	{
 		_range = std::move(range);
 		_iterator = _range.begin();
 	}
 
 private:
-	[[nodiscard]] Token& GetNext() noexcept override
+	[[nodiscard]] ItemT& GetNext() noexcept override
 	{
 		return *_iterator;
 	}
@@ -182,13 +185,13 @@ private:
 		_iterator++;
 	}
 
-	TokenRangeT _range;
-	decltype(_range.begin()) _iterator;
-
-	static_assert(std::is_convertible_v<decltype(*_range.begin()), Token>, "Parsers expect tokens as input.");
+	RangeT _range;
+	IteratorT _iterator;
 };
 
-inline auto operator>>(TokenGenerator&& input, RangeParser<Parser, TokenGenerator>& parser)
+using RangeParser = RangeEnumerator<Parser, TokenGenerator>;
+
+inline auto operator>>(TokenGenerator&& input, RangeParser& parser)
 {
 	parser.Initialize(std::move(input));
 	return parser.Parse();
