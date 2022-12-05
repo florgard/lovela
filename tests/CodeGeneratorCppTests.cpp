@@ -89,11 +89,10 @@ bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std:
 
 bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
-	std::istringstream input(std::string(code.data(), code.size()));
-	StreamLexer lexer(input);
+	RangeLexer lexer;
 	RangeParser parser;
-	parser.Initialize(lexer.Lex());
-	auto nodes = to_vector(parser.Parse());
+	std::vector<Node> nodes;
+	code >> lexer >> parser >> nodes;
 
 	std::ostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
@@ -155,11 +154,10 @@ bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code
 
 bool CodeGeneratorCppTest::ExportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
-	std::istringstream input(std::string(code.data(), code.size()));
-	StreamLexer lexer(input);
+	RangeLexer lexer;
 	RangeParser parser;
-	parser.Initialize(lexer.Lex());
-	auto nodes = to_vector(parser.Parse());
+	std::vector<Node> nodes;
+	code >> lexer >> parser >> nodes;
 
 	std::ostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");

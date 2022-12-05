@@ -6,10 +6,10 @@
 
 int main_utf8(int argc, char** argv)
 {
-	StreamLexer lexer(std::cin);
+	std::unique_ptr<StreamLexer> lexer;
 	RangeParser parser;
-	parser.Initialize(lexer.Lex());
-	auto nodes = to_vector(parser.Parse());
+	std::vector<Node> nodes;
+	std::cin >> lexer >> parser >> nodes;
 	auto codeGen = CodeGeneratorFactory::Create(std::cout, "Cpp");
 
 	for (auto&& node : parser.Parse())
