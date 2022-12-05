@@ -167,17 +167,17 @@ public:
 	}
 
 private:
-	[[nodiscard]] virtual Token& GetNext() noexcept
+	[[nodiscard]] Token& GetNext() noexcept override
 	{
 		return *_iterator;
 	}
 
-	[[nodiscard]] virtual bool IsDone() noexcept
+	[[nodiscard]] bool IsDone() noexcept override
 	{
 		return _iterator == _range.end();
 	}
 
-	[[nodiscard]] virtual void Advance() noexcept
+	[[nodiscard]] void Advance() noexcept override
 	{
 		_iterator++;
 	}
@@ -185,7 +185,7 @@ private:
 	TokenRangeT _range;
 	decltype(_range.begin()) _iterator;
 
-	static_assert(std::is_convertible_v<decltype(*_range.begin()), Token>);
+	static_assert(std::is_convertible_v<decltype(*_range.begin()), Token>, "Parsers expect tokens as input.");
 };
 
 inline auto operator>>(TokenGenerator&& input, RangeParser<Parser, TokenGenerator>& parser)
