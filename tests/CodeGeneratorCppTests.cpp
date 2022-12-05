@@ -31,11 +31,10 @@ static CodeGeneratorCppTest s_test;
 
 bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
-	std::istringstream input(std::string(code.data(), code.size()));
-	std::unique_ptr<StreamLexer> lexer;
+	RangeLexer lexer;
 	RangeParser parser;
 	std::vector<Node> nodes;
-	input >> lexer >> parser >> nodes;
+	code >> lexer >> parser >> nodes;
 
 	std::ostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");

@@ -41,6 +41,14 @@ private:
 	LexerPatterns patterns;
 };
 
+using RangeLexer = RangeEnumerator<Lexer, std::string_view>;
+
+inline auto operator>>(std::string_view input, RangeLexer& lexer)
+{
+	lexer.Initialize(std::move(input));
+	return lexer.Lex();
+}
+
 struct StreamLexer : public RangeEnumerator<Lexer, std::ranges::istream_view<char>>
 {
 	StreamLexer(std::istream& input) noexcept

@@ -4,7 +4,7 @@ template <typename ItemT>
 class IEnumerator
 {
 protected:
-	[[nodiscard]] virtual ItemT& GetNext() noexcept = 0;
+	[[nodiscard]] virtual const ItemT& GetNext() noexcept = 0;
 	[[nodiscard]] virtual bool IsDone() noexcept = 0;
 	virtual void Advance() noexcept = 0;
 };
@@ -18,9 +18,9 @@ class RangeEnumerator : public BaseT
 	IteratorT _iterator;
 
 	using ItemT = std::decay_t<decltype(*std::ranges::begin(_range))>;
-	static_assert(std::is_base_of_v<IEnumerator<ItemT>, BaseT>, "The base class must implement IEnumerator for the item type.");
+	static_assert(std::is_base_of_v<IEnumerator<ItemT>, BaseT>, "The base class must inherit IEnumerator for the item type.");
 
-	[[nodiscard]] ItemT& GetNext() noexcept override
+	[[nodiscard]] const ItemT& GetNext() noexcept override
 	{
 		return *_iterator;
 	}
