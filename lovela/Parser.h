@@ -5,7 +5,6 @@
 
 class Parser : public ParserBase
 {
-	friend class ParserFactory;
 	friend class ParserTest;
 
 public:

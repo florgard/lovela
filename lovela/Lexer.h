@@ -3,7 +3,6 @@
 
 class Lexer : public LexerBase
 {
-	friend class LexerFactory;
 	friend class LexerTest;
 
 public:
