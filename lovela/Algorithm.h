@@ -1,5 +1,14 @@
 #pragma once
 
+template <typename ItemT>
+class IEnumerator
+{
+protected:
+	[[nodiscard]] virtual ItemT& GetNext() noexcept = 0;
+	[[nodiscard]] virtual bool IsDone() noexcept = 0;
+	virtual void Advance() noexcept = 0;
+};
+
 constexpr bool not_empty(const auto& x)
 {
 	return !!x;

@@ -198,7 +198,6 @@
     <ClInclude Include="generator.hpp" />
     <ClInclude Include="ICodeGenerator.h" />
     <ClInclude Include="ILexer.h" />
-    <ClInclude Include="IParser.h" />
     <ClInclude Include="Lexer.h" />
     <ClInclude Include="LexerBase.h" />
     <ClInclude Include="LexerFactory.h" />

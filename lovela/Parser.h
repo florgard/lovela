@@ -1,4 +1,5 @@
 #pragma once
+#include "ILexer.h"
 #include "ParserBase.h"
 #include "ParserRegexes.h"
 
@@ -8,7 +9,9 @@ class Parser : public ParserBase
 	friend class ParserTest;
 
 public:
-	[[nodiscard]] NodeGenerator Parse() noexcept override;
+	using Generator = tl::generator<Node>;
+
+	[[nodiscard]] Generator Parse() noexcept;
 
 private:
 	struct Context
@@ -147,7 +150,7 @@ private:
 	ParserRegexes regexes;
 };
 
-inline std::vector<Node>& operator>>(NodeGenerator&& input, std::vector<Node>& v)
+inline std::vector<Node>& operator>>(Parser::Generator&& input, std::vector<Node>& v)
 {
 	v = std::move(to_vector(std::move(input)));
 	return v;
@@ -185,7 +188,7 @@ private:
 	static_assert(std::is_convertible_v<decltype(*_range.begin()), Token>);
 };
 
-inline NodeGenerator operator>>(TokenGenerator&& input, RangeParser<Parser, TokenGenerator>& parser)
+inline auto operator>>(TokenGenerator&& input, RangeParser<Parser, TokenGenerator>& parser)
 {
 	parser.Initialize(std::move(input));
 	return parser.Parse();

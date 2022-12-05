@@ -1,20 +1,13 @@
 #pragma once
-#include "ILexer.h"
-#include "IParser.h"
+#include "Node.h"
 #include "ParseException.h"
 
-template <typename ItemT>
-class IEnumerator
+class ParserBase : public IEnumerator<Token>
 {
 protected:
-	[[nodiscard]] virtual ItemT& GetNext() noexcept = 0;
-	[[nodiscard]] virtual bool IsDone() noexcept = 0;
-	virtual void Advance() noexcept = 0;
-};
+	// Prohibit creation.
+	ParserBase() = default;
 
-class ParserBase : public IParser, public IEnumerator<Token>
-{
-public:
 	// Throws InvalidCurrentTokenException.
 	void Assert()
 	{

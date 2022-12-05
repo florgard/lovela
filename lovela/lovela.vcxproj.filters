@@ -64,7 +64,6 @@
     <ClInclude Include="CodeGeneratorFactory.h" />
     <ClInclude Include="ICodeGenerator.h" />
     <ClInclude Include="ILexer.h" />
-    <ClInclude Include="IParser.h" />
     <ClInclude Include="LexerFactory.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="CodeGeneratorCpp.h">
