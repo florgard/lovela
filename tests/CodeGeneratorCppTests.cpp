@@ -2,7 +2,6 @@
 #include "TestingBase.h"
 #include "../lovela/Lexer.h"
 #include "../lovela/Parser.h"
-#include "../lovela/LexerFactory.h"
 #include "../lovela/CodeGeneratorFactory.h"
 
 class CodeGeneratorCppTest : public TestingBase
@@ -33,7 +32,7 @@ static CodeGeneratorCppTest s_test;
 bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
 	std::istringstream input(std::string(code.data(), code.size()));
-	Lexer lexer;
+	std::unique_ptr<StreamLexer> lexer;
 	RangeParser parser;
 	std::vector<Node> nodes;
 	input >> lexer >> parser >> nodes;
@@ -92,9 +91,9 @@ bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std:
 bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
 	std::istringstream input(std::string(code.data(), code.size()));
-	auto lexer = LexerFactory::Create(input);
+	StreamLexer lexer(std::ranges::istream_view<char>(input >> std::noskipws));
 	RangeParser parser;
-	parser.Initialize(lexer->Lex());
+	parser.Initialize(lexer.Lex());
 	auto nodes = to_vector(parser.Parse());
 
 	std::ostringstream output;
@@ -158,9 +157,9 @@ bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code
 bool CodeGeneratorCppTest::ExportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
 	std::istringstream input(std::string(code.data(), code.size()));
-	auto lexer = LexerFactory::Create(input);
+	StreamLexer lexer(std::ranges::istream_view<char>(input >> std::noskipws));
 	RangeParser parser;
-	parser.Initialize(lexer->Lex());
+	parser.Initialize(lexer.Lex());
 	auto nodes = to_vector(parser.Parse());
 
 	std::ostringstream output;

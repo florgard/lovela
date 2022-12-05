@@ -9,20 +9,17 @@ protected:
 	virtual void Advance() noexcept = 0;
 };
 
-template <class BaseT, std::ranges::range RangeT, class ItemT = std::decay_t<decltype(*RangeT().begin())>>
-	requires std::is_base_of_v<IEnumerator<ItemT>, BaseT>
+template <class BaseT, std::ranges::range RangeT>
 class RangeEnumerator : public BaseT
 {
-	using IteratorT = decltype(RangeT().begin());
+	RangeT _range;
 
-public:
-	void Initialize(RangeT&& range) noexcept
-	{
-		_range = std::move(range);
-		_iterator = _range.begin();
-	}
+	using IteratorT = decltype(std::ranges::begin(_range));
+	IteratorT _iterator;
 
-private:
+	using ItemT = std::decay_t<decltype(*std::ranges::begin(_range))>;
+	static_assert(std::is_base_of_v<IEnumerator<ItemT>, BaseT>, "The base class must implement IEnumerator for the item type.");
+
 	[[nodiscard]] ItemT& GetNext() noexcept override
 	{
 		return *_iterator;
@@ -38,8 +35,20 @@ private:
 		_iterator++;
 	}
 
-	RangeT _range;
-	IteratorT _iterator;
+public:
+	RangeEnumerator() noexcept = default;
+
+	RangeEnumerator(RangeT&& range) noexcept
+		: _range(std::move(range))
+		, _iterator(_range.begin())
+	{
+	}
+
+	void Initialize(RangeT&& range) noexcept
+	{
+		_range = std::move(range);
+		_iterator = _range.begin();
+	}
 };
 
 constexpr bool not_empty(const auto& x)

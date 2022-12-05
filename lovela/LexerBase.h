@@ -2,21 +2,13 @@
 #include "ILexer.h"
 #include "LexerPatterns.h"
 
-class LexerBase : public ILexer
+class LexerBase : public ILexer, public IEnumerator<char>
 {
 public:
-	void Initialize(std::istream& charStream) noexcept
-	{
-		_charStream = &charStream;
-		*_charStream >> std::noskipws;
-		currentTokens.reserve(64);
-	}
+	void PrintErrorSourceCode(std::ostream& stream, const Token& token) noexcept override;
 
 protected:
-	LexerBase() noexcept = default;
-	LexerBase(std::istream& charStream) noexcept;
-
-	void PrintErrorSourceCode(std::ostream& stream, const Token& token) noexcept override;
+	LexerBase() noexcept;
 
 	[[nodiscard]] virtual Token GetToken(char lexeme) noexcept = 0;
 	[[nodiscard]] virtual Token GetToken(std::string_view lexeme) noexcept = 0;

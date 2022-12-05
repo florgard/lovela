@@ -6,11 +6,7 @@ class Lexer : public LexerBase
 	friend class LexerFactory;
 	friend class LexerTest;
 
-	Lexer(std::istream& charStream) noexcept;
-
 public:
-	Lexer() noexcept = default;
-
 	[[nodiscard]] TokenGenerator Lex() noexcept override;
 
 private:
@@ -45,8 +41,10 @@ private:
 	LexerPatterns patterns;
 };
 
-inline TokenGenerator operator>>(std::istream& input, Lexer& lexer)
+using StreamLexer = RangeEnumerator<Lexer, std::ranges::istream_view<char>>;
+
+inline auto operator>>(std::istream& input, std::unique_ptr<StreamLexer>& lexer)
 {
-	lexer.Initialize(input);
-	return lexer.Lex();
+	lexer = std::make_unique<StreamLexer>(std::ranges::istream_view<char>(input >> std::noskipws));
+	return lexer->Lex();
 }

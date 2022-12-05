@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "TestingBase.h"
-#include "../lovela/LexerFactory.h"
+#include "../lovela/Lexer.h"
 #include "../lovela/Parser.h"
 #include "../lovela/CodeGeneratorFactory.h"
 
@@ -28,9 +28,9 @@ public:
 		std::cout << "Input code:\n" << color.code << code << color.none << '\n';
 
 		std::istringstream input(code);
-		auto lexer = LexerFactory::Create(input);
+		StreamLexer lexer(std::ranges::istream_view<char>(input >> std::noskipws));
 		RangeParser parser;
-		parser.Initialize(lexer->Lex());
+		parser.Initialize(lexer.Lex());
 		auto nodes = to_vector(parser.Parse());
 
 		bool parseErrors = false;

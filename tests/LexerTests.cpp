@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "TestingBase.h"
-#include "../lovela/LexerFactory.h"
+#include "../lovela/Lexer.h"
 
 class LexerTest : public TestingBase
 {
@@ -13,8 +13,8 @@ static LexerTest lexerTest;
 bool LexerTest::YieldsTokens(const char* name, std::string_view code, const std::vector<Token>& expectedTokens)
 {
 	std::istringstream input(std::string(code.data(), code.size()));
-	auto lexer = LexerFactory::Create(input);
-	auto tokens = to_vector(lexer->Lex());
+	StreamLexer lexer(std::ranges::istream_view<char>(input >> std::noskipws));
+	auto tokens = to_vector(lexer.Lex());
 
 	bool success = true;
 
@@ -39,7 +39,7 @@ bool LexerTest::YieldsTokens(const char* name, std::string_view code, const std:
 				<< "Expected:\n" << color.expect;
 			expected.Print(std::cerr);
 			std::cerr << color.none << '\n';
-			lexer->PrintErrorSourceCode(std::cerr, actual);
+			lexer.PrintErrorSourceCode(std::cerr, actual);
 		}
 	}
 

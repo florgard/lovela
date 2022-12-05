@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "TestingBase.h"
-#include "../lovela/LexerFactory.h"
+#include "../lovela/Lexer.h"
 #include "../lovela/Parser.h"
 
 class ParserTest : public TestingBase
@@ -19,9 +19,9 @@ static ParserTest parserTest;
 bool ParserTest::YieldsNodes(const char* name, std::string_view code, const std::ranges::range auto& expectedRange)
 {
 	std::istringstream input(std::string(code.data(), code.size()));
-	auto lexer = LexerFactory::Create(input);
+	StreamLexer lexer(std::ranges::istream_view<char>(input >> std::noskipws));
 	RangeParser parser;
-	parser.Initialize(lexer->Lex());
+	parser.Initialize(lexer.Lex());
 	auto nodes = to_vector(parser.Parse());
 
 	bool success = nodes.begin() != nodes.end(); 
@@ -51,7 +51,7 @@ bool ParserTest::YieldsNodes(const char* name, std::string_view code, const std:
 			std::cerr <<  color.none << "Expected:\n" << color.expect;
 			PrintAST(expectedRange);
 			std::cerr << color.none;
-			lexer->PrintErrorSourceCode(std::cerr, failingToken);
+			lexer.PrintErrorSourceCode(std::cerr, failingToken);
 		}
 	}
 

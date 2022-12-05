@@ -1,10 +1,8 @@
 #include "pch.h"
 #include "LexerBase.h"
 
-LexerBase::LexerBase(std::istream& charStream) noexcept
-	: _charStream(&charStream)
+LexerBase::LexerBase() noexcept
 {
-	*_charStream >> std::noskipws;
 	currentTokens.reserve(64);
 }
 
@@ -12,8 +10,16 @@ void LexerBase::GetNextCharacter() noexcept
 {
 	characters[Current] = characters[Next];
 	characters[Next] = characters[NextAfter];
-	characters[NextAfter] = 0;
-	*_charStream >> characters[NextAfter];
+
+	if (IsDone())
+	{
+		characters[NextAfter] = 0;
+	}
+	else
+	{
+		characters[NextAfter] = GetNext();
+		Advance();
+	}
 }
 
 void LexerBase::AddCodeLine() noexcept

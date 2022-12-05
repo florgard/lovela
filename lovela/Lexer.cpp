@@ -1,11 +1,6 @@
 #include "pch.h"
 #include "Lexer.h"
 
-Lexer::Lexer(std::istream& charStream) noexcept
-	: LexerBase(charStream)
-{
-}
-
 TokenGenerator Lexer::Lex() noexcept
 {
 	// Populate next and next after characters.

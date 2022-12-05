@@ -1,14 +1,14 @@
 #include "libpu8.h"
 #include "../../lovela/lovela-dependencies.h"
-#include "../../lovela/LexerFactory.h"
+#include "../../lovela/Lexer.h"
 #include "../../lovela/Parser.h"
 #include "../../lovela/CodeGeneratorFactory.h"
 
 int main_utf8(int argc, char** argv)
 {
-	auto lexer = LexerFactory::Create(std::cin);
+	StreamLexer lexer(std::ranges::istream_view<char>(std::cin >> std::noskipws));
 	RangeParser parser;
-	parser.Initialize(lexer->Lex());
+	parser.Initialize(lexer.Lex());
 	auto nodes = to_vector(parser.Parse());
 	auto codeGen = CodeGeneratorFactory::Create(std::cout, "Cpp");
 
