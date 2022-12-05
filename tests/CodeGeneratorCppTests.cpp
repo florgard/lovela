@@ -38,7 +38,7 @@ bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std:
 
 	std::ostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
-	Traverse<Node>::DepthFirstPostorder(nodes, [&](Node& node) { codeGen->Visit(node); });
+	nodes >> *codeGen;
 
 	auto generatedCode = output.str();
 	generatedCode = std::regex_replace(generatedCode, std::regex{ "^\\s+" }, "");
@@ -96,7 +96,7 @@ bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code
 
 	std::ostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
-	Traverse<Node>::DepthFirstPostorder(nodes, [&](Node& node) { codeGen->Visit(node); });
+	nodes >> *codeGen;
 
 	bool success = codeGen->GetImports().size() == 1 || codeGen->GetImports().empty() && cppCode.empty();
 
@@ -161,7 +161,7 @@ bool CodeGeneratorCppTest::ExportFailure(const char* name, std::string_view code
 
 	std::ostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
-	Traverse<Node>::DepthFirstPostorder(nodes, [&](Node& node) { codeGen->Visit(node); });
+	nodes >> *codeGen;
 
 	bool success = codeGen->GetExports().size() == 1 || codeGen->GetExports().empty() && cppCode.empty();
 

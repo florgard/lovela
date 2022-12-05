@@ -1,5 +1,5 @@
 #pragma once
-#include "Node.h"
+#include "Parser.h"
 
 class ICodeGenerator
 {
@@ -16,3 +16,13 @@ public:
 	virtual void GenerateImportsFile(std::ostream& file) const = 0;
 	virtual void GenerateExportsFile(std::ostream& file) const = 0;
 };
+
+inline void operator>>(std::ranges::range auto& input, ICodeGenerator& codeGen)
+{
+	Traverse<Node>::DepthFirstPostorder(input, [&](Node& node) { codeGen.Visit(node); });
+}
+
+inline void operator>>(Parser::Generator input, ICodeGenerator& codeGen)
+{
+	Traverse<Node>::DepthFirstPostorder(input, [&](Node& node) { codeGen.Visit(node); });
+}

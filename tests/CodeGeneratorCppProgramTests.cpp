@@ -47,9 +47,8 @@ public:
 		std::cout << color.none << '\n';
 
 		std::stringstream stream;
-
 		auto codeGen = CodeGeneratorFactory::Create(stream, "Cpp");
-		Traverse<Node>::DepthFirstPostorder(nodes, [&](auto& node) { codeGen->Visit(node); });
+		nodes >> *codeGen;
 
 		for (auto& error : codeGen->GetErrors())
 		{
