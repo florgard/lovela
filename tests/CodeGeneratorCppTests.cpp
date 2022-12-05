@@ -31,7 +31,7 @@ static CodeGeneratorCppTest s_test;
 
 bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
-	RangeLexer lexer;
+	StringLexer lexer;
 	RangeParser parser;
 	std::vector<Node> nodes;
 	code >> lexer >> parser >> nodes;
@@ -89,7 +89,7 @@ bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std:
 
 bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
-	RangeLexer lexer;
+	StringLexer lexer;
 	RangeParser parser;
 	std::vector<Node> nodes;
 	code >> lexer >> parser >> nodes;
@@ -154,7 +154,7 @@ bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code
 
 bool CodeGeneratorCppTest::ExportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
-	RangeLexer lexer;
+	StringLexer lexer;
 	RangeParser parser;
 	std::vector<Node> nodes;
 	code >> lexer >> parser >> nodes;

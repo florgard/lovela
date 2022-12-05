@@ -42,9 +42,9 @@ private:
 	LexerPatterns patterns;
 };
 
-using RangeLexer = RangeEnumerator<Lexer, std::string_view>;
+using StringLexer = RangeEnumerator<Lexer, std::string_view>;
 
-inline auto operator>>(std::string_view input, RangeLexer& lexer)
+inline auto operator>>(std::string_view input, StringLexer& lexer)
 {
 	lexer.Initialize(std::move(input));
 	return lexer.Lex();
