@@ -121,21 +121,6 @@
     <ClInclude Include="ParserBase.h">
       <Filter>Parser</Filter>
     </ClInclude>
-    <ClInclude Include="ApiSpec.h">
-      <Filter>Lexer</Filter>
-    </ClInclude>
-    <ClInclude Include="FunctionDeclaration.h">
-      <Filter>Lexer</Filter>
-    </ClInclude>
-    <ClInclude Include="NameSpace.h">
-      <Filter>Lexer</Filter>
-    </ClInclude>
-    <ClInclude Include="TypeSpec.h">
-      <Filter>Lexer</Filter>
-    </ClInclude>
-    <ClInclude Include="VariableDeclaration.h">
-      <Filter>Lexer</Filter>
-    </ClInclude>
     <ClInclude Include="ParserRegexes.h">
       <Filter>Parser</Filter>
     </ClInclude>
@@ -180,6 +165,21 @@
     </ClInclude>
     <ClInclude Include="LexerPatterns.h">
       <Filter>Lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="ApiSpec.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="FunctionDeclaration.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="NameSpace.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="TypeSpec.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="VariableDeclaration.h">
+      <Filter>Parser</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
