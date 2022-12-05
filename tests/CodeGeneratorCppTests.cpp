@@ -3,7 +3,6 @@
 #include "../lovela/Lexer.h"
 #include "../lovela/Parser.h"
 #include "../lovela/LexerFactory.h"
-#include "../lovela/ParserFactory.h"
 #include "../lovela/CodeGeneratorFactory.h"
 
 class CodeGeneratorCppTest : public TestingBase
@@ -35,7 +34,7 @@ bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std:
 {
 	std::istringstream input(std::string(code.data(), code.size()));
 	Lexer lexer;
-	Parser parser;
+	RangeParser<Parser, TokenGenerator> parser;
 	std::vector<Node> nodes;
 	input >> lexer >> parser >> nodes;
 
@@ -94,8 +93,9 @@ bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code
 {
 	std::istringstream input(std::string(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
-	auto parser = ParserFactory::Create(lexer->Lex());
-	auto nodes = to_vector(parser->Parse());
+	RangeParser<Parser, TokenGenerator> parser;
+	parser.Initialize(lexer->Lex());
+	auto nodes = to_vector(parser.Parse());
 
 	std::ostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");
@@ -159,8 +159,9 @@ bool CodeGeneratorCppTest::ExportFailure(const char* name, std::string_view code
 {
 	std::istringstream input(std::string(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
-	auto parser = ParserFactory::Create(lexer->Lex());
-	auto nodes = to_vector(parser->Parse());
+	RangeParser<Parser, TokenGenerator> parser;
+	parser.Initialize(lexer->Lex());
+	auto nodes = to_vector(parser.Parse());
 
 	std::ostringstream output;
 	auto codeGen = CodeGeneratorFactory::Create(output, "Cpp");

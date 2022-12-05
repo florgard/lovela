@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "TestingBase.h"
 #include "../lovela/LexerFactory.h"
-#include "../lovela/ParserFactory.h"
+#include "../lovela/Parser.h"
 #include "../lovela/CodeGeneratorFactory.h"
 
 class CodeGeneratorCppTest : public TestingBase
@@ -29,8 +29,9 @@ public:
 
 		std::istringstream input(code);
 		auto lexer = LexerFactory::Create(input);
-		auto parser = ParserFactory::Create(lexer->Lex());
-		auto nodes = to_vector(parser->Parse());
+		RangeParser<Parser, TokenGenerator> parser;
+		parser.Initialize(lexer->Lex());
+		auto nodes = to_vector(parser.Parse());
 
 		bool parseErrors = false;
 

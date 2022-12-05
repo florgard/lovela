@@ -11,7 +11,6 @@
       <Filter>CodeGeneratorCpp</Filter>
     </ClCompile>
     <ClCompile Include="CodeGeneratorFactory.cpp" />
-    <ClCompile Include="ParserFactory.cpp" />
     <ClCompile Include="LexerFactory.cpp" />
     <ClCompile Include="pch.cpp">
       <Filter>Main</Filter>
@@ -67,7 +66,6 @@
     <ClInclude Include="ILexer.h" />
     <ClInclude Include="IParser.h" />
     <ClInclude Include="LexerFactory.h" />
-    <ClInclude Include="ParserFactory.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="CodeGeneratorCpp.h">
       <Filter>CodeGeneratorCpp</Filter>

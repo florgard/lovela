@@ -3,18 +3,18 @@
 #include "IParser.h"
 #include "ParseException.h"
 
-class ParserBase : public IParser
+template <typename ItemT>
+class IEnumerator
+{
+protected:
+	[[nodiscard]] virtual ItemT& GetNext() noexcept = 0;
+	[[nodiscard]] virtual bool IsDone() noexcept = 0;
+	virtual void Advance() noexcept = 0;
+};
+
+class ParserBase : public IParser, public IEnumerator<Token>
 {
 public:
-	ParserBase() noexcept = default;
-	ParserBase(TokenGenerator&& tokenGenerator) noexcept;
-
-	void Initialize(TokenGenerator&& tokenGenerator) noexcept
-	{
-		_tokenGenerator = std::move(tokenGenerator);
-		_tokenIterator = _tokenGenerator.begin();
-	}
-
 	// Throws InvalidCurrentTokenException.
 	void Assert()
 	{
@@ -45,8 +45,8 @@ public:
 	// Skips the current token and sets the next token as current token.
 	void Skip()
 	{
-		currentToken = NextToken();
-		_tokenIterator++;
+		currentToken = GetNext();
+		Advance();
 	}
 
 	// Skips the current token and sets the next token as current token, if the next token is of the given type.
@@ -89,7 +89,7 @@ public:
 	{
 		if (!Accept(type))
 		{
-			throw UnexpectedTokenException(NextToken(), type);
+			throw UnexpectedTokenException(GetNext(), type);
 		}
 	}
 
@@ -99,12 +99,12 @@ public:
 	{
 		if (!Accept(type))
 		{
-			throw UnexpectedTokenException(NextToken(), type);
+			throw UnexpectedTokenException(GetNext(), type);
 		}
 
 		if (currentToken.value != value)
 		{
-			throw UnexpectedTokenException(NextToken(), type, value);
+			throw UnexpectedTokenException(GetNext(), type, value);
 		}
 	}
 
@@ -115,7 +115,7 @@ public:
 	{
 		if (!Accept(types))
 		{
-			throw UnexpectedTokenException(NextToken(), types);
+			throw UnexpectedTokenException(GetNext(), types);
 		}
 	}
 
@@ -145,15 +145,15 @@ public:
 	// Throws ErrorTokenException if the next token is an error token.
 	[[nodiscard]] bool Peek()
 	{
-		if (_tokenIterator == _tokenGenerator.end())
+		if (IsDone())
 		{
 			return false;
 		}
 
-		const auto nextType = NextToken().type;
+		const auto nextType = GetNext().type;
 		if (nextType == Token::Type::Error)
 		{
-			throw ErrorTokenException(NextToken());
+			throw ErrorTokenException(GetNext());
 		}
 
 		return true;
@@ -168,7 +168,7 @@ public:
 			return false;
 		}
 
-		const auto nextType = NextToken().type;
+		const auto nextType = GetNext().type;
 		return type == nextType;
 	}
 
@@ -182,18 +182,10 @@ public:
 			return false;
 		}
 
-		const auto nextType = NextToken().type;
+		const auto nextType = GetNext().type;
 		return types.contains(nextType);
 	}
 
 protected:
 	Token currentToken;
-
-protected:
-	[[nodiscard]] Token& NextToken() noexcept { return *_tokenIterator; }
-	[[nodiscard]] const Token& NextToken() const noexcept { return *_tokenIterator; }
-
-private:
-	TokenGenerator _tokenGenerator;
-	TokenGenerator::iterator _tokenIterator;
 };

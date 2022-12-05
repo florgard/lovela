@@ -207,11 +207,6 @@ void Parser::Context::AddVariableSymbol(std::shared_ptr<VariableDeclaration> dec
 
 // Parser
 
-Parser::Parser(TokenGenerator&& tokenGenerator) noexcept
-	: ParserBase(std::move(tokenGenerator))
-{
-}
-
 NodeGenerator Parser::Parse() noexcept
 {
 	auto context = make<Context>::shared();
@@ -238,7 +233,7 @@ NodeGenerator Parser::Parse() noexcept
 			{
 				if (Peek())
 				{
-					throw UnexpectedTokenException(NextToken());
+					throw UnexpectedTokenException(GetNext());
 				}
 				else
 				{
@@ -247,7 +242,7 @@ NodeGenerator Parser::Parse() noexcept
 			}
 			else if (Peek())
 			{
-				throw UnexpectedTokenException(NextToken());
+				throw UnexpectedTokenException(GetNext());
 			}
 			else
 			{
@@ -371,7 +366,7 @@ TypeSpec Parser::ParseTypeSpec()
 		}
 		else
 		{
-			throw UnexpectedTokenException(NextToken());
+			throw UnexpectedTokenException(GetNext());
 		}
 	}
 	// [/type/i32]
@@ -401,7 +396,7 @@ TypeSpec Parser::ParseTypeSpec()
 	}
 	else
 	{
-		throw UnexpectedTokenException(NextToken());
+		throw UnexpectedTokenException(GetNext());
 	}
 
 	Expect(Token::Type::ParenSquareClose);
@@ -641,7 +636,7 @@ std::unique_ptr<Node> Parser::ParseCompoundExpression(std::shared_ptr<Context> c
 
 std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 {
-	auto firstToken = NextToken();
+	auto firstToken = GetNext();
 
 	const auto& inType = context->inType;
 	auto innerContext = make<Context>::shared({ .parent = context, .inType = inType });
@@ -676,7 +671,7 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		}
 		else
 		{
-			throw UnexpectedTokenException(NextToken());
+			throw UnexpectedTokenException(GetNext());
 		}
 	}
 

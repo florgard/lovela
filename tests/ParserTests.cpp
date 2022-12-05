@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "TestingBase.h"
 #include "../lovela/LexerFactory.h"
-#include "../lovela/ParserFactory.h"
+#include "../lovela/Parser.h"
 
 class ParserTest : public TestingBase
 {
@@ -20,8 +20,9 @@ bool ParserTest::YieldsNodes(const char* name, std::string_view code, const std:
 {
 	std::istringstream input(std::string(code.data(), code.size()));
 	auto lexer = LexerFactory::Create(input);
-	auto parser = ParserFactory::Create(lexer->Lex());
-	auto nodes = to_vector(parser->Parse());
+	RangeParser<Parser, TokenGenerator> parser;
+	parser.Initialize(lexer->Lex());
+	auto nodes = to_vector(parser.Parse());
 
 	bool success = nodes.begin() != nodes.end(); 
 

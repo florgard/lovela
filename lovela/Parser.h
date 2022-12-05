@@ -7,12 +7,7 @@ class Parser : public ParserBase
 	friend class ParserFactory;
 	friend class ParserTest;
 
-protected:
-	Parser(TokenGenerator&& tokenGenerator) noexcept;
-
 public:
-	Parser() noexcept = default;
-
 	[[nodiscard]] NodeGenerator Parse() noexcept override;
 
 private:
@@ -152,14 +147,46 @@ private:
 	ParserRegexes regexes;
 };
 
-inline NodeGenerator operator>>(TokenGenerator&& input, Parser& parser)
-{
-	parser.Initialize(std::move(input));
-	return parser.Parse();
-}
-
 inline std::vector<Node>& operator>>(NodeGenerator&& input, std::vector<Node>& v)
 {
 	v = std::move(to_vector(std::move(input)));
 	return v;
+}
+
+template <class ParserT, std::ranges::range TokenRangeT>
+class RangeParser : public ParserT
+{
+public:
+	void Initialize(TokenRangeT&& range) noexcept
+	{
+		_range = std::move(range);
+		_iterator = _range.begin();
+	}
+
+private:
+	[[nodiscard]] virtual Token& GetNext() noexcept
+	{
+		return *_iterator;
+	}
+
+	[[nodiscard]] virtual bool IsDone() noexcept
+	{
+		return _iterator == _range.end();
+	}
+
+	[[nodiscard]] virtual void Advance() noexcept
+	{
+		_iterator++;
+	}
+
+	TokenRangeT _range;
+	decltype(_range.begin()) _iterator;
+
+	static_assert(std::is_convertible_v<decltype(*_range.begin()), Token>);
+};
+
+inline NodeGenerator operator>>(TokenGenerator&& input, RangeParser<Parser, TokenGenerator>& parser)
+{
+	parser.Initialize(std::move(input));
+	return parser.Parse();
 }

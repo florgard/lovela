@@ -167,7 +167,6 @@
     <ClCompile Include="ParseException.cpp" />
     <ClCompile Include="Parser.cpp" />
     <ClCompile Include="ParserBase.cpp" />
-    <ClCompile Include="ParserFactory.cpp" />
     <ClCompile Include="ParserRegexes.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -211,7 +210,6 @@
     <ClInclude Include="ParseException.h" />
     <ClInclude Include="Parser.h" />
     <ClInclude Include="ParserBase.h" />
-    <ClInclude Include="ParserFactory.h" />
     <ClInclude Include="ParserRegexes.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="StandardCDeclarations.h" />
