@@ -2,7 +2,7 @@
 #include "TestingBase.h"
 #include "../lovela/Lexer.h"
 #include "../lovela/Parser.h"
-#include "../lovela/CodeGeneratorCpp.h"
+#include "../lovela/CoderCpp.h"
 
 class CodeGeneratorCppTest : public TestingBase
 {

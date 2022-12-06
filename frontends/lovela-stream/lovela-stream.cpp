@@ -3,7 +3,7 @@
 #include "../../lovela/lovela-dependencies.h"
 #include "../../lovela/Lexer.h"
 #include "../../lovela/Parser.h"
-#include "../../lovela/CodeGeneratorCpp.h"
+#include "../../lovela/CoderCpp.h"
 
 int main_utf8(int argc, char** argv)
 {
