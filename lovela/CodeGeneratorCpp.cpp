@@ -42,7 +42,8 @@ const TypeSpec& CodeGeneratorCpp::GetVoidPtrType()
 	return t;
 }
 
-CodeGeneratorCpp::CodeGeneratorCpp(std::ostream& stream) : stream(stream)
+CodeGeneratorCpp::CodeGeneratorCpp(Stream& stream) noexcept
+	: streamPtr(&stream)
 {
 }
 
@@ -69,7 +70,7 @@ void CodeGeneratorCpp::Visit(Node& node, Context& context)
 
 void CodeGeneratorCpp::BeginScope()
 {
-	stream << Indent() << "{\n";
+	GetStream() << Indent() << "{\n";
 	indent += '\t';
 }
 
@@ -81,12 +82,12 @@ void CodeGeneratorCpp::EndScope()
 	}
 
 	indent.resize(indent.length() - 1);
-	stream << Indent() << "}\n";
+	GetStream() << Indent() << "}\n";
 }
 
 void CodeGeneratorCpp::ErrorVisitor(Node& node, Context&)
 {
-	stream << "/* " << to_string(node.error.code) << ": " << node.error.message << " */\n";
+	GetStream() << "/* " << to_string(node.error.code) << ": " << node.error.message << " */\n";
 }
 
 void CodeGeneratorCpp::FunctionDeclarationVisitor(Node& node, Context& context)
@@ -136,26 +137,26 @@ void CodeGeneratorCpp::FunctionDeclarationVisitor(Node& node, Context& context)
 
 	if (!templateParameters.empty())
 	{
-		stream << Indent() << "template <";
+		GetStream() << Indent() << "template <";
 
 		index = 0;
 		for (auto& param : templateParameters)
 		{
-			stream << (index++ ? ", " : "");
-			stream << "typename " << param;
+			GetStream() << (index++ ? ", " : "");
+			GetStream() << "typename " << param;
 		}
 
-		stream << ">\n";
+		GetStream() << ">\n";
 	}
 
-	stream << Indent() << outType.name << ' ' << FunctionName(node.value) << "(lovela::context& context";
+	GetStream() << Indent() << outType.name << ' ' << FunctionName(node.value) << "(lovela::context& context";
 
 	for (auto& parameter : parameters)
 	{
-		stream << ", " << parameter.first << ' ' << parameter.second;
+		GetStream() << ", " << parameter.first << ' ' << parameter.second;
 	}
 
-	stream << ')';
+	GetStream() << ')';
 
 	if (node.api.Is(ApiSpec::Import))
 	{
@@ -166,7 +167,7 @@ void CodeGeneratorCpp::FunctionDeclarationVisitor(Node& node, Context& context)
 		FunctionBody(node, context);
 	}
 
-	stream << '\n';
+	GetStream() << '\n';
 
 	// Generate the exported function
 
@@ -181,12 +182,12 @@ void CodeGeneratorCpp::MainFunctionDeclaration(Node& node, Context& context)
 	if (!node.outType.Is(TypeSpec::Kind::None))
 	{
 		errors.emplace_back("Warning: The main function out type wasn't None. The parser should set that.");
-		node.outType = { .kind = TypeSpec::Kind::None };
+		//node.outType = { .kind = TypeSpec::Kind::None };
 	}
 
-	stream << TypeNames::none << ' ' << "lovela::main(lovela::context& context, " << TypeNames::none << " in)";
+	GetStream() << TypeNames::none << ' ' << "lovela::main(lovela::context& context, " << TypeNames::none << " in)";
 	FunctionBody(node, context);
-	stream << '\n';
+	GetStream() << '\n';
 }
 
 std::optional<TypeSpec> CodeGeneratorCpp::CheckExportType(const TypeSpec& type)
@@ -394,36 +395,36 @@ void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
 
 	// Define the exported function wrapper
 
-	stream << signature << '\n';
+	GetStream() << signature << '\n';
 
 	BeginScope();
 
-	stream << Indent() << "lovela::context context;\n";
+	GetStream() << Indent() << "lovela::context context;\n";
 
 	if (inType.Is(TypeSpec::Kind::None))
 	{
-		stream << Indent() << TypeNames::none << " in;\n";
+		GetStream() << Indent() << TypeNames::none << " in;\n";
 	}
 
 	// Call the actual function
 
-	stream << Indent() << (node.outType.Is(TypeSpec::Kind::None) ? "" : "return ") << FunctionName(node.value) << "(context";
+	GetStream() << Indent() << (node.outType.Is(TypeSpec::Kind::None) ? "" : "return ") << FunctionName(node.value) << "(context";
 
 	if (inType.Is(TypeSpec::Kind::None))
 	{
-		stream << ", in";
+		GetStream() << ", in";
 	}
 
 	for (auto& parameter : parameters)
 	{
-		stream << ", " << parameter.second;
+		GetStream() << ", " << parameter.second;
 	}
 
-	stream << ");\n";
+	GetStream() << ");\n";
 
 	EndScope();
 
-	stream << '\n';
+	GetStream() << '\n';
 }
 
 void CodeGeneratorCpp::ImportedFunctionDeclaration(Node& node, Context&)
@@ -517,88 +518,88 @@ void CodeGeneratorCpp::ImportedFunctionDeclaration(Node& node, Context&)
 
 	if (node.api.Is(ApiSpec::C))
 	{
-		stream << "LOVELA_API_C ";
+		GetStream() << "LOVELA_API_C ";
 	}
 	else if (node.api.Is(ApiSpec::Cpp))
 	{
-		stream << "LOVELA_API_CPP ";
+		GetStream() << "LOVELA_API_CPP ";
 	}
 
 	if (node.api.Is(ApiSpec::Dynamic | ApiSpec::Import))
 	{
-		stream << "LOVELA_API_DYNAMIC_IMPORT ";
+		GetStream() << "LOVELA_API_DYNAMIC_IMPORT ";
 	}
 	else if (node.api.Is(ApiSpec::Dynamic | ApiSpec::Export))
 	{
-		stream << "LOVELA_API_DYNAMIC_EXPORT ";
+		GetStream() << "LOVELA_API_DYNAMIC_EXPORT ";
 	}
 
-	stream << signature << ";\n";
+	GetStream() << signature << ";\n";
 
-	stream << '\n';
+	GetStream() << '\n';
 }
 
 void CodeGeneratorCpp::FunctionBody(Node& node, Context& context)
 {
 	if (node.left)
 	{
-		stream << '\n';
+		GetStream() << '\n';
 
 		BeginScope();
 
-		stream << Indent() << "static_cast<void>(context);\n";
+		GetStream() << Indent() << "static_cast<void>(context);\n";
 
 		// Make an indexed reference to the input object and avoid a warning if it's unreferenced.
-		stream << Indent() << "auto& " << LocalVar << ++context.variableIndex << " = in; " << RefVar(LocalVar, context.variableIndex) << ";\n";
+		GetStream() << Indent() << "auto& " << LocalVar << ++context.variableIndex << " = in; " << RefVar(LocalVar, context.variableIndex) << ";\n";
 
 		Visit(*node.left, context);
 
 		if (node.outType.Is(TypeSpec::Kind::None))
 		{
-			stream << Indent() << "return {};\n";
+			GetStream() << Indent() << "return {};\n";
 		}
 		else
 		{
-			stream << Indent() << "return " << LocalVar << context.variableIndex << ";\n";
+			GetStream() << Indent() << "return " << LocalVar << context.variableIndex << ";\n";
 		}
 
 		EndScope();
 	}
 	else
 	{
-		stream << ";\n";
+		GetStream() << ";\n";
 	}
 }
 
 void CodeGeneratorCpp::ImportedFunctionBody(Node& node, Context&, const std::vector<std::pair<std::string, std::string>>& parameters)
 {
-	stream << '\n';
+	GetStream() << '\n';
 
 	BeginScope();
 
-	stream << Indent() << "static_cast<void>(context);\n";;
+	GetStream() << Indent() << "static_cast<void>(context);\n";;
 
-	stream << Indent();
+	GetStream() << Indent();
 
 	if (!node.outType.Is(TypeSpec::Kind::None))
 	{
-		stream << "return ";
+		GetStream() << "return ";
 	}
 
-	stream << node.value << '(';
+	GetStream() << node.value << '(';
 
 	size_t index = 0;
 	for (auto& parameter : parameters)
 	{
-		stream << (index++ ? ", " : "");
-		stream << parameter.second;
+		GetStream() << (index++ ? ", " : "");
+		GetStream() << parameter.second;
 	}
 
-	stream << ");\n";
+	GetStream() << ");\n";
 
 	if (node.outType.Is(TypeSpec::Kind::None))
 	{
-		stream << "return {};\n";
+		GetStream() << "return {};\n";
 	}
 
 	EndScope();
@@ -622,28 +623,28 @@ void CodeGeneratorCpp::ExpressionVisitor(Node& node, Context& context)
 void CodeGeneratorCpp::ExpressionInputVisitor(Node&, Context& context)
 {
 	// The input of an expression is the output of the previous expression.
-	stream << LocalVar << (context.variableIndex - 1);
+	GetStream() << LocalVar << (context.variableIndex - 1);
 }
 
 void CodeGeneratorCpp::FunctionCallVisitor(Node& node, Context& context)
 {
 	const auto reset = BeginAssign(context, true);
 
-	stream << FunctionName(node.value) << "(context";
+	GetStream() << FunctionName(node.value) << "(context";
 
 	if (node.left)
 	{
-		stream << ", ";
+		GetStream() << ", ";
 		Visit(*node.left, context);
 	}
 
 	if (node.right)
 	{
-		stream << ", ";
+		GetStream() << ", ";
 		Visit(*node.right, context);
 	}
 
-	stream << ')';
+	GetStream() << ')';
 
 	EndAssign(context, reset);
 }
@@ -659,7 +660,7 @@ void CodeGeneratorCpp::BinaryOperationVisitor(Node& node, Context& context)
 	const bool reset = BeginAssign(context, true);
 
 	Visit(*node.left, context);
-	stream << ' ' << node.value << ' ';
+	GetStream() << ' ' << node.value << ' ';
 	Visit(*node.right, context);
 
 	EndAssign(context, reset);
@@ -668,7 +669,7 @@ void CodeGeneratorCpp::BinaryOperationVisitor(Node& node, Context& context)
 void CodeGeneratorCpp::LiteralVisitor(Node& node, Context& context)
 {
 	BeginAssign(context);
-	stream << (node.token.type == Token::Type::LiteralString ? double_quote(node.value) : node.value);
+	GetStream() << (node.token.type == Token::Type::LiteralString ? double_quote(node.value) : node.value);
 	EndAssign(context);
 }
 
@@ -684,7 +685,7 @@ void CodeGeneratorCpp::TupleVisitor(Node& node, Context& context)
 	{
 		if (hasLeft)
 		{
-			stream << ", ";
+			GetStream() << ", ";
 		}
 
 		Visit(*node.right, context);
@@ -693,14 +694,14 @@ void CodeGeneratorCpp::TupleVisitor(Node& node, Context& context)
 
 void CodeGeneratorCpp::VariableReferenceVisitor(Node& node, Context&)
 {
-	stream << ParameterName(node.value);
+	GetStream() << ParameterName(node.value);
 }
 
 void CodeGeneratorCpp::BeginAssign(Context& context)
 {
 	if (!context.inner)
 	{
-		stream << Indent() << "const auto " << LocalVar << ++context.variableIndex << " = ";
+		GetStream() << Indent() << "const auto " << LocalVar << ++context.variableIndex << " = ";
 	}
 }
 
@@ -717,7 +718,7 @@ void CodeGeneratorCpp::EndAssign(Context& context)
 {
 	if (!context.inner)
 	{
-		stream << "; " << RefVar(LocalVar, context.variableIndex) << ";\n";
+		GetStream() << "; " << RefVar(LocalVar, context.variableIndex) << ";\n";
 	}
 }
 
@@ -770,5 +771,5 @@ void CodeGeneratorCpp::GenerateProgramFile(std::ostream& file) const
 #include "lovela-program.h"
 )cpp";
 
-	file << stream.rdbuf();
+	file << GetStream().rdbuf();
 }

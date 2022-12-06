@@ -34,11 +34,9 @@ bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std:
 	StringLexer lexer;
 	RangeParser parser;
 	std::vector<Node> nodes;
-	code >> lexer >> parser >> nodes;
-
+	CodeGeneratorCpp codeGen;
 	std::ostringstream output;
-	CodeGeneratorCpp codeGen(output);
-	nodes >> codeGen;
+	code >> lexer >> parser >> nodes >> codeGen >> output;
 
 	auto generatedCode = output.str();
 	generatedCode = std::regex_replace(generatedCode, std::regex{ "^\\s+" }, "");
@@ -92,11 +90,9 @@ bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code
 	StringLexer lexer;
 	RangeParser parser;
 	std::vector<Node> nodes;
-	code >> lexer >> parser >> nodes;
-
+	CodeGeneratorCpp codeGen;
 	std::ostringstream output;
-	CodeGeneratorCpp codeGen(output);
-	nodes >> codeGen;
+	code >> lexer >> parser >> nodes >> codeGen >> output;
 
 	bool success = codeGen.GetImports().size() == 1 || codeGen.GetImports().empty() && cppCode.empty();
 
@@ -157,11 +153,9 @@ bool CodeGeneratorCppTest::ExportFailure(const char* name, std::string_view code
 	StringLexer lexer;
 	RangeParser parser;
 	std::vector<Node> nodes;
-	code >> lexer >> parser >> nodes;
-
+	CodeGeneratorCpp codeGen;
 	std::ostringstream output;
-	CodeGeneratorCpp codeGen(output);
-	nodes >> codeGen;
+	code >> lexer >> parser >> nodes >> codeGen >> output;
 
 	bool success = codeGen.GetExports().size() == 1 || codeGen.GetExports().empty() && cppCode.empty();
 

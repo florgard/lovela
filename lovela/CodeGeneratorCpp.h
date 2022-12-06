@@ -4,7 +4,25 @@
 class CodeGeneratorCpp
 {
 public:
-	CodeGeneratorCpp(std::ostream& stream);
+	using Stream = std::ostream;
+
+	CodeGeneratorCpp() noexcept = default;
+	CodeGeneratorCpp(Stream& stream) noexcept;
+
+	void Initialize(Stream& stream)
+	{
+		streamPtr = &stream;
+	}
+
+	[[nodiscard]] constexpr Stream& GetStream() noexcept
+	{
+		return *streamPtr;
+	}
+
+	[[nodiscard]] constexpr const Stream& GetStream() const noexcept
+	{
+		return *streamPtr;
+	}
 
 	[[nodiscard]] const std::vector<std::string>& GetErrors() const noexcept
 	{
@@ -77,7 +95,7 @@ private:
 	static const TypeSpec& GetVoidType();
 	static const TypeSpec& GetVoidPtrType();
 
-	std::ostream& stream;
+	Stream* streamPtr{};
 	std::string indent;
 	std::vector<std::string> errors;
 	std::vector<std::string> headers;
@@ -93,12 +111,49 @@ private:
 	};
 };
 
-inline void operator>>(std::ranges::range auto& input, CodeGeneratorCpp& codeGen)
+template <class CodeGeneratorT = CodeGeneratorCpp>
+struct CodeGeneratorTraverser
 {
-	Traverse<Node>::DepthFirstPostorder(input, [&](Node& node) { codeGen.Visit(node); });
+	CodeGeneratorT& codeGenerator;
+	std::function<void()> Traverse;
+};
+
+inline CodeGeneratorTraverser<> operator>>(std::ranges::range auto& input, CodeGeneratorCpp& codeGen)
+{
+	CodeGeneratorTraverser<> retVal{ codeGen };
+	retVal.Traverse = [&input, &codeGen = retVal.codeGenerator]() mutable
+	{
+		Traverse<Node>::DepthFirstPostorder(input, [&](Node& node) { codeGen.Visit(node); });
+	};
+	return retVal;
 }
 
-inline void operator>>(Parser::Generator input, CodeGeneratorCpp& codeGen)
+template <class NodeGeneratorT = Parser::Generator, class CodeGeneratorT = CodeGeneratorCpp>
+struct NodeGeneratorCodeGeneratorTraverser
 {
-	Traverse<Node>::DepthFirstPostorder(input, [&](Node& node) { codeGen.Visit(node); });
+	NodeGeneratorT nodeGenerator;
+	CodeGeneratorT& codeGenerator;
+	std::function<void()> Traverse;
+};
+
+inline NodeGeneratorCodeGeneratorTraverser<> operator>>(Parser::Generator&& input, CodeGeneratorCpp& codeGen)
+{
+	NodeGeneratorCodeGeneratorTraverser<> retVal{ std::move(input), codeGen };
+	retVal.Traverse = [&input = retVal.nodeGenerator, &codeGen = retVal.codeGenerator]() mutable
+	{
+		Traverse<Node>::DepthFirstPostorder(input, [&](Node& node) { codeGen.Visit(node); });
+	};
+	return retVal;
+}
+
+inline void operator>>(CodeGeneratorTraverser<>&& input, std::ostream& output)
+{
+	input.codeGenerator.Initialize(output);
+	input.Traverse();
+}
+
+inline void operator>>(NodeGeneratorCodeGeneratorTraverser<>&& input, std::ostream& output)
+{
+	input.codeGenerator.Initialize(output);
+	input.Traverse();
 }
