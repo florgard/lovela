@@ -111,21 +111,28 @@ private:
 	};
 };
 
-template <class CodeGeneratorT = CoderCpp>
+template <class CoderT = CoderCpp>
 struct CodeGeneratorTraverser
 {
-	CodeGeneratorT& codeGenerator;
-	std::function<void()> Traverse;
+	CoderT& coder;
+	std::function<void(CoderT&)> Traverse;
 };
 
-inline CodeGeneratorTraverser<> operator>>(std::ranges::range auto& input, CoderCpp& coder)
+inline CodeGeneratorTraverser<> operator>>(std::ranges::range auto& nodes, CoderCpp& coder)
 {
-	CodeGeneratorTraverser<> retVal{ coder };
-	retVal.Traverse = [&input, &coder = retVal.codeGenerator]() mutable
-	{
-		Traverse<Node>::DepthFirstPostorder(input, [&](Node& node) { coder.Visit(node); });
+	return {
+		coder,
+		[&nodes](CoderCpp& coder) mutable
+		{
+			Traverse<Node>::DepthFirstPostorder(nodes, [&](Node& node) { coder.Visit(node); });
+		}
 	};
-	return retVal;
+}
+
+inline void operator>>(CodeGeneratorTraverser<>&& input, std::ostream& output)
+{
+	input.coder.Initialize(output);
+	input.Traverse(input.coder);
 }
 
 template <class NodeRangeT = Parser::Generator, class CoderT = CoderCpp>
@@ -146,12 +153,6 @@ inline NodeGeneratorCodeGeneratorTraverser<> operator>>(Parser::Generator&& node
 			Traverse<Node>::DepthFirstPostorder(nodes, [&](Node& node) { coder.Visit(node); });
 		}
 	};
-}
-
-inline void operator>>(CodeGeneratorTraverser<>&& input, std::ostream& output)
-{
-	input.codeGenerator.Initialize(output);
-	input.Traverse();
 }
 
 inline void operator>>(NodeGeneratorCodeGeneratorTraverser<>&& input, std::ostream& output)

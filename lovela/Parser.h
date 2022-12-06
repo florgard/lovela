@@ -155,9 +155,10 @@ inline std::vector<Node>& operator>>(Parser::Generator&& input, std::vector<Node
 	return v;
 }
 
-using RangeParser = RangeEnumerator<Parser, Lexer::Generator>;
+template <class ParserT = Parser>
+using RangeParser = RangeEnumerator<ParserT, Lexer::Generator>;
 
-inline auto operator>>(Lexer::Generator&& input, RangeParser& parser)
+inline auto operator>>(Lexer::Generator&& input, RangeParser<>& parser)
 {
 	parser.Initialize(std::move(input));
 	return parser.Parse();

@@ -27,8 +27,8 @@ public:
 )";
 		std::cout << "Input code:\n" << color.code << code << color.none << '\n';
 
-		StringLexer lexer;
-		RangeParser parser;
+		StringLexer<> lexer;
+		RangeParser<> parser;
 		std::vector<Node> nodes;
 		CoderCpp coder;
 		std::stringstream output;

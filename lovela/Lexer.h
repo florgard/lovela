@@ -42,27 +42,29 @@ private:
 	LexerPatterns patterns;
 };
 
-using StringLexer = RangeEnumerator<Lexer, std::string_view>;
+template <class LexerT = Lexer>
+using StringLexer = RangeEnumerator<LexerT, std::string_view>;
 
-inline auto operator>>(std::string_view input, StringLexer& lexer)
+inline auto operator>>(std::string_view input, StringLexer<>& lexer)
 {
 	lexer.Initialize(std::move(input));
 	return lexer.Lex();
 }
 
-struct StreamLexer : public RangeEnumerator<Lexer, std::ranges::istream_view<char>>
+template <class LexerT = Lexer, class BaseT = RangeEnumerator<LexerT, std::ranges::istream_view<char>>>
+struct StreamLexer : public BaseT
 {
 	StreamLexer(std::istream& input) noexcept
-		: RangeEnumerator(std::ranges::istream_view<char>(input >> std::noskipws))
+		: BaseT(std::ranges::istream_view<char>(input >> std::noskipws))
 	{
 	}
 };
 
-inline auto operator>>(std::istream& input, std::unique_ptr<StreamLexer>& lexer)
+inline auto operator>>(std::istream& input, std::unique_ptr<StreamLexer<>>& lexer)
 {
 	if (!lexer)
 	{
-		lexer = std::make_unique<StreamLexer>(input);
+		lexer = std::make_unique<StreamLexer<>>(input);
 	}
 
 	return lexer->Lex();
