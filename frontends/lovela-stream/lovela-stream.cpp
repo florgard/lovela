@@ -1,3 +1,4 @@
+#include <csignal>
 #include "libpu8.h"
 #include "../../lovela/lovela-dependencies.h"
 #include "../../lovela/Lexer.h"
@@ -6,6 +7,9 @@
 
 int main_utf8(int argc, char** argv)
 {
+	// Intercept Ctrl-C to exit gracefully.
+	signal(SIGINT, [](int) {});
+
 	std::unique_ptr<StreamLexer> lexer;
 	RangeParser parser;
 	CodeGeneratorCpp coder;
