@@ -2,13 +2,13 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="CodeGeneratorCpp.cpp">
-      <Filter>CodeGeneratorCpp</Filter>
+      <Filter>CoderCpp</Filter>
     </ClCompile>
     <ClCompile Include="StandardCDeclarations.cpp">
-      <Filter>CodeGeneratorCpp</Filter>
+      <Filter>CoderCpp</Filter>
     </ClCompile>
     <ClCompile Include="StandardCppDeclarations.cpp">
-      <Filter>CodeGeneratorCpp</Filter>
+      <Filter>CoderCpp</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Main</Filter>
@@ -36,9 +36,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="CodeGeneratorCpp">
-      <UniqueIdentifier>{271e455b-01c2-4c47-9076-26af72095ad5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Main">
       <UniqueIdentifier>{2cff5842-59be-40fa-a640-3f33a5962767}</UniqueIdentifier>
     </Filter>
@@ -57,17 +54,20 @@
     <Filter Include="Libraries\fmt">
       <UniqueIdentifier>{5696b848-4614-4a91-9a90-ed73a9ff4334}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CoderCpp">
+      <UniqueIdentifier>{271e455b-01c2-4c47-9076-26af72095ad5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utility.h" />
     <ClInclude Include="CodeGeneratorCpp.h">
-      <Filter>CodeGeneratorCpp</Filter>
+      <Filter>CoderCpp</Filter>
     </ClInclude>
     <ClInclude Include="StandardCDeclarations.h">
-      <Filter>CodeGeneratorCpp</Filter>
+      <Filter>CoderCpp</Filter>
     </ClInclude>
     <ClInclude Include="StandardCppDeclarations.h">
-      <Filter>CodeGeneratorCpp</Filter>
+      <Filter>CoderCpp</Filter>
     </ClInclude>
     <ClInclude Include="Algorithm.h" />
     <ClInclude Include="pch.h">
