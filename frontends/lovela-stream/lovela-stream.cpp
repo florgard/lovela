@@ -8,8 +8,8 @@ int main_utf8(int argc, char** argv)
 {
 	std::unique_ptr<StreamLexer> lexer;
 	RangeParser parser;
-	CodeGeneratorCpp codeGen(std::cout);
-	std::cin >> lexer >> parser >> codeGen;
+	CodeGeneratorCpp coder(std::cout);
+	std::cin >> lexer >> parser >> coder;
 
 	return 0;
 }

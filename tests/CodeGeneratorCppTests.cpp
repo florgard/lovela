@@ -34,9 +34,9 @@ bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std:
 	StringLexer lexer;
 	RangeParser parser;
 	std::vector<Node> nodes;
-	CodeGeneratorCpp codeGen;
+	CodeGeneratorCpp coder;
 	std::ostringstream output;
-	code >> lexer >> parser >> nodes >> codeGen >> output;
+	code >> lexer >> parser >> nodes >> coder >> output;
 
 	auto generatedCode = output.str();
 	generatedCode = std::regex_replace(generatedCode, std::regex{ "^\\s+" }, "");
@@ -64,7 +64,7 @@ bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std:
 		return false;
 	}
 
-	const auto actualErrorCount = codeGen.GetErrors().size();
+	const auto actualErrorCount = coder.GetErrors().size();
 	success = actualErrorCount == expectedErrors;
 
 	if (!success)
@@ -74,7 +74,7 @@ bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std:
 			<< "The actual error count " << actualErrorCount << " differs from the expected count " << expectedErrors << ".\n"
 			<< "Error messages:\n";
 
-		for (auto& error : codeGen.GetErrors())
+		for (auto& error : coder.GetErrors())
 		{
 			std::cerr << error << '\n';
 		}
@@ -90,11 +90,11 @@ bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code
 	StringLexer lexer;
 	RangeParser parser;
 	std::vector<Node> nodes;
-	CodeGeneratorCpp codeGen;
+	CodeGeneratorCpp coder;
 	std::ostringstream output;
-	code >> lexer >> parser >> nodes >> codeGen >> output;
+	code >> lexer >> parser >> nodes >> coder >> output;
 
-	bool success = codeGen.GetImports().size() == 1 || codeGen.GetImports().empty() && cppCode.empty();
+	bool success = coder.GetImports().size() == 1 || coder.GetImports().empty() && cppCode.empty();
 
 	if (!success)
 	{
@@ -105,7 +105,7 @@ bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code
 		return false;
 	}
 
-	auto generatedCode = codeGen.GetImports().front();
+	auto generatedCode = coder.GetImports().front();
 	generatedCode = std::regex_replace(generatedCode, std::regex{ "^\\s+" }, "");
 	generatedCode = std::regex_replace(generatedCode, std::regex{ "\\s+$" }, "");
 	generatedCode = std::regex_replace(generatedCode, std::regex{ "\\s+" }, " ");
@@ -128,7 +128,7 @@ bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code
 		return false;
 	}
 
-	success = codeGen.GetErrors().size() == expectedErrors;
+	success = coder.GetErrors().size() == expectedErrors;
 
 	if (!success)
 	{
@@ -137,7 +137,7 @@ bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code
 			<< "The error count differs from the expected count.\n"
 			<< "Error messages:\n";
 
-		for (auto& error : codeGen.GetErrors())
+		for (auto& error : coder.GetErrors())
 		{
 			std::cerr << error << '\n';
 		}
@@ -153,11 +153,11 @@ bool CodeGeneratorCppTest::ExportFailure(const char* name, std::string_view code
 	StringLexer lexer;
 	RangeParser parser;
 	std::vector<Node> nodes;
-	CodeGeneratorCpp codeGen;
+	CodeGeneratorCpp coder;
 	std::ostringstream output;
-	code >> lexer >> parser >> nodes >> codeGen >> output;
+	code >> lexer >> parser >> nodes >> coder >> output;
 
-	bool success = codeGen.GetExports().size() == 1 || codeGen.GetExports().empty() && cppCode.empty();
+	bool success = coder.GetExports().size() == 1 || coder.GetExports().empty() && cppCode.empty();
 
 	if (!success)
 	{
@@ -168,7 +168,7 @@ bool CodeGeneratorCppTest::ExportFailure(const char* name, std::string_view code
 		return false;
 	}
 
-	auto generatedCode = codeGen.GetExports().front();
+	auto generatedCode = coder.GetExports().front();
 	generatedCode = std::regex_replace(generatedCode, std::regex{ "^\\s+" }, "");
 	generatedCode = std::regex_replace(generatedCode, std::regex{ "\\s+$" }, "");
 	generatedCode = std::regex_replace(generatedCode, std::regex{ "\\s+" }, " ");
@@ -191,7 +191,7 @@ bool CodeGeneratorCppTest::ExportFailure(const char* name, std::string_view code
 		return false;
 	}
 
-	success = codeGen.GetErrors().size() == expectedErrors;
+	success = coder.GetErrors().size() == expectedErrors;
 
 	if (!success)
 	{
@@ -200,7 +200,7 @@ bool CodeGeneratorCppTest::ExportFailure(const char* name, std::string_view code
 			<< "The error count differs from the expected count.\n"
 			<< "Error messages:\n";
 
-		for (auto& error : codeGen.GetErrors())
+		for (auto& error : coder.GetErrors())
 		{
 			std::cerr << error << '\n';
 		}

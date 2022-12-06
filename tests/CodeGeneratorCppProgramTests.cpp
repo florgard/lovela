@@ -30,9 +30,9 @@ public:
 		StringLexer lexer;
 		RangeParser parser;
 		std::vector<Node> nodes;
-		CodeGeneratorCpp codeGen;
+		CodeGeneratorCpp coder;
 		std::stringstream output;
-		code >> lexer >> parser >> nodes >> codeGen >> output;
+		code >> lexer >> parser >> nodes >> coder >> output;
 
 		bool parseErrors = false;
 
@@ -48,26 +48,26 @@ public:
 		PrintAST(nodes);
 		std::cout << color.none << '\n';
 
-		for (auto& error : codeGen.GetErrors())
+		for (auto& error : coder.GetErrors())
 		{
 			std::cerr << error << '\n';
 		}
 
-		expect(codeGen.GetErrors().empty());
+		expect(coder.GetErrors().empty());
 
 		auto genCode = output.str();
 		std::cout << "Generated code:\n" << color.output << genCode << color.none;
 
 		std::ofstream program(R"(..\targets\cpp\program\lovela-program.cpp)");
-		codeGen.GenerateProgramFile(program);
+		coder.GenerateProgramFile(program);
 		program.close();
 
 		std::ofstream imports(R"(..\targets\cpp\program\lovela-imports.h)");
-		codeGen.GenerateImportsFile(imports);
+		coder.GenerateImportsFile(imports);
 		imports.close();
 
 		std::ofstream exports(R"(..\targets\cpp\program\lovela-exports.h)");
-		codeGen.GenerateExportsFile(exports);
+		coder.GenerateExportsFile(exports);
 		exports.close();
 	}
 };

@@ -118,12 +118,12 @@ struct CodeGeneratorTraverser
 	std::function<void()> Traverse;
 };
 
-inline CodeGeneratorTraverser<> operator>>(std::ranges::range auto& input, CodeGeneratorCpp& codeGen)
+inline CodeGeneratorTraverser<> operator>>(std::ranges::range auto& input, CodeGeneratorCpp& coder)
 {
-	CodeGeneratorTraverser<> retVal{ codeGen };
-	retVal.Traverse = [&input, &codeGen = retVal.codeGenerator]() mutable
+	CodeGeneratorTraverser<> retVal{ coder };
+	retVal.Traverse = [&input, &coder = retVal.codeGenerator]() mutable
 	{
-		Traverse<Node>::DepthFirstPostorder(input, [&](Node& node) { codeGen.Visit(node); });
+		Traverse<Node>::DepthFirstPostorder(input, [&](Node& node) { coder.Visit(node); });
 	};
 	return retVal;
 }
@@ -136,12 +136,12 @@ struct NodeGeneratorCodeGeneratorTraverser
 	std::function<void()> Traverse;
 };
 
-inline NodeGeneratorCodeGeneratorTraverser<> operator>>(Parser::Generator&& input, CodeGeneratorCpp& codeGen)
+inline NodeGeneratorCodeGeneratorTraverser<> operator>>(Parser::Generator&& input, CodeGeneratorCpp& coder)
 {
-	NodeGeneratorCodeGeneratorTraverser<> retVal{ std::move(input), codeGen };
-	retVal.Traverse = [&input = retVal.nodeGenerator, &codeGen = retVal.codeGenerator]() mutable
+	NodeGeneratorCodeGeneratorTraverser<> retVal{ std::move(input), coder };
+	retVal.Traverse = [&input = retVal.nodeGenerator, &coder = retVal.codeGenerator]() mutable
 	{
-		Traverse<Node>::DepthFirstPostorder(input, [&](Node& node) { codeGen.Visit(node); });
+		Traverse<Node>::DepthFirstPostorder(input, [&](Node& node) { coder.Visit(node); });
 	};
 	return retVal;
 }
