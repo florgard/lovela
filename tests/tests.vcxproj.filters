@@ -12,8 +12,8 @@
     </ClCompile>
     <ClCompile Include="LexerTests.cpp" />
     <ClCompile Include="ParserTests.cpp" />
-    <ClCompile Include="CodeGeneratorCppTests.cpp" />
-    <ClCompile Include="CodeGeneratorCppProgramTests.cpp" />
+    <ClCompile Include="CoderCppTests.cpp" />
+    <ClCompile Include="CoderCppProgramTests.cpp" />
     <ClCompile Include="TargetsCppLovelaTypes.cpp" />
     <ClCompile Include="TargetsCppLovelaTypesTuples.cpp" />
     <ClCompile Include="TargetsCppLovelaTypesArrays.cpp" />

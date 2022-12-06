@@ -147,8 +147,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CodeGeneratorCppProgramTests.cpp" />
-    <ClCompile Include="CodeGeneratorCppTests.cpp" />
+    <ClCompile Include="CoderCppProgramTests.cpp" />
+    <ClCompile Include="CoderCppTests.cpp" />
     <ClCompile Include="LexerInternalsTests.cpp" />
     <ClCompile Include="LexerPatternsTests.cpp" />
     <ClCompile Include="LexerTests.cpp" />
