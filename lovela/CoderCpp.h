@@ -1,13 +1,13 @@
 #pragma once
 #include "Parser.h"
 
-class CodeGeneratorCpp
+class CoderCpp
 {
 public:
 	using Stream = std::ostream;
 
-	CodeGeneratorCpp() noexcept = default;
-	CodeGeneratorCpp(Stream& stream) noexcept;
+	CoderCpp() noexcept = default;
+	CoderCpp(Stream& stream) noexcept;
 
 	void Initialize(Stream& stream)
 	{
@@ -88,7 +88,7 @@ private:
 	std::optional<TypeSpec> CheckExportType(const TypeSpec& type);
 	std::optional<std::string> ConvertPrimitiveType(const TypeSpec& type);
 
-	using Visitor = std::function<void(CodeGeneratorCpp*, Node&, Context&)>;
+	using Visitor = std::function<void(CoderCpp*, Node&, Context&)>;
 	static std::map<Node::Type, Visitor>& GetVisitors();
 	static std::map<Node::Type, Visitor>& GetInternalVisitors();
 
@@ -111,14 +111,14 @@ private:
 	};
 };
 
-template <class CodeGeneratorT = CodeGeneratorCpp>
+template <class CodeGeneratorT = CoderCpp>
 struct CodeGeneratorTraverser
 {
 	CodeGeneratorT& codeGenerator;
 	std::function<void()> Traverse;
 };
 
-inline CodeGeneratorTraverser<> operator>>(std::ranges::range auto& input, CodeGeneratorCpp& coder)
+inline CodeGeneratorTraverser<> operator>>(std::ranges::range auto& input, CoderCpp& coder)
 {
 	CodeGeneratorTraverser<> retVal{ coder };
 	retVal.Traverse = [&input, &coder = retVal.codeGenerator]() mutable
@@ -128,7 +128,7 @@ inline CodeGeneratorTraverser<> operator>>(std::ranges::range auto& input, CodeG
 	return retVal;
 }
 
-template <class NodeRangeT = Parser::Generator, class CoderT = CodeGeneratorCpp>
+template <class NodeRangeT = Parser::Generator, class CoderT = CoderCpp>
 struct NodeGeneratorCodeGeneratorTraverser
 {
 	NodeRangeT nodes;
@@ -136,12 +136,12 @@ struct NodeGeneratorCodeGeneratorTraverser
 	std::function<void(NodeRangeT&, CoderT&)> Traverse;
 };
 
-inline NodeGeneratorCodeGeneratorTraverser<> operator>>(Parser::Generator&& nodes, CodeGeneratorCpp& coder)
+inline NodeGeneratorCodeGeneratorTraverser<> operator>>(Parser::Generator&& nodes, CoderCpp& coder)
 {
 	return {
 		std::move(nodes),
 		coder,
-		[](Parser::Generator& nodes, CodeGeneratorCpp& coder)
+		[](Parser::Generator& nodes, CoderCpp& coder)
 		{
 			Traverse<Node>::DepthFirstPostorder(nodes, [&](Node& node) { coder.Visit(node); });
 		}

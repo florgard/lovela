@@ -3,51 +3,51 @@
 #include "StandardCDeclarations.h"
 #include "StandardCppDeclarations.h"
 
-std::map<Node::Type, CodeGeneratorCpp::Visitor>& CodeGeneratorCpp::GetVisitors()
+std::map<Node::Type, CoderCpp::Visitor>& CoderCpp::GetVisitors()
 {
 	static std::map<Node::Type, Visitor> visitors
 	{
-		{ Node::Type::Error,&CodeGeneratorCpp::ErrorVisitor },
-		{ Node::Type::FunctionDeclaration, &CodeGeneratorCpp::FunctionDeclarationVisitor },
+		{ Node::Type::Error,&CoderCpp::ErrorVisitor },
+		{ Node::Type::FunctionDeclaration, &CoderCpp::FunctionDeclarationVisitor },
 	};
 
 	return visitors;
 }
 
-std::map<Node::Type, CodeGeneratorCpp::Visitor>& CodeGeneratorCpp::GetInternalVisitors()
+std::map<Node::Type, CoderCpp::Visitor>& CoderCpp::GetInternalVisitors()
 {
 	static std::map<Node::Type, Visitor> visitors
 	{
-		{ Node::Type::Expression, &CodeGeneratorCpp::ExpressionVisitor },
-		{ Node::Type::ExpressionInput, &CodeGeneratorCpp::ExpressionInputVisitor },
-		{ Node::Type::FunctionCall, &CodeGeneratorCpp::FunctionCallVisitor },
-		{ Node::Type::BinaryOperation, &CodeGeneratorCpp::BinaryOperationVisitor },
-		{ Node::Type::Literal, &CodeGeneratorCpp::LiteralVisitor },
-		{ Node::Type::Tuple, &CodeGeneratorCpp::TupleVisitor },
-		{ Node::Type::VariableReference, &CodeGeneratorCpp::VariableReferenceVisitor },
+		{ Node::Type::Expression, &CoderCpp::ExpressionVisitor },
+		{ Node::Type::ExpressionInput, &CoderCpp::ExpressionInputVisitor },
+		{ Node::Type::FunctionCall, &CoderCpp::FunctionCallVisitor },
+		{ Node::Type::BinaryOperation, &CoderCpp::BinaryOperationVisitor },
+		{ Node::Type::Literal, &CoderCpp::LiteralVisitor },
+		{ Node::Type::Tuple, &CoderCpp::TupleVisitor },
+		{ Node::Type::VariableReference, &CoderCpp::VariableReferenceVisitor },
 	};
 
 	return visitors;
 }
 
-const TypeSpec& CodeGeneratorCpp::GetVoidType()
+const TypeSpec& CoderCpp::GetVoidType()
 {
 	static TypeSpec t{ .name = "void" };
 	return t;
 }
 
-const TypeSpec& CodeGeneratorCpp::GetVoidPtrType()
+const TypeSpec& CoderCpp::GetVoidPtrType()
 {
 	static TypeSpec t{ .name = "void*" };
 	return t;
 }
 
-CodeGeneratorCpp::CodeGeneratorCpp(Stream& stream) noexcept
+CoderCpp::CoderCpp(Stream& stream) noexcept
 	: streamPtr(&stream)
 {
 }
 
-void CodeGeneratorCpp::Visit(Node& node)
+void CoderCpp::Visit(Node& node)
 {
 	auto& v = GetVisitors();
 	auto iter = v.find(node.type);
@@ -58,7 +58,7 @@ void CodeGeneratorCpp::Visit(Node& node)
 	}
 }
 
-void CodeGeneratorCpp::Visit(Node& node, Context& context)
+void CoderCpp::Visit(Node& node, Context& context)
 {
 	auto& v = GetInternalVisitors();
 	auto iter = v.find(node.type);
@@ -68,13 +68,13 @@ void CodeGeneratorCpp::Visit(Node& node, Context& context)
 	}
 }
 
-void CodeGeneratorCpp::BeginScope()
+void CoderCpp::BeginScope()
 {
 	GetStream() << Indent() << "{\n";
 	indent += '\t';
 }
 
-void CodeGeneratorCpp::EndScope()
+void CoderCpp::EndScope()
 {
 	if (indent.empty())
 	{
@@ -85,12 +85,12 @@ void CodeGeneratorCpp::EndScope()
 	GetStream() << Indent() << "}\n";
 }
 
-void CodeGeneratorCpp::ErrorVisitor(Node& node, Context&)
+void CoderCpp::ErrorVisitor(Node& node, Context&)
 {
 	GetStream() << "/* " << to_string(node.error.code) << ": " << node.error.message << " */\n";
 }
 
-void CodeGeneratorCpp::FunctionDeclarationVisitor(Node& node, Context& context)
+void CoderCpp::FunctionDeclarationVisitor(Node& node, Context& context)
 {
 	if (node.value.empty())
 	{
@@ -177,7 +177,7 @@ void CodeGeneratorCpp::FunctionDeclarationVisitor(Node& node, Context& context)
 	}
 }
 
-void CodeGeneratorCpp::MainFunctionDeclaration(Node& node, Context& context)
+void CoderCpp::MainFunctionDeclaration(Node& node, Context& context)
 {
 	if (!node.outType.Is(TypeSpec::Kind::None))
 	{
@@ -190,7 +190,7 @@ void CodeGeneratorCpp::MainFunctionDeclaration(Node& node, Context& context)
 	GetStream() << '\n';
 }
 
-std::optional<TypeSpec> CodeGeneratorCpp::CheckExportType(const TypeSpec& type)
+std::optional<TypeSpec> CoderCpp::CheckExportType(const TypeSpec& type)
 {
 	switch (type.kind)
 	{
@@ -216,7 +216,7 @@ std::optional<TypeSpec> CodeGeneratorCpp::CheckExportType(const TypeSpec& type)
 	}
 }
 
-std::optional<std::string> CodeGeneratorCpp::ConvertPrimitiveType(const TypeSpec& type)
+std::optional<std::string> CoderCpp::ConvertPrimitiveType(const TypeSpec& type)
 {
 	static const std::map<std::string, std::string> types
 	{
@@ -244,14 +244,14 @@ std::optional<std::string> CodeGeneratorCpp::ConvertPrimitiveType(const TypeSpec
 	return exportName.str();
 }
 
-TypeSpec CodeGeneratorCpp::ConvertType(const TypeSpec& type)
+TypeSpec CoderCpp::ConvertType(const TypeSpec& type)
 {
 	auto converted = type;
 	converted.name = ConvertTypeName(type);
 	return converted;
 }
 
-std::string CodeGeneratorCpp::ConvertTypeName(const TypeSpec& type)
+std::string CoderCpp::ConvertTypeName(const TypeSpec& type)
 {
 	switch (type.kind)
 	{
@@ -280,12 +280,12 @@ std::string CodeGeneratorCpp::ConvertTypeName(const TypeSpec& type)
 	}
 }
 
-std::string CodeGeneratorCpp::ParameterName(const std::string& name)
+std::string CoderCpp::ParameterName(const std::string& name)
 {
 	return "p_" + name;
 }
 
-std::string CodeGeneratorCpp::ParameterName(const std::string& name, size_t index)
+std::string CoderCpp::ParameterName(const std::string& name, size_t index)
 {
 	if (name.empty())
 	{
@@ -297,17 +297,17 @@ std::string CodeGeneratorCpp::ParameterName(const std::string& name, size_t inde
 	}
 }
 
-std::string CodeGeneratorCpp::FunctionName(const std::string& name)
+std::string CoderCpp::FunctionName(const std::string& name)
 {
 	return "f_" + name;
 }
 
-std::string CodeGeneratorCpp::RefVar(char prefix, size_t index)
+std::string CoderCpp::RefVar(char prefix, size_t index)
 {
 	return std::string("static_cast<void>(") + prefix + to_string(index) + ')';
 }
 
-void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
+void CoderCpp::ExportedFunctionDeclaration(Node& node, Context&)
 {
 	std::vector<std::pair<std::string, std::string>> parameters;
 
@@ -427,7 +427,7 @@ void CodeGeneratorCpp::ExportedFunctionDeclaration(Node& node, Context&)
 	GetStream() << '\n';
 }
 
-void CodeGeneratorCpp::ImportedFunctionDeclaration(Node& node, Context&)
+void CoderCpp::ImportedFunctionDeclaration(Node& node, Context&)
 {
 	if (node.api.Is(ApiSpec::Standard))
 	{
@@ -539,7 +539,7 @@ void CodeGeneratorCpp::ImportedFunctionDeclaration(Node& node, Context&)
 	GetStream() << '\n';
 }
 
-void CodeGeneratorCpp::FunctionBody(Node& node, Context& context)
+void CoderCpp::FunctionBody(Node& node, Context& context)
 {
 	if (node.left)
 	{
@@ -571,7 +571,7 @@ void CodeGeneratorCpp::FunctionBody(Node& node, Context& context)
 	}
 }
 
-void CodeGeneratorCpp::ImportedFunctionBody(Node& node, Context&, const std::vector<std::pair<std::string, std::string>>& parameters)
+void CoderCpp::ImportedFunctionBody(Node& node, Context&, const std::vector<std::pair<std::string, std::string>>& parameters)
 {
 	GetStream() << '\n';
 
@@ -605,7 +605,7 @@ void CodeGeneratorCpp::ImportedFunctionBody(Node& node, Context&, const std::vec
 	EndScope();
 }
 
-void CodeGeneratorCpp::ExpressionVisitor(Node& node, Context& context)
+void CoderCpp::ExpressionVisitor(Node& node, Context& context)
 {
 	if (node.left)
 	{
@@ -620,13 +620,13 @@ void CodeGeneratorCpp::ExpressionVisitor(Node& node, Context& context)
 	}
 }
 
-void CodeGeneratorCpp::ExpressionInputVisitor(Node&, Context& context)
+void CoderCpp::ExpressionInputVisitor(Node&, Context& context)
 {
 	// The input of an expression is the output of the previous expression.
 	GetStream() << LocalVar << (context.variableIndex - 1);
 }
 
-void CodeGeneratorCpp::FunctionCallVisitor(Node& node, Context& context)
+void CoderCpp::FunctionCallVisitor(Node& node, Context& context)
 {
 	const auto reset = BeginAssign(context, true);
 
@@ -649,7 +649,7 @@ void CodeGeneratorCpp::FunctionCallVisitor(Node& node, Context& context)
 	EndAssign(context, reset);
 }
 
-void CodeGeneratorCpp::BinaryOperationVisitor(Node& node, Context& context)
+void CoderCpp::BinaryOperationVisitor(Node& node, Context& context)
 {
 	if (!node.left || !node.right)
 	{
@@ -666,14 +666,14 @@ void CodeGeneratorCpp::BinaryOperationVisitor(Node& node, Context& context)
 	EndAssign(context, reset);
 }
 
-void CodeGeneratorCpp::LiteralVisitor(Node& node, Context& context)
+void CoderCpp::LiteralVisitor(Node& node, Context& context)
 {
 	BeginAssign(context);
 	GetStream() << (node.token.type == Token::Type::LiteralString ? double_quote(node.value) : node.value);
 	EndAssign(context);
 }
 
-void CodeGeneratorCpp::TupleVisitor(Node& node, Context& context)
+void CoderCpp::TupleVisitor(Node& node, Context& context)
 {
 	const bool hasLeft = !!node.left;
 	if (hasLeft)
@@ -692,12 +692,12 @@ void CodeGeneratorCpp::TupleVisitor(Node& node, Context& context)
 	}
 }
 
-void CodeGeneratorCpp::VariableReferenceVisitor(Node& node, Context&)
+void CoderCpp::VariableReferenceVisitor(Node& node, Context&)
 {
 	GetStream() << ParameterName(node.value);
 }
 
-void CodeGeneratorCpp::BeginAssign(Context& context)
+void CoderCpp::BeginAssign(Context& context)
 {
 	if (!context.inner)
 	{
@@ -705,7 +705,7 @@ void CodeGeneratorCpp::BeginAssign(Context& context)
 	}
 }
 
-bool CodeGeneratorCpp::BeginAssign(Context& context, bool inner)
+bool CoderCpp::BeginAssign(Context& context, bool inner)
 {
 	BeginAssign(context);
 
@@ -714,7 +714,7 @@ bool CodeGeneratorCpp::BeginAssign(Context& context, bool inner)
 	return reset;
 }
 
-void CodeGeneratorCpp::EndAssign(Context& context)
+void CoderCpp::EndAssign(Context& context)
 {
 	if (!context.inner)
 	{
@@ -722,14 +722,14 @@ void CodeGeneratorCpp::EndAssign(Context& context)
 	}
 }
 
-void CodeGeneratorCpp::EndAssign(Context& context, bool reset)
+void CoderCpp::EndAssign(Context& context, bool reset)
 {
 	context.inner = reset;
 
 	EndAssign(context);
 }
 
-void CodeGeneratorCpp::GenerateImportsFile(std::ostream& file) const
+void CoderCpp::GenerateImportsFile(std::ostream& file) const
 {
 	file << R"cpp(
 // Automatically generated header with function declarations that the lovela program imports.
@@ -747,7 +747,7 @@ void CodeGeneratorCpp::GenerateImportsFile(std::ostream& file) const
 )cpp";
 }
 
-void CodeGeneratorCpp::GenerateExportsFile(std::ostream& file) const
+void CoderCpp::GenerateExportsFile(std::ostream& file) const
 {
 	file << R"cpp(
 // Automatically generated header with function declarations that the lovela program exports.
@@ -765,7 +765,7 @@ void CodeGeneratorCpp::GenerateExportsFile(std::ostream& file) const
 )cpp";
 }
 
-void CodeGeneratorCpp::GenerateProgramFile(std::ostream& file) const
+void CoderCpp::GenerateProgramFile(std::ostream& file) const
 {
 	file << R"cpp(
 #include "lovela-program.h"

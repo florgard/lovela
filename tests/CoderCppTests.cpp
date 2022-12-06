@@ -4,7 +4,7 @@
 #include "../lovela/Parser.h"
 #include "../lovela/CoderCpp.h"
 
-class CodeGeneratorCppTest : public TestingBase
+class CoderCppTest : public TestingBase
 {
 public:
 	bool Success(const char* name, std::string_view code, std::string_view cppCode)
@@ -27,14 +27,14 @@ public:
 	bool ExportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors);
 };
 
-static CodeGeneratorCppTest s_test;
+static CoderCppTest s_test;
 
-bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
+bool CoderCppTest::Failure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
 	StringLexer lexer;
 	RangeParser parser;
 	std::vector<Node> nodes;
-	CodeGeneratorCpp coder;
+	CoderCpp coder;
 	std::ostringstream output;
 	code >> lexer >> parser >> nodes >> coder >> output;
 
@@ -85,12 +85,12 @@ bool CodeGeneratorCppTest::Failure(const char* name, std::string_view code, std:
 	return true;
 }
 
-bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
+bool CoderCppTest::ImportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
 	StringLexer lexer;
 	RangeParser parser;
 	std::vector<Node> nodes;
-	CodeGeneratorCpp coder;
+	CoderCpp coder;
 	std::ostringstream output;
 	code >> lexer >> parser >> nodes >> coder >> output;
 
@@ -148,12 +148,12 @@ bool CodeGeneratorCppTest::ImportFailure(const char* name, std::string_view code
 	return true;
 }
 
-bool CodeGeneratorCppTest::ExportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
+bool CoderCppTest::ExportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
 	StringLexer lexer;
 	RangeParser parser;
 	std::vector<Node> nodes;
-	CodeGeneratorCpp coder;
+	CoderCpp coder;
 	std::ostringstream output;
 	code >> lexer >> parser >> nodes >> coder >> output;
 
@@ -213,7 +213,7 @@ bool CodeGeneratorCppTest::ExportFailure(const char* name, std::string_view code
 
 using namespace boost::ut;
 
-suite CodeGeneratorCpp_function_literal_input_type_tests = [] {
+suite CoderCpp_function_literal_input_type_tests = [] {
 	"[1] input"_test = [] {
 		expect(s_test.Success("[1] input",
 			"[1] f",
@@ -243,7 +243,7 @@ suite CodeGeneratorCpp_function_literal_input_type_tests = [] {
 	};
 };
 
-suite CodeGeneratorCpp_function_builtin_input_type_tests = [] {
+suite CoderCpp_function_builtin_input_type_tests = [] {
 	"l_i1 input error"_test = [] {
 		expect(s_test.Failure("l_i1 input error",
 			"[/type/i1] f",
@@ -347,7 +347,7 @@ suite CodeGeneratorCpp_function_builtin_input_type_tests = [] {
 	};
 };
 
-suite CodeGeneratorCpp_function_tagged_input_type_tests = [] {
+suite CoderCpp_function_tagged_input_type_tests = [] {
 	"[#1] input"_test = [] {
 		expect(s_test.Success("[#1] input",
 			"[#1] f",
@@ -358,7 +358,7 @@ auto f_f(lovela::context& context, Tag1 in);)cpp"
 	};
 };
 
-suite CodeGeneratorCpp_function_literal_output_type_tests = [] {
+suite CoderCpp_function_literal_output_type_tests = [] {
 	"[1] output"_test = [] {
 		expect(s_test.Success("[1] output",
 			"f [1]",
@@ -367,7 +367,7 @@ suite CodeGeneratorCpp_function_literal_output_type_tests = [] {
 	};
 };
 
-suite CodeGeneratorCpp_function_builtin_output_type_tests = [] {
+suite CoderCpp_function_builtin_output_type_tests = [] {
 	"l_i1 output error"_test = [] {
 		expect(s_test.Failure("l_i1 output error",
 			"f [/type/i1]",
@@ -471,7 +471,7 @@ suite CodeGeneratorCpp_function_builtin_output_type_tests = [] {
 	};
 };
 
-suite CodeGeneratorCpp_function_tagged_output_type_tests = [] {
+suite CoderCpp_function_tagged_output_type_tests = [] {
 	"[#1] output"_test = [] {
 		expect(s_test.Success("[#1] output",
 			"f [#1]",
@@ -480,7 +480,7 @@ suite CodeGeneratorCpp_function_tagged_output_type_tests = [] {
 	};
 };
 
-suite CodeGeneratorCpp_function_literal_param_type_tests = [] {
+suite CoderCpp_function_literal_param_type_tests = [] {
 	"[1] param"_test = [] {
 		expect(s_test.Success("[1] param",
 			"f ([1])",
@@ -489,7 +489,7 @@ suite CodeGeneratorCpp_function_literal_param_type_tests = [] {
 	};
 };
 
-suite CodeGeneratorCpp_function_builtin_param_type_tests = [] {
+suite CoderCpp_function_builtin_param_type_tests = [] {
 	"l_i1 param error"_test = [] {
 		expect(s_test.Failure("l_i1 param error",
 			"f ([/type/i1])",
@@ -543,7 +543,7 @@ suite CodeGeneratorCpp_function_builtin_param_type_tests = [] {
 	};
 };
 
-suite CodeGeneratorCpp_function_tagged_param_type_tests = [] {
+suite CoderCpp_function_tagged_param_type_tests = [] {
 	"[#1] param"_test = [] {
 		expect(s_test.Success("[#1] param",
 			"f ([#1])",
@@ -573,7 +573,7 @@ suite CodeGeneratorCpp_function_tagged_param_type_tests = [] {
 	};
 };
 
-suite CodeGeneratorCpp_function_declaration_tests = [] {
+suite CoderCpp_function_declaration_tests = [] {
 	"trivial function"_test = [] { 
 		expect(s_test.Success("trivial function", 
 			"func",
@@ -625,7 +625,7 @@ auto f_func(lovela::context& context, auto in)
 	};
 };
 
-suite CodeGeneratorCpp_function_call_tests = [] {
+suite CoderCpp_function_call_tests = [] {
 	"function call"_test = [] { 
 		expect(s_test.Success("function call", 
 			"[/type/i8] func [/type/i8]: f(1, 'a', g).", 
@@ -642,7 +642,7 @@ l_i8 f_func(lovela::context& context, l_i8 in)
 	};
 };
 
-suite CodeGeneratorCpp_exported_functions_with_implementation_tests = [] {
+suite CoderCpp_exported_functions_with_implementation_tests = [] {
 	"exported function none -> none"_test = [] {
 		expect(s_test.Success("exported function none -> none",
 			"<- [()] ex [()]:.",
@@ -686,7 +686,7 @@ void* ex(void* in)
 	};
 };
 
-suite CodeGeneratorCpp_exported_functions_tests = [] {
+suite CoderCpp_exported_functions_tests = [] {
 	"exported function C"_test = [] { 
 		expect(s_test.ExportSuccess("exported function C", 
 			"<- 'C' [/type/i32] ex [/type/i32]", 
@@ -709,7 +709,7 @@ suite CodeGeneratorCpp_exported_functions_tests = [] {
 	};
 };
 
-suite CodeGeneratorCpp_imported_functions_tests = [] {
+suite CoderCpp_imported_functions_tests = [] {
 	"imported function"_test = [] {
 		expect(s_test.Success("imported function",
 			"-> im",
@@ -751,7 +751,7 @@ l_i8 f_im(lovela::context& context, l_i8 in)
 	};
 };
 
-suite CodeGeneratorCpp_imported_standard_functions_tests = [] {
+suite CoderCpp_imported_standard_functions_tests = [] {
 	"imported function Standard C stdio"_test = [] { 
 		expect(s_test.ImportSuccess("imported function Standard C stdio", 
 			"-> 'Standard C' puts", 
@@ -809,7 +809,7 @@ suite CodeGeneratorCpp_imported_standard_functions_tests = [] {
 	};
 };
 
-suite CodeGeneratorCpp_main_function_tests = [] {
+suite CoderCpp_main_function_tests = [] {
 	"main and export"_test = [] { 
 		expect(s_test.Success("main and export", 
 			"<- [/type/i32] ex [/type/i32]: + 1. : 1 ex.", 

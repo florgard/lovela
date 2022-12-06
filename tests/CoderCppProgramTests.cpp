@@ -4,7 +4,7 @@
 #include "../lovela/Parser.h"
 #include "../lovela/CoderCpp.h"
 
-class CodeGeneratorCppTest : public TestingBase
+class CoderCppTest : public TestingBase
 {
 public:
 	void GenerateCode()
@@ -30,7 +30,7 @@ public:
 		StringLexer lexer;
 		RangeParser parser;
 		std::vector<Node> nodes;
-		CodeGeneratorCpp coder;
+		CoderCpp coder;
 		std::stringstream output;
 		code >> lexer >> parser >> nodes >> coder >> output;
 
@@ -72,11 +72,11 @@ public:
 	}
 };
 
-static CodeGeneratorCppTest s_test;
+static CoderCppTest s_test;
 
 using namespace boost::ut;
 
-suite CodeGeneratorCpp_program_tests = [] {
+suite CoderCpp_program_tests = [] {
 	"program test"_test = [] {
 		s_test.GenerateCode();
 	};
