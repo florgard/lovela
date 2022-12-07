@@ -1,7 +1,8 @@
 #pragma once
+#include "ILexer.h"
 #include "LexerPatterns.h"
 
-class LexerBase : public IEnumerator<char>
+class LexerBase : public ILexer
 {
 public:
 	void PrintErrorSourceCode(std::ostream& stream, const Token& token) noexcept;

@@ -181,5 +181,8 @@
     <ClInclude Include="VariableDeclaration.h">
       <Filter>Parser</Filter>
     </ClInclude>
+    <ClInclude Include="ILexer.h">
+      <Filter>Lexer</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

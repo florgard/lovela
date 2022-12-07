@@ -8,7 +8,7 @@ class Lexer : public LexerBase
 public:
 	using Generator = tl::generator<Token>;
 
-	[[nodiscard]] Generator Lex() noexcept;
+	[[nodiscard]] Generator Lex() noexcept override;
 
 private:
 	[[nodiscard]] void LexLiteralString() noexcept;

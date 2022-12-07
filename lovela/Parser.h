@@ -1,5 +1,5 @@
 #pragma once
-#include "Lexer.h"
+#include "ILexer.h"
 #include "ParserBase.h"
 #include "ParserRegexes.h"
 
@@ -149,10 +149,10 @@ private:
 	ParserRegexes regexes;
 };
 
-template <class ParserT = Parser, class TokenRangeT = Lexer::Generator>
+template <class ParserT = Parser, class TokenRangeT = ILexer::Generator>
 using RangeParser = RangeEnumerator<ParserT, TokenRangeT>;
 
-inline auto operator>>(Lexer::Generator&& tokens, RangeParser<>& parser)
+inline auto operator>>(ILexer::Generator&& tokens, RangeParser<>& parser)
 {
 	parser.Initialize(std::move(tokens));
 	return parser.Parse();
