@@ -149,8 +149,8 @@ private:
 	ParserRegexes regexes;
 };
 
-template <class ParserT = Parser>
-using RangeParser = RangeEnumerator<ParserT, Lexer::Generator>;
+template <class ParserT = Parser, class TokenRangeT = Lexer::Generator>
+using RangeParser = RangeEnumerator<ParserT, TokenRangeT>;
 
 inline auto operator>>(Lexer::Generator&& tokens, RangeParser<>& parser)
 {
