@@ -11,7 +11,7 @@ public:
 private:
 	[[nodiscard]] void LexLiteralString() noexcept;
 	[[nodiscard]] void LexLiteralNumber() noexcept;
-	[[nodiscard]] void LexComment() noexcept;
+	[[nodiscard]] OutputT LexComment() noexcept;
 	[[nodiscard]] void LexSeparator() noexcept;
 	[[nodiscard]] void LexWhitespace() noexcept;
 

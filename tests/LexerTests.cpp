@@ -633,8 +633,9 @@ suite lexer_comment_tests = [] {
 		expect(lexerTest.YieldsTokens("nested comments",
 			"<<<< 123 << 456 >>>>.>> ident456.",
 			{
-				{.type = Token::Type::Comment, .value = " 123 ."},
+				{.type = Token::Type::Comment, .value = " 123 "},
 				{.type = Token::Type::Comment, .value = " 456 "},
+				{.type = Token::Type::Comment, .value = "."},
 				IdToken("ident456"),
 				{.type = Token::Type::SeparatorDot, .value = "."},
 				EndToken()
@@ -647,8 +648,9 @@ suite lexer_comment_tests = [] {
 			{
 				{.type = Token::Type::Comment, .value = "123"},
 				IdToken("ident234"),
-				{.type = Token::Type::Comment, .value = "123:"},
+				{.type = Token::Type::Comment, .value = "123"},
 				{.type = Token::Type::Comment, .value = "456"},
+				{.type = Token::Type::Comment, .value = ":"},
 				{.type = Token::Type::SeparatorDot, .value = "."},
 				EndToken()
 			}
@@ -660,8 +662,9 @@ suite lexer_comment_tests = [] {
 			{
 				{.type = Token::Type::Comment, .value = "123"},
 				IdToken("ident234"),
-				{.type = Token::Type::Comment, .value = "123:>."},
+				{.type = Token::Type::Comment, .value = "123"},
 				{.type = Token::Type::Comment, .value = "456"},
+				{.type = Token::Type::Comment, .value = ":>."},
 				ErrorToken(Token::Error::Code::CommentOpen),
 				EndToken()
 			}

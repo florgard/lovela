@@ -22,7 +22,10 @@ ILexer::OutputT Lexer::Lex() noexcept
 		else if (Accept(patterns.beginComment))
 		{
 			WordBreak();
-			LexComment();
+			for (auto t : LexComment())
+			{
+				AddToken(std::move(t));
+			}
 		}
 		else if (IsWordBreakExpected())
 		{
@@ -209,13 +212,12 @@ void Lexer::LexLiteralNumber() noexcept
 	}
 }
 
-void Lexer::LexComment() noexcept
+ILexer::OutputT Lexer::LexComment() noexcept
 {
 	// Consume consecutive angle brackets.
 	while (Accept(patterns.commentOpen));
 
-	AddToken({ .type = Token::Type::Comment });
-	auto& token = GetCurrentToken();
+	Token token{ .type = Token::Type::Comment };
 
 	for (;;)
 	{
@@ -223,12 +225,22 @@ void Lexer::LexComment() noexcept
 		{
 			// Consume consecutive angle brackets.
 			while (Accept(patterns.commentClose));
-			return;
+
+			co_yield token;
+
+			co_return;
 		}
 		else if (Accept(patterns.beginComment))
 		{
 			// Nested comment.
-			LexComment();
+
+			co_yield token;
+			token = { .type = Token::Type::Comment };
+
+			for (auto t : LexComment())
+			{
+				co_yield t;
+			}
 		}
 		else if (Accept())
 		{
@@ -237,8 +249,12 @@ void Lexer::LexComment() noexcept
 		}
 		else
 		{
-			AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::CommentOpen, .message = "A comment wasn't terminated." } });
-			return;
+			co_yield token;
+
+			token = { .type = Token::Type::Error, .error{.code = Token::Error::Code::CommentOpen, .message = "A comment wasn't terminated." } };
+			co_yield token;
+
+			co_return;
 		}
 	}
 }
