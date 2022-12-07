@@ -4,15 +4,15 @@
 
 struct IParser : public IEnumerator<Token>
 {
-	using Generator = tl::generator<Node>;
+	using OutputT = tl::generator<Node>;
 
-	[[nodiscard]] virtual Generator Parse() noexcept = 0;
+	[[nodiscard]] virtual OutputT Parse() noexcept = 0;
 };
 
-template <class ParserT, class TokenRangeT = ILexer::Generator>
+template <class ParserT, class TokenRangeT = ILexer::OutputT>
 using BasicRangeParser = RangeEnumerator<ParserT, TokenRangeT>;
 
-inline std::vector<Node>& operator>>(IParser::Generator&& input, std::vector<Node>& output)
+inline std::vector<Node>& operator>>(IParser::OutputT&& input, std::vector<Node>& output)
 {
 	output = std::move(to_vector(std::move(input)));
 	return output;

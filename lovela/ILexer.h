@@ -3,9 +3,9 @@
 
 struct ILexer : public IEnumerator<char>
 {
-	using Generator = tl::generator<Token>;
+	using OutputT = tl::generator<Token>;
 
-	[[nodiscard]] virtual Generator Lex() noexcept = 0;
+	[[nodiscard]] virtual OutputT Lex() noexcept = 0;
 };
 
 template <class LexerT>
@@ -34,7 +34,7 @@ struct BasicStreamLexer
 	}
 };
 
-inline std::vector<Token>& operator>>(ILexer::Generator&& input, std::vector<Token>& output)
+inline std::vector<Token>& operator>>(ILexer::OutputT&& input, std::vector<Token>& output)
 {
 	output = std::move(to_vector(std::move(input)));
 	return output;

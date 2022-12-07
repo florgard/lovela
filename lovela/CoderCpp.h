@@ -6,21 +6,21 @@ class CoderCpp : public ICoder
 {
 public:
 	CoderCpp() noexcept = default;
-	CoderCpp(Stream& stream) noexcept;
+	CoderCpp(OutputT& output) noexcept;
 
-	void Initialize(Stream& stream) noexcept override
+	void Initialize(OutputT& output) noexcept override
 	{
-		streamPtr = &stream;
+		streamPtr = &output;
 	}
 
 	void Visit(Node& node) noexcept override;
 
-	[[nodiscard]] constexpr Stream& GetStream() noexcept
+	[[nodiscard]] constexpr OutputT& GetStream() noexcept
 	{
 		return *streamPtr;
 	}
 
-	[[nodiscard]] constexpr const Stream& GetStream() const noexcept
+	[[nodiscard]] constexpr const OutputT& GetStream() const noexcept
 	{
 		return *streamPtr;
 	}
@@ -94,7 +94,7 @@ private:
 	static const TypeSpec& GetVoidType();
 	static const TypeSpec& GetVoidPtrType();
 
-	Stream* streamPtr{};
+	OutputT* streamPtr{};
 	std::string indent;
 	std::vector<std::string> errors;
 	std::vector<std::string> headers;

@@ -8,7 +8,7 @@ class Parser : public ParserBase
 	friend class ParserTest;
 
 public:
-	[[nodiscard]] Generator Parse() noexcept override;
+	[[nodiscard]] OutputT Parse() noexcept override;
 
 private:
 	struct Context
@@ -149,7 +149,7 @@ private:
 
 using RangeParser = BasicRangeParser<Parser>;
 
-inline auto operator>>(ILexer::Generator&& tokens, RangeParser& parser)
+inline auto operator>>(ILexer::OutputT&& tokens, RangeParser& parser)
 {
 	parser.Initialize(std::move(tokens));
 	return parser.Parse();

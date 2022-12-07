@@ -42,8 +42,8 @@ const TypeSpec& CoderCpp::GetVoidPtrType()
 	return t;
 }
 
-CoderCpp::CoderCpp(Stream& stream) noexcept
-	: streamPtr(&stream)
+CoderCpp::CoderCpp(OutputT& output) noexcept
+	: streamPtr(&output)
 {
 }
 
