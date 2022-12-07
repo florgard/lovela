@@ -16,12 +16,12 @@ ILexer::OutputT Lexer::Lex() noexcept
 		else if (Accept(patterns.separator))
 		{
 			WordBreak();
-			LexSeparator();
+			AddToken(LexSeparator());
 		}
 		else if (Accept(patterns.beginComment))
 		{
 			WordBreak();
-			for (auto t : LexComment())
+			for (auto&& t : LexComment())
 			{
 				AddToken(std::move(t));
 			}
@@ -33,7 +33,7 @@ ILexer::OutputT Lexer::Lex() noexcept
 		}
 		else if (AcceptBegin(patterns.beginLiteralNumber))
 		{
-			LexLiteralNumber();
+			AddToken(LexLiteralNumber());
 			ExpectWordBreak();
 		}
 		else if (AcceptBegin(patterns.beginString))
@@ -162,7 +162,7 @@ void Lexer::LexLiteralString() noexcept
 	}
 }
 
-void Lexer::LexLiteralNumber() noexcept
+Token Lexer::LexLiteralNumber() noexcept
 {
 	// FIXME: Optimize with a simple state machine.
 
@@ -191,8 +191,7 @@ void Lexer::LexLiteralNumber() noexcept
 
 			if (!Accept(patterns.beginLiteralNumber))
 			{
-				AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::LiteralDecimalIllformed, .message = "Ill-formed literal decimal number." } });
-				return;
+				return { .type = Token::Type::Error, .error{.code = Token::Error::Code::LiteralDecimalIllformed, .message = "Ill-formed literal decimal number." } };
 			}
 			
 			value += GetCharacter(Current);
@@ -203,11 +202,11 @@ void Lexer::LexLiteralNumber() noexcept
 			}
 		}
 
-		AddToken({.type = Token::Type::LiteralDecimal, .value = std::move(value)});
+		return {.type = Token::Type::LiteralDecimal, .value = std::move(value)};
 	}
 	else
 	{
-		AddToken({.type = Token::Type::LiteralInteger, .value = std::move(value)});
+		return {.type = Token::Type::LiteralInteger, .value = std::move(value)};
 	}
 }
 
@@ -258,9 +257,9 @@ ILexer::OutputT Lexer::LexComment() noexcept
 	}
 }
 
-void Lexer::LexSeparator() noexcept
+Token Lexer::LexSeparator() noexcept
 {
-	AddToken(GetToken(GetCharacter(Current)));
+	return GetToken(GetCharacter(Current));
 }
 
 Token Lexer::GetToken(char lexeme) noexcept

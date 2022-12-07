@@ -10,9 +10,9 @@ public:
 
 private:
 	[[nodiscard]] void LexLiteralString() noexcept;
-	[[nodiscard]] void LexLiteralNumber() noexcept;
+	[[nodiscard]] Token LexLiteralNumber() noexcept;
 	[[nodiscard]] OutputT LexComment() noexcept;
-	[[nodiscard]] void LexSeparator() noexcept;
+	[[nodiscard]] Token LexSeparator() noexcept;
 
 	[[nodiscard]] Token GetToken(char lexeme) noexcept override;
 	[[nodiscard]] Token GetToken(std::string_view lexeme) noexcept override;
