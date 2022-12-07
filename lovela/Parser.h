@@ -8,9 +8,7 @@ class Parser : public ParserBase
 	friend class ParserTest;
 
 public:
-	using Generator = tl::generator<Node>;
-
-	[[nodiscard]] Generator Parse() noexcept;
+	[[nodiscard]] Generator Parse() noexcept override;
 
 private:
 	struct Context
@@ -158,7 +156,7 @@ inline auto operator>>(ILexer::Generator&& tokens, RangeParser<>& parser)
 	return parser.Parse();
 }
 
-inline std::vector<Node>& operator>>(Parser::Generator&& input, std::vector<Node>& output)
+inline std::vector<Node>& operator>>(IParser::Generator&& input, std::vector<Node>& output)
 {
 	output = std::move(to_vector(std::move(input)));
 	return output;

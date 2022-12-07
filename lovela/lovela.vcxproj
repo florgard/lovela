@@ -194,6 +194,7 @@
     <ClInclude Include="FunctionDeclaration.h" />
     <ClInclude Include="generator.hpp" />
     <ClInclude Include="ILexer.h" />
+    <ClInclude Include="IParser.h" />
     <ClInclude Include="Lexer.h" />
     <ClInclude Include="LexerBase.h" />
     <ClInclude Include="LexerPatterns.h" />

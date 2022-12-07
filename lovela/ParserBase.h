@@ -1,8 +1,8 @@
 #pragma once
-#include "Node.h"
+#include "IParser.h"
 #include "ParseException.h"
 
-class ParserBase : public IEnumerator<Token>
+class ParserBase : public IParser
 {
 	Token currentToken;
 

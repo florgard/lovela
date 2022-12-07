@@ -184,5 +184,8 @@
     <ClInclude Include="ILexer.h">
       <Filter>Lexer</Filter>
     </ClInclude>
+    <ClInclude Include="IParser.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
