@@ -154,9 +154,3 @@ inline auto operator>>(ILexer::Generator&& tokens, RangeParser& parser)
 	parser.Initialize(std::move(tokens));
 	return parser.Parse();
 }
-
-inline std::vector<Node>& operator>>(IParser::Generator&& input, std::vector<Node>& output)
-{
-	output = std::move(to_vector(std::move(input)));
-	return output;
-}

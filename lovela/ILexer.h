@@ -33,3 +33,9 @@ struct BasicStreamLexer
 		return _base->Lex();
 	}
 };
+
+inline std::vector<Token>& operator>>(ILexer::Generator&& input, std::vector<Token>& output)
+{
+	output = std::move(to_vector(std::move(input)));
+	return output;
+}

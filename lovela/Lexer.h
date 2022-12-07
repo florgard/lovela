@@ -56,9 +56,3 @@ inline auto operator>>(std::istream& stream, StreamLexer& lexer)
 	lexer.Initialize(stream);
 	return lexer.Lex();
 }
-
-inline std::vector<Token>& operator>>(ILexer::Generator&& input, std::vector<Token>& output)
-{
-	output = std::move(to_vector(std::move(input)));
-	return output;
-}
