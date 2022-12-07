@@ -12,9 +12,9 @@ static LexerTest lexerTest;
 
 bool LexerTest::YieldsTokens(const char* name, std::string_view code, const std::vector<Token>& expectedTokens)
 {
-	std::istringstream input(std::string(code.data(), code.size()));
-	StreamLexer lexer(input);
-	auto tokens = to_vector(lexer.Lex());
+	StringLexer<> lexer;
+	std::vector<Token> tokens;
+	code >> lexer >> tokens;
 
 	bool success = true;
 

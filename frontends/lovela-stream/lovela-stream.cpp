@@ -10,7 +10,7 @@ int main_utf8(int argc, char** argv)
 	// Intercept Ctrl-C to exit gracefully.
 	signal(SIGINT, [](int) {});
 
-	std::unique_ptr<StreamLexer<>> lexer;
+	StreamLexer<> lexer;
 	RangeParser<> parser;
 	CoderCpp coder;
 	std::cin >> lexer >> parser >> coder >> std::cout;

@@ -149,17 +149,17 @@ private:
 	ParserRegexes regexes;
 };
 
-inline std::vector<Node>& operator>>(Parser::Generator&& input, std::vector<Node>& v)
-{
-	v = std::move(to_vector(std::move(input)));
-	return v;
-}
-
 template <class ParserT = Parser>
 using RangeParser = RangeEnumerator<ParserT, Lexer::Generator>;
 
-inline auto operator>>(Lexer::Generator&& input, RangeParser<>& parser)
+inline auto operator>>(Lexer::Generator&& tokens, RangeParser<>& parser)
 {
-	parser.Initialize(std::move(input));
+	parser.Initialize(std::move(tokens));
 	return parser.Parse();
+}
+
+inline std::vector<Node>& operator>>(Parser::Generator&& input, std::vector<Node>& output)
+{
+	output = std::move(to_vector(std::move(input)));
+	return output;
 }
