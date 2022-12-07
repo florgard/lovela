@@ -147,10 +147,9 @@ private:
 	ParserRegexes regexes;
 };
 
-template <class ParserT = Parser, class TokenRangeT = ILexer::Generator>
-using RangeParser = RangeEnumerator<ParserT, TokenRangeT>;
+using RangeParser = BasicRangeParser<Parser>;
 
-inline auto operator>>(ILexer::Generator&& tokens, RangeParser<>& parser)
+inline auto operator>>(ILexer::Generator&& tokens, RangeParser& parser)
 {
 	parser.Initialize(std::move(tokens));
 	return parser.Parse();

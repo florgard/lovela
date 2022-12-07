@@ -10,8 +10,8 @@ int main_utf8(int argc, char** argv)
 	// Intercept Ctrl-C to exit gracefully.
 	signal(SIGINT, [](int) {});
 
-	StreamLexer<> lexer;
-	RangeParser<> parser;
+	StreamLexer lexer;
+	RangeParser parser;
 	CoderCpp coder;
 	std::cin >> lexer >> parser >> coder >> std::cout;
 

@@ -19,7 +19,7 @@ static ParserTest parserTest;
 bool ParserTest::YieldsNodes(const char* name, std::string_view code, const std::ranges::range auto& expectedRange)
 {
 	StringLexer lexer;
-	RangeParser<> parser;
+	RangeParser parser;
 	std::vector<Node> nodes;
 	code >> lexer >> parser >> nodes;
 

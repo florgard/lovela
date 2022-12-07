@@ -1,5 +1,6 @@
 #pragma once
 #include "Node.h"
+#include "ILexer.h"
 
 struct IParser : public IEnumerator<Token>
 {
@@ -7,3 +8,6 @@ struct IParser : public IEnumerator<Token>
 
 	[[nodiscard]] virtual Generator Parse() noexcept = 0;
 };
+
+template <class ParserT, class TokenRangeT = ILexer::Generator>
+using BasicRangeParser = RangeEnumerator<ParserT, TokenRangeT>;
