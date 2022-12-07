@@ -9,7 +9,7 @@ public:
 	[[nodiscard]] OutputT Lex() noexcept override;
 
 private:
-	[[nodiscard]] void LexLiteralString() noexcept;
+	[[nodiscard]] OutputT LexLiteralString() noexcept;
 	[[nodiscard]] Token LexLiteralNumber() noexcept;
 	[[nodiscard]] OutputT LexComment() noexcept;
 	[[nodiscard]] Token LexSeparator() noexcept;

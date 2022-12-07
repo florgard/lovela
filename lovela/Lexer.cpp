@@ -38,7 +38,10 @@ ILexer::OutputT Lexer::Lex() noexcept
 		}
 		else if (AcceptBegin(patterns.beginString))
 		{
-			LexLiteralString();
+			for (auto&& t : LexLiteralString())
+			{
+				AddToken(std::move(t));
+			}
 			ExpectWordBreak();
 		}
 		else if (Accept())
@@ -70,7 +73,7 @@ ILexer::OutputT Lexer::Lex() noexcept
 	}
 }
 
-void Lexer::LexLiteralString() noexcept
+ILexer::OutputT Lexer::LexLiteralString() noexcept
 {
 	std::string value;
 	char nextStringInterpolation = '1';
@@ -86,8 +89,9 @@ void Lexer::LexLiteralString() noexcept
 			}
 			else
 			{
-				AddToken({.type = Token::Type::LiteralString, .value = std::move(value)});
-				return;
+				Token t{.type = Token::Type::LiteralString, .value = std::move(value)};
+				co_yield t;
+				co_return;
 			}
 		}
 		else if (Accept(patterns.stringFieldOpen))
@@ -100,16 +104,19 @@ void Lexer::LexLiteralString() noexcept
 			else if (Accept(patterns.stringFieldClose))
 			{
 				// Unindexed string interpolation. Add the string literal up to this point as a token.
-				AddToken({.type = Token::Type::LiteralString, .value = std::move(value)});
+				Token t{.type = Token::Type::LiteralString, .value = std::move(value)};
+				co_yield t;
 
 				// Add a string literal interpolation token with the next free index.
 				if (nextStringInterpolation > '9')
 				{
-					AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::StringInterpolationOverflow, .message = "Too many string interpolations, index out of bounds (greater than 9)." } });
+					t = { .type = Token::Type::Error, .error{.code = Token::Error::Code::StringInterpolationOverflow, .message = "Too many string interpolations, index out of bounds (greater than 9)." } };
+					co_yield t;
 				}
 				else
 				{
-					AddToken({.type = Token::Type::LiteralStringInterpolation, .value = std::string(1, nextStringInterpolation)});
+					t = {.type = Token::Type::LiteralStringInterpolation, .value = std::string(1, nextStringInterpolation)};
+					co_yield t;
 					nextStringInterpolation++;
 				}
 			}
@@ -120,14 +127,17 @@ void Lexer::LexLiteralString() noexcept
 				if (Accept(patterns.stringFieldClose))
 				{
 					// Indexed string interpolation. Add the string literal up to this point as a token.
-					AddToken({.type = Token::Type::LiteralString, .value = std::move(value)});
+					Token t{.type = Token::Type::LiteralString, .value = std::move(value)};
+					co_yield t;
 
 					// Add a string literal interpolation token with the given index.
-					AddToken({.type = Token::Type::LiteralStringInterpolation, .value = std::string(1, stringFieldCode)});
+					t = {.type = Token::Type::LiteralStringInterpolation, .value = std::string(1, stringFieldCode)};
+					co_yield t;
 				}
 				else
 				{
-					AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::StringFieldIllformed, .message = fmt::format("Ill-formed string field \"{}\".", stringFieldCode), } });
+					Token t{ .type = Token::Type::Error, .error{.code = Token::Error::Code::StringFieldIllformed, .message = fmt::format("Ill-formed string field \"{}\".", stringFieldCode), } };
+					co_yield t;
 				}
 			}
 			else if (Accept(patterns.stringField))
@@ -141,12 +151,14 @@ void Lexer::LexLiteralString() noexcept
 				}
 				else
 				{
-					AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::StringFieldIllformed, .message = fmt::format("Ill-formed string field \"{}\".", stringFieldCode) } });
+					Token t{ .type = Token::Type::Error, .error{.code = Token::Error::Code::StringFieldIllformed, .message = fmt::format("Ill-formed string field \"{}\".", stringFieldCode) } };
+					co_yield t;
 				}
 			}
 			else
 			{
-				AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::StringFieldUnknown, .message = fmt::format("Unknown string field code \"{}\".", GetCharacter(Next)) } });
+				Token t{ .type = Token::Type::Error, .error{.code = Token::Error::Code::StringFieldUnknown, .message = fmt::format("Unknown string field code \"{}\".", GetCharacter(Next)) } };
+				co_yield t;
 			}
 		}
 		else if (Accept())
@@ -156,8 +168,9 @@ void Lexer::LexLiteralString() noexcept
 		}
 		else
 		{
-			AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::StringLiteralOpen, .message = "A string literal wasn't terminated." } });
-			return;
+			Token t{ .type = Token::Type::Error, .error{.code = Token::Error::Code::StringLiteralOpen, .message = "A string literal wasn't terminated." } };
+			co_yield t;
+			co_return;
 		}
 	}
 }
