@@ -26,7 +26,7 @@ void LexerBase::AddCodeLine() noexcept
 	nextTokenColumn = 1;
 }
 
-Token LexerBase::AddToken(Token token) noexcept
+Token LexerBase::YieldToken(Token token) noexcept
 {
 	if (token)
 	{
@@ -39,7 +39,7 @@ Token LexerBase::AddToken(Token token) noexcept
 	return token;
 }
 
-Token LexerBase::AddCurrenToken() noexcept
+Token LexerBase::GetCurrentToken() noexcept
 {
 	Token token{};
 
@@ -57,7 +57,7 @@ Token LexerBase::WordBreak() noexcept
 {
 	expectWordBreak = false;
 
-	return AddCurrenToken();
+	return GetCurrentToken();
 }
 
 void LexerBase::ExpectWordBreak() noexcept

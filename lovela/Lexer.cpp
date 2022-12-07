@@ -11,39 +11,39 @@ ILexer::OutputT Lexer::Lex() noexcept
 	{
 		if (Accept(patterns.whitespace))
 		{
-			auto t = AddToken(WordBreak());
+			auto t = YieldToken(WordBreak());
 			if (t) co_yield t;
 		}
 		else if (Accept(patterns.separator))
 		{
-			auto t = AddToken(WordBreak());
+			auto t = YieldToken(WordBreak());
 			if (t) co_yield t;
 
-			t = AddToken(LexSeparator());
+			t = YieldToken(LexSeparator());
 			if (t) co_yield t;
 		}
 		else if (Accept(patterns.beginComment))
 		{
-			auto t = AddToken(WordBreak());
+			auto t = YieldToken(WordBreak());
 			if (t) co_yield t;
 
 			for (auto&& rt : LexComment())
 			{
-				t = AddToken(rt);
+				t = YieldToken(rt);
 				if (t) co_yield t;
 			}
 		}
 		else if (IsWordBreakExpected())
 		{
-			auto t = AddToken(WordBreak());
+			auto t = YieldToken(WordBreak());
 			if (t) co_yield t;
 
-			t = AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = fmt::format("Unexpected character \"{}\".", GetCharacter(Next)) } });
+			t = YieldToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = fmt::format("Unexpected character \"{}\".", GetCharacter(Next)) } });
 			if (t) co_yield t;
 		}
 		else if (AcceptBegin(patterns.beginLiteralNumber))
 		{
-			auto t = AddToken(LexLiteralNumber());
+			auto t = YieldToken(LexLiteralNumber());
 			if (t) co_yield t;
 
 			ExpectWordBreak();
@@ -52,7 +52,7 @@ ILexer::OutputT Lexer::Lex() noexcept
 		{
 			for (auto&& rt : LexLiteralString())
 			{
-				auto t = AddToken(rt);
+				auto t = YieldToken(rt);
 				if (t) co_yield t;
 			}
 
@@ -66,11 +66,11 @@ ILexer::OutputT Lexer::Lex() noexcept
 	}
 
 	// Add the possible token at the very end of the stream.
-	auto t = AddToken(WordBreak());
+	auto t = YieldToken(WordBreak());
 	if (t) co_yield t;
 
 	// Add the end token.
-	t = AddToken({.type = Token::Type::End});
+	t = YieldToken({.type = Token::Type::End});
 	if (t) co_yield t;
 
 	// Add the last code line.
