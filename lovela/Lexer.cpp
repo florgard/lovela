@@ -11,37 +11,49 @@ ILexer::OutputT Lexer::Lex() noexcept
 	{
 		if (Accept(patterns.whitespace))
 		{
-			WordBreak();
+			auto t = WordBreak();
+			if (AddToken(t)) co_yield t;
 		}
 		else if (Accept(patterns.separator))
 		{
-			WordBreak();
-			AddToken(LexSeparator());
+			auto t = WordBreak();
+			if (AddToken(t)) co_yield t;
+
+			t = LexSeparator();
+			if (AddToken(t)) co_yield t;
 		}
 		else if (Accept(patterns.beginComment))
 		{
-			WordBreak();
-			for (auto&& t : LexComment())
+			auto t = WordBreak();
+			if (AddToken(t)) co_yield t;
+
+			for (auto&& ct : LexComment())
 			{
-				AddToken(std::move(t));
+				if (AddToken(ct)) co_yield ct;
 			}
 		}
 		else if (IsWordBreakExpected())
 		{
-			WordBreak();
-			AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = fmt::format("Unexpected character \"{}\".", GetCharacter(Next)) } });
+			auto t = WordBreak();
+			if (AddToken(t)) co_yield t;
+
+			t = { .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = fmt::format("Unexpected character \"{}\".", GetCharacter(Next)) } };
+			if (AddToken(t)) co_yield t;
 		}
 		else if (AcceptBegin(patterns.beginLiteralNumber))
 		{
-			AddToken(LexLiteralNumber());
+			auto t = LexLiteralNumber();
+			if (AddToken(t)) co_yield t;
+
 			ExpectWordBreak();
 		}
 		else if (AcceptBegin(patterns.beginString))
 		{
 			for (auto&& t : LexLiteralString())
 			{
-				AddToken(std::move(t));
+				if (AddToken(t)) co_yield t;
 			}
+
 			ExpectWordBreak();
 		}
 		else if (Accept())
@@ -49,28 +61,18 @@ ILexer::OutputT Lexer::Lex() noexcept
 			// Append to the current lexeme.
 			AddCharacter(GetCharacter(Current));
 		}
-
-		for (auto& token : GetCurrentTokens())
-		{
-			co_yield token;
-		}
-
-		ClearCurrentTokens();
 	}
 
 	// Add the possible token at the very end of the stream.
-	WordBreak();
+	auto t = WordBreak();
+	if (AddToken(t)) co_yield t;
 
 	// Add the end token.
-	AddToken({.type = Token::Type::End});
+	t = {.type = Token::Type::End};
+	if (AddToken(t)) co_yield t;
 
 	// Add the last code line.
 	AddCodeLine();
-
-	for (auto& token : GetCurrentTokens())
-	{
-		co_yield token;
-	}
 }
 
 ILexer::OutputT Lexer::LexLiteralString() noexcept

@@ -1,11 +1,6 @@
 #include "pch.h"
 #include "LexerBase.h"
 
-LexerBase::LexerBase() noexcept
-{
-	currentTokens.reserve(64);
-}
-
 void LexerBase::GetNextCharacter() noexcept
 {
 	characters[Current] = characters[Next];
@@ -31,11 +26,11 @@ void LexerBase::AddCodeLine() noexcept
 	nextTokenColumn = 1;
 }
 
-void LexerBase::AddToken(Token&& token) noexcept
+bool LexerBase::AddToken(Token& token) noexcept
 {
 	if (!token)
 	{
-		return;
+		return false;
 	}
 
 	token.error.line = currentLine;
@@ -43,35 +38,28 @@ void LexerBase::AddToken(Token&& token) noexcept
 
 	currentTokenColumn = nextTokenColumn;
 
-	currentTokens.emplace_back(std::move(token));
+	return true;
 }
 
-void LexerBase::AddCurrenToken() noexcept
+Token LexerBase::AddCurrenToken() noexcept
 {
 	if (currentLexeme.empty())
 	{
-		return;
+		return {};
 	}
 
-	AddToken(GetToken(currentLexeme));
+	auto t = GetToken(currentLexeme);
 
 	currentLexeme.clear();
+
+	return t;
 }
 
-Token& LexerBase::GetCurrentToken() noexcept
+Token LexerBase::WordBreak() noexcept
 {
-	return currentTokens.back();
-}
-
-const Token& LexerBase::GetCurrentToken() const noexcept
-{
-	return currentTokens.back();
-}
-
-void LexerBase::WordBreak() noexcept
-{
-	AddCurrenToken();
 	expectWordBreak = false;
+
+	return AddCurrenToken();
 }
 
 void LexerBase::ExpectWordBreak() noexcept
@@ -135,28 +123,6 @@ bool LexerBase::AcceptBegin(char pattern) noexcept
 bool LexerBase::AcceptBegin(LexerPatterns::Chars pattern) noexcept
 {
 	return currentLexeme.empty() && Accept(pattern);
-}
-
-bool LexerBase::Expect(char pattern) noexcept
-{
-	if (Accept(pattern))
-	{
-		return true;
-	}
-
-	AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = fmt::format("Unexpected character \"{}\", expected \"{}\".", characters[Next], pattern) } });
-	return false;
-}
-
-bool LexerBase::Expect(LexerPatterns::Chars pattern) noexcept
-{
-	if (Accept(pattern))
-	{
-		return true;
-	}
-
-	AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = fmt::format("Unexpected characters \"{}{}\", expected \"{}{}\".", characters[Next], characters[NextAfter], pattern.next, pattern.nextAfter) } });
-	return false;
 }
 
 void LexerBase::PrintErrorSourceCode(std::ostream& stream, const Token& token) noexcept

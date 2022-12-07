@@ -8,8 +8,6 @@ public:
 	void PrintErrorSourceCode(std::ostream& stream, const Token& token) noexcept;
 
 protected:
-	LexerBase() noexcept;
-
 	[[nodiscard]] virtual Token GetToken(char lexeme) noexcept = 0;
 	[[nodiscard]] virtual Token GetToken(std::string_view lexeme) noexcept = 0;
 
@@ -23,24 +21,12 @@ protected:
 		currentLexeme += ch;
 	}
 
-	[[nodiscard]] constexpr std::vector<Token>& GetCurrentTokens() noexcept
-	{
-		return currentTokens;
-	}
-
-	[[nodiscard]] constexpr void ClearCurrentTokens() noexcept
-	{
-		currentTokens.clear();
-	}
-
 	void GetNextCharacter() noexcept;
 	void AddCodeLine() noexcept;
-	void AddToken(Token&& token) noexcept;
-	void AddCurrenToken() noexcept;
-	Token& GetCurrentToken() noexcept;
-	const Token& GetCurrentToken() const noexcept;
+	[[nodiscard]] bool AddToken(Token& token) noexcept;
+	[[nodiscard]] Token AddCurrenToken() noexcept;
 
-	void WordBreak() noexcept;
+	[[nodiscard]] Token WordBreak() noexcept;
 	void ExpectWordBreak() noexcept;
 	[[nodiscard]] bool IsWordBreakExpected() const noexcept;
 
@@ -48,11 +34,9 @@ protected:
 
 	[[nodiscard]] bool Accept(char pattern) noexcept;
 	[[nodiscard]] bool AcceptBegin(char pattern) noexcept;
-	[[nodiscard]] bool Expect(char pattern) noexcept;
 
 	[[nodiscard]] bool Accept(LexerPatterns::Chars pattern) noexcept;
 	[[nodiscard]] bool AcceptBegin(LexerPatterns::Chars pattern) noexcept;
-	[[nodiscard]] bool Expect(LexerPatterns::Chars pattern) noexcept;
 
 	/// <summary>
 	/// Checks if the next 1 or 2 characters match the given regex.
@@ -78,26 +62,6 @@ protected:
 		return currentLexeme.empty() && Accept(pattern);
 	}
 
-	template <size_t length>
-	[[nodiscard]] bool Expect(const LexerPatterns::Regex<length>& pattern) noexcept
-	{
-		if (Accept(pattern))
-		{
-			return true;
-		}
-
-		if constexpr (length > 1)
-		{
-			AddToken({ .type = Token::Type::Error, .value = fmt::format("Unexpected characters \"{}{}\".", characters[Next], characters[NextAfter]) });
-		}
-		else
-		{
-			AddToken({ .type = Token::Type::Error, .value = fmt::format("Unexpected character \"{}\".", characters[Next]) });
-		}
-
-		return false;
-	}
-
 	static constexpr size_t Current = 0;
 	static constexpr size_t Next = 1;
 	static constexpr size_t NextAfter = 2;
@@ -106,7 +70,6 @@ private:
 	std::istream* _charStream;
 	std::array<char, 3> characters{};
 	std::string currentLexeme;
-	std::vector<Token> currentTokens;
 	bool expectWordBreak{};
 
 	size_t currentLine = 1;
