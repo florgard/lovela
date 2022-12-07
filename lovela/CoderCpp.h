@@ -1,5 +1,5 @@
 #pragma once
-#include "Parser.h"
+#include "IParser.h"
 
 class CoderCpp
 {
@@ -134,12 +134,12 @@ inline void operator>>(Traverser<std::vector<Node>&>&& input, std::ostream& outp
 	input.Traverse();
 }
 
-inline Traverser<Parser::Generator> operator>>(Parser::Generator&& nodes, CoderCpp& coder)
+inline Traverser<IParser::Generator> operator>>(IParser::Generator&& nodes, CoderCpp& coder)
 {
 	return { std::move(nodes), coder };
 }
 
-inline void operator>>(Traverser<Parser::Generator>&& input, std::ostream& output)
+inline void operator>>(Traverser<IParser::Generator>&& input, std::ostream& output)
 {
 	input.coder.Initialize(output);
 	input.Traverse();
