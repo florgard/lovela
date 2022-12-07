@@ -11,47 +11,49 @@ ILexer::OutputT Lexer::Lex() noexcept
 	{
 		if (Accept(patterns.whitespace))
 		{
-			auto t = WordBreak();
-			if (AddToken(t)) co_yield t;
+			auto t = AddToken(WordBreak());
+			if (t) co_yield t;
 		}
 		else if (Accept(patterns.separator))
 		{
-			auto t = WordBreak();
-			if (AddToken(t)) co_yield t;
+			auto t = AddToken(WordBreak());
+			if (t) co_yield t;
 
-			t = LexSeparator();
-			if (AddToken(t)) co_yield t;
+			t = AddToken(LexSeparator());
+			if (t) co_yield t;
 		}
 		else if (Accept(patterns.beginComment))
 		{
-			auto t = WordBreak();
-			if (AddToken(t)) co_yield t;
+			auto t = AddToken(WordBreak());
+			if (t) co_yield t;
 
-			for (auto&& ct : LexComment())
+			for (auto&& rt : LexComment())
 			{
-				if (AddToken(ct)) co_yield ct;
+				t = AddToken(rt);
+				if (t) co_yield t;
 			}
 		}
 		else if (IsWordBreakExpected())
 		{
-			auto t = WordBreak();
-			if (AddToken(t)) co_yield t;
+			auto t = AddToken(WordBreak());
+			if (t) co_yield t;
 
-			t = { .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = fmt::format("Unexpected character \"{}\".", GetCharacter(Next)) } };
-			if (AddToken(t)) co_yield t;
+			t = AddToken({ .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = fmt::format("Unexpected character \"{}\".", GetCharacter(Next)) } });
+			if (t) co_yield t;
 		}
 		else if (AcceptBegin(patterns.beginLiteralNumber))
 		{
-			auto t = LexLiteralNumber();
-			if (AddToken(t)) co_yield t;
+			auto t = AddToken(LexLiteralNumber());
+			if (t) co_yield t;
 
 			ExpectWordBreak();
 		}
 		else if (AcceptBegin(patterns.beginString))
 		{
-			for (auto&& t : LexLiteralString())
+			for (auto&& rt : LexLiteralString())
 			{
-				if (AddToken(t)) co_yield t;
+				auto t = AddToken(rt);
+				if (t) co_yield t;
 			}
 
 			ExpectWordBreak();
@@ -64,12 +66,12 @@ ILexer::OutputT Lexer::Lex() noexcept
 	}
 
 	// Add the possible token at the very end of the stream.
-	auto t = WordBreak();
-	if (AddToken(t)) co_yield t;
+	auto t = AddToken(WordBreak());
+	if (t) co_yield t;
 
 	// Add the end token.
-	t = {.type = Token::Type::End};
-	if (AddToken(t)) co_yield t;
+	t = AddToken({.type = Token::Type::End});
+	if (t) co_yield t;
 
 	// Add the last code line.
 	AddCodeLine();

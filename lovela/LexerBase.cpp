@@ -26,33 +26,31 @@ void LexerBase::AddCodeLine() noexcept
 	nextTokenColumn = 1;
 }
 
-bool LexerBase::AddToken(Token& token) noexcept
+Token LexerBase::AddToken(Token token) noexcept
 {
-	if (!token)
+	if (token)
 	{
-		return false;
+		token.error.line = currentLine;
+		token.error.column = currentTokenColumn;
+
+		currentTokenColumn = nextTokenColumn;
 	}
 
-	token.error.line = currentLine;
-	token.error.column = currentTokenColumn;
-
-	currentTokenColumn = nextTokenColumn;
-
-	return true;
+	return token;
 }
 
 Token LexerBase::AddCurrenToken() noexcept
 {
-	if (currentLexeme.empty())
+	Token token{};
+
+	if (!currentLexeme.empty())
 	{
-		return {};
+		token = GetToken(currentLexeme);
+
+		currentLexeme.clear();
 	}
 
-	auto t = GetToken(currentLexeme);
-
-	currentLexeme.clear();
-
-	return t;
+	return token;
 }
 
 Token LexerBase::WordBreak() noexcept

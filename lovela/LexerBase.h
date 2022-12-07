@@ -23,7 +23,7 @@ protected:
 
 	void GetNextCharacter() noexcept;
 	void AddCodeLine() noexcept;
-	[[nodiscard]] bool AddToken(Token& token) noexcept;
+	[[nodiscard]] Token AddToken(Token token) noexcept;
 	[[nodiscard]] Token AddCurrenToken() noexcept;
 
 	[[nodiscard]] Token WordBreak() noexcept;
