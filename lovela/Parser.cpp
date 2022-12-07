@@ -207,7 +207,7 @@ void Parser::Context::AddVariableSymbol(std::shared_ptr<VariableDeclaration> dec
 
 // Parser
 
-Parser::OutputT Parser::Parse() noexcept
+IParser::OutputT Parser::Parse() noexcept
 {
 	auto context = make<Context>::shared();
 	// TODO: add built-in functions?

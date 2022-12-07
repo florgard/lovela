@@ -6,9 +6,7 @@ class Lexer : public LexerBase
 	friend class LexerTest;
 
 public:
-	using Generator = tl::generator<Token>;
-
-	[[nodiscard]] Generator Lex() noexcept override;
+	[[nodiscard]] OutputT Lex() noexcept override;
 
 private:
 	[[nodiscard]] void LexLiteralString() noexcept;

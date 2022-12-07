@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Lexer.h"
 
-Lexer::Generator Lexer::Lex() noexcept
+ILexer::OutputT Lexer::Lex() noexcept
 {
 	// Populate next and next after characters.
 	GetNextCharacter();

@@ -1,7 +1,6 @@
 #pragma once
 #include "ICoder.h"
-#include "IParser.h"
-
+#
 class CoderCpp : public ICoder
 {
 public:
