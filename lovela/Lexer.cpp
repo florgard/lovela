@@ -12,7 +12,6 @@ ILexer::OutputT Lexer::Lex() noexcept
 		if (Accept(patterns.whitespace))
 		{
 			WordBreak();
-			LexWhitespace();
 		}
 		else if (Accept(patterns.separator))
 		{
@@ -262,10 +261,6 @@ ILexer::OutputT Lexer::LexComment() noexcept
 void Lexer::LexSeparator() noexcept
 {
 	AddToken(GetToken(GetCharacter(Current)));
-}
-
-void Lexer::LexWhitespace() noexcept
-{
 }
 
 Token Lexer::GetToken(char lexeme) noexcept

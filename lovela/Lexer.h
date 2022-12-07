@@ -13,7 +13,6 @@ private:
 	[[nodiscard]] void LexLiteralNumber() noexcept;
 	[[nodiscard]] OutputT LexComment() noexcept;
 	[[nodiscard]] void LexSeparator() noexcept;
-	[[nodiscard]] void LexWhitespace() noexcept;
 
 	[[nodiscard]] Token GetToken(char lexeme) noexcept override;
 	[[nodiscard]] Token GetToken(std::string_view lexeme) noexcept override;
