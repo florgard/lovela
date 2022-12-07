@@ -47,7 +47,7 @@ CoderCpp::CoderCpp(Stream& stream) noexcept
 {
 }
 
-void CoderCpp::Visit(Node& node)
+void CoderCpp::Visit(Node& node) noexcept
 {
 	auto& v = GetVisitors();
 	auto iter = v.find(node.type);

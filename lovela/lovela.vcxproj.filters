@@ -187,5 +187,8 @@
     <ClInclude Include="IParser.h">
       <Filter>Parser</Filter>
     </ClInclude>
+    <ClInclude Include="ICoder.h">
+      <Filter>CoderCpp</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,18 +1,19 @@
 #pragma once
+#include "ICoder.h"
 #include "IParser.h"
 
-class CoderCpp
+class CoderCpp : public ICoder
 {
 public:
-	using Stream = std::ostream;
-
 	CoderCpp() noexcept = default;
 	CoderCpp(Stream& stream) noexcept;
 
-	void Initialize(Stream& stream)
+	void Initialize(Stream& stream) noexcept override
 	{
 		streamPtr = &stream;
 	}
+
+	void Visit(Node& node) noexcept override;
 
 	[[nodiscard]] constexpr Stream& GetStream() noexcept
 	{
@@ -38,8 +39,6 @@ public:
 	{
 		return exports;
 	}
-
-	void Visit(Node& node);
 
 	void GenerateProgramFile(std::ostream& file) const;
 	void GenerateImportsFile(std::ostream& file) const;
@@ -110,37 +109,3 @@ private:
 		static constexpr const char* invalid{ "InvalidTypeName" };
 	};
 };
-
-template <class NodeRangeT, class CoderT = CoderCpp>
-struct Traverser
-{
-	NodeRangeT nodes;
-	CoderT& coder;
-
-	void Traverse()
-	{
-		::Traverse<Node>::DepthFirstPostorder(nodes, [&](Node& node) { coder.Visit(node); });
-	}
-};
-
-inline Traverser<std::vector<Node>&> operator>>(std::vector<Node>& nodes, CoderCpp& coder)
-{
-	return { nodes, coder };
-}
-
-inline void operator>>(Traverser<std::vector<Node>&>&& input, std::ostream& output)
-{
-	input.coder.Initialize(output);
-	input.Traverse();
-}
-
-inline Traverser<IParser::Generator> operator>>(IParser::Generator&& nodes, CoderCpp& coder)
-{
-	return { std::move(nodes), coder };
-}
-
-inline void operator>>(Traverser<IParser::Generator>&& input, std::ostream& output)
-{
-	input.coder.Initialize(output);
-	input.Traverse();
-}
