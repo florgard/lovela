@@ -31,7 +31,7 @@ static CoderCppTest s_test;
 
 bool CoderCppTest::Failure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
-	StringLexer<> lexer;
+	StringLexer lexer;
 	RangeParser<> parser;
 	std::vector<Node> nodes;
 	CoderCpp coder;
@@ -87,7 +87,7 @@ bool CoderCppTest::Failure(const char* name, std::string_view code, std::string_
 
 bool CoderCppTest::ImportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
-	StringLexer<> lexer;
+	StringLexer lexer;
 	RangeParser<> parser;
 	std::vector<Node> nodes;
 	CoderCpp coder;
@@ -150,7 +150,7 @@ bool CoderCppTest::ImportFailure(const char* name, std::string_view code, std::s
 
 bool CoderCppTest::ExportFailure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
-	StringLexer<> lexer;
+	StringLexer lexer;
 	RangeParser<> parser;
 	std::vector<Node> nodes;
 	CoderCpp coder;

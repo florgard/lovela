@@ -12,7 +12,7 @@ static LexerTest lexerTest;
 
 bool LexerTest::YieldsTokens(const char* name, std::string_view code, const std::vector<Token>& expectedTokens)
 {
-	StringLexer<> lexer;
+	StringLexer lexer;
 	std::vector<Token> tokens;
 	code >> lexer >> tokens;
 
