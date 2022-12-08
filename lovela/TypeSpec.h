@@ -15,7 +15,9 @@ struct TypeSpec
 
 	std::string name;
 	NameSpace nameSpace{};
-	std::vector<size_t> arrayDims;
+
+	using ArrayDims = std::vector<size_t>;
+	ArrayDims arrayDims;
 
 	struct Primitive
 	{
@@ -72,19 +74,7 @@ struct TypeSpec
 		return s.str();
 	}
 
-	[[nodiscard]] void Print(std::ostream& stream) const
-	{
-		stream << '[' << to_string(kind) << ',' << name << ',';
-		nameSpace.Print(stream);
-		stream << ',' << '[';
-		for (auto& length : arrayDims)
-		{
-			stream << length << ',';
-		}
-		stream << ']' << ',';
-		primitive.Print(stream);
-		stream << ']';
-	}
+	[[nodiscard]] void Print(std::ostream& stream) const;
 
 private:
 	static constexpr const char* noneTypeName = "()";
@@ -94,4 +84,30 @@ inline std::ostream& operator<<(std::ostream& stream, const TypeSpec& typeSpec)
 {
 	typeSpec.Print(stream);
 	return stream;
+}
+
+inline std::ostream& operator<<(std::ostream& stream, const TypeSpec::Primitive& primitive)
+{
+	primitive.Print(stream);
+	return stream;
+}
+
+inline std::ostream& operator<<(std::ostream& stream, const TypeSpec::ArrayDims& arrayDims)
+{
+	for (auto& length : arrayDims)
+	{
+		stream << length << ',';
+	}
+	return stream;
+}
+
+[[nodiscard]] inline void TypeSpec::Print(std::ostream& stream) const
+{
+	stream << '['
+		<< to_string(kind) << ','
+		<< name << ','
+		<< nameSpace << ','
+		<< '[' << arrayDims << ']' << ','
+		<< primitive
+		<< ']';
 }
