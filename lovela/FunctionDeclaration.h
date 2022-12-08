@@ -17,20 +17,16 @@ struct FunctionDeclaration
 
 	[[nodiscard]] void Print(std::ostream& stream) const
 	{
-		stream << '[' << name << ',';
-		nameSpace.Print(stream);
-		stream << ',';
-		outType.Print(stream);
-		stream << ',';
-		inType.Print(stream);
-		stream << ',' << '[';
+		stream << '[' << name << ','
+			<< nameSpace << ','
+			<< outType << ','
+			<< inType << ',' << '[';
 		for (auto& param : parameters)
 		{
 			param->Print(stream);
 			stream << ',';
 		}
-		stream << ']' << ',';
-		api.Print(stream);
-		stream << ']';
+		stream << ']' << ','
+			<< api << ']';
 	}
 };

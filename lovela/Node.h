@@ -108,20 +108,20 @@ struct Node
 
 	[[nodiscard]] void Print(std::ostream& stream) const
 	{
-		stream << '[' << to_string(type) << ',';
-		stream << '\"' << value << '\"' << ',';
-		stream << "outType=" << outType << ',';
-		stream << "token=" << token << ',';
-		stream << "nameSpace=" << nameSpace << ',';
-		stream << "inType=" << inType << ',';
-		stream << "parameters=[";
+		stream << '[' << to_string(type) << ','
+			<< '\"' << value << '\"' << ','
+			<< "outType=" << outType << ','
+			<< "token=" << token << ','
+			<< "nameSpace=" << nameSpace << ','
+			<< "inType=" << inType << ','
+			<< "parameters=[";
 		for (auto& param : parameters)
 		{
 			stream << *param << ',';
 		}
-		stream << ']' << ',';
-		stream << "apiSpec=" << api << ',';
-		stream << "errorCode=" << to_string(error.code) << ']';
+		stream << ']' << ','
+			<< "apiSpec=" << api << ','
+			<< "errorCode=" << to_string(error.code) << ']';
 	}
 };
 
