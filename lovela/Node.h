@@ -109,21 +109,29 @@ struct Node
 	[[nodiscard]] void Print(std::ostream& stream) const
 	{
 		stream << '[' << to_string(type) << ',';
+		stream << '\"' << value << '\"' << ',';
+		stream << "outType=";
 		outType.Print(stream);
 		stream << ',';
+		stream << "token=";
 		token.Print(stream);
 		stream << ',';
+		stream << "nameSpace=";
 		nameSpace.Print(stream);
 		stream << ',';
+		stream << "inType=";
 		inType.Print(stream);
-		stream << ',' << '[';
+		stream << ',';
+		stream << "parameters=[";
 		for (auto& param : parameters)
 		{
 			param->Print(stream);
 			stream << ',';
 		}
 		stream << ']' << ',';
+		stream << "apiSpec=";
 		api.Print(stream);
-		stream << ',' << to_string(error.code) << ']';
+		stream << ',';
+		stream << "errorCode=" << to_string(error.code) << ']';
 	}
 };
