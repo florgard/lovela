@@ -114,12 +114,7 @@ struct Node
 			<< "token=" << token << ','
 			<< "nameSpace=" << nameSpace << ','
 			<< "inType=" << inType << ','
-			<< "parameters=[";
-		for (auto& param : parameters)
-		{
-			stream << *param << ',';
-		}
-		stream << ']' << ','
+			<< "parameters=[" << parameters << ']' << ','
 			<< "apiSpec=" << api << ','
 			<< "errorCode=" << to_string(error.code) << ']';
 	}

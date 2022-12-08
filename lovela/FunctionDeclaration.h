@@ -6,6 +6,15 @@
 
 using ParameterList = std::vector<std::shared_ptr<VariableDeclaration>>;
 
+inline std::ostream& operator<<(std::ostream& stream, const ParameterList& parameters)
+{
+	for (auto& param : parameters)
+	{
+		stream << *param << ',';
+	}
+	return stream;
+}
+
 struct FunctionDeclaration
 {
 	std::string name;
@@ -20,13 +29,8 @@ struct FunctionDeclaration
 		stream << '[' << name << ','
 			<< nameSpace << ','
 			<< outType << ','
-			<< inType << ',' << '[';
-		for (auto& param : parameters)
-		{
-			param->Print(stream);
-			stream << ',';
-		}
-		stream << ']' << ','
+			<< inType << ','
+			<< '[' << parameters << ']' << ','
 			<< api << ']';
 	}
 };
