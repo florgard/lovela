@@ -111,12 +111,8 @@ struct Node
 		stream << '[' << to_string(type) << ',';
 		stream << '\"' << value << '\"' << ',';
 		stream << "outType=" << outType << ',';
-		stream << "token=";
-		token.Print(stream);
-		stream << ',';
-		stream << "nameSpace=";
-		nameSpace.Print(stream);
-		stream << ',';
+		stream << "token=" << token << ',';
+		stream << "nameSpace=" << nameSpace << ',';
 		stream << "inType=" << inType << ',';
 		stream << "parameters=[";
 		for (auto& param : parameters)
@@ -124,9 +120,7 @@ struct Node
 			stream << *param << ',';
 		}
 		stream << ']' << ',';
-		stream << "apiSpec=";
-		api.Print(stream);
-		stream << ',';
+		stream << "apiSpec=" << api << ',';
 		stream << "errorCode=" << to_string(error.code) << ']';
 	}
 };

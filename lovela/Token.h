@@ -91,3 +91,9 @@ struct Token
 		stream << '[' << to_string(type) << ',' << value << ',' << to_string(error.code) << ',' << error.line << ',' << error.column << ',' << error.message << ']';
 	}
 };
+
+inline std::ostream& operator<<(std::ostream& stream, const Token& token)
+{
+	token.Print(stream);
+	return stream;
+}

@@ -20,3 +20,9 @@ struct NameSpace
 		}
 	}
 };
+
+inline std::ostream& operator<<(std::ostream& stream, const NameSpace& nameSpace)
+{
+	nameSpace.Print(stream);
+	return stream;
+}

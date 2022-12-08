@@ -38,3 +38,9 @@ struct ApiSpec
 private:
 	int flags{};
 };
+
+inline std::ostream& operator<<(std::ostream& stream, const ApiSpec& apiSpec)
+{
+	apiSpec.Print(stream);
+	return stream;
+}
