@@ -59,6 +59,7 @@ struct Token
 
 		size_t line = 1;
 		size_t column = 1;
+		size_t length = 0;
 		std::string message;
 
 		[[nodiscard]] constexpr bool operator==(const Error& rhs) const noexcept

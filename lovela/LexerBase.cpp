@@ -32,6 +32,7 @@ Token LexerBase::YieldToken(Token token) noexcept
 	{
 		token.error.line = currentLine;
 		token.error.column = currentTokenColumn;
+		token.error.length = nextTokenColumn - currentTokenColumn;
 
 		currentTokenColumn = nextTokenColumn;
 	}
@@ -138,7 +139,7 @@ void LexerBase::PrintErrorSourceCode(std::ostream& stream, const Token& token) n
 
 	const auto length = sourceCode.length();
 	const auto begin = std::min(column - 1, length);
-	auto end = std::min(begin + token.value.length(), length);
+	auto end = std::min(begin + token.error.length, length);
 	const auto count = end - begin;
 
 	stream << '(' << line << ':' << column << ") " << color.code << sourceCode.substr(0, begin) << color.fail;
