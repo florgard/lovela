@@ -644,11 +644,11 @@ suite lexer_comment_tests = [] {
 	};
 	"multiple comments"_test = [] {
 		expect(lexerTest.YieldsTokens("multiple comments",
-			"<<<<123>>ident234<<<<123<<456>>>:>>.",
+			"<<<<123>>ident234<<<<345<<456>>>:>>.",
 			{
 				{.type = Token::Type::Comment, .value = "123"},
 				IdToken("ident234"),
-				{.type = Token::Type::Comment, .value = "123"},
+				{.type = Token::Type::Comment, .value = "345"},
 				{.type = Token::Type::Comment, .value = "456"},
 				{.type = Token::Type::Comment, .value = ":"},
 				{.type = Token::Type::SeparatorDot, .value = "."},

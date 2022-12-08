@@ -68,12 +68,12 @@ using namespace boost::ut;
 suite parser_comments_tests = [] {
 	"multiple comments"_test = [] {
 		expect(parserTest.YieldsNodes("multiple comments",
-			"<<<<123>>ident234<<<<123<<456>>>:>>.",
+			"<<<<123>>ident234<<<<345<<456>>>:>>.",
 			std::array<Node, 4>
 			{
 				Node{ .type = Node::Type::Comment, .value = "123" },
 				Node{ .type = Node::Type::FunctionDeclaration, .value = "ident234" },
-				Node{ .type = Node::Type::Comment, .value = "123:" },
+				Node{ .type = Node::Type::Comment, .value = "345:" },
 				Node{ .type = Node::Type::Comment, .value = "456" },
 			}
 		));
