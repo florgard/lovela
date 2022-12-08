@@ -209,25 +209,29 @@ void Parser::Context::AddVariableSymbol(std::shared_ptr<VariableDeclaration> dec
 
 IParser::OutputT Parser::Parse() noexcept
 {
-	auto context = make<Context>::shared();
+	currentContext = make<Context>::shared();
+
 	// TODO: add built-in functions?
 
 	bool parsing = true;
 
 	while (parsing)
 	{
-		Node n;
+		Node errorNode{};
 
 		try
 		{
-			if (Accept(Token::Type::Comment))
+			for (auto&& rn : ParseNonSemantic())
 			{
-				n = Node{ .type = Node::Type::Comment, .value = GetCurrent().value, .token = GetCurrent() };
+				Node n = std::move(rn);
+				co_yield n;
 			}
-			else if (Accept(GetFunctionDeclarationTokens()))
+
+			if (Accept(GetFunctionDeclarationTokens()))
 			{
-				auto p = ParseFunctionDeclaration(context);
-				n = std::move(*p);
+				auto p = ParseFunctionDeclaration(currentContext);
+				Node n = std::move(*p);
+				co_yield n;
 			}
 			else if (Accept(Token::Type::End))
 			{
@@ -251,20 +255,40 @@ IParser::OutputT Parser::Parse() noexcept
 		}
 		catch (const NoTokenException& e)
 		{
-			n = { .type = Node::Type::Error, .error = {.code = Node::Error::Code::ParseError, .message = e.message } };
+			errorNode = { .type = Node::Type::Error, .error = {.code = Node::Error::Code::ParseError, .message = e.message } };
 
 			// Stop parsing after yielding the error node.
 			parsing = false;
 		}
 		catch (const ParseException& e)
 		{
-			n = { .type = Node::Type::Error, .error = {.code = Node::Error::Code::ParseError, .message = e.message } };
+			errorNode = { .type = Node::Type::Error, .error = {.code = Node::Error::Code::ParseError, .message = e.message } };
 
 			// Skip faulty token.
 			Skip();
 		}
 
-		co_yield n;
+		if (errorNode) co_yield errorNode;
+	}
+}
+
+[[nodiscard]] IParser::OutputT Parser::ParseNonSemantic()
+{
+	for (;;)
+	{
+		if (Accept(Token::Type::Comment))
+		{
+			Node n{ .type = Node::Type::Comment, .value = GetCurrent().value, .token = GetCurrent() };
+			co_yield n;
+		}
+		else if (Accept(Token::Type::SeparatorDot))
+		{
+			// Skip arbitrary statement separators.
+		}
+		else
+		{
+			co_return;
+		}
 	}
 }
 

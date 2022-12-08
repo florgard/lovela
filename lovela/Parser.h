@@ -23,6 +23,9 @@ private:
 		void AddVariableSymbol(std::shared_ptr<VariableDeclaration> variable);
 	};
 
+	std::shared_ptr<Context> currentContext;
+
+	[[nodiscard]] OutputT ParseNonSemantic();
 	[[nodiscard]] std::unique_ptr<Node> ParseFunctionDeclaration(std::shared_ptr<Context> context);
 	[[nodiscard]] std::unique_ptr<Node> ParseCompoundExpression(std::shared_ptr<Context> context);
 	[[nodiscard]] std::unique_ptr<Node> ParseExpression(std::shared_ptr<Context> context);
