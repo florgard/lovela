@@ -110,23 +110,18 @@ struct Node
 	{
 		stream << '[' << to_string(type) << ',';
 		stream << '\"' << value << '\"' << ',';
-		stream << "outType=";
-		outType.Print(stream);
-		stream << ',';
+		stream << "outType=" << outType << ',';
 		stream << "token=";
 		token.Print(stream);
 		stream << ',';
 		stream << "nameSpace=";
 		nameSpace.Print(stream);
 		stream << ',';
-		stream << "inType=";
-		inType.Print(stream);
-		stream << ',';
+		stream << "inType=" << inType << ',';
 		stream << "parameters=[";
 		for (auto& param : parameters)
 		{
-			param->Print(stream);
-			stream << ',';
+			stream << *param << ',';
 		}
 		stream << ']' << ',';
 		stream << "apiSpec=";
@@ -135,3 +130,9 @@ struct Node
 		stream << "errorCode=" << to_string(error.code) << ']';
 	}
 };
+
+inline std::ostream& operator<<(std::ostream& stream, const Node& node)
+{
+	node.Print(stream);
+	return stream;
+}

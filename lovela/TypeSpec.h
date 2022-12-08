@@ -89,3 +89,9 @@ struct TypeSpec
 private:
 	static constexpr const char* noneTypeName = "()";
 };
+
+inline std::ostream& operator<<(std::ostream& stream, const TypeSpec& typeSpec)
+{
+	typeSpec.Print(stream);
+	return stream;
+}

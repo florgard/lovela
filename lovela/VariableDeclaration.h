@@ -10,8 +10,12 @@ struct VariableDeclaration
 
 	[[nodiscard]] void Print(std::ostream& stream) const
 	{
-		stream << '[' << name << ',';
-		type.Print(stream);
-		stream << ']';
+		stream << '[' << name << ',' << type << ']';
 	}
 };
+
+inline std::ostream& operator<<(std::ostream& stream, const VariableDeclaration& varDecl)
+{
+	varDecl.Print(stream);
+	return stream;
+}
