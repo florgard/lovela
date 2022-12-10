@@ -151,7 +151,7 @@ private:
 
 using RangeParser = BasicRangeParser<Parser>;
 
-inline auto operator>>(ILexer::OutputT&& tokens, RangeParser& parser)
+inline IParser::OutputT operator>>(ILexer::OutputT&& tokens, RangeParser& parser)
 {
 	parser.Initialize(std::move(tokens));
 	return parser.Parse();
