@@ -558,7 +558,7 @@ suite lexer_function_declarations_tests = [] {
 		expect(lexerTest.YieldsTokens("imported function",
 			"-> func",
 			{
-				{.type = Token::Type::OperatorArrow, .value = "->"},
+				{.type = Token::Type::OperatorRightArrow, .value = "->"},
 				IdToken("func"),
 				EndToken()
 			}
@@ -568,7 +568,7 @@ suite lexer_function_declarations_tests = [] {
 		expect(lexerTest.YieldsTokens("exported function",
 			"<- []func",
 			{
-				{.type = Token::Type::OperatorArrow, .value = "<-"},
+				{.type = Token::Type::OperatorLeftArrow, .value = "<-"},
 				{.type = Token::Type::ParenSquareOpen, .value = "["},
 				{.type = Token::Type::ParenSquareClose, .value = "]"},
 				IdToken("func"),

@@ -92,7 +92,8 @@ struct LexerPatterns
 	const LexemeRegex<char> operatorComparison{ R"(<|>|<>|<=|>=|=)" };
 	const LexemeRegex<char> operatorArithmetic{ R"(\+|-|\*|/|/*)" };
 	const LexemeRegex<char> operatorBitwise{ R"(\*\*|\+\+|--)" };
-	const LexemeRegex<char> operatorArrow{ R"(<-|->)" };
+	const LexemeRegex<char> operatorLeftArrow{ R"(<-)" };
+	const LexemeRegex<char> operatorRightArrow{ R"(->)" };
 	const LexemeRegex<char> identifierAnsi{ R"([[:alpha:]][\w<>=\+\-\*/]*)" };
 	const LexemeRegex<wchar_t> identifierUnicode{ LR"([[:alpha:]][\w<>=\+\-\*/\u0300–\u036F\u1AB0–\u1AFF\u1DC0–\u1DFF\u20D0–\u20FF\uFE20–\uFE2F]*)" };
 
@@ -127,12 +128,13 @@ struct LexerPatterns
 		const Token::Type tokenType;
 	};
 
-	const std::array<LexemePattern<char>, 5> lexemePatternsAnsi
+	const std::array<LexemePattern<char>, 6> lexemePatternsAnsi
 	{ {
 		{ operatorComparison, Token::Type::OperatorComparison },
 		{ operatorArithmetic, Token::Type::OperatorArithmetic },
 		{ operatorBitwise, Token::Type::OperatorBitwise },
-		{ operatorArrow, Token::Type::OperatorArrow },
+		{ operatorLeftArrow, Token::Type::OperatorLeftArrow },
+		{ operatorRightArrow, Token::Type::OperatorRightArrow },
 		{ identifierAnsi, Token::Type::Identifier },
 	} };
 

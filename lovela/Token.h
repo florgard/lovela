@@ -36,7 +36,8 @@ struct Token
 		OperatorComparison,
 		OperatorArithmetic,
 		OperatorBitwise,
-		OperatorArrow,
+		OperatorLeftArrow,
+		OperatorRightArrow,
 	} type{};
 
 	std::string value;

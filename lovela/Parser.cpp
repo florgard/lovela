@@ -4,11 +4,12 @@
 
 // Token sets
 
-static constexpr std::array<Token::Type, 8> s_FunctionDeclarationTokens
+static constexpr std::array<Token::Type, 9> s_FunctionDeclarationTokens
 {
 	Token::Type::ParenSquareOpen,
 	Token::Type::Identifier,
-	Token::Type::OperatorArrow,
+	Token::Type::OperatorLeftArrow,
+	Token::Type::OperatorRightArrow,
 	Token::Type::OperatorArithmetic,
 	Token::Type::OperatorBitwise,
 	Token::Type::OperatorComparison,
@@ -48,10 +49,11 @@ static constexpr std::array<Token::Type, 3> s_BinaryOperatorTokens
 	Token::Type::OperatorComparison,
 };
 
-static constexpr std::array<Token::Type, 5> s_OperatorTokens
+static constexpr std::array<Token::Type, 6> s_OperatorTokens
 {
 	Token::Type::Identifier,
-	Token::Type::OperatorArrow,
+	Token::Type::OperatorLeftArrow,
+	Token::Type::OperatorRightArrow,
 	Token::Type::OperatorArithmetic,
 	Token::Type::OperatorBitwise,
 	Token::Type::OperatorComparison,
@@ -506,48 +508,66 @@ ParameterList Parser::ParseParameterList()
 	return parameters;
 }
 
+ApiSpec Parser::ParseApiSpec()
+{
+	ApiSpec apiSpec;
+
+	if (Accept(Token::Type::LiteralString))
+	{
+		static const std::map<std::string, int> validApiTokens
+		{
+			{ "Dynamic", ApiSpec::Dynamic },
+			{ "Standard", ApiSpec::Standard },
+			{ "C", ApiSpec::C },
+			{ "C++", ApiSpec::Cpp },
+		};
+
+		const auto apiTokens = split(GetCurrent().value, L' ');
+		for (auto& apiToken : apiTokens)
+		{
+			if (validApiTokens.contains(apiToken))
+			{
+				apiSpec.Set(validApiTokens.at(apiToken));
+			}
+			else
+			{
+				throw ParseException(GetCurrent(), fmt::format("Invalid import/export API specification token \"{}\".", apiToken));
+			}
+		}
+	}
+
+	Expect(GetExternalFunctionDeclarationTokens());
+
+	return apiSpec;
+}
+
+ApiSpec Parser::ParseImportApiSpec()
+{
+	auto apiSpec = ParseApiSpec();
+	apiSpec.Set(ApiSpec::Import);
+	return apiSpec;
+}
+
+ApiSpec Parser::ParseExportApiSpec()
+{
+	auto apiSpec = ParseApiSpec();
+	apiSpec.Set(ApiSpec::Export);
+	return apiSpec;
+}
+
 std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> context)
 {
 	auto node = make<Node>::unique({ .type = Node::Type::FunctionDeclaration, .token = GetCurrent() });
 
 	// <-
-	// ->
-	if (IsToken(Token::Type::OperatorArrow))
+	if (IsToken(Token::Type::OperatorLeftArrow))
 	{
-		if (GetCurrent().value == "<-")
-		{
-			node->apiSpec = ApiSpec::Export;
-		}
-		else if (GetCurrent().value == "->")
-		{
-			node->apiSpec = ApiSpec::Import;
-		}
-
-		if (Accept(Token::Type::LiteralString))
-		{
-			static const std::map<std::string, int> validApiTokens
-			{
-				{ "Dynamic", ApiSpec::Dynamic },
-				{ "Standard", ApiSpec::Standard },
-				{ "C", ApiSpec::C },
-				{ "C++", ApiSpec::Cpp },
-			};
-
-			const auto apiTokens = split(GetCurrent().value, L' ');
-			for (auto& apiToken : apiTokens)
-			{
-				if (validApiTokens.contains(apiToken))
-				{
-					node->apiSpec.Set(validApiTokens.at(apiToken));
-				}
-				else
-				{
-					throw ParseException(GetCurrent(), fmt::format("Invalid import/export API specification token \"{}\".", apiToken));
-				}
-			}
-		}
-
-		Expect(GetExternalFunctionDeclarationTokens());
+		node->apiSpec = ParseExportApiSpec();
+	}
+	// ->
+	else if (IsToken(Token::Type::OperatorRightArrow))
+	{
+		node->apiSpec = ParseImportApiSpec();
 	}
 
 	// [inType]

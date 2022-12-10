@@ -38,6 +38,9 @@ private:
 
 	[[nodiscard]] std::unique_ptr<Node> ReduceExpression(std::unique_ptr<Node>&& expression);
 
+	[[nodiscard]] ApiSpec ParseApiSpec();
+	[[nodiscard]] ApiSpec ParseImportApiSpec();
+	[[nodiscard]] ApiSpec ParseExportApiSpec();
 	[[nodiscard]] TypeSpec ParseTypeSpec();
 	[[nodiscard]] ParameterList ParseParameterList();
 
