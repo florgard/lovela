@@ -2,7 +2,7 @@
 
 ## Small
 
-Add comment tokens.
+Use vector of child nodes?
 
 /type/bool
 
