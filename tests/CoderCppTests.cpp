@@ -34,7 +34,7 @@ bool CoderCppTest::Failure(const char* name, std::string_view code, std::string_
 	StringLexer lexer;
 	RangeParser parser;
 	std::vector<Node> nodes;
-	CoderCpp coder;
+	VectorCoderCpp coder;
 	std::ostringstream output;
 	code >> lexer >> parser >> nodes >> coder >> output;
 
@@ -90,7 +90,7 @@ bool CoderCppTest::ImportFailure(const char* name, std::string_view code, std::s
 	StringLexer lexer;
 	RangeParser parser;
 	std::vector<Node> nodes;
-	CoderCpp coder;
+	VectorCoderCpp coder;
 	std::ostringstream output;
 	code >> lexer >> parser >> nodes >> coder >> output;
 
@@ -153,7 +153,7 @@ bool CoderCppTest::ExportFailure(const char* name, std::string_view code, std::s
 	StringLexer lexer;
 	RangeParser parser;
 	std::vector<Node> nodes;
-	CoderCpp coder;
+	VectorCoderCpp coder;
 	std::ostringstream output;
 	code >> lexer >> parser >> nodes >> coder >> output;
 

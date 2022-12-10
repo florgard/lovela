@@ -12,7 +12,7 @@ int main_utf8(int argc, char** argv)
 
 	StreamLexer lexer;
 	RangeParser parser;
-	CoderCpp coder;
+	RangeCoderCpp coder;
 	std::cin >> lexer >> parser >> coder >> std::cout;
 
 	return 0;

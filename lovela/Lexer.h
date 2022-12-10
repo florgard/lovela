@@ -42,13 +42,13 @@ private:
 using StringLexer = BasicStringLexer<Lexer>;
 using StreamLexer = BasicStreamLexer<Lexer>;
 
-inline auto operator>>(std::string_view string, StringLexer& lexer)
+inline ILexer::OutputT operator>>(std::string_view string, StringLexer& lexer)
 {
 	lexer.Initialize(std::move(string));
 	return lexer.Lex();
 }
 
-inline auto operator>>(std::istream& stream, StreamLexer& lexer)
+inline ILexer::OutputT operator>>(std::istream& stream, StreamLexer& lexer)
 {
 	lexer.Initialize(stream);
 	return lexer.Lex();

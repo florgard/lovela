@@ -30,7 +30,7 @@ public:
 		StringLexer lexer;
 		RangeParser parser;
 		std::vector<Node> nodes;
-		CoderCpp coder;
+		VectorCoderCpp coder;
 		std::stringstream output;
 		code >> lexer >> parser >> nodes >> coder >> output;
 

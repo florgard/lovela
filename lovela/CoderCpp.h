@@ -7,10 +7,12 @@ public:
 	CoderCpp() noexcept = default;
 	CoderCpp(OutputT& output) noexcept;
 
-	void Initialize(OutputT& output) noexcept override
+	void InitializeOutput(OutputT& output) noexcept override
 	{
 		streamPtr = &output;
 	}
+
+	void Code() noexcept override;
 
 	void Visit(Node& node) noexcept override;
 
@@ -108,3 +110,31 @@ private:
 		static constexpr const char* invalid{ "InvalidTypeName" };
 	};
 };
+
+using RangeCoderCpp = BasicRangeCoder<CoderCpp>;
+using VectorCoderCpp = BasicRangeCoder<CoderCpp, std::vector<Node>>;
+
+inline RangeCoderCpp& operator>>(IParser::OutputT&& nodes, RangeCoderCpp& coder)
+{
+	coder.Initialize(std::move(nodes));
+	return coder;
+}
+
+inline void operator>>(RangeCoderCpp& coder, ICoder::OutputT& output)
+{
+	coder.InitializeOutput(output);
+	coder.Code();
+}
+
+inline VectorCoderCpp& operator>>(std::vector<Node>& nodes, VectorCoderCpp& coder)
+{
+	coder.Initialize(std::move(nodes));
+	return coder;
+}
+
+inline void operator>>(VectorCoderCpp& coder, ICoder::OutputT& output)
+{
+	coder.InitializeOutput(output);
+	coder.Code();
+}
+

@@ -47,6 +47,15 @@ CoderCpp::CoderCpp(OutputT& output) noexcept
 {
 }
 
+void CoderCpp::Code() noexcept
+{
+	while (!IsDone())
+	{
+		::Traverse<Node>::DepthFirstPostorder(GetNext(), [this](Node& node) { Visit(node); });
+		Advance();
+	}
+}
+
 void CoderCpp::Visit(Node& node) noexcept
 {
 	auto& v = GetVisitors();
