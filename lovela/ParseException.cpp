@@ -70,7 +70,7 @@ ErrorTokenException::ErrorTokenException(const Token& token) noexcept
 	message = s.str();
 }
 
-NoTokenException::NoTokenException() noexcept
+MissingTokenException::MissingTokenException() noexcept
 	: ParseException({})
 {
 	message = "Unexpected end of token stream.";

@@ -51,7 +51,7 @@ struct ErrorTokenException : public ParseException
 	ErrorTokenException(const Token& token) noexcept;
 };
 
-struct NoTokenException : public ParseException
+struct MissingTokenException : public ParseException
 {
-	NoTokenException() noexcept;
+	MissingTokenException() noexcept;
 };

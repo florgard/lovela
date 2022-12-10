@@ -250,10 +250,10 @@ IParser::OutputT Parser::Parse() noexcept
 			}
 			else
 			{
-				throw NoTokenException();
+				throw MissingTokenException();
 			}
 		}
-		catch (const NoTokenException& e)
+		catch (const MissingTokenException& e)
 		{
 			errorNode = { .type = Node::Type::Error, .error = {.code = Node::Error::Code::ParseError, .message = e.message } };
 
