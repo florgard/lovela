@@ -1,5 +1,4 @@
 #pragma once
-#include "../lovela/Node.h"
 
 class TestingBase
 {

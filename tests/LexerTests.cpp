@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "TestingBase.h"
-#include "../lovela/Lexer.h"
 
 class LexerTest : public TestingBase
 {

@@ -1,8 +1,5 @@
 #include "pch.h"
 #include "TestingBase.h"
-#include "../lovela/Lexer.h"
-#include "../lovela/Parser.h"
-#include "../lovela/CoderCpp.h"
 
 class CoderCppTest : public TestingBase
 {

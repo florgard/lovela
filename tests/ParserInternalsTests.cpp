@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "../lovela/Parser.h"
 
 class ParserTest
 {

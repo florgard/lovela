@@ -1,7 +1,5 @@
 #include "pch.h"
 #include "TestingBase.h"
-#include "../lovela/Lexer.h"
-#include "../lovela/Parser.h"
 
 class ParserTest : public TestingBase
 {
