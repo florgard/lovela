@@ -4,7 +4,7 @@ template <typename ItemT>
 class IEnumerator
 {
 protected:
-	[[nodiscard]] virtual const ItemT& GetNext() noexcept = 0;
+	[[nodiscard]] virtual ItemT& GetNext() noexcept = 0;
 	[[nodiscard]] virtual bool IsDone() noexcept = 0;
 	virtual void Advance() noexcept = 0;
 };
@@ -20,7 +20,7 @@ class RangeEnumerator : public BaseT
 	using ItemT = std::decay_t<decltype(*std::ranges::begin(_range))>;
 	static_assert(std::is_base_of_v<IEnumerator<ItemT>, BaseT>, "The base class must inherit IEnumerator for the item type.");
 
-	[[nodiscard]] const ItemT& GetNext() noexcept override
+	[[nodiscard]] ItemT& GetNext() noexcept override
 	{
 		return *_iterator;
 	}
@@ -48,6 +48,94 @@ public:
 	{
 		_range = std::move(range);
 		_iterator = _range.begin();
+	}
+};
+
+template <class BaseT, std::ranges::range RangeT>
+class ConstRangeEnumerator : public BaseT
+{
+	RangeT _range;
+
+	using IteratorT = decltype(std::ranges::begin(_range));
+	IteratorT _iterator;
+
+	using ItemT = std::decay_t<decltype(*std::ranges::begin(_range))>;
+	static_assert(std::is_base_of_v<IEnumerator<ItemT>, BaseT>, "The base class must inherit IEnumerator for the item type.");
+
+	ItemT _item{};
+
+	[[nodiscard]] ItemT& GetNext() noexcept override
+	{
+		_item = *_iterator;
+		return _item;
+	}
+
+	[[nodiscard]] bool IsDone() noexcept override
+	{
+		return _iterator == _range.end();
+	}
+
+	[[nodiscard]] void Advance() noexcept override
+	{
+		_iterator++;
+	}
+
+public:
+	ConstRangeEnumerator() noexcept = default;
+
+	ConstRangeEnumerator(RangeT&& range) noexcept
+		: _range(std::move(range))
+		, _iterator(_range.begin())
+	{
+	}
+
+	void Initialize(RangeT&& range) noexcept
+	{
+		_range = std::move(range);
+		_iterator = _range.begin();
+	}
+};
+
+template <class BaseT, class StreamT>
+class StreamEnumerator : public BaseT
+{
+	StreamT* _stream;
+
+	using ItemT = StreamT::char_type;
+	static_assert(std::is_base_of_v<IEnumerator<ItemT>, BaseT>, "The base class must inherit IEnumerator for the item type.");
+
+	ItemT _item{};
+	bool _done{};
+
+	[[nodiscard]] ItemT& GetNext() noexcept override
+	{
+		return _item;
+	}
+
+	[[nodiscard]] bool IsDone() noexcept override
+	{
+		return _done;
+	}
+
+	[[nodiscard]] void Advance() noexcept override
+	{
+		(*_stream) >> _item;
+		_done = _stream->eof() || _stream->fail();
+	}
+
+public:
+	StreamEnumerator() noexcept = default;
+
+	StreamEnumerator(StreamT& stream) noexcept
+		: _stream(&stream)
+		, _item((*_stream) >> _item)
+	{
+	}
+
+	void Initialize(StreamT& stream) noexcept
+	{
+		_stream = &stream;
+		(*_stream) >> _item;
 	}
 };
 
