@@ -10,8 +10,7 @@ struct ApiSpec
 	static constexpr int C = 1 << 4;
 	static constexpr int Cpp = 1 << 5;
 
-	constexpr ApiSpec() noexcept = default;
-	constexpr ApiSpec(int flags) noexcept : flags(flags) {}
+	int flags{};
 
 	[[nodiscard]] constexpr auto operator<=>(const ApiSpec& rhs) const noexcept = default;
 	
@@ -34,9 +33,6 @@ struct ApiSpec
 	{
 		stream << '[' << flags << ']';
 	}
-
-private:
-	int flags{};
 };
 
 inline std::ostream& operator<<(std::ostream& stream, const ApiSpec& apiSpec)
