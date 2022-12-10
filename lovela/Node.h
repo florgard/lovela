@@ -31,7 +31,7 @@ struct Node
 	NameSpace nameSpace{};
 	TypeSpec inType{};
 	ParameterList parameters{};
-	ApiSpec api{};
+	ApiSpec apiSpec{};
 
 	// Function call
 	std::shared_ptr<FunctionDeclaration> callee;
@@ -68,7 +68,7 @@ struct Node
 			&& outType == rhs.outType
 			&& nameSpace == rhs.nameSpace
 			&& inType == rhs.inType
-			&& api == rhs.api
+			&& apiSpec == rhs.apiSpec
 			&& error == rhs.error
 			&& std::equal(parameters.begin(), parameters.end(), rhs.parameters.begin(), [](auto& p1, auto& p2) { return *p1 == *p2; });
 	}
@@ -92,7 +92,7 @@ struct Node
 			.outType = outType,
 			.inType = inType,
 			.parameters = parameters,
-			.api = api,
+			.apiSpec = apiSpec,
 		};
 	}
 
@@ -115,7 +115,7 @@ struct Node
 			<< "nameSpace=" << nameSpace << ','
 			<< "inType=" << inType << ','
 			<< "parameters=[" << parameters << ']' << ','
-			<< "apiSpec=" << api << ','
+			<< "apiSpec=" << apiSpec << ','
 			<< "errorCode=" << to_string(error.code) << ']';
 	}
 };

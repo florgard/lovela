@@ -106,7 +106,7 @@ void CoderCpp::FunctionDeclarationVisitor(Node& node, Context& context)
 		MainFunctionDeclaration(node, context);
 		return;
 	}
-	else if (node.api.Is(ApiSpec::Import))
+	else if (node.apiSpec.Is(ApiSpec::Import))
 	{
 		ImportedFunctionDeclaration(node, context);
 	}
@@ -167,7 +167,7 @@ void CoderCpp::FunctionDeclarationVisitor(Node& node, Context& context)
 
 	GetStream() << ')';
 
-	if (node.api.Is(ApiSpec::Import))
+	if (node.apiSpec.Is(ApiSpec::Import))
 	{
 		ImportedFunctionBody(node, context, parameters);
 	}
@@ -180,7 +180,7 @@ void CoderCpp::FunctionDeclarationVisitor(Node& node, Context& context)
 
 	// Generate the exported function
 
-	if (node.api.Is(ApiSpec::Export))
+	if (node.apiSpec.Is(ApiSpec::Export))
 	{
 		ExportedFunctionDeclaration(node, context);
 	}
@@ -384,16 +384,16 @@ void CoderCpp::ExportedFunctionDeclaration(Node& node, Context&)
 
 	std::ostringstream exportDeclaration;
 
-	if (node.api.Is(ApiSpec::C))
+	if (node.apiSpec.Is(ApiSpec::C))
 	{
 		exportDeclaration << "LOVELA_API_C ";
 	}
-	else if (node.api.Is(ApiSpec::Cpp))
+	else if (node.apiSpec.Is(ApiSpec::Cpp))
 	{
 		exportDeclaration << "LOVELA_API_CPP ";
 	}
 
-	if (node.api.Is(ApiSpec::Dynamic))
+	if (node.apiSpec.Is(ApiSpec::Dynamic))
 	{
 		exportDeclaration << "LOVELA_API_DYNAMIC_EXPORT ";
 	}
@@ -438,23 +438,23 @@ void CoderCpp::ExportedFunctionDeclaration(Node& node, Context&)
 
 void CoderCpp::ImportedFunctionDeclaration(Node& node, Context&)
 {
-	if (node.api.Is(ApiSpec::Standard))
+	if (node.apiSpec.Is(ApiSpec::Standard))
 	{
 		// Don't emit function declarations for standard library functions.
 		// Instead attempt to find the appropriate header to add to lovela-imports.h.
 
-		if (node.api.Is(ApiSpec::C))
+		if (node.apiSpec.Is(ApiSpec::C))
 		{
 			StandardCDeclarations::GetHeader(headers, node.value);
 		}
-		else if (node.api.Is(ApiSpec::Cpp))
+		else if (node.apiSpec.Is(ApiSpec::Cpp))
 		{
 			StandardCppDeclarations::GetHeader(headers, node.value);
 		}
 
 		return;
 	}
-	else if (!node.api.IsExplicit())
+	else if (!node.apiSpec.IsExplicit())
 	{
 		// Don't emit a function declaration if the API hasn't explicitly been specified.
 		// The user is expected to provide the declaration in user-imports.h.
@@ -525,20 +525,20 @@ void CoderCpp::ImportedFunctionDeclaration(Node& node, Context&)
 
 	// Declare import
 
-	if (node.api.Is(ApiSpec::C))
+	if (node.apiSpec.Is(ApiSpec::C))
 	{
 		GetStream() << "LOVELA_API_C ";
 	}
-	else if (node.api.Is(ApiSpec::Cpp))
+	else if (node.apiSpec.Is(ApiSpec::Cpp))
 	{
 		GetStream() << "LOVELA_API_CPP ";
 	}
 
-	if (node.api.Is(ApiSpec::Dynamic | ApiSpec::Import))
+	if (node.apiSpec.Is(ApiSpec::Dynamic | ApiSpec::Import))
 	{
 		GetStream() << "LOVELA_API_DYNAMIC_IMPORT ";
 	}
-	else if (node.api.Is(ApiSpec::Dynamic | ApiSpec::Export))
+	else if (node.apiSpec.Is(ApiSpec::Dynamic | ApiSpec::Export))
 	{
 		GetStream() << "LOVELA_API_DYNAMIC_EXPORT ";
 	}

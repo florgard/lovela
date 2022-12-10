@@ -254,31 +254,31 @@ suite parser_import_export_tests = [] {
 	"imported function"_test = [] {
 		expect(parserTest.YieldsNodes("imported function",
 			"-> func",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .api = ApiSpec::Import }
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .apiSpec = ApiSpec::Import }
 		));
 	};
 	"exported function"_test = [] {
 		expect(parserTest.YieldsNodes("exported function",
 			"<- [] func",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .api = ApiSpec::Export }
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .apiSpec = ApiSpec::Export }
 		));
 	};
 	"imported C function"_test = [] {
 		expect(parserTest.YieldsNodes("imported C function",
 			"-> 'C' func",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .api = ApiSpec::Import | ApiSpec::C }
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .apiSpec = ApiSpec::Import | ApiSpec::C }
 		));
 	};
 	"imported dynamically linked C function"_test = [] {
 		expect(parserTest.YieldsNodes("imported dynamically linked C function",
 			"-> 'C Dynamic' func",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .api = ApiSpec::Import | ApiSpec::C | ApiSpec::Dynamic }
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .apiSpec = ApiSpec::Import | ApiSpec::C | ApiSpec::Dynamic }
 		));
 	};
 	"imported standard C++ function"_test = [] {
 		expect(parserTest.YieldsNodes("imported standard C++ function",
 			"-> 'Standard C++' func",
-			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .api = ApiSpec::Import | ApiSpec::Cpp | ApiSpec::Standard }
+			Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .apiSpec = ApiSpec::Import | ApiSpec::Cpp | ApiSpec::Standard }
 		));
 	};
 	"invalid import specifier"_test = [] {

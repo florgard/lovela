@@ -22,7 +22,7 @@ struct FunctionDeclaration
 	TypeSpec outType{};
 	TypeSpec inType{};
 	ParameterList parameters{};
-	ApiSpec api{};
+	ApiSpec apiSpec{};
 
 	[[nodiscard]] void Print(std::ostream& stream) const
 	{
@@ -31,6 +31,6 @@ struct FunctionDeclaration
 			<< outType << ','
 			<< inType << ','
 			<< '[' << parameters << ']' << ','
-			<< api << ']';
+			<< apiSpec << ']';
 	}
 };

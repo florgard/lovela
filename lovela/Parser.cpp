@@ -516,11 +516,11 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 	{
 		if (GetCurrent().value == "<-")
 		{
-			node->api = ApiSpec::Export;
+			node->apiSpec = ApiSpec::Export;
 		}
 		else if (GetCurrent().value == "->")
 		{
-			node->api = ApiSpec::Import;
+			node->apiSpec = ApiSpec::Import;
 		}
 
 		if (Accept(Token::Type::LiteralString))
@@ -538,7 +538,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 			{
 				if (validApiTokens.contains(apiToken))
 				{
-					node->api.Set(validApiTokens.at(apiToken));
+					node->apiSpec.Set(validApiTokens.at(apiToken));
 				}
 				else
 				{
