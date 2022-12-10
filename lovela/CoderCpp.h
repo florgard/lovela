@@ -7,14 +7,14 @@ public:
 	CoderCpp() noexcept = default;
 	CoderCpp(OutputT& output) noexcept;
 
-	void InitializeOutput(OutputT& output) noexcept override
+	void InitializeOutput(OutputT& output) noexcept
 	{
 		streamPtr = &output;
 	}
 
 	void Code() noexcept override;
 
-	void Visit(Node& node) noexcept override;
+	void Visit(Node& node) noexcept;
 
 	[[nodiscard]] constexpr OutputT& GetStream() noexcept
 	{
@@ -137,4 +137,3 @@ inline void operator>>(VectorCoderCpp& coder, ICoder::OutputT& output)
 	coder.InitializeOutput(output);
 	coder.Code();
 }
-

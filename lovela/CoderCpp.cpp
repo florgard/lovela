@@ -51,7 +51,7 @@ void CoderCpp::Code() noexcept
 {
 	while (!IsDone())
 	{
-		::Traverse<Node>::DepthFirstPostorder(GetNext(), [this](Node& node) { Visit(node); });
+		Traverse<Node>::DepthFirstPostorder(GetNext(), [this](Node& node) { Visit(node); });
 		Advance();
 	}
 }
