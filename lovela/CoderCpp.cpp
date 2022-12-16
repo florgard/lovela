@@ -80,7 +80,8 @@ void CoderCpp::Visit(Node& node, Context& context)
 void CoderCpp::BeginScope()
 {
 	GetStream() << Indent() << "{\n";
-	indent += '\t';
+	indent += ' ';
+	indent += ' ';
 }
 
 void CoderCpp::EndScope()
@@ -90,7 +91,7 @@ void CoderCpp::EndScope()
 		throw std::exception("Scope begin and end mismatch.");
 	}
 
-	indent.resize(indent.length() - 1);
+	indent.resize(indent.length() - 2);
 	GetStream() << Indent() << "}\n";
 }
 
