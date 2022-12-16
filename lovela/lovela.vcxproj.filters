@@ -2,13 +2,13 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="CoderCpp.cpp">
-      <Filter>CoderCpp</Filter>
+      <Filter>Coder</Filter>
     </ClCompile>
     <ClCompile Include="StandardCDeclarations.cpp">
-      <Filter>CoderCpp</Filter>
+      <Filter>Coder</Filter>
     </ClCompile>
     <ClCompile Include="StandardCppDeclarations.cpp">
-      <Filter>CoderCpp</Filter>
+      <Filter>Coder</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>Main</Filter>
@@ -54,20 +54,20 @@
     <Filter Include="Libraries\fmt">
       <UniqueIdentifier>{5696b848-4614-4a91-9a90-ed73a9ff4334}</UniqueIdentifier>
     </Filter>
-    <Filter Include="CoderCpp">
+    <Filter Include="Coder">
       <UniqueIdentifier>{271e455b-01c2-4c47-9076-26af72095ad5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Utility.h" />
     <ClInclude Include="CoderCpp.h">
-      <Filter>CoderCpp</Filter>
+      <Filter>Coder</Filter>
     </ClInclude>
     <ClInclude Include="StandardCDeclarations.h">
-      <Filter>CoderCpp</Filter>
+      <Filter>Coder</Filter>
     </ClInclude>
     <ClInclude Include="StandardCppDeclarations.h">
-      <Filter>CoderCpp</Filter>
+      <Filter>Coder</Filter>
     </ClInclude>
     <ClInclude Include="Algorithm.h" />
     <ClInclude Include="pch.h">
@@ -188,7 +188,7 @@
       <Filter>Parser</Filter>
     </ClInclude>
     <ClInclude Include="ICoder.h">
-      <Filter>CoderCpp</Filter>
+      <Filter>Coder</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
