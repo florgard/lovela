@@ -67,7 +67,7 @@ void CoderCpp::Visit(Node& node) noexcept
 	}
 }
 
-void CoderCpp::Visit(Node& node, Context& context)
+void CoderCpp::Visit(Context& context, Node& node)
 {
 	auto& v = GetInternalVisitors();
 	auto iter = v.find(node.type);
@@ -551,7 +551,7 @@ void CoderCpp::ImportedFunctionDeclaration(Node& node, Context&)
 
 void CoderCpp::FunctionBody(Node& node, Context& context)
 {
-	if (node.left)
+	if (!node.children.empty())
 	{
 		GetStream() << '\n';
 
@@ -562,7 +562,7 @@ void CoderCpp::FunctionBody(Node& node, Context& context)
 		// Make an indexed reference to the input object and avoid a warning if it's unreferenced.
 		GetStream() << Indent() << "auto& " << LocalVar << ++context.variableIndex << " = in; " << RefVar(LocalVar, context.variableIndex) << ";\n";
 
-		Visit(*node.left, context);
+		Visit(context, node.children);
 
 		if (node.outType.Is(TypeSpec::Kind::None))
 		{
@@ -617,17 +617,14 @@ void CoderCpp::ImportedFunctionBody(Node& node, Context&, const std::vector<std:
 
 void CoderCpp::ExpressionVisitor(Node& node, Context& context)
 {
-	if (node.left)
+	if (!node.children.empty())
 	{
 		BeginAssign(context);
-		Visit(*node.left, context);
+		Visit(context, node.children);
 		EndAssign(context);
 	}
 
-	if (node.right)
-	{
-		Visit(*node.right, context);
-	}
+	Visit(context, node.children, 1);
 }
 
 void CoderCpp::ExpressionInputVisitor(Node&, Context& context)
@@ -642,16 +639,16 @@ void CoderCpp::FunctionCallVisitor(Node& node, Context& context)
 
 	GetStream() << FunctionName(node.value) << "(context";
 
-	if (node.left)
+	if (!node.children.empty())
 	{
 		GetStream() << ", ";
-		Visit(*node.left, context);
+		Visit(context, node.children);
 	}
 
-	if (node.right)
+	if (node.children.size() > 1)
 	{
 		GetStream() << ", ";
-		Visit(*node.right, context);
+		Visit(context, node.children, 1);
 	}
 
 	GetStream() << ')';
@@ -661,7 +658,7 @@ void CoderCpp::FunctionCallVisitor(Node& node, Context& context)
 
 void CoderCpp::BinaryOperationVisitor(Node& node, Context& context)
 {
-	if (!node.left || !node.right)
+	if (node.children.empty())
 	{
 		errors.emplace_back("Child node missing in binary operation.");
 		return;
@@ -669,9 +666,9 @@ void CoderCpp::BinaryOperationVisitor(Node& node, Context& context)
 
 	const bool reset = BeginAssign(context, true);
 
-	Visit(*node.left, context);
+	Visit(context, node.children);
 	GetStream() << ' ' << node.value << ' ';
-	Visit(*node.right, context);
+	Visit(context, node.children, 1);
 
 	EndAssign(context, reset);
 }
@@ -685,20 +682,20 @@ void CoderCpp::LiteralVisitor(Node& node, Context& context)
 
 void CoderCpp::TupleVisitor(Node& node, Context& context)
 {
-	const bool hasLeft = !!node.left;
+	const bool hasLeft = !node.children.empty();
 	if (hasLeft)
 	{
-		Visit(*node.left, context);
+		Visit(context, node.children);
 	}
 
-	if (node.right)
+	if (node.children.size() > 1)
 	{
 		if (hasLeft)
 		{
 			GetStream() << ", ";
 		}
 
-		Visit(*node.right, context);
+		Visit(context, node.children, 1);
 	}
 }
 

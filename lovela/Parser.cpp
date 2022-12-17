@@ -231,8 +231,7 @@ IParser::OutputT Parser::Parse() noexcept
 
 			if (Accept(GetFunctionDeclarationTokens()))
 			{
-				auto p = ParseFunctionDeclaration(currentContext);
-				Node n = std::move(*p);
+				Node n = ParseFunctionDeclaration(currentContext);
 				co_yield n;
 			}
 			else if (Accept(Token::Type::End))
@@ -555,30 +554,30 @@ ApiSpec Parser::ParseExportApiSpec()
 	return apiSpec;
 }
 
-std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> context)
+Node Parser::ParseFunctionDeclaration(std::shared_ptr<Context> context)
 {
-	auto node = make<Node>::unique({ .type = Node::Type::FunctionDeclaration, .token = GetCurrent() });
+	Node node{ .type = Node::Type::FunctionDeclaration, .token = GetCurrent() };
 
 	// <-
 	if (IsToken(Token::Type::OperatorLeftArrow))
 	{
-		node->apiSpec = ParseExportApiSpec();
+		node.apiSpec = ParseExportApiSpec();
 	}
 	// ->
 	else if (IsToken(Token::Type::OperatorRightArrow))
 	{
-		node->apiSpec = ParseImportApiSpec();
+		node.apiSpec = ParseImportApiSpec();
 	}
 
 	// [inType]
 	if (IsToken(GetTypeSpecTokens()))
 	{
-		node->inType = ParseTypeSpec();
+		node.inType = ParseTypeSpec();
 
 		// [inType] identifier
 		if (Accept(Token::Type::Identifier))
 		{
-			node->value = GetCurrent().value;
+			node.value = GetCurrent().value;
 		}
 	}
 	// identifier
@@ -592,7 +591,7 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 		// namespace1/namespaceN/binaryOperator
 		while (Accept(Token::Type::SeparatorSlash))
 		{
-			node->nameSpace.parts.emplace_back(name);
+			node.nameSpace.parts.emplace_back(name);
 
 			// binaryOperator
 			if (Accept(GetBinaryOperatorTokens()))
@@ -609,14 +608,14 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 			}
 		}
 
-		node->value = name;
+		node.value = name;
 
-		context->AddFunctionSymbol(node->GetQualifiedName());
+		context->AddFunctionSymbol(node.GetQualifiedName());
 	}
 	// binaryOperator
 	else if (IsToken(GetBinaryOperatorTokens()))
 	{
-		node->value = GetCurrent().value;
+		node.value = GetCurrent().value;
 	}
 	// :
 	else if (IsToken(Token::Type::SeparatorColon))
@@ -630,32 +629,32 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 	// identifier (parameterList)
 	if (Accept(Token::Type::ParenRoundOpen))
 	{
-		node->parameters = ParseParameterList();
+		node.parameters = ParseParameterList();
 	}
 
 	// identifier [outType]
 	if (Accept(GetTypeSpecTokens()))
 	{
-		node->outType = ParseTypeSpec();
+		node.outType = ParseTypeSpec();
 	}
 
 	// identifier:
 	if (IsToken(Token::Type::SeparatorColon) || Accept(Token::Type::SeparatorColon))
 	{
-		if (node->value.empty())
+		if (node.value.empty())
 		{
 			// The anonymous main function has no output type.
-			node->outType = { .kind = TypeSpec::Kind::None };
+			node.outType = { .kind = TypeSpec::Kind::None };
 		}
 
-		auto innerContext = make<Context>::shared({ .parent = context, .inType = node->inType });
+		auto innerContext = make<Context>::shared({ .parent = context, .inType = node.inType });
 
-		for (const auto& parameter : node->parameters)
+		for (const auto& parameter : node.parameters)
 		{
 			innerContext->AddVariableSymbol(parameter);
 		}
 
-		node->left = ParseExpression(innerContext);
+		node.children.emplace_back(ParseExpression(innerContext));
 	}
 	else if (Accept(Token::Type::SeparatorDot))
 	{
@@ -666,26 +665,26 @@ std::unique_ptr<Node> Parser::ParseFunctionDeclaration(std::shared_ptr<Context> 
 	return node;
 }
 
-std::unique_ptr<Node> Parser::ParseCompoundExpression(std::shared_ptr<Context> context)
+Node Parser::ParseCompoundExpression(std::shared_ptr<Context> context)
 {
 	auto node = ParseExpression(context);
 
 	if (!Peek(GetExpressionTerminatorTokens()))
 	{
-		node->right = ParseCompoundExpression(context);
+		node.children.emplace_back(ParseCompoundExpression(context));
 	}
 
 	return node;
 }
 
-std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
+Node Parser::ParseExpression(std::shared_ptr<Context> context)
 {
 	auto firstToken = GetNext();
 
 	const auto& inType = context->inType;
 	auto innerContext = make<Context>::shared({ .parent = context, .inType = inType });
 
-	std::vector<std::unique_ptr<Node>> nodes;
+	std::vector<Node> nodes;
 
 	for (;;)
 	{
@@ -721,45 +720,47 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 
 	if (nodes.empty())
 	{
-		return make<Node>::unique({ .type = Node::Type::Empty, .token = firstToken });
+		return { .type = Node::Type::Empty, .token = firstToken };
 	}
 
-	auto expression = make<Node>::unique({ .type = Node::Type::Expression, .outType = inType, .token = firstToken, .inType = inType });
-	auto parent = expression.get();
-	std::unique_ptr<Node> right;
+	Node expression{ .type = Node::Type::Expression, .outType = inType, .token = firstToken, .inType = inType };
+	auto parent = &expression;
+	Node right{};
 
 	while (!nodes.empty())
 	{
-		auto node = std::move(nodes.back());
+		Node node = std::move(nodes.back());
 		nodes.pop_back();
 
-		if (GetOperandNodes().contains(node->type))
+		if (GetOperandNodes().contains(node.type))
 		{
 			if (right)
 			{
-				throw UnexpectedTokenException(node->token);
+				throw UnexpectedTokenException(node.token);
 			}
 
 			right = std::move(node);
+			node = {};
 		}
-		else if (GetOperatorNodes().contains(node->type))
+		else if (GetOperatorNodes().contains(node.type))
 		{
 			if (right)
 			{
-				if (node->right)
+				if (node.children.size() > 1)
 				{
-					throw ParseException(node->token, "Attempt to replace an existing right node of an operator");
+					throw ParseException(node.token, "Attempt to replace an existing right node of an operator");
 				}
 
-				node->right = std::move(right);
+				node.children.emplace_back(std::move(right));
+				right = {};
 			}
 
-			parent->left = std::move(node);
-			parent = parent->left.get();
+			parent = &*parent->children.insert(parent->children.begin(), std::move(node));
+			node = {};
 		}
 		else
 		{
-			throw ParseException(node->token, "The expression node stack contains a node that is neither an operand nor an operator.");
+			throw ParseException(node.token, "The expression node stack contains a node that is neither an operand nor an operator.");
 		}
 	}
 
@@ -768,42 +769,43 @@ std::unique_ptr<Node> Parser::ParseExpression(std::shared_ptr<Context> context)
 		// Left-most operand
 		// TODO: Check that default input is implicit and can be discarded?
 
-		if (parent->left)
+		if (!parent->children.empty())
 		{
 			throw ParseException(parent->token, "The parent expression node already has a left hand side operand.");
 		}
 
-		parent->left = std::move(right);
+		parent->children.emplace_back(std::move(right));
+		right = {};
 	}
-	else if (!parent->left || parent->left->type == Node::Type::Empty)
+	else if (parent->children.empty() || (parent->children.size() < 2 && parent->children[0].type != Node::Type::ExpressionInput))
 	{
 		// Default expression input
 		// TODO: Check if the expected in-type is None and the implicit input should be discarded?
 
-		parent->left = make<Node>::unique(Node{ .type = Node::Type::ExpressionInput, .token = firstToken });
+		parent->children.insert(parent->children.begin(), Node{ .type = Node::Type::ExpressionInput, .token = firstToken });
 	}
 
 	expression = ReduceExpression(std::move(expression));
 
 	// The out type of an expression node is the data type of the first child node.
-	if (expression->type == Node::Type::Expression && expression->left)
+	if (expression.type == Node::Type::Expression && !expression.children.empty())
 	{
-		expression->outType = expression->left->outType;
+		expression.outType = expression.children[0].outType;
 	}
 
 	return expression;
 }
 
-std::unique_ptr<Node> Parser::ReduceExpression(std::unique_ptr<Node>&& expression)
+Node Parser::ReduceExpression(Node&& expression)
 {
-	if (expression->type != Node::Type::Expression)
+	if (expression.type != Node::Type::Expression)
 	{
 		// Only expression nodes can be reduced.
 		return expression;
 	}
 
-	const bool leftEmpty = !expression->left || expression->left->type == Node::Type::Empty;
-	const bool rightEmpty = !expression->right || expression->right->type == Node::Type::Empty;
+	const bool leftEmpty = expression.children.empty() || expression.children[0].type == Node::Type::Empty;
+	const bool rightEmpty = expression.children.size() < 2 || expression.children[1].type == Node::Type::Empty;
 
 	if (leftEmpty == rightEmpty)
 	{
@@ -811,15 +813,15 @@ std::unique_ptr<Node> Parser::ReduceExpression(std::unique_ptr<Node>&& expressio
 		return expression;
 	}
 
-	return std::move(leftEmpty ? expression->right : expression->left);
+	return std::move(leftEmpty ? expression.children[1] : expression.children[0]);
 }
 
 // Returns Expression or Tuple
-std::unique_ptr<Node> Parser::ParseGroup(std::shared_ptr<Context> context)
+Node Parser::ParseGroup(std::shared_ptr<Context> context)
 {
 	Assert(Token::Type::ParenRoundOpen);
 
-	auto node = ParseTuple(context);
+	Node node = ParseTuple(context);
 
 	Expect(Token::Type::ParenRoundClose);
 
@@ -827,24 +829,24 @@ std::unique_ptr<Node> Parser::ParseGroup(std::shared_ptr<Context> context)
 }
 
 // Returns Expression or Tuple
-std::unique_ptr<Node> Parser::ParseTuple(std::shared_ptr<Context> context)
+Node Parser::ParseTuple(std::shared_ptr<Context> context)
 {
-	auto node = ParseCompoundExpression(context);
+	Node node = ParseCompoundExpression(context);
 
 	if (Accept(Token::Type::SeparatorComma))
 	{
-		auto tuple = make<Node>::unique({ .type = Node::Type::Tuple, .token = GetCurrent() });
-		tuple->left = std::move(node);
-		tuple->right = ParseTuple(context);
+		Node tuple{ .type = Node::Type::Tuple, .token = GetCurrent() };
+		tuple.children.emplace_back(std::move(node));
+		tuple.children.emplace_back(ParseTuple(context));
 		node = std::move(tuple);
 	}
 
 	return node;
 }
 
-std::unique_ptr<Node> Parser::ParseOperand(std::shared_ptr<Context> context)
+Node Parser::ParseOperand(std::shared_ptr<Context> context)
 {
-	std::unique_ptr<Node> node;
+	Node node;
 
 	if (IsToken(Token::Type::ParenRoundOpen))
 	{
@@ -852,25 +854,20 @@ std::unique_ptr<Node> Parser::ParseOperand(std::shared_ptr<Context> context)
 	}
 	else if (IsToken(GetLiteralTokens()))
 	{
-		node = make<Node>::unique(
-			{
-				.type = Node::Type::Literal,
-				.value = GetCurrent().value,
-				.token = GetCurrent()
-			});
+		node = { .type = Node::Type::Literal, .value = GetCurrent().value, .token = GetCurrent() };
 
 		switch (GetCurrent().type)
 		{
 		case Token::Type::LiteralInteger:
-			node->outType = GetPrimitiveIntegerTypeSpec(GetCurrent().value);
+			node.outType = GetPrimitiveIntegerTypeSpec(GetCurrent().value);
 			break;
 
 		case Token::Type::LiteralDecimal:
-			node->outType = GetPrimitiveDecimalTypeSpec(GetCurrent().value);
+			node.outType = GetPrimitiveDecimalTypeSpec(GetCurrent().value);
 			break;
 
 		case Token::Type::LiteralString:
-			node->outType = TypeSpec{ .kind = TypeSpec::Kind::Primitive, .arrayDims{0}, .primitive{.bits = 8, .signedType = true} };
+			node.outType = TypeSpec{ .kind = TypeSpec::Kind::Primitive, .arrayDims{0}, .primitive{.bits = 8, .signedType = true} };
 		}
 	}
 	else
@@ -881,32 +878,32 @@ std::unique_ptr<Node> Parser::ParseOperand(std::shared_ptr<Context> context)
 	return node;
 }
 
-std::unique_ptr<Node> Parser::ParseFunctionCall(std::shared_ptr<Context> context)
+Node Parser::ParseFunctionCall(std::shared_ptr<Context> context)
 {
 	Assert(Token::Type::Identifier);
 
-	auto node = make<Node>::unique({ .type = Node::Type::FunctionCall, .value = GetCurrent().value, .token = GetCurrent() });
+	Node node{ .type = Node::Type::FunctionCall, .value = GetCurrent().value, .token = GetCurrent() };
 
 	// TODO: nameSpace
 
 	if (Accept(Token::Type::ParenRoundOpen))
 	{
-		node->right = ParseGroup(context);
+		node.children.emplace_back(ParseGroup(context));
 	}
 
 	return node;
 }
 
-std::unique_ptr<Node> Parser::ParseBinaryOperation(std::shared_ptr<Context> context)
+Node Parser::ParseBinaryOperation(std::shared_ptr<Context> context)
 {
 	Assert(GetBinaryOperatorTokens());
 
-	return make<Node>::unique({ .type = Node::Type::BinaryOperation, .value = GetCurrent().value, .token = GetCurrent() });
+	return { .type = Node::Type::BinaryOperation, .value = GetCurrent().value, .token = GetCurrent() };
 }
 
-std::unique_ptr<Node> Parser::ParseVariableReference(std::shared_ptr<Context> context)
+Node Parser::ParseVariableReference(std::shared_ptr<Context> context)
 {
 	Assert(Token::Type::Identifier);
 
-	return make<Node>::unique({ .type = Node::Type::VariableReference, .value = GetCurrent().value, .token = GetCurrent() });
+	return { .type = Node::Type::VariableReference, .value = GetCurrent().value, .token = GetCurrent() };
 }

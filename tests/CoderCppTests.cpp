@@ -606,8 +606,8 @@ suite CoderCpp_function_declaration_tests = [] {
 		));
 	};
 
-	"trivial function"_test = [] { 
-		expect(s_test.Success("trivial function", 
+	"increment function"_test = [] { 
+		expect(s_test.Success("increment function", 
 			"func: + 1.", 
 			R"cpp(
 auto f_func(lovela::context& context, auto in)

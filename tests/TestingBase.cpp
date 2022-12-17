@@ -23,21 +23,18 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& node, const 
 
 	index++;
 
-	// Fail if one pointer is set but not the other
-	if (!!node.left != !!expectedNode.left || !!node.right != !!expectedNode.right)
+	if (node.children.size() != expectedNode.children.size())
 	{
 		failingToken = node.token;
 		return false;
 	}
 
-	if (node.left && !TestAST(index, name, *node.left, *expectedNode.left, failingToken))
+	for (size_t i = 0, c = node.children.size(); i < c; ++i)
 	{
-		return false;
-	}
-
-	if (node.right && !TestAST(index, name, *node.right, *expectedNode.right, failingToken))
-	{
-		return false;
+		if (!TestAST(index, name, node.children[i], expectedNode.children[i], failingToken))
+		{
+			return false;
+		}
 	}
 
 	return true;
@@ -71,13 +68,9 @@ void TestingBase::PrintAST(int& index, const Node& node, int indent)
 
 	++index;
 
-	if (node.left)
+	for (auto& child : node.children)
 	{
-		PrintAST(index, *node.left, indent + 1);
-	}
-	if (node.right)
-	{
-		PrintAST(index, *node.right, indent + 1);
+		PrintAST(index, child, indent + 1);
 	}
 
 	PrintIndent(indent);

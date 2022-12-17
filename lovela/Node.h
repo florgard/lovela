@@ -36,8 +36,7 @@ struct Node
 	// Function call
 	std::shared_ptr<FunctionDeclaration> callee;
 
-	std::unique_ptr<Node> left;
-	std::unique_ptr<Node> right;
+	std::vector<Node> children;
 
 	struct Error
 	{

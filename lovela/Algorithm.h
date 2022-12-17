@@ -174,25 +174,17 @@ struct Traverse
 	{
 		visitor(tree);
 
-		if (tree.left)
+		for (auto& child : tree.children)
 		{
-			DepthFirstPreorder(*tree.left, visitor);
-		}
-		if (tree.right)
-		{
-			DepthFirstPreorder(*tree.right, visitor);
+			DepthFirstPreorder(child, visitor);
 		}
 	}
 
 	static constexpr void DepthFirstPostorder(NodeT& tree, std::function<void(NodeT& node)> visitor) noexcept
 	{
-		if (tree.left)
+		for (auto& child : tree.children)
 		{
-			DepthFirstPostorder(*tree.left, visitor);
-		}
-		if (tree.right)
-		{
-			DepthFirstPostorder(*tree.right, visitor);
+			DepthFirstPostorder(child, visitor);
 		}
 
 		visitor(tree);

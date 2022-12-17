@@ -222,7 +222,7 @@ suite parser_function_declaration_other_types_tests = [] {
 		expect(parserTest.YieldsNodes("function with empty body",
 			"func:.",
 			Node{ .type = Node::Type::FunctionDeclaration, .value = "func",
-			.left = make<Node>::unique({.type = Node::Type::Empty})
+			.children{{.type = Node::Type::Empty}}
 			}
 		));
 	};
@@ -335,25 +335,25 @@ suite parser_binary_operator_tests = [] {
 
 suite parser_function_body_tests = [] {
 	"function with trivial body"_test = [] {
-		auto fc = Node{ .type = Node::Type::FunctionCall, .value = "body", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
-		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .left = make<Node>::unique(fc) };
+		auto fc = Node{ .type = Node::Type::FunctionCall, .value = "body", .children{{.type = Node::Type::ExpressionInput}} };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .children{fc} };
 		expect(parserTest.YieldsNodes("function with trivial body",
 			"func: body.",
 			fd));
 	};
 
 	"function with 2 chained calls"_test = [] {
-		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = "inner", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
-		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = "outer", .left = make<Node>::unique(fc2) };
-		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .left = make<Node>::unique(fc1) };
+		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = "inner", .children{{.type = Node::Type::ExpressionInput}} };
+		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = "outer", .children{fc2} };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .children{fc1} };
 		expect(parserTest.YieldsNodes("function with 2 chained calls",
 			"func: inner outer.",
 			fd));
 	};
 
 	"function with group"_test = [] {
-		auto fc = Node{ .type = Node::Type::FunctionCall, .value = "body", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
-		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .left = make<Node>::unique(fc) };
+		auto fc = Node{ .type = Node::Type::FunctionCall, .value = "body", .children{{.type = Node::Type::ExpressionInput}} };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .children{fc} };
 		expect(parserTest.YieldsNodes("function with group",
 			"func: (body).",
 			fd));
@@ -363,66 +363,66 @@ suite parser_function_body_tests = [] {
 			};
 
 	"function with compound expression"_test = [] {
-		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = "expr2", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
-		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = "expr1", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}), .right = make<Node>::unique(fc2) };
-		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .left = make<Node>::unique(fc1) };
+		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = "expr2", .children{{.type = Node::Type::ExpressionInput}} };
+		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = "expr1", .children{{.type = Node::Type::ExpressionInput}, fc2} };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .children{fc1} };
 		expect(parserTest.YieldsNodes("function with compound expression",
 			"func: (expr1. expr2).",
 			fd));
 	};
 
 	"function with tuple"_test = [] {
-		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = "expr2", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
-		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = "expr1", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
-		auto t = Node{ .type = Node::Type::Tuple, .left = make<Node>::unique(fc1), .right = make<Node>::unique(fc2) };
-		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .left = make<Node>::unique(t) };
+		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = "expr2", .children{{.type = Node::Type::ExpressionInput}} };
+		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = "expr1", .children{{.type = Node::Type::ExpressionInput}} };
+		auto t = Node{ .type = Node::Type::Tuple, .children{fc1, fc2} };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .children{t} };
 		expect(parserTest.YieldsNodes("function with tuple",
 			"func: (expr1, expr2).",
 			fd));
 	};
 
 	"function with triple"_test = [] {
-		auto fc3 = Node{ .type = Node::Type::FunctionCall, .value = "expr3", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
-		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = "expr2", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
-		auto t2 = Node{ .type = Node::Type::Tuple, .left = make<Node>::unique(fc2), .right = make<Node>::unique(fc3) };
-		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = "expr1", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
-		auto t1 = Node{ .type = Node::Type::Tuple, .left = make<Node>::unique(fc1), .right = make<Node>::unique(t2) };
-		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .left = make<Node>::unique(t1) };
+		auto fc3 = Node{ .type = Node::Type::FunctionCall, .value = "expr3", .children{{.type = Node::Type::ExpressionInput}} };
+		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = "expr2", .children{{.type = Node::Type::ExpressionInput}} };
+		auto t2 = Node{ .type = Node::Type::Tuple, .children{fc2, fc3} };
+		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = "expr1", .children{{.type = Node::Type::ExpressionInput}} };
+		auto t1 = Node{ .type = Node::Type::Tuple, .children{fc1, t2} };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .children{t1} };
 		expect(parserTest.YieldsNodes("function with triple",
 			"func: (expr1, expr2, expr3).",
 			fd));
 	};
 
 	"function with tuple and compound expression"_test = [] {
-		auto fc3 = Node{ .type = Node::Type::FunctionCall, .value = "expr2b", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
-		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = "expr2a", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}), .right = make<Node>::unique(fc3) };
-		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = "expr1", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
-		auto t = Node{ .type = Node::Type::Tuple, .left = make<Node>::unique(fc1), .right = make<Node>::unique(fc2) };
-		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .left = make<Node>::unique(t) };
+		auto fc3 = Node{ .type = Node::Type::FunctionCall, .value = "expr2b", .children{{.type = Node::Type::ExpressionInput}} };
+		auto fc2 = Node{ .type = Node::Type::FunctionCall, .value = "expr2a", .children{{.type = Node::Type::ExpressionInput}, fc3} };
+		auto fc1 = Node{ .type = Node::Type::FunctionCall, .value = "expr1", .children{{.type = Node::Type::ExpressionInput}} };
+		auto t = Node{ .type = Node::Type::Tuple, .children{fc1, fc2} };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .children{t} };
 		expect(parserTest.YieldsNodes("function with tuple and compound expression",
 			"func: (expr1, expr2a. expr2b).",
 			fd));
 	};
 
 	"function with parameters and body"_test = [] {
-		auto fc = Node{ .type = Node::Type::FunctionCall, .value = "doWork", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto fc = Node{ .type = Node::Type::FunctionCall, .value = "doWork", .children{{.type = Node::Type::ExpressionInput}} };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .parameters{
 				make<VariableDeclaration>::shared({.name = "name_only"}),
 				make<VariableDeclaration>::shared({.name = "name", .type{.kind = TypeSpec::Kind::Named, .name = "type"}}),
 				make<VariableDeclaration>::shared({.type{.kind = TypeSpec::Kind::Named, .name = "type_only"}})
-			}, .left = make<Node>::unique(fc) };
+			}, .children{fc} };
 		expect(parserTest.YieldsNodes("function with parameters and body",
 			"func(name_only, name [type], [type_only]): doWork.",
 			fd));
 	};
 
 	"function without object but with parameters and body"_test = [] {
-		auto fc = Node{ .type = Node::Type::FunctionCall, .value = "doWork", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
+		auto fc = Node{ .type = Node::Type::FunctionCall, .value = "doWork", .children{{.type = Node::Type::ExpressionInput}} };
 		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .inType = {.kind = TypeSpec::Kind::None}, .parameters{
 				make<VariableDeclaration>::shared({.name = "name_only"}),
 				make<VariableDeclaration>::shared({.name = "name", .type{.kind = TypeSpec::Kind::Named, .name = "type"}}),
 				make<VariableDeclaration>::shared({.type{.kind = TypeSpec::Kind::Named, .name = "type_only"}})
-			}, .left = make<Node>::unique(fc) };
+			}, .children{fc} };
 		expect(parserTest.YieldsNodes("function without object but with parameters and body",
 			"[()] func(name_only, name [type], [type_only]): doWork.",
 			fd));
@@ -430,11 +430,20 @@ suite parser_function_body_tests = [] {
 
 	"binary operation with function call"_test = [] {
 		auto l = Node{ .type = Node::Type::Literal, .value = "1", .outType{ .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 8, .signedType = true }} };
-		auto fc = Node{ .type = Node::Type::FunctionCall, .value = "call", .left = make<Node>::unique(Node{.type = Node::Type::ExpressionInput}) };
-		auto bo = Node{ .type = Node::Type::BinaryOperation, .value = "+", .left = make<Node>::unique(fc), .right = make<Node>::unique(l) };
-		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .left = make<Node>::unique(bo) };
+		auto fc = Node{ .type = Node::Type::FunctionCall, .value = "call", .children{{.type = Node::Type::ExpressionInput}} };
+		auto bo = Node{ .type = Node::Type::BinaryOperation, .value = "+", .children{fc, l} };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .children{bo} };
 		expect(parserTest.YieldsNodes("binary operation with function call",
 			"func: call + 1.",
+			fd));
+	};
+
+	"increment function"_test = [] {
+		auto l = Node{ .type = Node::Type::Literal, .value = "1", .outType{.kind = TypeSpec::Kind::Primitive, .primitive{.bits = 8, .signedType = true }} };
+		auto bo = Node{ .type = Node::Type::BinaryOperation, .value = "+", .children{{.type = Node::Type::ExpressionInput}, l} };
+		auto fd = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .children{bo} };
+		expect(parserTest.YieldsNodes("increment function",
+			"func: + 1.",
 			fd));
 	};
 };

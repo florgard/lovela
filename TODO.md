@@ -2,8 +2,6 @@
 
 ## Small
 
-Use vector of child nodes?
-
 /type/bool
 
 Bind operator
