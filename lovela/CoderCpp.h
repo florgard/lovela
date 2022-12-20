@@ -16,16 +16,6 @@ public:
 
 	void Visit(Node& node) noexcept;
 
-	[[nodiscard]] constexpr OutputT& GetStream() noexcept
-	{
-		return *streamPtr;
-	}
-
-	[[nodiscard]] constexpr const OutputT& GetStream() const noexcept
-	{
-		return *streamPtr;
-	}
-
 	[[nodiscard]] const std::vector<std::string>& GetErrors() const noexcept
 	{
 		return errors;
@@ -62,6 +52,17 @@ private:
 		}
 	}
 
+	[[nodiscard]] constexpr OutputT& GetStream() noexcept
+	{
+		return *streamPtr;
+	}
+
+	[[nodiscard]] OutputT& Indent() noexcept
+	{
+		*streamPtr << indent;
+		return *streamPtr;
+	}
+
 	void FunctionDeclarationVisitor(Node& node, Context& context);
 	void ExpressionVisitor(Node& node, Context& context);
 	void ExpressionInputVisitor(Node& node, Context& context);
@@ -80,7 +81,6 @@ private:
 
 	void BeginScope();
 	void EndScope();
-	const std::string& Indent() const { return indent; }
 	void BeginAssign(Context& context);
 	bool BeginAssign(Context& context, bool set);
 	void EndAssign(Context& context);

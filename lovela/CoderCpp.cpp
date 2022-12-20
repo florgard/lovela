@@ -79,7 +79,7 @@ void CoderCpp::Visit(Context& context, Node& node)
 
 void CoderCpp::BeginScope()
 {
-	GetStream() << Indent() << "{\n";
+	Indent() << "{\n";
 	indent += ' ';
 	indent += ' ';
 }
@@ -92,7 +92,7 @@ void CoderCpp::EndScope()
 	}
 
 	indent.resize(indent.length() - 2);
-	GetStream() << Indent() << "}\n";
+	Indent() << "}\n";
 }
 
 void CoderCpp::ErrorVisitor(Node& node, Context&)
@@ -147,7 +147,7 @@ void CoderCpp::FunctionDeclarationVisitor(Node& node, Context& context)
 
 	if (!templateParameters.empty())
 	{
-		GetStream() << Indent() << "template <";
+		Indent() << "template <";
 
 		index = 0;
 		for (auto& param : templateParameters)
@@ -159,7 +159,7 @@ void CoderCpp::FunctionDeclarationVisitor(Node& node, Context& context)
 		GetStream() << ">\n";
 	}
 
-	GetStream() << Indent() << outType.name << ' ' << FunctionName(node.value) << "(lovela::context& context";
+	Indent() << outType.name << ' ' << FunctionName(node.value) << "(lovela::context& context";
 
 	for (auto& parameter : parameters)
 	{
@@ -409,16 +409,16 @@ void CoderCpp::ExportedFunctionDeclaration(Node& node, Context&)
 
 	BeginScope();
 
-	GetStream() << Indent() << "lovela::context context;\n";
+	Indent() << "lovela::context context;\n";
 
 	if (inType.Is(TypeSpec::Kind::None))
 	{
-		GetStream() << Indent() << TypeNames::none << " in;\n";
+		Indent() << TypeNames::none << " in;\n";
 	}
 
 	// Call the actual function
 
-	GetStream() << Indent() << (node.outType.Is(TypeSpec::Kind::None) ? "" : "return ") << FunctionName(node.value) << "(context";
+	Indent() << (node.outType.Is(TypeSpec::Kind::None) ? "" : "return ") << FunctionName(node.value) << "(context";
 
 	if (inType.Is(TypeSpec::Kind::None))
 	{
@@ -557,20 +557,20 @@ void CoderCpp::FunctionBody(Node& node, Context& context)
 
 		BeginScope();
 
-		GetStream() << Indent() << "static_cast<void>(context);\n";
+		Indent() << "static_cast<void>(context);\n";
 
 		// Make an indexed reference to the input object and avoid a warning if it's unreferenced.
-		GetStream() << Indent() << "auto& " << LocalVar << ++context.variableIndex << " = in; " << RefVar(LocalVar, context.variableIndex) << ";\n";
+		Indent() << "auto& " << LocalVar << ++context.variableIndex << " = in; " << RefVar(LocalVar, context.variableIndex) << ";\n";
 
 		Visit(context, node.children);
 
 		if (node.outType.Is(TypeSpec::Kind::None))
 		{
-			GetStream() << Indent() << "return {};\n";
+			Indent() << "return {};\n";
 		}
 		else
 		{
-			GetStream() << Indent() << "return " << LocalVar << context.variableIndex << ";\n";
+			Indent() << "return " << LocalVar << context.variableIndex << ";\n";
 		}
 
 		EndScope();
@@ -587,9 +587,7 @@ void CoderCpp::ImportedFunctionBody(Node& node, Context&, const std::vector<std:
 
 	BeginScope();
 
-	GetStream() << Indent() << "static_cast<void>(context);\n";;
-
-	GetStream() << Indent();
+	Indent() << "static_cast<void>(context);\n";;
 
 	if (!node.outType.Is(TypeSpec::Kind::None))
 	{
@@ -708,7 +706,7 @@ void CoderCpp::BeginAssign(Context& context)
 {
 	if (!context.inner)
 	{
-		GetStream() << Indent() << "const auto " << LocalVar << ++context.variableIndex << " = ";
+		Indent() << "const auto " << LocalVar << ++context.variableIndex << " = ";
 	}
 }
 
@@ -778,5 +776,5 @@ void CoderCpp::GenerateProgramFile(std::ostream& file) const
 #include "lovela-program.h"
 )cpp";
 
-	file << GetStream().rdbuf();
+	file << streamPtr->rdbuf();
 }
