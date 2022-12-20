@@ -152,21 +152,21 @@ void CoderCpp::FunctionDeclarationVisitor(Node& node, Context& context)
 		index = 0;
 		for (auto& param : templateParameters)
 		{
-			GetStream() << (index++ ? ", " : "");
-			GetStream() << "typename " << param;
+			Cursor() << (index++ ? ", " : "");
+			Cursor() << "typename " << param;
 		}
 
-		GetStream() << '>';
+		Cursor() << '>';
 	}
 
 	Scope() << outType.name << ' ' << FunctionName(node.value) << "(lovela::context& context";
 
 	for (auto& parameter : parameters)
 	{
-		GetStream() << ", " << parameter.first << ' ' << parameter.second;
+		Cursor() << ", " << parameter.first << ' ' << parameter.second;
 	}
 
-	GetStream() << ')';
+	Cursor() << ')';
 
 	if (node.apiSpec.Is(ApiSpec::Import))
 	{
@@ -419,15 +419,15 @@ void CoderCpp::ExportedFunctionDeclaration(Node& node, Context&)
 
 	if (inType.Is(TypeSpec::Kind::None))
 	{
-		GetStream() << ", in";
+		Cursor() << ", in";
 	}
 
 	for (auto& parameter : parameters)
 	{
-		GetStream() << ", " << parameter.second;
+		Cursor() << ", " << parameter.second;
 	}
 
-	GetStream() << ");";
+	Cursor() << ");";
 
 	EndScope();
 }
@@ -525,23 +525,23 @@ void CoderCpp::ImportedFunctionDeclaration(Node& node, Context&)
 
 	if (node.apiSpec.Is(ApiSpec::C))
 	{
-		GetStream() << "LOVELA_API_C ";
+		Cursor() << "LOVELA_API_C ";
 	}
 	else if (node.apiSpec.Is(ApiSpec::Cpp))
 	{
-		GetStream() << "LOVELA_API_CPP ";
+		Cursor() << "LOVELA_API_CPP ";
 	}
 
 	if (node.apiSpec.Is(ApiSpec::Dynamic | ApiSpec::Import))
 	{
-		GetStream() << "LOVELA_API_DYNAMIC_IMPORT ";
+		Cursor() << "LOVELA_API_DYNAMIC_IMPORT ";
 	}
 	else if (node.apiSpec.Is(ApiSpec::Dynamic | ApiSpec::Export))
 	{
-		GetStream() << "LOVELA_API_DYNAMIC_EXPORT ";
+		Cursor() << "LOVELA_API_DYNAMIC_EXPORT ";
 	}
 
-	GetStream() << signature << ";";
+	Cursor() << signature << ';';
 }
 
 void CoderCpp::FunctionBody(Node& node, Context& context)
@@ -572,7 +572,7 @@ void CoderCpp::FunctionBody(Node& node, Context& context)
 	}
 	else
 	{
-		GetStream() << ';';
+		Cursor() << ';';
 	}
 }
 
@@ -587,16 +587,16 @@ void CoderCpp::ImportedFunctionBody(Node& node, Context&, const std::vector<std:
 		Scope() << "return ";
 	}
 
-	GetStream() << node.value << '(';
+	Cursor() << node.value << '(';
 
 	size_t index = 0;
 	for (auto& parameter : parameters)
 	{
-		GetStream() << (index++ ? ", " : "");
-		GetStream() << parameter.second;
+		Cursor() << (index++ ? ", " : "");
+		Cursor() << parameter.second;
 	}
 
-	GetStream() << ");";
+	Cursor() << ");";
 
 	if (node.outType.Is(TypeSpec::Kind::None))
 	{
@@ -623,28 +623,28 @@ void CoderCpp::ExpressionVisitor(Node& node, Context& context)
 void CoderCpp::ExpressionInputVisitor(Node&, Context& context)
 {
 	// The input of an expression is the output of the previous expression.
-	GetStream() << LocalVar << (context.variableIndex - 1);
+	Cursor() << LocalVar << (context.variableIndex - 1);
 }
 
 void CoderCpp::FunctionCallVisitor(Node& node, Context& context)
 {
 	const auto reset = BeginAssign(context, true);
 
-	GetStream() << FunctionName(node.value) << "(context";
+	Cursor() << FunctionName(node.value) << "(context";
 
 	if (!node.children.empty())
 	{
-		GetStream() << ", ";
+		Cursor() << ", ";
 		Visit(context, node.children);
 	}
 
 	if (node.children.size() > 1)
 	{
-		GetStream() << ", ";
+		Cursor() << ", ";
 		Visit(context, node.children, 1);
 	}
 
-	GetStream() << ')';
+	Cursor() << ')';
 
 	EndAssign(context, reset);
 }
@@ -660,7 +660,7 @@ void CoderCpp::BinaryOperationVisitor(Node& node, Context& context)
 	const bool reset = BeginAssign(context, true);
 
 	Visit(context, node.children);
-	GetStream() << ' ' << node.value << ' ';
+	Cursor() << ' ' << node.value << ' ';
 	Visit(context, node.children, 1);
 
 	EndAssign(context, reset);
@@ -669,7 +669,7 @@ void CoderCpp::BinaryOperationVisitor(Node& node, Context& context)
 void CoderCpp::LiteralVisitor(Node& node, Context& context)
 {
 	BeginAssign(context);
-	GetStream() << (node.token.type == Token::Type::LiteralString ? double_quote(node.value) : node.value);
+	Cursor() << (node.token.type == Token::Type::LiteralString ? double_quote(node.value) : node.value);
 	EndAssign(context);
 }
 
@@ -685,7 +685,7 @@ void CoderCpp::TupleVisitor(Node& node, Context& context)
 	{
 		if (hasLeft)
 		{
-			GetStream() << ", ";
+			Cursor() << ", ";
 		}
 
 		Visit(context, node.children, 1);
@@ -694,7 +694,7 @@ void CoderCpp::TupleVisitor(Node& node, Context& context)
 
 void CoderCpp::VariableReferenceVisitor(Node& node, Context&)
 {
-	GetStream() << ParameterName(node.value);
+	Cursor() << ParameterName(node.value);
 }
 
 void CoderCpp::BeginAssign(Context& context)
@@ -718,7 +718,7 @@ void CoderCpp::EndAssign(Context& context)
 {
 	if (!context.inner)
 	{
-		GetStream() << "; " << RefVar(LocalVar, context.variableIndex) << ';';
+		Cursor() << "; " << RefVar(LocalVar, context.variableIndex) << ';';
 	}
 }
 

@@ -52,7 +52,7 @@ private:
 		}
 	}
 
-	[[nodiscard]] constexpr OutputT& GetStream() noexcept
+	[[nodiscard]] constexpr OutputT& Cursor() noexcept
 	{
 		return *streamPtr;
 	}
