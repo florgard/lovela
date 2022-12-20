@@ -521,7 +521,7 @@ void CoderCpp::ImportedFunctionDeclaration(Node& node, Context&)
 
 	// Declare import
 
-	Scope() << "";
+	NewLine();
 
 	if (node.apiSpec.Is(ApiSpec::C))
 	{
@@ -568,7 +568,7 @@ void CoderCpp::FunctionBody(Node& node, Context& context)
 
 		EndScope();
 
-		Scope() << "";
+		NewLine();
 	}
 	else
 	{
@@ -605,7 +605,7 @@ void CoderCpp::ImportedFunctionBody(Node& node, Context&, const std::vector<std:
 
 	EndScope();
 
-	Scope() << "";
+	NewLine();
 }
 
 void CoderCpp::ExpressionVisitor(Node& node, Context& context)

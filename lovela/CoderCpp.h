@@ -63,6 +63,12 @@ private:
 		return *streamPtr;
 	}
 
+	OutputT& NewLine() noexcept
+	{
+		*streamPtr << '\n';
+		return *streamPtr;
+	}
+
 	void FunctionDeclarationVisitor(Node& node, Context& context);
 	void ExpressionVisitor(Node& node, Context& context);
 	void ExpressionInputVisitor(Node& node, Context& context);
