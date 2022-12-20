@@ -163,7 +163,7 @@ void CoderCpp::FunctionDeclarationVisitor(Node& node, Context& context)
 
 	for (auto& parameter : parameters)
 	{
-		Cursor() << ", " << parameter.first << ' ' << parameter.second;
+		Cursor() << ',' << ' ' << parameter.first << ' ' << parameter.second;
 	}
 
 	Cursor() << ')';
@@ -424,7 +424,7 @@ void CoderCpp::ExportedFunctionDeclaration(Node& node, Context&)
 
 	for (auto& parameter : parameters)
 	{
-		Cursor() << ", " << parameter.second;
+		Cursor() << ',' << ' ' << parameter.second;
 	}
 
 	Cursor() << ");";
@@ -596,7 +596,7 @@ void CoderCpp::ImportedFunctionBody(Node& node, Context&, const std::vector<std:
 		Cursor() << parameter.second;
 	}
 
-	Cursor() << ");";
+	Cursor() << ')' << ';';
 
 	if (node.outType.Is(TypeSpec::Kind::None))
 	{
@@ -634,13 +634,13 @@ void CoderCpp::FunctionCallVisitor(Node& node, Context& context)
 
 	if (!node.children.empty())
 	{
-		Cursor() << ", ";
+		Cursor() << ',' << ' ';
 		Visit(context, node.children);
 	}
 
 	if (node.children.size() > 1)
 	{
-		Cursor() << ", ";
+		Cursor() << ',' << ' ';
 		Visit(context, node.children, 1);
 	}
 
@@ -685,7 +685,7 @@ void CoderCpp::TupleVisitor(Node& node, Context& context)
 	{
 		if (hasLeft)
 		{
-			Cursor() << ", ";
+			Cursor() << ',' << ' ';
 		}
 
 		Visit(context, node.children, 1);
