@@ -151,7 +151,11 @@ void CoderCpp::FunctionDeclarationVisitor(Node& node, Context& context)
 		index = 0;
 		for (auto& param : templateParameters)
 		{
-			Cursor() << (index++ ? ", " : "");
+			if (index++)
+			{
+				Cursor() << ',' << ' ';
+			}
+
 			Cursor() << "typename " << param;
 		}
 
@@ -370,7 +374,12 @@ void CoderCpp::ExportedFunctionDeclaration(Node& node, Context&)
 	index = 0;
 	for (auto& parameter : parameters)
 	{
-		ss << (index++ ? ", " : "") << parameter.first << ' ' << parameter.second;
+		if (index++)
+		{
+			ss << ',' << ' ';
+		}
+
+		ss << parameter.first << ' ' << parameter.second;
 	}
 
 	ss << ')';
@@ -426,7 +435,7 @@ void CoderCpp::ExportedFunctionDeclaration(Node& node, Context&)
 		Cursor() << ',' << ' ' << parameter.second;
 	}
 
-	Cursor() << ");";
+	Cursor() << ')' << ';';
 
 	EndScope();
 }
@@ -511,7 +520,12 @@ void CoderCpp::ImportedFunctionDeclaration(Node& node, Context&)
 	index = 0;
 	for (auto& parameter : parameters)
 	{
-		ss << (index++ ? ", " : "") << parameter.first << ' ' << parameter.second;
+		if (index++)
+		{
+			ss << ',' << ' ';
+		}
+
+		ss << parameter.first << ' ' << parameter.second;
 	}
 
 	ss << ')';
@@ -591,7 +605,11 @@ void CoderCpp::ImportedFunctionBody(Node& node, Context&, const std::vector<std:
 	size_t index = 0;
 	for (auto& parameter : parameters)
 	{
-		Cursor() << (index++ ? ", " : "");
+		if (index++)
+		{
+			Cursor() << ',' << ' ';
+		}
+
 		Cursor() << parameter.second;
 	}
 
