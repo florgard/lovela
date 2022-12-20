@@ -59,7 +59,11 @@ private:
 
 	[[nodiscard]] OutputT& Scope() noexcept
 	{
-		*streamPtr << '\n' << indent;
+		*streamPtr << '\n';
+		for (size_t i = 0; i < indent; ++i)
+		{
+			*streamPtr << ' ' << ' ';
+		}
 		return *streamPtr;
 	}
 
@@ -110,7 +114,7 @@ private:
 	static const TypeSpec& GetVoidPtrType();
 
 	OutputT* streamPtr{};
-	std::string indent;
+	size_t indent;
 	std::vector<std::string> errors;
 	std::vector<std::string> headers;
 	std::vector<std::string> exports;

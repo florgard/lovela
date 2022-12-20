@@ -80,18 +80,17 @@ void CoderCpp::Visit(Context& context, Node& node)
 void CoderCpp::BeginScope()
 {
 	Scope() << '{';
-	indent += ' ';
-	indent += ' ';
+	++indent;
 }
 
 void CoderCpp::EndScope()
 {
-	if (indent.empty())
+	if (!indent)
 	{
 		throw std::exception("Scope begin and end mismatch.");
 	}
 
-	indent.resize(indent.length() - 2);
+	--indent;
 	Scope() << '}';
 }
 
