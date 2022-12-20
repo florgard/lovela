@@ -57,7 +57,7 @@ private:
 		return *streamPtr;
 	}
 
-	[[nodiscard]] OutputT& Indent() noexcept
+	[[nodiscard]] OutputT& Scope() noexcept
 	{
 		*streamPtr << '\n' << indent;
 		return *streamPtr;

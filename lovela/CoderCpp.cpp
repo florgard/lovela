@@ -79,7 +79,7 @@ void CoderCpp::Visit(Context& context, Node& node)
 
 void CoderCpp::BeginScope()
 {
-	Indent() << '{';
+	Scope() << '{';
 	indent += ' ';
 	indent += ' ';
 }
@@ -92,12 +92,12 @@ void CoderCpp::EndScope()
 	}
 
 	indent.resize(indent.length() - 2);
-	Indent() << '}';
+	Scope() << '}';
 }
 
 void CoderCpp::ErrorVisitor(Node& node, Context&)
 {
-	Indent() << "/* " << to_string(node.error.code) << ": " << node.error.message << " */";
+	Scope() << "/* " << to_string(node.error.code) << ": " << node.error.message << " */";
 }
 
 void CoderCpp::FunctionDeclarationVisitor(Node& node, Context& context)
@@ -147,7 +147,7 @@ void CoderCpp::FunctionDeclarationVisitor(Node& node, Context& context)
 
 	if (!templateParameters.empty())
 	{
-		Indent() << "template <";
+		Scope() << "template <";
 
 		index = 0;
 		for (auto& param : templateParameters)
@@ -159,7 +159,7 @@ void CoderCpp::FunctionDeclarationVisitor(Node& node, Context& context)
 		GetStream() << '>';
 	}
 
-	Indent() << outType.name << ' ' << FunctionName(node.value) << "(lovela::context& context";
+	Scope() << outType.name << ' ' << FunctionName(node.value) << "(lovela::context& context";
 
 	for (auto& parameter : parameters)
 	{
@@ -193,7 +193,7 @@ void CoderCpp::MainFunctionDeclaration(Node& node, Context& context)
 		//node.outType = { .kind = TypeSpec::Kind::None };
 	}
 
-	Indent() << TypeNames::none << ' ' << "lovela::main(lovela::context& context, " << TypeNames::none << " in)";
+	Scope() << TypeNames::none << ' ' << "lovela::main(lovela::context& context, " << TypeNames::none << " in)";
 	FunctionBody(node, context);
 }
 
@@ -402,20 +402,20 @@ void CoderCpp::ExportedFunctionDeclaration(Node& node, Context&)
 
 	// Define the exported function wrapper
 
-	Indent() << signature;
+	Scope() << signature;
 
 	BeginScope();
 
-	Indent() << "lovela::context context;";
+	Scope() << "lovela::context context;";
 
 	if (inType.Is(TypeSpec::Kind::None))
 	{
-		Indent() << TypeNames::none << " in;";
+		Scope() << TypeNames::none << " in;";
 	}
 
 	// Call the actual function
 
-	Indent() << (node.outType.Is(TypeSpec::Kind::None) ? "" : "return ") << FunctionName(node.value) << "(context";
+	Scope() << (node.outType.Is(TypeSpec::Kind::None) ? "" : "return ") << FunctionName(node.value) << "(context";
 
 	if (inType.Is(TypeSpec::Kind::None))
 	{
@@ -521,7 +521,7 @@ void CoderCpp::ImportedFunctionDeclaration(Node& node, Context&)
 
 	// Declare import
 
-	Indent() << "";
+	Scope() << "";
 
 	if (node.apiSpec.Is(ApiSpec::C))
 	{
@@ -550,25 +550,25 @@ void CoderCpp::FunctionBody(Node& node, Context& context)
 	{
 		BeginScope();
 
-		Indent() << "static_cast<void>(context);";
+		Scope() << "static_cast<void>(context);";
 
 		// Make an indexed reference to the input object and avoid a warning if it's unreferenced.
-		Indent() << "auto& " << LocalVar << ++context.variableIndex << " = in; " << RefVar(LocalVar, context.variableIndex) << ';';
+		Scope() << "auto& " << LocalVar << ++context.variableIndex << " = in; " << RefVar(LocalVar, context.variableIndex) << ';';
 
 		Visit(context, node.children);
 
 		if (node.outType.Is(TypeSpec::Kind::None))
 		{
-			Indent() << "return {};";
+			Scope() << "return {};";
 		}
 		else
 		{
-			Indent() << "return " << LocalVar << context.variableIndex << ';';
+			Scope() << "return " << LocalVar << context.variableIndex << ';';
 		}
 
 		EndScope();
 
-		Indent() << "";
+		Scope() << "";
 	}
 	else
 	{
@@ -580,11 +580,11 @@ void CoderCpp::ImportedFunctionBody(Node& node, Context&, const std::vector<std:
 {
 	BeginScope();
 
-	Indent() << "static_cast<void>(context);";
+	Scope() << "static_cast<void>(context);";
 
 	if (!node.outType.Is(TypeSpec::Kind::None))
 	{
-		Indent() << "return ";
+		Scope() << "return ";
 	}
 
 	GetStream() << node.value << '(';
@@ -600,12 +600,12 @@ void CoderCpp::ImportedFunctionBody(Node& node, Context&, const std::vector<std:
 
 	if (node.outType.Is(TypeSpec::Kind::None))
 	{
-		Indent() << "return {};";
+		Scope() << "return {};";
 	}
 
 	EndScope();
 
-	Indent() << "";
+	Scope() << "";
 }
 
 void CoderCpp::ExpressionVisitor(Node& node, Context& context)
@@ -701,7 +701,7 @@ void CoderCpp::BeginAssign(Context& context)
 {
 	if (!context.inner)
 	{
-		Indent() << "const auto " << LocalVar << ++context.variableIndex << " = ";
+		Scope() << "const auto " << LocalVar << ++context.variableIndex << " = ";
 	}
 }
 
