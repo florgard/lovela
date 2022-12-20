@@ -79,7 +79,7 @@ void CoderCpp::Visit(Context& context, Node& node)
 
 void CoderCpp::BeginScope()
 {
-	Indent() << "{\n";
+	Indent() << '{';
 	indent += ' ';
 	indent += ' ';
 }
@@ -92,12 +92,12 @@ void CoderCpp::EndScope()
 	}
 
 	indent.resize(indent.length() - 2);
-	Indent() << "}\n";
+	Indent() << '}';
 }
 
 void CoderCpp::ErrorVisitor(Node& node, Context&)
 {
-	GetStream() << "/* " << to_string(node.error.code) << ": " << node.error.message << " */\n";
+	Indent() << "/* " << to_string(node.error.code) << ": " << node.error.message << " */";
 }
 
 void CoderCpp::FunctionDeclarationVisitor(Node& node, Context& context)
@@ -156,7 +156,7 @@ void CoderCpp::FunctionDeclarationVisitor(Node& node, Context& context)
 			GetStream() << "typename " << param;
 		}
 
-		GetStream() << ">\n";
+		GetStream() << '>';
 	}
 
 	Indent() << outType.name << ' ' << FunctionName(node.value) << "(lovela::context& context";
@@ -177,8 +177,6 @@ void CoderCpp::FunctionDeclarationVisitor(Node& node, Context& context)
 		FunctionBody(node, context);
 	}
 
-	GetStream() << '\n';
-
 	// Generate the exported function
 
 	if (node.apiSpec.Is(ApiSpec::Export))
@@ -195,9 +193,8 @@ void CoderCpp::MainFunctionDeclaration(Node& node, Context& context)
 		//node.outType = { .kind = TypeSpec::Kind::None };
 	}
 
-	GetStream() << TypeNames::none << ' ' << "lovela::main(lovela::context& context, " << TypeNames::none << " in)";
+	Indent() << TypeNames::none << ' ' << "lovela::main(lovela::context& context, " << TypeNames::none << " in)";
 	FunctionBody(node, context);
-	GetStream() << '\n';
 }
 
 std::optional<TypeSpec> CoderCpp::CheckExportType(const TypeSpec& type)
@@ -405,15 +402,15 @@ void CoderCpp::ExportedFunctionDeclaration(Node& node, Context&)
 
 	// Define the exported function wrapper
 
-	GetStream() << signature << '\n';
+	Indent() << signature;
 
 	BeginScope();
 
-	Indent() << "lovela::context context;\n";
+	Indent() << "lovela::context context;";
 
 	if (inType.Is(TypeSpec::Kind::None))
 	{
-		Indent() << TypeNames::none << " in;\n";
+		Indent() << TypeNames::none << " in;";
 	}
 
 	// Call the actual function
@@ -430,11 +427,9 @@ void CoderCpp::ExportedFunctionDeclaration(Node& node, Context&)
 		GetStream() << ", " << parameter.second;
 	}
 
-	GetStream() << ");\n";
+	GetStream() << ");";
 
 	EndScope();
-
-	GetStream() << '\n';
 }
 
 void CoderCpp::ImportedFunctionDeclaration(Node& node, Context&)
@@ -526,6 +521,8 @@ void CoderCpp::ImportedFunctionDeclaration(Node& node, Context&)
 
 	// Declare import
 
+	Indent() << "";
+
 	if (node.apiSpec.Is(ApiSpec::C))
 	{
 		GetStream() << "LOVELA_API_C ";
@@ -544,54 +541,50 @@ void CoderCpp::ImportedFunctionDeclaration(Node& node, Context&)
 		GetStream() << "LOVELA_API_DYNAMIC_EXPORT ";
 	}
 
-	GetStream() << signature << ";\n";
-
-	GetStream() << '\n';
+	GetStream() << signature << ";";
 }
 
 void CoderCpp::FunctionBody(Node& node, Context& context)
 {
 	if (!node.children.empty())
 	{
-		GetStream() << '\n';
-
 		BeginScope();
 
-		Indent() << "static_cast<void>(context);\n";
+		Indent() << "static_cast<void>(context);";
 
 		// Make an indexed reference to the input object and avoid a warning if it's unreferenced.
-		Indent() << "auto& " << LocalVar << ++context.variableIndex << " = in; " << RefVar(LocalVar, context.variableIndex) << ";\n";
+		Indent() << "auto& " << LocalVar << ++context.variableIndex << " = in; " << RefVar(LocalVar, context.variableIndex) << ';';
 
 		Visit(context, node.children);
 
 		if (node.outType.Is(TypeSpec::Kind::None))
 		{
-			Indent() << "return {};\n";
+			Indent() << "return {};";
 		}
 		else
 		{
-			Indent() << "return " << LocalVar << context.variableIndex << ";\n";
+			Indent() << "return " << LocalVar << context.variableIndex << ';';
 		}
 
 		EndScope();
+
+		Indent() << "";
 	}
 	else
 	{
-		GetStream() << ";\n";
+		GetStream() << ';';
 	}
 }
 
 void CoderCpp::ImportedFunctionBody(Node& node, Context&, const std::vector<std::pair<std::string, std::string>>& parameters)
 {
-	GetStream() << '\n';
-
 	BeginScope();
 
-	Indent() << "static_cast<void>(context);\n";;
+	Indent() << "static_cast<void>(context);";
 
 	if (!node.outType.Is(TypeSpec::Kind::None))
 	{
-		GetStream() << "return ";
+		Indent() << "return ";
 	}
 
 	GetStream() << node.value << '(';
@@ -603,14 +596,16 @@ void CoderCpp::ImportedFunctionBody(Node& node, Context&, const std::vector<std:
 		GetStream() << parameter.second;
 	}
 
-	GetStream() << ");\n";
+	GetStream() << ");";
 
 	if (node.outType.Is(TypeSpec::Kind::None))
 	{
-		GetStream() << "return {};\n";
+		Indent() << "return {};";
 	}
 
 	EndScope();
+
+	Indent() << "";
 }
 
 void CoderCpp::ExpressionVisitor(Node& node, Context& context)
@@ -723,7 +718,7 @@ void CoderCpp::EndAssign(Context& context)
 {
 	if (!context.inner)
 	{
-		GetStream() << "; " << RefVar(LocalVar, context.variableIndex) << ";\n";
+		GetStream() << "; " << RefVar(LocalVar, context.variableIndex) << ';';
 	}
 }
 

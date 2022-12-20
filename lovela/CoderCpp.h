@@ -59,7 +59,7 @@ private:
 
 	[[nodiscard]] OutputT& Indent() noexcept
 	{
-		*streamPtr << indent;
+		*streamPtr << '\n' << indent;
 		return *streamPtr;
 	}
 
