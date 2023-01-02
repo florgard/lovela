@@ -36,8 +36,6 @@ private:
 	[[nodiscard]] Node ParseBinaryOperation(std::shared_ptr<Context> context);
 	[[nodiscard]] Node ParseVariableReference(std::shared_ptr<Context> context);
 
-	[[nodiscard]] Node ReduceExpression(Node&& expression);
-
 	[[nodiscard]] ApiSpec ParseApiSpec();
 	[[nodiscard]] ApiSpec ParseImportApiSpec();
 	[[nodiscard]] ApiSpec ParseExportApiSpec();

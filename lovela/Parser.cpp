@@ -679,33 +679,54 @@ Node Parser::ParseCompoundExpression(std::shared_ptr<Context> context)
 
 Node Parser::ParseExpression(std::shared_ptr<Context> context)
 {
-	auto firstToken = GetNext();
-
 	const auto& inType = context->inType;
 	auto innerContext = make<Context>::shared({ .parent = context, .inType = inType });
 
-	std::vector<Node> nodes;
+	Node expression{ .type = Node::Type::Expression, .outType = inType, .token = GetNext(), .inType = inType };
+
+	if (Accept(GetOperandTokens()))
+	{
+		expression.children.emplace_back(ParseOperand(innerContext));
+	}
+	else
+	{
+		expression.children.emplace_back(Node{ .type = Node::Type::ExpressionInput, .token = GetNext() });
+	}
+
+	bool canAcceptOperand = false;
 
 	for (;;)
 	{
-		if (Accept(GetOperandTokens()))
+		if (Peek(GetOperandTokens()))
 		{
-			nodes.emplace_back(ParseOperand(innerContext));
+			if (canAcceptOperand)
+			{
+				Skip();
+				expression.children.emplace_back(ParseOperand(innerContext));
+			}
+			else
+			{
+				throw UnexpectedTokenAfterException(GetNext(), GetCurrent());
+			}
 		}
 		else if (Accept(Token::Type::Identifier))
 		{
 			if (context->HasVariableSymbol(GetCurrent().value))
 			{
-				nodes.emplace_back(ParseVariableReference(innerContext));
+				expression.children.emplace_back(ParseVariableReference(innerContext));
 			}
 			else
 			{
-				nodes.emplace_back(ParseFunctionCall(innerContext));
+				expression.children.emplace_back(ParseFunctionCall(innerContext));
 			}
+
+			canAcceptOperand = false;
 		}
 		else if (Accept(GetBinaryOperatorTokens()))
 		{
-			nodes.emplace_back(ParseBinaryOperation(innerContext));
+			expression.children.emplace_back(ParseBinaryOperation(innerContext));
+
+			canAcceptOperand = true;
 		}
 		// TODO: Selector, bind
 		else if (Accept(Token::Type::SeparatorDot) || Peek(GetExpressionTerminatorTokens()))
@@ -718,102 +739,7 @@ Node Parser::ParseExpression(std::shared_ptr<Context> context)
 		}
 	}
 
-	if (nodes.empty())
-	{
-		return { .type = Node::Type::Empty, .token = firstToken };
-	}
-
-	Node expression{ .type = Node::Type::Expression, .outType = inType, .token = firstToken, .inType = inType };
-	auto parent = &expression;
-	Node right{};
-
-	while (!nodes.empty())
-	{
-		Node node = std::move(nodes.back());
-		nodes.pop_back();
-
-		if (GetOperandNodes().contains(node.type))
-		{
-			if (right)
-			{
-				throw UnexpectedTokenException(node.token);
-			}
-
-			right = std::move(node);
-			node = {};
-		}
-		else if (GetOperatorNodes().contains(node.type))
-		{
-			if (right)
-			{
-				if (node.children.size() > 1)
-				{
-					throw ParseException(node.token, "Attempt to replace an existing right node of an operator");
-				}
-
-				node.children.emplace_back(std::move(right));
-				right = {};
-			}
-
-			parent = &*parent->children.insert(parent->children.begin(), std::move(node));
-			node = {};
-		}
-		else
-		{
-			throw ParseException(node.token, "The expression node stack contains a node that is neither an operand nor an operator.");
-		}
-	}
-
-	if (right)
-	{
-		// Left-most operand
-		// TODO: Check that default input is implicit and can be discarded?
-
-		if (!parent->children.empty())
-		{
-			throw ParseException(parent->token, "The parent expression node already has a left hand side operand.");
-		}
-
-		parent->children.emplace_back(std::move(right));
-		right = {};
-	}
-	else if (parent->children.empty() || (parent->children.size() < 2 && parent->children[0].type != Node::Type::ExpressionInput))
-	{
-		// Default expression input
-		// TODO: Check if the expected in-type is None and the implicit input should be discarded?
-
-		parent->children.insert(parent->children.begin(), Node{ .type = Node::Type::ExpressionInput, .token = firstToken });
-	}
-
-	expression = ReduceExpression(std::move(expression));
-
-	// The out type of an expression node is the data type of the first child node.
-	if (expression.type == Node::Type::Expression && !expression.children.empty())
-	{
-		expression.outType = expression.children[0].outType;
-	}
-
 	return expression;
-}
-
-Node Parser::ReduceExpression(Node&& expression)
-{
-	if (expression.type != Node::Type::Expression)
-	{
-		// Only expression nodes can be reduced.
-		return expression;
-	}
-
-	const bool leftEmpty = expression.children.empty() || expression.children[0].type == Node::Type::Empty;
-	const bool rightEmpty = expression.children.size() < 2 || expression.children[1].type == Node::Type::Empty;
-
-	if (leftEmpty == rightEmpty)
-	{
-		// Can't reduce when either no or both children are defined.
-		return expression;
-	}
-
-	return std::move(leftEmpty ? expression.children[1] : expression.children[0]);
 }
 
 // Returns Expression or Tuple
