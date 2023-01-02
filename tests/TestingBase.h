@@ -22,12 +22,38 @@ protected:
 	/// <summary>
 	/// Compares the actual AST with the expected one.
 	/// </summary>
+	/// <param name="name"></param>
+	/// <param name="node"></param>
+	/// <param name="expectedNode"></param>
+	/// <returns>true if the actual and expected AST match, false otherwise.</returns>
+	bool TestAST(std::ostream& stream, std::string_view name, Node const& node, Node const& expectedNode, Token& failingToken)
+	{
+		int index = 0;
+		return TestAST(stream, index, name, node, expectedNode, failingToken);
+	}
+
+	/// <summary>
+	/// Compares the actual AST with the expected one.
+	/// </summary>
 	/// <param name="index"></param>
 	/// <param name="name"></param>
 	/// <param name="node"></param>
 	/// <param name="expectedNode"></param>
 	/// <returns>true if the actual and expected AST match, false otherwise.</returns>
-	bool TestAST(int& index, const char* name, const Node& node, const Node& expectedNode, Token& failingToken);
+	bool TestAST(std::ostream& stream, int& index, std::string_view name, Node const& node, Node const& expectedNode, Token& failingToken);
+
+	/// <summary>
+	/// Compares each AST in the actual range with the corresponding one in the expected range.
+	/// </summary>
+	/// <param name="name"></param>
+	/// <param name="range"></param>
+	/// <param name="expectedRange"></param>
+	/// <returns>true if the actual and expected AST match, false otherwise.</returns>
+	bool TestAST(std::ostream& stream, std::string_view name, std::ranges::range auto& range, std::ranges::range auto const& expectedRange, Token& failingToken)
+	{
+		int index = 0;
+		return TestAST(stream, index, name, range, expectedRange, failingToken);
+	}
 
 	/// <summary>
 	/// Compares each AST in the actual range with the corresponding one in the expected range.
@@ -37,7 +63,7 @@ protected:
 	/// <param name="range"></param>
 	/// <param name="expectedRange"></param>
 	/// <returns>true if the actual and expected AST match, false otherwise.</returns>
-	bool TestAST(int& index, const char* name, std::ranges::range auto& range, const std::ranges::range auto& expectedRange, Token& failingToken)
+	bool TestAST(std::ostream& stream, int& index, std::string_view name, std::ranges::range auto& range, std::ranges::range auto const& expectedRange, Token& failingToken)
 	{
 		static const Node emptyNode{};
 
@@ -51,7 +77,7 @@ protected:
 			const auto& actual = actualIt != actualEnd ? *actualIt++ : emptyNode;
 			const auto& expected = expectedIt != expectedEnd ? static_cast<const Node&>(*expectedIt++) : emptyNode;
 
-			if (!TestAST(index, name, actual, expected, failingToken))
+			if (!TestAST(stream, index, name, actual, expected, failingToken))
 			{
 				return false;
 			}

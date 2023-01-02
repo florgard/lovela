@@ -1,27 +1,25 @@
 #include "pch.h"
 #include "TestingBase.h"
 
-bool TestingBase::TestAST(int& index, const char* name, const Node& node, const Node& expectedNode, Token& failingToken)
+bool TestingBase::TestAST(std::ostream& stream, int& index, std::string_view name, Node const& node, Node const& expectedNode, Token& failingToken)
 {
 	if (node != expectedNode)
 	{
 		failingToken = node.token;
 
-		std::cerr << color.fail << "ERROR: " << color.none
-			<< "Parser test \"" << color.name << name << color.none << "\": "
-			<< "Some property of node " << index + 1 << " of type " << color.actual << to_string(node.type) << color.none
+		stream << "Some property of node " << index + 1 << " of type " << color.actual << to_string(node.type) << color.none
 			<< " differs from the expected node of type " << color.expect << to_string(expectedNode.type) << color.none << ".\n"
 			<< "Actual:\n" << color.actual;
-		node.Print(std::cerr);
-		std::cerr << color.none << '\n'
+		node.Print(stream);
+		stream << color.none << '\n'
 			<< "Expected:\n" << color.expect;
-		expectedNode.Print(std::cerr);
-		std::cerr << color.none << '\n';
+		expectedNode.Print(stream);
+		stream << color.none << '\n';
 
 		return false;
 	}
 
-	index++;
+	++index;
 
 	if (node.children.size() != expectedNode.children.size())
 	{
@@ -31,7 +29,7 @@ bool TestingBase::TestAST(int& index, const char* name, const Node& node, const 
 
 	for (size_t i = 0, c = node.children.size(); i < c; ++i)
 	{
-		if (!TestAST(index, name, node.children[i], expectedNode.children[i], failingToken))
+		if (!TestAST(stream, index, name, node.children[i], expectedNode.children[i], failingToken))
 		{
 			return false;
 		}
