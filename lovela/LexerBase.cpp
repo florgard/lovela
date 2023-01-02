@@ -142,7 +142,7 @@ void LexerBase::PrintErrorSourceCode(std::ostream& stream, const Token& token) n
 	auto end = std::min(begin + token.error.length, length);
 	const auto count = end - begin;
 
-	stream << '(' << line << ':' << column << ") " << color.code << sourceCode.substr(0, begin) << color.fail;
+	stream << '(' << line << ',' << column << ") " << color.code << sourceCode.substr(0, begin) << color.fail;
 
 	if (begin < end)
 	{
