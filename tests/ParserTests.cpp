@@ -4,58 +4,38 @@
 class ParserTest : public TestingBase
 {
 public:
-	bool YieldsNodes(const char* name, std::string_view code, const Node& expectedTree)
+	bool YieldsNodes(std::string_view name, std::string_view code, const Node& expectedTree)
 	{
 		return YieldsNodes(name, code, std::initializer_list<std::reference_wrapper<const Node>> { expectedTree });
 	}
 
-	bool YieldsNodes(const char* name, std::string_view code, const std::ranges::range auto& expectedRange);
+	bool YieldsNodes(std::string_view name, std::string_view code, const std::ranges::range auto& expectedRange);
 };
 
 static ParserTest parserTest;
 
-bool ParserTest::YieldsNodes(const char* name, std::string_view code, const std::ranges::range auto& expectedRange)
+bool ParserTest::YieldsNodes(std::string_view name, std::string_view code, const std::ranges::range auto& expectedRange)
 {
 	StringLexer lexer;
 	RangeParser parser;
 	std::vector<Node> nodes;
 	code >> lexer >> parser >> nodes;
 
-	bool success = nodes.begin() != nodes.end(); 
-
+	Token failingToken{};
+	std::ostringstream s;
+	const bool success = TestAST(s, name, nodes, expectedRange, failingToken);
 	if (!success)
 	{
 		std::cerr << color.fail << "ERROR: " << color.none
-			<< "Parser test \"" << color.name << name << color.none << "\": "
-			<< "The parser didn't yield an AST.\n"
-			<< "Expected:\n" << color.expect;
+			<< "Parser test \"" << color.name << name << color.none << "\"\n"
+			<< "Input code:\n";
+		lexer.PrintErrorSourceCode(std::cerr, failingToken);
+		std::cerr << s.str()
+			<< "Actual AST:\n" << color.actual;
+		PrintAST(nodes);
+		std::cerr << color.none << "Expected AST:\n" << color.expect;
 		PrintAST(expectedRange);
-		std::cerr << color.none;
-	}
-	else
-	{
-		int index = 0;
-		Token failingToken{};
-		success = TestAST(index, name, nodes, expectedRange, failingToken);
-
-		if (!success)
-		{
-			std::cerr << color.fail << "ERROR: " << color.none
-				<< "Parser test \"" << color.name << name << color.none << "\": "
-				<< "AST mismatch.\n"
-				<< "Actual:\n" << color.actual;
-			PrintAST(nodes);
-			std::cerr <<  color.none << "Expected:\n" << color.expect;
-			PrintAST(expectedRange);
-			std::cerr << color.none;
-			lexer.PrintErrorSourceCode(std::cerr, failingToken);
-		}
-	}
-
-	if (!success)
-	{
-		std::cerr << "Input code:\n" << color.code << code << color.none << '\n';
-		std::cerr << '\n';
+		std::cerr << color.none << '\n';
 	}
 
 	return success;
@@ -445,5 +425,19 @@ suite parser_function_body_tests = [] {
 		expect(parserTest.YieldsNodes("increment function",
 			"func: + 1.",
 			fd));
+	};
+};
+
+suite Parser_expression_tests = [] {
+	"expression with input"_test = [] {
+		auto f = Node{ .type = Node::Type::FunctionDeclaration, .value = "func", .children
+			{
+				{.type = Node::Type::FunctionCall, .value = "scale", .children{{.type = Node::Type::ExpressionInput}} },
+				{.type = Node::Type::FunctionCall, .value = "rotate", .children{{.type = Node::Type::ExpressionInput}} },
+				{.type = Node::Type::FunctionCall, .value = "translate", .children{{.type = Node::Type::ExpressionInput}} },
+			} };
+		expect(parserTest.YieldsNodes("expression with input",
+			"func: (scale rotate translate).",
+			f));
 	};
 };
