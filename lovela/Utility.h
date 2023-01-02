@@ -453,7 +453,7 @@ struct static_map
 // Usage:
 // static constexpr std::array<int>, 2> values{ 1, 3 };
 // static constexpr auto set = static_set<int, values.size()>{ {values} };
-// static_assert(map.contains(3));
+// static_assert(set.contains(3));
 template <typename Key, std::size_t Size>
 struct static_set
 {
