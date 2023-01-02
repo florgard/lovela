@@ -115,7 +115,7 @@ protected:
 	{
 		if (!Accept(types))
 		{
-			throw UnexpectedTokenException(GetNext(), types);
+			throw UnexpectedTokenException(GetNext(), types.data);
 		}
 	}
 
