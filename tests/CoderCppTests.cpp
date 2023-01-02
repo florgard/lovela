@@ -878,3 +878,22 @@ lovela::None lovela::main(lovela::context& context, lovela::None in)
 		));
 	};
 };
+
+suite CoderCpp_expression_tests = [] {
+	"expression with input"_test = [] {
+		expect(s_test.Success("expression with input",
+			"func: (scale rotate translate).",
+			R"cpp(
+auto f_func(lovela::context& context, auto in)
+{
+	static_cast<void>(context);
+	auto& v1 = in; static_cast<void>(v1);
+	const auto v2 = scale(v1); static_cast<void>(v2);
+	const auto v3 = rotate(v2); static_cast<void>(v3);
+	const auto v4 = translate(v3); static_cast<void>(v4);
+	return v4;
+}
+)cpp"
+));
+	};
+};
