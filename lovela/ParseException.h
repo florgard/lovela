@@ -1,13 +1,21 @@
 #pragma once
 #include "Token.h"
 
+template <> struct fmt::formatter<Token::Type> : formatter<string_view>
+{
+	auto format(Token::Type t, format_context& ctx) const
+	{
+		return formatter<string_view>::format(::to_string(t), ctx);
+	}
+};
+
 struct ParseException : public std::exception
 {
 	std::string message;
 	Token token;
 
-	ParseException(const Token& token) noexcept;
-	ParseException(const Token& token, std::string_view message) noexcept;
+	ParseException(Token const& token) noexcept;
+	ParseException(Token const& token, std::string&& message) noexcept;
 
 	const char* what() const noexcept override
 	{
@@ -17,38 +25,32 @@ struct ParseException : public std::exception
 
 struct UnexpectedTokenException : public ParseException
 {
-	UnexpectedTokenException(const Token& token) noexcept;
-	UnexpectedTokenException(const Token& token, Token::Type expectedType) noexcept;
-	UnexpectedTokenException(const Token& token, Token::Type expectedType, std::string_view expectedValue) noexcept;
-	UnexpectedTokenException(const Token& token, const std::set<Token::Type>& expectedTypes) noexcept;
+	UnexpectedTokenException(Token const& token) noexcept;
+	UnexpectedTokenException(Token const& token, std::string&& message) noexcept;
+	UnexpectedTokenException(Token const& token, Token::Type expectedType) noexcept;
+	UnexpectedTokenException(Token const& token, Token::Type expectedType, std::string_view expectedValue) noexcept;
 
-	template <size_t Size>
-	constexpr UnexpectedTokenException(const Token& token, const static_set<Token::Type, Size>& expectedTypes) noexcept : ParseException(token)
+	template <std::ranges::range RangeT>
+	UnexpectedTokenException(Token const& token, const RangeT& expectedTypes) noexcept
+		: UnexpectedTokenException(token, fmt::format("Expected {}.", fmt::join(expectedTypes.begin(), expectedTypes.end(), ", ")))
 	{
-		std::ostringstream s;
-		s << "Unexpected token " << to_string(token.type) << ", expected ";
-		bool first = true;
-		for (const auto& type : expectedTypes.data)
-		{
-			if (!first)
-			{
-				s << ", ";
-			}
-			first = false;
-			s << to_string(type);
-		}
-		message = s.str();
 	}
+};
+
+struct UnexpectedTokenAfterException : public UnexpectedTokenException
+{
+	UnexpectedTokenAfterException(Token const& token, Token::Type preceedingType) noexcept;
+	UnexpectedTokenAfterException(Token const& token, Token const& preceedingToken) noexcept;
 };
 
 struct InvalidCurrentTokenException : public ParseException
 {
-	InvalidCurrentTokenException(const Token& token) noexcept;
+	InvalidCurrentTokenException(Token const& token) noexcept;
 };
 
 struct ErrorTokenException : public ParseException
 {
-	ErrorTokenException(const Token& token) noexcept;
+	ErrorTokenException(Token const& token) noexcept;
 };
 
 struct MissingTokenException : public ParseException
