@@ -2,6 +2,14 @@
 
 ## Small
 
+### Simplified expression parsing
+
+* No general expresion input. Leave it to the analyzer to check and decide.
+* No variable checking. Leave it to the analyzer.
+* Left-to-right parsing, don't stack function calls.
+
+### Other
+
 /type/bool
 
 Bind operator
@@ -19,6 +27,24 @@ Standard library namespaces
 * net
 
 ## Medium
+
+### Passing variables
+
+1. Pass by reference.
+ * [out] == [in] -> return by reference
+ * [out] != [in] -> return by value
+2. Optimize by passing small types by value.
+ * size <= 16 -> pass by value
+  * template<typename T> concept bool SmallType = sizeof(T) <= 16;
+ * size > 16 -> pass by reference
+  * What about multiple arguments? Is 2^c overloads required?
+ * [out] == [in] -> return by value/reference
+ * [out] != [in] -> return by value
+
+/mem/clone?
+* std::move
+
+### Other
 
 Assignment
 
@@ -46,17 +72,21 @@ Standard library: http?
 
 ## Large
 
-Type system
+### Analyzer phase
+
+Checks that functions exist, etc.
+
+### Type system
 * [1] -> flag. << new "type" called "flag", really a function "flag" that gives a default value of type [flag]. >>
 * [flag] raise_error_if_set: << body >>. << function that takes input of type [flag] >>
 
-Type construction
+### Type construction
 * [[100] checked] -> checked_integer_that_can_hold_only_-100_to_100 << Checked<100> >> 
 * [[100] checked unsigned] -> checked_integer_that_can_hold_only_0_to_100 << Checked<100, 0> >> 
 
-Built-in data structures
+### Built-in data structures
 * Dynamic named array
 * Dynamic tuple
 * Dynamic named tuple
 
-Standard library
+### Standard library
