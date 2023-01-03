@@ -9,6 +9,12 @@ protected:
 	virtual void Advance() noexcept = 0;
 };
 
+/// <summary>
+/// Range enumerator that takes ownership of the range object.
+/// Provides access to the encapsulated range object to the base enumerator class.
+/// </summary>
+/// <typeparam name="BaseT">The base enumerator class. Must inherit IEnumerator.</typeparam>
+/// <typeparam name="RangeT">The range type to encapsulate. The range object will be moved into the range enumerator.</typeparam>
 template <class BaseT, std::ranges::range RangeT>
 class RangeEnumerator : public BaseT
 {
@@ -51,6 +57,62 @@ public:
 	}
 };
 
+/// <summary>
+/// Range enumerator that doesn't take ownership of the range object.
+/// Provides access to the encapsulated range object to the base enumerator class.
+/// Use this range enumerator variant when the referenced range must retain its items.
+/// </summary>
+/// <typeparam name="BaseT">The base enumerator class. Must inherit IEnumerator.</typeparam>
+/// <typeparam name="RangeT">The range type to encapsulate. The range object will only be referenced, not moved into the range enumerator.</typeparam>
+template <class BaseT, std::ranges::range RangeT>
+class RangeRefEnumerator : public BaseT
+{
+	RangeT* _rangePtr;
+
+	using IteratorT = decltype(std::ranges::begin(*_rangePtr));
+	IteratorT _iterator;
+
+	using ItemT = std::decay_t<decltype(*std::ranges::begin(*_rangePtr))>;
+	static_assert(std::is_base_of_v<IEnumerator<ItemT>, BaseT>, "The base class must inherit IEnumerator for the item type.");
+
+	[[nodiscard]] ItemT& GetNext() noexcept override
+	{
+		return *_iterator;
+	}
+
+	[[nodiscard]] bool IsDone() noexcept override
+	{
+		return _iterator == _rangePtr->end();
+	}
+
+	[[nodiscard]] void Advance() noexcept override
+	{
+		_iterator++;
+	}
+
+public:
+	RangeRefEnumerator() noexcept = default;
+
+	RangeRefEnumerator(RangeT& range) noexcept
+		: _rangePtr(&range)
+		, _iterator(range.begin())
+	{
+	}
+
+	void Initialize(RangeT& range) noexcept
+	{
+		_rangePtr = &range;
+		_iterator = range.begin();
+	}
+};
+
+/// <summary>
+/// Range enumerator that takes ownership of the range object.
+/// Provides access to the encapsulated range object to the base enumerator class.
+/// Use this range enumerator variant for ranges that only gives const access to the items.
+/// </summary>
+/// <typeparam name="BaseT">The base enumerator class. Must inherit IEnumerator.</typeparam>
+/// <typeparam name="RangeT">The range type to encapsulate. The range object will be moved into the range enumerator.</typeparam>
 template <class BaseT, std::ranges::range RangeT>
 class ConstRangeEnumerator : public BaseT
 {

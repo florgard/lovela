@@ -130,7 +130,7 @@ private:
 };
 
 using RangeCoderCpp = BasicRangeCoder<CoderCpp>;
-using VectorCoderCpp = BasicRangeCoder<CoderCpp, std::vector<Node>>;
+using VectorCoderCpp = BasicRangeRefCoder<CoderCpp, std::vector<Node>>;
 
 inline RangeCoderCpp& operator>>(IParser::OutputT&& nodes, RangeCoderCpp& coder)
 {
@@ -146,7 +146,7 @@ inline void operator>>(RangeCoderCpp& coder, ICoder::OutputT& output)
 
 inline VectorCoderCpp& operator>>(std::vector<Node>& nodes, VectorCoderCpp& coder)
 {
-	coder.Initialize(std::move(nodes));
+	coder.Initialize(nodes);
 	return coder;
 }
 

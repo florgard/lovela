@@ -10,3 +10,6 @@ struct ICoder : IEnumerator<Node>
 
 template <class CoderT, class NodeRangeT = IParser::OutputT>
 using BasicRangeCoder = RangeEnumerator<CoderT, NodeRangeT>;
+
+template <class CoderT, class NodeRangeT = IParser::OutputT>
+using BasicRangeRefCoder = RangeRefEnumerator<CoderT, NodeRangeT>;
