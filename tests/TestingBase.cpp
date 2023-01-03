@@ -46,7 +46,7 @@ void TestingBase::PrintIndent(int indent)
 	}
 }
 
-void TestingBase::PrintAST(int& index, const Node& node, int indent)
+void TestingBase::PrintAST(int& index, Node const& node, int indent)
 {
 	PrintIndent(indent);
 

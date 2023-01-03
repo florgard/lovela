@@ -3,7 +3,7 @@
 class TestingBase
 {
 public:
-	void PrintAST(const Node& node)
+	void PrintAST(Node const& node)
 	{
 		int i{};
 		PrintAST(i, node, {});
@@ -86,7 +86,7 @@ protected:
 		return true;
 	}
 
-	void PrintAST(int& index, const Node& node, int indent);
+	void PrintAST(int& index, Node const& node, int indent);
 
 	template <typename Code>
 	void PrintIncorrectErrorCodeMessage(std::ostream& stream, const char* phase, const char* name, size_t index, Code actual, Code expected)
