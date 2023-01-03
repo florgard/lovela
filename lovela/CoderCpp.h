@@ -44,7 +44,7 @@ private:
 
 	void Visit(Context& context, Node& node);
 
-	void Visit(Context& context, std::vector<Node> nodes, size_t start = 0, size_t count = 1)
+	void Visit(Context& context, std::vector<Node>& nodes, size_t start = 0, size_t count = 1)
 	{
 		for (size_t i = start, e = nodes.size(), c = 0; i < e && c < count; ++i, ++c)
 		{
