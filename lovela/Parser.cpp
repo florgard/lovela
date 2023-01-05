@@ -677,56 +677,73 @@ Node Parser::ParseCompoundExpression(std::shared_ptr<Context> context)
 	return node;
 }
 
+Node Parser::ParseExpressionInput(std::shared_ptr<Context> context)
+{
+	if (Accept(GetOperandTokens()))
+	{
+		return ParseOperand(context);
+	}
+	else if (Peek(Token::Type::Identifier) && context->HasVariableSymbol(GetNext().value))
+	{
+		Skip();
+		return ParseVariableReference(context);
+	}
+	else
+	{
+		return GetDefaultExpressionInput();
+	}
+}
+
 Node Parser::ParseExpression(std::shared_ptr<Context> context)
 {
 	const auto& inType = context->inType;
 	auto innerContext = make<Context>::shared({ .parent = context, .inType = inType });
 
 	Node expression{ .type = Node::Type::Expression, .outType = inType, .token = GetNext(), .inType = inType };
+	auto& operations = expression.children;
+	Node* operation{};
 
-	if (Accept(GetOperandTokens()))
-	{
-		expression.children.emplace_back(ParseOperand(innerContext));
-	}
-	else
-	{
-		expression.children.emplace_back(Node{ .type = Node::Type::ExpressionInput, .token = GetNext() });
-	}
+	Node input = ParseExpressionInput(innerContext);
 
-	bool canAcceptOperand = false;
+	bool expectRightOperand = false;
 
 	for (;;)
 	{
-		if (Peek(GetOperandTokens()))
+		if (expectRightOperand)
 		{
-			if (canAcceptOperand)
+			if (Accept(GetOperandTokens()))
+			{
+				operation->children.emplace_back(ParseOperand(innerContext));
+			}
+			else if (Peek(Token::Type::Identifier) && context->HasVariableSymbol(GetNext().value))
 			{
 				Skip();
-				expression.children.emplace_back(ParseOperand(innerContext));
+				operation->children.emplace_back(ParseVariableReference(innerContext));
 			}
 			else
 			{
-				throw UnexpectedTokenAfterException(GetNext(), GetCurrent());
+				throw UnexpectedTokenAfterException(GetNext(), operation->token);
 			}
+
+			expectRightOperand = false;
 		}
 		else if (Accept(Token::Type::Identifier))
 		{
-			if (context->HasVariableSymbol(GetCurrent().value))
-			{
-				expression.children.emplace_back(ParseVariableReference(innerContext));
-			}
-			else
-			{
-				expression.children.emplace_back(ParseFunctionCall(innerContext));
-			}
+			operation = &operations.emplace_back(ParseFunctionCall(innerContext));
+			
+			operation->children.emplace_back(std::move(input));
+			input = GetDefaultExpressionInput();
 
-			canAcceptOperand = false;
+			expectRightOperand = false;
 		}
 		else if (Accept(GetBinaryOperatorTokens()))
 		{
-			expression.children.emplace_back(ParseBinaryOperation(innerContext));
+			operation = &operations.emplace_back(ParseBinaryOperation(innerContext));
 
-			canAcceptOperand = true;
+			operation->children.emplace_back(std::move(input));
+			input = GetDefaultExpressionInput();
+
+			expectRightOperand = true;
 		}
 		// TODO: Selector, bind
 		else if (Accept(Token::Type::SeparatorDot) || Peek(GetExpressionTerminatorTokens()))
@@ -737,6 +754,11 @@ Node Parser::ParseExpression(std::shared_ptr<Context> context)
 		{
 			throw UnexpectedTokenException(GetNext());
 		}
+	}
+
+	if (expectRightOperand)
+	{
+		throw ParseException(GetNext(), "Missing operand after binary operation.");
 	}
 
 	return expression;
