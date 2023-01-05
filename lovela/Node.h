@@ -16,6 +16,7 @@ struct Node
 		FunctionDeclaration,
 		Expression,
 		ExpressionInput,
+		ExpressionList,
 		Tuple,
 		Literal,
 		FunctionCall,

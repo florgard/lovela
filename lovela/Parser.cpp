@@ -665,18 +665,6 @@ Node Parser::ParseFunctionDeclaration(std::shared_ptr<Context> context)
 	return node;
 }
 
-Node Parser::ParseCompoundExpression(std::shared_ptr<Context> context)
-{
-	auto node = ParseExpression(context);
-
-	if (!Peek(GetExpressionTerminatorTokens()))
-	{
-		node.children.emplace_back(ParseCompoundExpression(context));
-	}
-
-	return node;
-}
-
 Node Parser::ParseExpressionInput(std::shared_ptr<Context> context)
 {
 	if (Accept(GetOperandTokens()))
@@ -699,8 +687,7 @@ Node Parser::ParseExpression(std::shared_ptr<Context> context)
 	const auto& inType = context->inType;
 	auto innerContext = make<Context>::shared({ .parent = context, .inType = inType });
 
-	Node expression{ .type = Node::Type::Expression, .outType = inType, .token = GetNext(), .inType = inType };
-	auto& operations = expression.children;
+	std::vector<Node> operations;
 	Node* operation{};
 
 	Node input = ParseExpressionInput(innerContext);
@@ -761,7 +748,14 @@ Node Parser::ParseExpression(std::shared_ptr<Context> context)
 		throw ParseException(GetNext(), "Missing operand after binary operation.");
 	}
 
-	return expression;
+	if (operations.empty())
+	{
+		return input;
+	}
+	else
+	{
+		return { .type = Node::Type::Expression, .outType = inType, .token = GetNext(), .inType = inType, .children = std::move(operations) };
+	}
 }
 
 // Returns Expression or Tuple
@@ -776,20 +770,52 @@ Node Parser::ParseGroup(std::shared_ptr<Context> context)
 	return node;
 }
 
-// Returns Expression or Tuple
-Node Parser::ParseTuple(std::shared_ptr<Context> context)
+// Returns ExpressionList, Expression or Empty
+Node Parser::ParseExpressionList(std::shared_ptr<Context> context)
 {
-	Node node = ParseCompoundExpression(context);
+	std::vector<Node> items;
 
-	if (Accept(Token::Type::SeparatorComma))
+	while (!Peek(GetExpressionTerminatorTokens()))
 	{
-		Node tuple{ .type = Node::Type::Tuple, .token = GetCurrent() };
-		tuple.children.emplace_back(std::move(node));
-		tuple.children.emplace_back(ParseTuple(context));
-		node = std::move(tuple);
+		items.emplace_back(ParseExpression(context));
 	}
 
-	return node;
+	if (items.size() > 1)
+	{
+		return { .type = Node::Type::ExpressionList, .token = GetCurrent(), .children = std::move(items) };
+	}
+	else if (items.size() == 1)
+	{
+		return std::move(items.back());
+	}
+	else
+	{
+		return {};
+	}
+}
+
+// Returns Tuple, ExpressionList, Expression or Empty
+Node Parser::ParseTuple(std::shared_ptr<Context> context)
+{
+	std::vector<Node> items;
+
+	do
+	{
+		items.emplace_back(ParseExpressionList(context));
+	} while (Accept(Token::Type::SeparatorComma));
+
+	if (items.size() > 1)
+	{
+		return { .type = Node::Type::Tuple, .token = GetCurrent(), .children = std::move(items) };
+	}
+	else if (items.size() == 1)
+	{
+		return std::move(items.back());
+	}
+	else
+	{
+		return {};
+	}
 }
 
 Node Parser::ParseOperand(std::shared_ptr<Context> context)

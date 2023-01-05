@@ -27,9 +27,9 @@ private:
 
 	[[nodiscard]] OutputT ParseNonSemantic();
 	[[nodiscard]] Node ParseFunctionDeclaration(std::shared_ptr<Context> context);
-	[[nodiscard]] Node ParseCompoundExpression(std::shared_ptr<Context> context);
 	[[nodiscard]] Node ParseExpression(std::shared_ptr<Context> context);
 	[[nodiscard]] Node ParseExpressionInput(std::shared_ptr<Context> context);
+	[[nodiscard]] Node ParseExpressionList(std::shared_ptr<Context> context);
 	[[nodiscard]] Node ParseGroup(std::shared_ptr<Context> context);
 	[[nodiscard]] Node ParseTuple(std::shared_ptr<Context> context);
 	[[nodiscard]] Node ParseOperand(std::shared_ptr<Context> context);
