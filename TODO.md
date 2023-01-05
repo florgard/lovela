@@ -2,11 +2,13 @@
 
 ## Small
 
+### Tests
+
+Print tokens.
+
 ### Simplified expression parsing
 
-* No general expresion input. Leave it to the analyzer to check and decide.
-* No variable checking. Leave it to the analyzer.
-* Left-to-right parsing, don't stack function calls.
+* No input type from context. Leave it to the analyzer to check and decide.
 
 ### Other
 
