@@ -12,6 +12,9 @@ struct IParser : public IEnumerator<Token>
 template <class ParserT, class TokenRangeT = ILexer::OutputT>
 using BasicRangeParser = RangeEnumerator<ParserT, TokenRangeT>;
 
+template <class ParserT, class TokenRangeT = ILexer::OutputT>
+using BasicRangeRefParser = RangeRefEnumerator<ParserT, TokenRangeT>;
+
 inline std::vector<Node>& operator>>(IParser::OutputT&& input, std::vector<Node>& output)
 {
 	output = std::move(to_vector(std::move(input)));

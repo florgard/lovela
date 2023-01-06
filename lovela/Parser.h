@@ -157,9 +157,16 @@ private:
 };
 
 using RangeParser = BasicRangeParser<Parser>;
+using VectorParser = BasicRangeRefParser<Parser, std::vector<Token>>;
 
 inline IParser::OutputT operator>>(ILexer::OutputT&& tokens, RangeParser& parser)
 {
 	parser.Initialize(std::move(tokens));
+	return parser.Parse();
+}
+
+inline IParser::OutputT operator>>(std::vector<Token>& tokens, VectorParser& parser)
+{
+	parser.Initialize(tokens);
 	return parser.Parse();
 }
