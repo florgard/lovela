@@ -30,15 +30,22 @@ bool LexerTest::YieldsTokens(const char* name, std::string_view code, const std:
 		{
 			success = false;
 			std::cerr << color.fail << "ERROR: " << color.none
-				<< "Lexer test \"" << color.name << name << color.none << "\": "
-				<< "Token " << i + 1 << " is " << to_string(actual.type) << " \"" << actual.value << "\", expected " << to_string(expected.type) << " \"" << expected.value << "\".\n"
+				<< "Lexer test \"" << color.name << name << color.none << "\"\n"
+				<< "Input code:\n";
+			lexer.PrintErrorSourceCode(std::cerr, actual);
+			std::cerr << "Token " << i + 1 << " is " << to_string(actual.type) << " \"" << actual.value << "\", expected " << to_string(expected.type) << " \"" << expected.value << "\".\n"
 				<< "Actual:\n" << color.actual;
 			actual.Print(std::cerr);
 			std::cerr << color.none << '\n'
 				<< "Expected:\n" << color.expect;
 			expected.Print(std::cerr);
+			std::cerr << color.none << '\n'
+				<< "Actual tokens:\n" << color.actual;
+			PrintTokens(tokens);
+			std::cerr << color.none
+				<< "Expected tokens:\n" << color.expect;
+			PrintTokens(expectedTokens);
 			std::cerr << color.none << '\n';
-			lexer.PrintErrorSourceCode(std::cerr, actual);
 		}
 	}
 

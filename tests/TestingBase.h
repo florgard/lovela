@@ -16,16 +16,29 @@ protected:
 		std::string_view actual = "\033[93m";
 	} color;
 
+	void PrintTokens(std::ranges::range auto& tokens)
+	{
+		for (auto& token : tokens)
+		{
+			std::cerr << to_string(token.type) << ' ';
+
+			if (!token.value.empty())
+			{
+				std::cerr << '"' << token.value << '"' << ' ';
+			}
+		}
+	}
+
 	void PrintSyntaxTree(Node const& node)
 	{
 		int i{};
 		PrintSyntaxTree(i, node, {});
 	}
 
-	void PrintSyntaxTree(std::ranges::range auto& range)
+	void PrintSyntaxTree(std::ranges::range auto& nodes)
 	{
-		auto end = range.end();
-		for (auto it = range.begin(); it != end; it++)
+		auto end = nodes.end();
+		for (auto it = nodes.begin(); it != end; it++)
 		{
 			PrintSyntaxTree(*it);
 		}
@@ -34,9 +47,9 @@ protected:
 	/// <summary>
 	/// Compares the actual syntax tree with the expected one.
 	/// </summary>
-	/// <param name="name"></param>
-	/// <param name="node"></param>
-	/// <param name="expectedNode"></param>
+	/// <param name="name">The name of the running test, for error messages.</param>
+	/// <param name="node">The root node for which to print the syntax tree.</param>
+	/// <param name="expectedNode">The expected root node with its expected syntax tree.</param>
 	/// <returns>true if the actual and expected syntax tree match, false otherwise.</returns>
 	bool TestSyntaxTree(std::ostream& stream, std::string_view name, Node const& node, Node const& expectedNode, Token& failingToken)
 	{
@@ -47,14 +60,14 @@ protected:
 	/// <summary>
 	/// Compares each syntax tree in the actual range with the corresponding one in the expected range.
 	/// </summary>
-	/// <param name="name"></param>
-	/// <param name="range"></param>
-	/// <param name="expectedRange"></param>
-	/// <returns>true if the actual and expected syntax tree match, false otherwise.</returns>
-	bool TestSyntaxTree(std::ostream& stream, std::string_view name, std::ranges::range auto& range, std::ranges::range auto const& expectedRange, Token& failingToken)
+	/// <param name="name">The name of the running test, for error messages.</param>
+	/// <param name="nodes">The root nodes for which to print the syntax tree.</param>
+	/// <param name="expectedRange">The expected root nodes with their expected syntax trees.</param>
+	/// <returns>true if the actual and expected syntax trees match, false otherwise.</returns>
+	bool TestSyntaxTree(std::ostream& stream, std::string_view name, std::ranges::range auto& nodes, std::ranges::range auto const& expectedRange, Token& failingToken)
 	{
 		int index = 0;
-		return TestSyntaxTree(stream, index, name, range, expectedRange, failingToken);
+		return TestSyntaxTree(stream, index, name, nodes, expectedRange, failingToken);
 	}
 
 private:

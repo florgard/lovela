@@ -17,9 +17,10 @@ static ParserTest parserTest;
 bool ParserTest::YieldsNodes(std::string_view name, std::string_view code, const std::ranges::range auto& expectedRange)
 {
 	StringLexer lexer;
-	RangeParser parser;
+	std::vector<Token> tokens;
+	VectorParser parser;
 	std::vector<Node> nodes;
-	code >> lexer >> parser >> nodes;
+	code >> lexer >> tokens >> parser >> nodes;
 
 	Token failingToken{};
 	std::ostringstream s;
@@ -31,9 +32,13 @@ bool ParserTest::YieldsNodes(std::string_view name, std::string_view code, const
 			<< "Input code:\n";
 		lexer.PrintErrorSourceCode(std::cerr, failingToken);
 		std::cerr << s.str()
+			<< "Tokens:\n" << color.actual;
+		PrintTokens(tokens);
+		std::cerr << color.none << '\n'
 			<< "Actual syntax tree:\n" << color.actual;
 		PrintSyntaxTree(nodes);
-		std::cerr << color.none << "Expected syntax tree:\n" << color.expect;
+		std::cerr << color.none
+			<< "Expected syntax tree:\n" << color.expect;
 		PrintSyntaxTree(expectedRange);
 		std::cerr << color.none << '\n';
 	}
