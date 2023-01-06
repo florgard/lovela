@@ -764,7 +764,7 @@ Node Parser::ParseExpression(std::shared_ptr<Context> context)
 	}
 }
 
-// Returns Expression or Tuple
+// Returns Tuple, ExpressionList, Expression or Empty
 Node Parser::ParseGroup(std::shared_ptr<Context> context)
 {
 	Assert(Token::Type::ParenRoundOpen);
