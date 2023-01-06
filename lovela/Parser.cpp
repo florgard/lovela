@@ -709,7 +709,7 @@ Node Parser::ParseExpression(std::shared_ptr<Context> context)
 			}
 			else
 			{
-				throw UnexpectedTokenAfterException(GetNext(), operation->token);
+				throw UnexpectedTokenAfterException(GetNext(), operation->token, "Expected an operand after binary operation.");
 			}
 
 			expectRightOperand = false;
@@ -745,7 +745,7 @@ Node Parser::ParseExpression(std::shared_ptr<Context> context)
 
 	if (expectRightOperand)
 	{
-		throw ParseException(GetNext(), "Missing operand after binary operation.");
+		throw UnexpectedTokenAfterException(GetNext(), operation->token, "Expected an operand after binary operation.");
 	}
 
 	if (operations.empty())

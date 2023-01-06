@@ -40,7 +40,9 @@ struct UnexpectedTokenException : public ParseException
 struct UnexpectedTokenAfterException : public UnexpectedTokenException
 {
 	UnexpectedTokenAfterException(Token const& token, Token::Type preceedingType) noexcept;
+	UnexpectedTokenAfterException(Token const& token, Token::Type preceedingType, std::string&& message) noexcept;
 	UnexpectedTokenAfterException(Token const& token, Token const& preceedingToken) noexcept;
+	UnexpectedTokenAfterException(Token const& token, Token const& preceedingToken, std::string&& message) noexcept;
 };
 
 struct InvalidCurrentTokenException : public ParseException

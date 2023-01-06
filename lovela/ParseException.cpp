@@ -37,8 +37,18 @@ UnexpectedTokenAfterException::UnexpectedTokenAfterException(Token const& token,
 {
 }
 
+UnexpectedTokenAfterException::UnexpectedTokenAfterException(Token const& token, Token::Type preceedingType, std::string&& message) noexcept
+	: UnexpectedTokenException(token, fmt::format("It can't come after a {}. {}", preceedingType, message))
+{
+}
+
 UnexpectedTokenAfterException::UnexpectedTokenAfterException(Token const& token, Token const& preceedingToken) noexcept
 	: UnexpectedTokenException(token, preceedingToken.type)
+{
+}
+
+UnexpectedTokenAfterException::UnexpectedTokenAfterException(Token const& token, Token const& preceedingToken, std::string&& message) noexcept
+	: UnexpectedTokenException(token, preceedingToken.type, message)
 {
 }
 
