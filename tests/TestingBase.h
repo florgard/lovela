@@ -2,7 +2,20 @@
 
 class TestingBase
 {
-public:
+protected:
+	struct Color
+	{
+		std::string_view none = "\033[0m";
+		std::string_view pass = "\033[32m";
+		std::string_view warn = "\033[33m";
+		std::string_view fail = "\033[31m";
+		std::string_view name = "\033[33m";
+		std::string_view code = "\033[96m";
+		std::string_view output = "\033[36m";
+		std::string_view expect = "\033[92m";
+		std::string_view actual = "\033[93m";
+	} color;
+
 	void PrintSyntaxTree(Node const& node)
 	{
 		int i{};
@@ -18,7 +31,6 @@ public:
 		}
 	}
 
-protected:
 	/// <summary>
 	/// Compares the actual syntax tree with the expected one.
 	/// </summary>
@@ -33,16 +45,6 @@ protected:
 	}
 
 	/// <summary>
-	/// Compares the actual syntax tree with the expected one.
-	/// </summary>
-	/// <param name="index"></param>
-	/// <param name="name"></param>
-	/// <param name="node"></param>
-	/// <param name="expectedNode"></param>
-	/// <returns>true if the actual and expected syntax tree match, false otherwise.</returns>
-	bool TestSyntaxTree(std::ostream& stream, int& index, std::string_view name, Node const& node, Node const& expectedNode, Token& failingToken);
-
-	/// <summary>
 	/// Compares each syntax tree in the actual range with the corresponding one in the expected range.
 	/// </summary>
 	/// <param name="name"></param>
@@ -55,14 +57,11 @@ protected:
 		return TestSyntaxTree(stream, index, name, range, expectedRange, failingToken);
 	}
 
-	/// <summary>
-	/// Compares each syntax tree in the actual range with the corresponding one in the expected range.
-	/// </summary>
-	/// <param name="index"></param>
-	/// <param name="name"></param>
-	/// <param name="range"></param>
-	/// <param name="expectedRange"></param>
-	/// <returns>true if the actual and expected syntax tree match, false otherwise.</returns>
+private:
+	void PrintIndent(int indent);
+	void PrintSyntaxTree(int& index, Node const& node, int indent);
+	bool TestSyntaxTree(std::ostream& stream, int& index, std::string_view name, Node const& node, Node const& expectedNode, Token& failingToken);
+
 	bool TestSyntaxTree(std::ostream& stream, int& index, std::string_view name, std::ranges::range auto& range, std::ranges::range auto const& expectedRange, Token& failingToken)
 	{
 		static const Node emptyNode{};
@@ -86,8 +85,6 @@ protected:
 		return true;
 	}
 
-	void PrintSyntaxTree(int& index, Node const& node, int indent);
-
 	template <typename Code>
 	void PrintIncorrectErrorCodeMessage(std::ostream& stream, std::string_view phase, std::string_view name, size_t index, Code actual, Code expected)
 	{
@@ -108,20 +105,4 @@ protected:
 	{
 		stream << to_string(error.code) << ": " << error.message << '\n';
 	}
-
-	struct Color
-	{
-		std::string_view none = "\033[0m";
-		std::string_view pass = "\033[32m";
-		std::string_view warn = "\033[33m";
-		std::string_view fail = "\033[31m";
-		std::string_view name = "\033[33m";
-		std::string_view code = "\033[96m";
-		std::string_view output = "\033[36m";
-		std::string_view expect = "\033[92m";
-		std::string_view actual = "\033[93m";
-	} color;
-
-private:
-	void PrintIndent(int indent);
 };
