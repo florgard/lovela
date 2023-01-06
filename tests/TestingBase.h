@@ -20,12 +20,12 @@ public:
 
 protected:
 	/// <summary>
-	/// Compares the actual AST with the expected one.
+	/// Compares the actual syntax tree with the expected one.
 	/// </summary>
 	/// <param name="name"></param>
 	/// <param name="node"></param>
 	/// <param name="expectedNode"></param>
-	/// <returns>true if the actual and expected AST match, false otherwise.</returns>
+	/// <returns>true if the actual and expected syntax tree match, false otherwise.</returns>
 	bool TestSyntaxTree(std::ostream& stream, std::string_view name, Node const& node, Node const& expectedNode, Token& failingToken)
 	{
 		int index = 0;
@@ -33,22 +33,22 @@ protected:
 	}
 
 	/// <summary>
-	/// Compares the actual AST with the expected one.
+	/// Compares the actual syntax tree with the expected one.
 	/// </summary>
 	/// <param name="index"></param>
 	/// <param name="name"></param>
 	/// <param name="node"></param>
 	/// <param name="expectedNode"></param>
-	/// <returns>true if the actual and expected AST match, false otherwise.</returns>
+	/// <returns>true if the actual and expected syntax tree match, false otherwise.</returns>
 	bool TestSyntaxTree(std::ostream& stream, int& index, std::string_view name, Node const& node, Node const& expectedNode, Token& failingToken);
 
 	/// <summary>
-	/// Compares each AST in the actual range with the corresponding one in the expected range.
+	/// Compares each syntax tree in the actual range with the corresponding one in the expected range.
 	/// </summary>
 	/// <param name="name"></param>
 	/// <param name="range"></param>
 	/// <param name="expectedRange"></param>
-	/// <returns>true if the actual and expected AST match, false otherwise.</returns>
+	/// <returns>true if the actual and expected syntax tree match, false otherwise.</returns>
 	bool TestSyntaxTree(std::ostream& stream, std::string_view name, std::ranges::range auto& range, std::ranges::range auto const& expectedRange, Token& failingToken)
 	{
 		int index = 0;
@@ -56,13 +56,13 @@ protected:
 	}
 
 	/// <summary>
-	/// Compares each AST in the actual range with the corresponding one in the expected range.
+	/// Compares each syntax tree in the actual range with the corresponding one in the expected range.
 	/// </summary>
 	/// <param name="index"></param>
 	/// <param name="name"></param>
 	/// <param name="range"></param>
 	/// <param name="expectedRange"></param>
-	/// <returns>true if the actual and expected AST match, false otherwise.</returns>
+	/// <returns>true if the actual and expected syntax tree match, false otherwise.</returns>
 	bool TestSyntaxTree(std::ostream& stream, int& index, std::string_view name, std::ranges::range auto& range, std::ranges::range auto const& expectedRange, Token& failingToken)
 	{
 		static const Node emptyNode{};

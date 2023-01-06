@@ -31,9 +31,9 @@ bool ParserTest::YieldsNodes(std::string_view name, std::string_view code, const
 			<< "Input code:\n";
 		lexer.PrintErrorSourceCode(std::cerr, failingToken);
 		std::cerr << s.str()
-			<< "Actual AST:\n" << color.actual;
+			<< "Actual syntax tree:\n" << color.actual;
 		PrintSyntaxTree(nodes);
-		std::cerr << color.none << "Expected AST:\n" << color.expect;
+		std::cerr << color.none << "Expected syntax tree:\n" << color.expect;
 		PrintSyntaxTree(expectedRange);
 		std::cerr << color.none << '\n';
 	}
