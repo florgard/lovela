@@ -89,14 +89,14 @@ protected:
 	void PrintSyntaxTree(int& index, Node const& node, int indent);
 
 	template <typename Code>
-	void PrintIncorrectErrorCodeMessage(std::ostream& stream, const char* phase, const char* name, size_t index, Code actual, Code expected)
+	void PrintIncorrectErrorCodeMessage(std::ostream& stream, std::string_view phase, std::string_view name, size_t index, Code actual, Code expected)
 	{
 		stream << color.fail << "ERROR: " << color.none
 			<< phase << " test \"" << color.name << name << color.none << "\": "
 			<< "Error " << index + 1 << " code is " << color.actual << to_string(actual) << color.none << ", expected " << color.expect << to_string(expected) << color.none << ".\n";
 	}
 
-	void PrintIncorrectErrorLineMessage(std::ostream& stream, const char* phase, const char* name, size_t index, size_t actual, size_t expected)
+	void PrintIncorrectErrorLineMessage(std::ostream& stream, std::string_view phase, std::string_view name, size_t index, size_t actual, size_t expected)
 	{
 		stream << color.fail << "ERROR: " << color.none
 			<< phase << " test \"" << color.name << name << color.none << "\": "
@@ -104,7 +104,7 @@ protected:
 	}
 
 	template <typename ErrorType>
-	void PrintErrorMessage(std::ostream& stream, const ErrorType& error)
+	void PrintErrorMessage(std::ostream& stream, ErrorType const& error)
 	{
 		stream << to_string(error.code) << ": " << error.message << '\n';
 	}
