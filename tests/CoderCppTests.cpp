@@ -627,8 +627,23 @@ auto f_func(lovela::context& context, auto in)
 };
 
 suite CoderCpp_function_call_tests = [] {
-	"function call"_test = [] { 
-		expect(s_test.Success("function call", 
+	"function call with single parameter"_test = [] {
+		expect(s_test.Success("function call with single parameter",
+			"[/type/i8] func [/type/i8]: f(123).",
+			R"cpp(
+l_i8 f_func(lovela::context& context, l_i8 in)
+{
+	static_cast<void>(context);
+	auto& v1 = in; static_cast<void>(v1);
+	const auto v2 = f_f(context, v1, 123); static_cast<void>(v2);
+	return v2;
+}
+)cpp"
+));
+	};
+
+	"function call with arbitrary parameters"_test = [] { 
+		expect(s_test.Success("function call with arbitrary parameters", 
 			"[/type/i8] func [/type/i8]: f(1, 'a', g).", 
 			R"cpp(
 l_i8 f_func(lovela::context& context, l_i8 in)
