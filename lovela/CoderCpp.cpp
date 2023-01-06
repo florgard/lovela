@@ -627,14 +627,7 @@ void CoderCpp::ImportedFunctionBody(Node& node, Context&, const std::vector<std:
 
 void CoderCpp::ExpressionVisitor(Node& node, Context& context)
 {
-	if (!node.children.empty())
-	{
-		BeginAssign(context);
-		Visit(context, node.children, 0, 1);
-		EndAssign(context);
-	}
-
-	Visit(context, node.children, 1, 1);
+	Visit(context, node.children);
 }
 
 void CoderCpp::ExpressionInputVisitor(Node&, Context& context)
