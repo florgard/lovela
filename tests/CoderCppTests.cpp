@@ -29,11 +29,12 @@ static CoderCppTest s_test;
 bool CoderCppTest::Failure(const char* name, std::string_view code, std::string_view cppCode, int expectedErrors)
 {
 	StringLexer lexer;
-	RangeParser parser;
+	std::vector<Token> tokens;
+	VectorParser parser;
 	std::vector<Node> nodes;
 	VectorCoderCpp coder;
 	std::ostringstream output;
-	code >> lexer >> parser >> nodes >> coder >> output;
+	code >> lexer >> tokens >> parser >> nodes >> coder >> output;
 
 	auto generatedCode = output.str();
 	generatedCode = std::regex_replace(generatedCode, std::regex{ "^\\s+" }, "");
@@ -54,7 +55,10 @@ bool CoderCppTest::Failure(const char* name, std::string_view code, std::string_
 			<< "Generated:\n" << color.actual << generatedCode << color.none << '\n'
 			<< "Expected:\n" << color.expect << expectedCode << color.none << '\n'
 			<< "Input code:\n" << color.code << code << color.none << '\n'
-			<< "AST:\n" << color.actual;
+			<< "Tokens:\n" << color.actual;
+		PrintTokens(tokens);
+		std::cout << color.none << '\n'
+			<< "Syntax tree:\n" << color.actual;
 		PrintSyntaxTree(nodes);
 		std::cerr << color.none << '\n';
 
@@ -88,7 +92,7 @@ bool CoderCppTest::ImportFailure(const char* name, std::string_view code, std::s
 	RangeParser parser;
 	std::vector<Node> nodes;
 	VectorCoderCpp coder;
-	std::ostringstream output;
+	std::stringstream output;
 	code >> lexer >> parser >> nodes >> coder >> output;
 
 	bool success = coder.GetImports().size() == 1 || coder.GetImports().empty() && cppCode.empty();

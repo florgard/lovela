@@ -25,11 +25,12 @@ public:
 		std::cout << "Input code:\n" << color.code << code << color.none << '\n';
 
 		StringLexer lexer;
-		RangeParser parser;
+		std::vector<Token> tokens;
+		VectorParser parser;
 		std::vector<Node> nodes;
 		VectorCoderCpp coder;
 		std::stringstream output;
-		code >> lexer >> parser >> nodes >> coder >> output;
+		code >> lexer >> tokens >> parser >> nodes >> coder >> output;
 
 		bool parseErrors = false;
 
@@ -41,7 +42,10 @@ public:
 
 		expect(!parseErrors);
 
-		std::cout << "AST:\n" << color.output;
+		std::cout << "Tokens:\n" << color.actual;
+		PrintTokens(tokens);
+		std::cout << color.none << '\n'
+			<< "Syntax tree:\n" << color.actual;
 		PrintSyntaxTree(nodes);
 		std::cout << color.none << '\n';
 
