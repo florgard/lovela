@@ -42,7 +42,7 @@ public:
 		expect(!parseErrors);
 
 		std::cout << "AST:\n" << color.output;
-		PrintAST(nodes);
+		PrintSyntaxTree(nodes);
 		std::cout << color.none << '\n';
 
 		for (auto& error : coder.GetErrors())

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "TestingBase.h"
 
-bool TestingBase::TestAST(std::ostream& stream, int& index, std::string_view name, Node const& node, Node const& expectedNode, Token& failingToken)
+bool TestingBase::TestSyntaxTree(std::ostream& stream, int& index, std::string_view name, Node const& node, Node const& expectedNode, Token& failingToken)
 {
 	if (node != expectedNode)
 	{
@@ -29,7 +29,7 @@ bool TestingBase::TestAST(std::ostream& stream, int& index, std::string_view nam
 
 	for (size_t i = 0, c = node.children.size(); i < c; ++i)
 	{
-		if (!TestAST(stream, index, name, node.children[i], expectedNode.children[i], failingToken))
+		if (!TestSyntaxTree(stream, index, name, node.children[i], expectedNode.children[i], failingToken))
 		{
 			return false;
 		}
@@ -46,7 +46,7 @@ void TestingBase::PrintIndent(int indent)
 	}
 }
 
-void TestingBase::PrintAST(int& index, Node const& node, int indent)
+void TestingBase::PrintSyntaxTree(int& index, Node const& node, int indent)
 {
 	PrintIndent(indent);
 
@@ -68,7 +68,7 @@ void TestingBase::PrintAST(int& index, Node const& node, int indent)
 
 	for (auto& child : node.children)
 	{
-		PrintAST(index, child, indent + 1);
+		PrintSyntaxTree(index, child, indent + 1);
 	}
 
 	PrintIndent(indent);

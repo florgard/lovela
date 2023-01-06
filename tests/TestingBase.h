@@ -3,18 +3,18 @@
 class TestingBase
 {
 public:
-	void PrintAST(Node const& node)
+	void PrintSyntaxTree(Node const& node)
 	{
 		int i{};
-		PrintAST(i, node, {});
+		PrintSyntaxTree(i, node, {});
 	}
 
-	void PrintAST(std::ranges::range auto& range)
+	void PrintSyntaxTree(std::ranges::range auto& range)
 	{
 		auto end = range.end();
 		for (auto it = range.begin(); it != end; it++)
 		{
-			PrintAST(*it);
+			PrintSyntaxTree(*it);
 		}
 	}
 
@@ -26,10 +26,10 @@ protected:
 	/// <param name="node"></param>
 	/// <param name="expectedNode"></param>
 	/// <returns>true if the actual and expected AST match, false otherwise.</returns>
-	bool TestAST(std::ostream& stream, std::string_view name, Node const& node, Node const& expectedNode, Token& failingToken)
+	bool TestSyntaxTree(std::ostream& stream, std::string_view name, Node const& node, Node const& expectedNode, Token& failingToken)
 	{
 		int index = 0;
-		return TestAST(stream, index, name, node, expectedNode, failingToken);
+		return TestSyntaxTree(stream, index, name, node, expectedNode, failingToken);
 	}
 
 	/// <summary>
@@ -40,7 +40,7 @@ protected:
 	/// <param name="node"></param>
 	/// <param name="expectedNode"></param>
 	/// <returns>true if the actual and expected AST match, false otherwise.</returns>
-	bool TestAST(std::ostream& stream, int& index, std::string_view name, Node const& node, Node const& expectedNode, Token& failingToken);
+	bool TestSyntaxTree(std::ostream& stream, int& index, std::string_view name, Node const& node, Node const& expectedNode, Token& failingToken);
 
 	/// <summary>
 	/// Compares each AST in the actual range with the corresponding one in the expected range.
@@ -49,10 +49,10 @@ protected:
 	/// <param name="range"></param>
 	/// <param name="expectedRange"></param>
 	/// <returns>true if the actual and expected AST match, false otherwise.</returns>
-	bool TestAST(std::ostream& stream, std::string_view name, std::ranges::range auto& range, std::ranges::range auto const& expectedRange, Token& failingToken)
+	bool TestSyntaxTree(std::ostream& stream, std::string_view name, std::ranges::range auto& range, std::ranges::range auto const& expectedRange, Token& failingToken)
 	{
 		int index = 0;
-		return TestAST(stream, index, name, range, expectedRange, failingToken);
+		return TestSyntaxTree(stream, index, name, range, expectedRange, failingToken);
 	}
 
 	/// <summary>
@@ -63,7 +63,7 @@ protected:
 	/// <param name="range"></param>
 	/// <param name="expectedRange"></param>
 	/// <returns>true if the actual and expected AST match, false otherwise.</returns>
-	bool TestAST(std::ostream& stream, int& index, std::string_view name, std::ranges::range auto& range, std::ranges::range auto const& expectedRange, Token& failingToken)
+	bool TestSyntaxTree(std::ostream& stream, int& index, std::string_view name, std::ranges::range auto& range, std::ranges::range auto const& expectedRange, Token& failingToken)
 	{
 		static const Node emptyNode{};
 
@@ -77,7 +77,7 @@ protected:
 			const auto& actual = actualIt != actualEnd ? *actualIt++ : emptyNode;
 			const auto& expected = expectedIt != expectedEnd ? static_cast<const Node&>(*expectedIt++) : emptyNode;
 
-			if (!TestAST(stream, index, name, actual, expected, failingToken))
+			if (!TestSyntaxTree(stream, index, name, actual, expected, failingToken))
 			{
 				return false;
 			}
@@ -86,7 +86,7 @@ protected:
 		return true;
 	}
 
-	void PrintAST(int& index, Node const& node, int indent);
+	void PrintSyntaxTree(int& index, Node const& node, int indent);
 
 	template <typename Code>
 	void PrintIncorrectErrorCodeMessage(std::ostream& stream, const char* phase, const char* name, size_t index, Code actual, Code expected)

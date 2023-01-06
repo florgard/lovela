@@ -23,7 +23,7 @@ bool ParserTest::YieldsNodes(std::string_view name, std::string_view code, const
 
 	Token failingToken{};
 	std::ostringstream s;
-	const bool success = TestAST(s, name, nodes, expectedRange, failingToken);
+	const bool success = TestSyntaxTree(s, name, nodes, expectedRange, failingToken);
 	if (!success)
 	{
 		std::cerr << color.fail << "ERROR: " << color.none
@@ -32,9 +32,9 @@ bool ParserTest::YieldsNodes(std::string_view name, std::string_view code, const
 		lexer.PrintErrorSourceCode(std::cerr, failingToken);
 		std::cerr << s.str()
 			<< "Actual AST:\n" << color.actual;
-		PrintAST(nodes);
+		PrintSyntaxTree(nodes);
 		std::cerr << color.none << "Expected AST:\n" << color.expect;
-		PrintAST(expectedRange);
+		PrintSyntaxTree(expectedRange);
 		std::cerr << color.none << '\n';
 	}
 

@@ -55,7 +55,7 @@ bool CoderCppTest::Failure(const char* name, std::string_view code, std::string_
 			<< "Expected:\n" << color.expect << expectedCode << color.none << '\n'
 			<< "Input code:\n" << color.code << code << color.none << '\n'
 			<< "AST:\n" << color.actual;
-		PrintAST(nodes);
+		PrintSyntaxTree(nodes);
 		std::cerr << color.none << '\n';
 
 		return false;
