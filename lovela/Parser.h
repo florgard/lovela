@@ -43,11 +43,6 @@ private:
 	[[nodiscard]] TypeSpec ParseTypeSpec();
 	[[nodiscard]] ParameterList ParseParameterList();
 
-	[[nodiscard]] Node GetDefaultExpressionInput() noexcept
-	{
-		return { .type = Node::Type::ExpressionInput, .token = GetNext() };
-	}
-
 	[[nodiscard]] static constexpr TypeSpec GetBuiltinTypeSpec(std::string_view value)
 	{
 		if (value.empty())

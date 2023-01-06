@@ -678,7 +678,7 @@ Node Parser::ParseExpressionInput(std::shared_ptr<Context> context)
 	}
 	else
 	{
-		return GetDefaultExpressionInput();
+		return {};
 	}
 }
 
@@ -718,8 +718,11 @@ Node Parser::ParseExpression(std::shared_ptr<Context> context)
 		{
 			operation = &operations.emplace_back(ParseFunctionCall(innerContext));
 			
-			operation->children.emplace_back(std::move(input));
-			input = GetDefaultExpressionInput();
+			if (input)
+			{
+				operation->children.front() = std::move(input);
+				input = {};
+			}
 
 			expectRightOperand = false;
 		}
@@ -727,8 +730,11 @@ Node Parser::ParseExpression(std::shared_ptr<Context> context)
 		{
 			operation = &operations.emplace_back(ParseBinaryOperation(innerContext));
 
-			operation->children.emplace_back(std::move(input));
-			input = GetDefaultExpressionInput();
+			if (input)
+			{
+				operation->children.front() = std::move(input);
+				input = {};
+			}
 
 			expectRightOperand = true;
 		}
@@ -856,7 +862,7 @@ Node Parser::ParseFunctionCall(std::shared_ptr<Context> context)
 {
 	Assert(Token::Type::Identifier);
 
-	Node node{ .type = Node::Type::FunctionCall, .value = GetCurrent().value, .token = GetCurrent() };
+	Node node{ .type = Node::Type::FunctionCall, .value = GetCurrent().value, .token = GetCurrent(), .children {Node{.type = Node::Type::ExpressionInput, .token = GetCurrent()}}};
 
 	// TODO: nameSpace
 
@@ -872,7 +878,7 @@ Node Parser::ParseBinaryOperation(std::shared_ptr<Context> context)
 {
 	Assert(GetBinaryOperatorTokens());
 
-	return { .type = Node::Type::BinaryOperation, .value = GetCurrent().value, .token = GetCurrent() };
+	return { .type = Node::Type::BinaryOperation, .value = GetCurrent().value, .token = GetCurrent(), .children {Node{.type = Node::Type::ExpressionInput, .token = GetCurrent()}} };
 }
 
 Node Parser::ParseVariableReference(std::shared_ptr<Context> context)
