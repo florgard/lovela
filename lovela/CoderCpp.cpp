@@ -568,7 +568,7 @@ void CoderCpp::FunctionBody(Node& node, Context& context)
 		// Make an indexed reference to the input object and avoid a warning if it's unreferenced.
 		Scope() << "auto& " << LocalVar << ++context.variableIndex << " = in; " << RefVar(LocalVar, context.variableIndex) << ';';
 
-		Visit(context, node.children);
+		Visit(context, node.children, 0, 1);
 
 		if (node.outType.Is(TypeSpec::Kind::None))
 		{
@@ -630,11 +630,11 @@ void CoderCpp::ExpressionVisitor(Node& node, Context& context)
 	if (!node.children.empty())
 	{
 		BeginAssign(context);
-		Visit(context, node.children);
+		Visit(context, node.children, 0, 1);
 		EndAssign(context);
 	}
 
-	Visit(context, node.children, 1);
+	Visit(context, node.children, 1, 1);
 }
 
 void CoderCpp::ExpressionInputVisitor(Node&, Context& context)
@@ -652,13 +652,13 @@ void CoderCpp::FunctionCallVisitor(Node& node, Context& context)
 	if (!node.children.empty())
 	{
 		Cursor() << ',' << ' ';
-		Visit(context, node.children);
+		Visit(context, node.children, 0, 1);
 	}
 
 	if (node.children.size() > 1)
 	{
 		Cursor() << ',' << ' ';
-		Visit(context, node.children, 1);
+		Visit(context, node.children, 1, 1);
 	}
 
 	Cursor() << ')';
@@ -676,9 +676,9 @@ void CoderCpp::BinaryOperationVisitor(Node& node, Context& context)
 
 	const bool reset = BeginAssign(context, true);
 
-	Visit(context, node.children);
+	Visit(context, node.children, 0, 1);
 	Cursor() << ' ' << node.value << ' ';
-	Visit(context, node.children, 1);
+	Visit(context, node.children, 1, 1);
 
 	EndAssign(context, reset);
 }
@@ -695,7 +695,7 @@ void CoderCpp::TupleVisitor(Node& node, Context& context)
 	const bool hasLeft = !node.children.empty();
 	if (hasLeft)
 	{
-		Visit(context, node.children);
+		Visit(context, node.children, 0, 1);
 	}
 
 	if (node.children.size() > 1)
@@ -705,7 +705,7 @@ void CoderCpp::TupleVisitor(Node& node, Context& context)
 			Cursor() << ',' << ' ';
 		}
 
-		Visit(context, node.children, 1);
+		Visit(context, node.children, 1, 1);
 	}
 }
 
