@@ -907,9 +907,9 @@ auto f_func(lovela::context& context, auto in)
 {
 	static_cast<void>(context);
 	auto& v1 = in; static_cast<void>(v1);
-	const auto v2 = scale(v1); static_cast<void>(v2);
-	const auto v3 = rotate(v2); static_cast<void>(v3);
-	const auto v4 = translate(v3); static_cast<void>(v4);
+	const auto v2 = f_scale(context, v1); static_cast<void>(v2);
+	const auto v3 = f_rotate(context, v2); static_cast<void>(v3);
+	const auto v4 = f_translate(context, v3); static_cast<void>(v4);
 	return v4;
 }
 )cpp"
