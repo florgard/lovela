@@ -642,16 +642,10 @@ void CoderCpp::FunctionCallVisitor(Node& node, Context& context)
 
 	Cursor() << FunctionName(node.value) << "(context";
 
-	if (!node.children.empty())
+	for (auto& parameter : node.children)
 	{
 		Cursor() << ',' << ' ';
-		Visit(context, node.children, 0, 1);
-	}
-
-	if (node.children.size() > 1)
-	{
-		Cursor() << ',' << ' ';
-		Visit(context, node.children, 1, 1);
+		Visit(context, parameter);
 	}
 
 	Cursor() << ')';
@@ -685,20 +679,15 @@ void CoderCpp::LiteralVisitor(Node& node, Context& context)
 
 void CoderCpp::TupleVisitor(Node& node, Context& context)
 {
-	const bool hasLeft = !node.children.empty();
-	if (hasLeft)
+	for (bool sep{}; auto& element : node.children)
 	{
-		Visit(context, node.children, 0, 1);
-	}
-
-	if (node.children.size() > 1)
-	{
-		if (hasLeft)
+		if (sep)
 		{
 			Cursor() << ',' << ' ';
 		}
+		sep = true;
 
-		Visit(context, node.children, 1, 1);
+		Visit(context, element);
 	}
 }
 
