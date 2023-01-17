@@ -2,16 +2,6 @@
 
 ## Small
 
-### Tests
-
-Print tokens.
-
-### Simplified expression parsing
-
-* No input type from context. Leave it to the analyzer to check and decide.
-
-### Other
-
 /type/bool
 
 Bind operator
@@ -76,7 +66,10 @@ Standard library: http?
 
 ### Analyzer phase
 
-Checks that functions exist, etc.
+Checks that expressions and function calls are valid, etc.
+
+* Check that functions exist.
+* Check that input and output types are compatible.
 
 ### Type system
 * [1] -> flag. << new "type" called "flag", really a function "flag" that gives a default value of type [flag]. >>
