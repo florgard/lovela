@@ -647,7 +647,7 @@ Node Parser::ParseFunctionDeclaration(std::shared_ptr<Context> context)
 			node.outType = { .kind = TypeSpec::Kind::None };
 		}
 
-		auto innerContext = make<Context>::shared({ .parent = context, .inType = node.inType });
+		auto innerContext = make<Context>::shared({ .parent = context });
 
 		for (const auto& parameter : node.parameters)
 		{
@@ -684,8 +684,7 @@ Node Parser::ParseExpressionInput(std::shared_ptr<Context> context)
 
 Node Parser::ParseExpression(std::shared_ptr<Context> context)
 {
-	const auto& inType = context->inType;
-	auto innerContext = make<Context>::shared({ .parent = context, .inType = inType });
+	auto innerContext = make<Context>::shared({ .parent = context });
 
 	std::vector<Node> operations;
 	Node* operation{};
@@ -760,7 +759,7 @@ Node Parser::ParseExpression(std::shared_ptr<Context> context)
 	}
 	else
 	{
-		return { .type = Node::Type::Expression, .outType = inType, .token = GetNext(), .inType = inType, .children = std::move(operations) };
+		return { .type = Node::Type::Expression, .token = GetNext(), .children = std::move(operations) };
 	}
 }
 

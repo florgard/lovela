@@ -15,7 +15,6 @@ private:
 		std::shared_ptr<Context> parent;
 		std::map<std::string, std::shared_ptr<FunctionDeclaration>> functionSymbols;
 		std::map<std::string, std::shared_ptr<VariableDeclaration>> variableSymbols;
-		TypeSpec inType{};
 
 		[[nodiscard]] bool HasFunctionSymbol(const std::string& symbol) const;
 		[[nodiscard]] bool HasVariableSymbol(const std::string& symbol) const;
