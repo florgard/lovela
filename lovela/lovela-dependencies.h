@@ -17,6 +17,7 @@
 #include <charconv>
 
 #include "fmt/fmt/format.h"
+#include "fmt/fmt/ranges.h"
 #include "utfcpp/utf8.h"
 #include "generator.hpp"
 #include "Utility.h"

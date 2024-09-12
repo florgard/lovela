@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Token.h"
 
 // https://stackoverflow.com/questions/399078/what-special-characters-must-be-escaped-in-regular-expressions
@@ -95,7 +95,7 @@ struct LexerPatterns
 	const LexemeRegex<char> operatorLeftArrow{ R"(<-)" };
 	const LexemeRegex<char> operatorRightArrow{ R"(->)" };
 	const LexemeRegex<char> identifierAnsi{ R"([[:alpha:]][\w<>=\+\-\*/]*)" };
-	const LexemeRegex<wchar_t> identifierUnicode{ LR"([[:alpha:]][\w<>=\+\-\*/\u0300–\u036F\u1AB0–\u1AFF\u1DC0–\u1DFF\u20D0–\u20FF\uFE20–\uFE2F]*)" };
+	const LexemeRegex<wchar_t> identifierUnicode{ LR"([[:alpha:]][\w<>=\+\-\*/\u0300â€“\u036F\u1AB0â€“\u1AFF\u1DC0â€“\u1DFF\u20D0â€“\u20FF\uFE20â€“\uFE2F]*)" };
 
 	// Character pattern to token type mapping
 	

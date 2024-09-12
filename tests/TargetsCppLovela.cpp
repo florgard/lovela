@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "../targets/cpp/lovela-runtime/lovela.h"
 
 using namespace boost::ut;
@@ -18,7 +18,7 @@ suite Stream = [] {
 		auto* buf = std::wcout.rdbuf(r1.rdbuf());
 		lovela::streams streams;
 		streams.select(2).write("100\xE2\x82\xAC");
-		expect(!std::wcscmp(r1.str().c_str(), L"100�"));
+		expect(!std::wcscmp(r1.str().c_str(), L"100€"));
 		std::wcout.rdbuf(buf);
 	};
 };
