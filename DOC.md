@@ -450,3 +450,10 @@ A function or type can have the same name as a namespace in the same context.
 `/type/bool/ << bool namespace >>`
 
 `/type/bool/is_true << bool namespace function >>`
+
+# Dependencies
+
+{fmt} - https://github.com/fmtlib/fmt
+UTF8-CPP - https://github.com/nemtrif/utfcpp
+generator - https://github.com/TartanLlama/generator
+Magic Enum C++ - https://github.com/Neargye/magic_enum
