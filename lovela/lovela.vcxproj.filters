@@ -190,5 +190,14 @@
     <ClInclude Include="ICoder.h">
       <Filter>Coder</Filter>
     </ClInclude>
+    <ClInclude Include="utfcpp\utf8\cpp17.h">
+      <Filter>Libraries\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="utfcpp\utf8\cpp20.h">
+      <Filter>Libraries\utf8</Filter>
+    </ClInclude>
+    <ClInclude Include="fmt\fmt\base.h">
+      <Filter>Libraries\fmt</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

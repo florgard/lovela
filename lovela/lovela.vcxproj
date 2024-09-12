@@ -181,6 +181,7 @@
     <ClInclude Include="CoderCpp.h" />
     <ClInclude Include="DataType.h" />
     <ClInclude Include="fmt\fmt\args.h" />
+    <ClInclude Include="fmt\fmt\base.h" />
     <ClInclude Include="fmt\fmt\chrono.h" />
     <ClInclude Include="fmt\fmt\color.h" />
     <ClInclude Include="fmt\fmt\compile.h" />
@@ -218,6 +219,8 @@
     <ClInclude Include="utfcpp\utf8\checked.h" />
     <ClInclude Include="utfcpp\utf8\core.h" />
     <ClInclude Include="utfcpp\utf8\cpp11.h" />
+    <ClInclude Include="utfcpp\utf8\cpp17.h" />
+    <ClInclude Include="utfcpp\utf8\cpp20.h" />
     <ClInclude Include="utfcpp\utf8\unchecked.h" />
     <ClInclude Include="Utility.h" />
     <ClInclude Include="VariableDeclaration.h" />
