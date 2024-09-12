@@ -3055,7 +3055,7 @@ struct _t : detail::value<T> {
 template <fixed_string suite_name = "unnamed suite">
 struct suite {
   reflection::source_location location{};
-  std::string_view name = suite_name.operator std::string_view();
+  std::string_view name = suite_name;
   template <class TSuite>
   constexpr /*explicit(false)*/ suite(TSuite _suite) {
     static_assert(1 == sizeof(_suite));
