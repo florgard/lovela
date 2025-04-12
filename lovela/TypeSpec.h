@@ -13,6 +13,11 @@ struct TypeSpec
 		Invalid,
 	} kind{};
 
+	static constexpr TypeSpec Invalid()
+	{
+		return { .kind = TypeSpec::Kind::Invalid };
+	}
+
 	std::string name;
 	NameSpace nameSpace{};
 

@@ -45,7 +45,7 @@ private:
 	[[nodiscard]] static constexpr TypeSpec GetBuiltinTypeSpec(std::string_view value)
 	{
 		if (value.empty())
-			return { .kind = TypeSpec::Kind::Invalid };
+			return TypeSpec::Invalid();
 
 		TypeSpec t{ .kind = TypeSpec::Kind::Primitive };
 
@@ -63,7 +63,7 @@ private:
 			break;
 
 		default:
-			return { .kind = TypeSpec::Kind::Invalid };
+			return TypeSpec::Invalid();
 		}
 
 		auto bits = to_int<char>(value.substr(1)).unsignedValue.value_or(0);
@@ -74,9 +74,7 @@ private:
 
 		case 16:
 			if (t.primitive.floatType)
-			{
-				return { .kind = TypeSpec::Kind::Invalid };
-			}
+				return TypeSpec::Invalid();
 			[[fallthrough]];
 
 		case 32:
@@ -87,7 +85,7 @@ private:
 			break;
 
 		default:
-			return { .kind = TypeSpec::Kind::Invalid };
+			return TypeSpec::Invalid();
 		}
 
 		return t;
@@ -124,7 +122,7 @@ private:
 				return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 64, .signedType = i <= static_cast<decltype(i)>(std::numeric_limits<int64_t>::max())} };
 		}
 
-		return { .kind = TypeSpec::Kind::Invalid };
+		return TypeSpec::Invalid();
 	}
 
 	[[nodiscard]] TypeSpec GetPrimitiveDecimalTypeSpec(const std::string& value);
