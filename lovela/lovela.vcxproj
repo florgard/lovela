@@ -195,7 +195,7 @@
     <ClInclude Include="fmt\fmt\std.h" />
     <ClInclude Include="fmt\fmt\xchar.h" />
     <ClInclude Include="FunctionDeclaration.h" />
-    <ClInclude Include="generator.hpp" />
+    <ClInclude Include="generator\generator.hpp" />
     <ClInclude Include="ICoder.h" />
     <ClInclude Include="ILexer.h" />
     <ClInclude Include="IParser.h" />
@@ -203,7 +203,7 @@
     <ClInclude Include="LexerBase.h" />
     <ClInclude Include="LexerPatterns.h" />
     <ClInclude Include="lovela-dependencies.h" />
-    <ClInclude Include="magic_enum.hpp" />
+    <ClInclude Include="magic_enum\magic_enum.hpp" />
     <ClInclude Include="NameSpace.h" />
     <ClInclude Include="Node.h" />
     <ClInclude Include="ParseException.h" />

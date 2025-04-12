@@ -73,12 +73,6 @@
     <ClInclude Include="pch.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="magic_enum.hpp">
-      <Filter>Libraries</Filter>
-    </ClInclude>
-    <ClInclude Include="generator.hpp">
-      <Filter>Libraries</Filter>
-    </ClInclude>
     <ClInclude Include="utfcpp\utf8.h">
       <Filter>Libraries</Filter>
     </ClInclude>
@@ -198,6 +192,12 @@
     </ClInclude>
     <ClInclude Include="fmt\fmt\base.h">
       <Filter>Libraries\fmt</Filter>
+    </ClInclude>
+    <ClInclude Include="magic_enum\magic_enum.hpp">
+      <Filter>Libraries</Filter>
+    </ClInclude>
+    <ClInclude Include="generator\generator.hpp">
+      <Filter>Libraries</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

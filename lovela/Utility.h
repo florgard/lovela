@@ -1,5 +1,5 @@
 #pragma once
-#include "magic_enum.hpp"
+#include "magic_enum/magic_enum.hpp"
 
 [[nodiscard]] static constexpr std::string_view Trim(const std::string_view& input) noexcept
 {
