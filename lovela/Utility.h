@@ -2,11 +2,11 @@
 
 struct Defer final
 {
-	Defer(std::function<void()> deferred) : m_Deferred(deferred) { }
-	~Defer() { m_Deferred(); }
+	Defer(std::function<void()> deferred) : _deferred(deferred) { }
+	~Defer() { _deferred(); }
 
 private:
-	std::function<void()> m_Deferred;
+	std::function<void()> _deferred;
 };
 
 template<typename T>
