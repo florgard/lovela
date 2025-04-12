@@ -187,9 +187,7 @@ Token Lexer::LexLiteralNumber() noexcept
 	value += GetCharacter(Current);
 
 	while (Accept(patterns.digit))
-	{
 		value += GetCharacter(Current);
-	}
 
 	// Accept a single decimal point in numbers.
 
@@ -198,25 +196,19 @@ Token Lexer::LexLiteralNumber() noexcept
 		value += GetCharacter(Current);
 
 		while (Accept(patterns.digit))
-		{
 			value += GetCharacter(Current);
-		}
 
 		if (Accept(patterns.beginDecimalExponent))
 		{
 			value += GetCharacter(Current);
 
 			if (!Accept(patterns.beginLiteralNumber))
-			{
 				return { .type = Token::Type::Error, .error{.code = Token::Error::Code::LiteralDecimalIllformed, .message = "Ill-formed literal decimal number." } };
-			}
 			
 			value += GetCharacter(Current);
 
 			while (Accept(patterns.digit))
-			{
 				value += GetCharacter(Current);
-			}
 		}
 
 		return {.type = Token::Type::LiteralDecimal, .value = MoveClear(value)};
@@ -252,10 +244,8 @@ ILexer::OutputT Lexer::LexComment() noexcept
 			co_yield token;
 			token = { .type = Token::Type::Comment };
 
-			for (auto t : LexComment())
-			{
+			for (Token t : LexComment())
 				co_yield t;
-			}
 		}
 		else if (Accept())
 		{
@@ -283,9 +273,7 @@ Token Lexer::GetToken(char lexeme) noexcept
 {
 	auto type = GetTokenType(lexeme);
 	if (type == Token::Type::Empty)
-	{
 		return {};
-	}
 
 	return { .type = type, .value = std::string(1, lexeme) };
 }
@@ -295,30 +283,21 @@ Token Lexer::GetToken(std::string_view lexeme) noexcept
 	const auto trimmed = Trim(lexeme);
 
 	if (trimmed.empty())
-	{
 		return {};
-	}
 
 	// Check for single char token
 
 	if (trimmed.length() == 1)
 	{
-		auto token = GetToken(trimmed[0]);
-		if (token)
-		{
-			return token;
-		}
+		Token t = GetToken(trimmed[0]);
+		if (t) return t;
 	}
 
 	// Check for ANSI token
 
 	for (const auto& lexemePattern : patterns.lexemePatternsAnsi)
-	{
 		if (std::regex_match(trimmed.begin(), trimmed.end(), lexemePattern.pattern.regex))
-		{
 			return { .type = lexemePattern.tokenType, .value = std::string(trimmed.data(), trimmed.size()) };
-		}
-	}
 
 	// Check for Unicode token
 
@@ -326,12 +305,8 @@ Token Lexer::GetToken(std::string_view lexeme) noexcept
 	const auto wtrimmed = Trim(wlexeme);
 
 	for (const auto& lexemePattern : patterns.lexemePatternsUnicode)
-	{
 		if (std::regex_match(wtrimmed.begin(), wtrimmed.end(), lexemePattern.pattern.regex))
-		{
 			return { .type = lexemePattern.tokenType, .value = std::string(trimmed.data(), trimmed.size()) };
-		}
-	}
 
 	return { .type = Token::Type::Error, .error{.code = Token::Error::Code::SyntaxError, .message = fmt::format("Syntax error near \"{}\".", std::string(trimmed.data(), trimmed.size()))} };
 }
