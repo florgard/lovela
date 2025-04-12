@@ -2,7 +2,7 @@
 
 struct Defer final
 {
-	Defer(std::function<void()> deferred) : m_Deferred(deferred) {}
+	Defer(std::function<void()> deferred) : m_Deferred(deferred) { }
 	~Defer() { m_Deferred(); }
 
 private:
@@ -427,14 +427,7 @@ struct static_map
 	[[nodiscard]] constexpr Value at(const Key& key) const
 	{
 		const auto itr = std::find_if(data.begin(), data.end(), [&key](const auto& v) { return v.first == key; });
-		if (itr != data.end())
-		{
-			return itr->second;
-		}
-		else
-		{
-			throw std::range_error("Not Found");
-		}
+		return (itr != data.end()) ? itr->second : throw std::range_error("Not Found");
 	}
 
 	[[nodiscard]] constexpr Value at_or(const Key& key, Value defaultValue) const
