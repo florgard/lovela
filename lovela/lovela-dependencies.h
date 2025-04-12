@@ -20,5 +20,6 @@
 #include "fmt/fmt/ranges.h"
 #include "utfcpp/utf8.h"
 #include "generator/generator.hpp"
+#include "magic_enum/magic_enum.hpp"
 #include "Utility.h"
 #include "Algorithm.h"

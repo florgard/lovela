@@ -122,7 +122,7 @@ private:
 	static const TypeSpec& GetVoidPtrType();
 
 	OutputT* streamPtr{};
-	size_t indent;
+	size_t indent{};
 	std::vector<std::string> errors;
 	std::vector<std::string> headers;
 	std::vector<std::string> exports;

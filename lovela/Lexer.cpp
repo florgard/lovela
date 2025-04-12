@@ -93,7 +93,7 @@ ILexer::OutputT Lexer::LexLiteralString() noexcept
 			}
 			else
 			{
-				Token t{.type = Token::Type::LiteralString, .value = std::move(value)};
+				Token t{.type = Token::Type::LiteralString, .value = MoveClear(value)};
 				co_yield t;
 				co_return;
 			}
@@ -108,7 +108,7 @@ ILexer::OutputT Lexer::LexLiteralString() noexcept
 			else if (Accept(patterns.stringFieldClose))
 			{
 				// Unindexed string interpolation. Add the string literal up to this point as a token.
-				Token t{.type = Token::Type::LiteralString, .value = std::move(value)};
+				Token t{.type = Token::Type::LiteralString, .value = MoveClear(value)};
 				co_yield t;
 
 				// Add a string literal interpolation token with the next free index.
@@ -131,7 +131,7 @@ ILexer::OutputT Lexer::LexLiteralString() noexcept
 				if (Accept(patterns.stringFieldClose))
 				{
 					// Indexed string interpolation. Add the string literal up to this point as a token.
-					Token t{.type = Token::Type::LiteralString, .value = std::move(value)};
+					Token t{.type = Token::Type::LiteralString, .value = MoveClear(value)};
 					co_yield t;
 
 					// Add a string literal interpolation token with the given index.
@@ -219,11 +219,11 @@ Token Lexer::LexLiteralNumber() noexcept
 			}
 		}
 
-		return {.type = Token::Type::LiteralDecimal, .value = std::move(value)};
+		return {.type = Token::Type::LiteralDecimal, .value = MoveClear(value)};
 	}
 	else
 	{
-		return {.type = Token::Type::LiteralInteger, .value = std::move(value)};
+		return {.type = Token::Type::LiteralInteger, .value = MoveClear(value)};
 	}
 }
 

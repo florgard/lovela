@@ -1,5 +1,27 @@
 #pragma once
-#include "magic_enum/magic_enum.hpp"
+
+struct Defer final
+{
+	Defer(std::function<void()> deferred) : m_Deferred(deferred) {}
+	~Defer() { m_Deferred(); }
+
+private:
+	std::function<void()> m_Deferred;
+};
+
+template<typename T>
+concept Clearable = requires(T t)
+{
+	{ t.clear() };
+};
+
+template<Clearable T>
+[[nodiscard]] static constexpr T MoveClear(T& value)
+{
+	T moved = std::move(value);
+	value.clear();
+	return moved;
+}
 
 [[nodiscard]] static constexpr std::string_view Trim(const std::string_view& input) noexcept
 {
