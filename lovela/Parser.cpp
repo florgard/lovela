@@ -162,49 +162,33 @@ static constexpr auto& GetOperatorNodes()
 bool Parser::Context::HasFunctionSymbol(const std::string& symbol) const
 {
 	if (functionSymbols.contains(symbol))
-	{
 		return true;
-	}
 	else if (parent)
-	{
 		return parent->HasFunctionSymbol(symbol);
-	}
 	else
-	{
 		return false;
-	}
 }
 
 bool Parser::Context::HasVariableSymbol(const std::string& symbol) const
 {
 	if (variableSymbols.contains(symbol))
-	{
 		return true;
-	}
 	else if (parent)
-	{
 		return parent->HasVariableSymbol(symbol);
-	}
 	else
-	{
 		return false;
-	}
 }
 
 void Parser::Context::AddFunctionSymbol(const std::string& symbol)
 {
 	if (!HasFunctionSymbol(symbol))
-	{
 		functionSymbols.emplace(std::make_pair(symbol, std::shared_ptr<FunctionDeclaration>()));
-	}
 }
 
 void Parser::Context::AddVariableSymbol(std::shared_ptr<VariableDeclaration> declaration)
 {
 	if (!HasVariableSymbol(declaration->name))
-	{
 		variableSymbols.emplace(std::make_pair(declaration->name, declaration));
-	}
 }
 
 // Parser
@@ -237,13 +221,9 @@ IParser::OutputT Parser::Parse() noexcept
 			else if (Accept(Token::Type::End))
 			{
 				if (Peek())
-				{
 					throw UnexpectedTokenException(GetNext());
-				}
 				else
-				{
 					co_return;
-				}
 			}
 			else if (Peek())
 			{
@@ -341,9 +321,7 @@ TypeSpec Parser::GetPrimitiveDecimalTypeSpec(const std::string& value)
 		auto [ptrFloat, errorFloat] = std::from_chars(value.data(), value.data() + value.size(), f);
 
 		if (errorFloat == std::errc{})
-		{
 			return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 32, .floatType = true} };
-		}
 	}
 
 	// A double is required, but check if within range.
@@ -352,9 +330,7 @@ TypeSpec Parser::GetPrimitiveDecimalTypeSpec(const std::string& value)
 	auto [ptrDouble, errorDouble] = std::from_chars(value.data(), value.data() + value.size(), d);
 
 	if (errorDouble == std::errc{})
-	{
 		return { .kind = TypeSpec::Kind::Primitive, .primitive{.bits = 64, .floatType = true} };
-	}
 
 	// FIXME: Throw?
 	// Not a number or out of range.
@@ -454,9 +430,7 @@ ParameterList Parser::ParseParameterList()
 
 	// ()
 	if (Accept(Token::Type::ParenRoundClose))
-	{
 		return parameters;
-	}
 
 	for (;;)
 	{
@@ -525,13 +499,9 @@ ApiSpec Parser::ParseApiSpec()
 		for (auto& apiToken : apiTokens)
 		{
 			if (validApiTokens.contains(apiToken))
-			{
 				apiSpec.Set(validApiTokens.at(apiToken));
-			}
 			else
-			{
 				throw ParseException(GetCurrent(), fmt::format("Invalid import/export API specification token \"{}\".", apiToken));
-			}
 		}
 	}
 
@@ -585,7 +555,7 @@ Node Parser::ParseFunctionDeclaration(std::shared_ptr<Context> context)
 	// namespace/binaryOperator
 	else if (IsToken(Token::Type::Identifier))
 	{
-		auto name = GetCurrent().value;
+		std::string name = GetCurrent().value;
 
 		// namespace1/namespaceN/identifier
 		// namespace1/namespaceN/binaryOperator
@@ -628,15 +598,11 @@ Node Parser::ParseFunctionDeclaration(std::shared_ptr<Context> context)
 
 	// identifier (parameterList)
 	if (Accept(Token::Type::ParenRoundOpen))
-	{
 		node.parameters = ParseParameterList();
-	}
 
 	// identifier [outType]
 	if (Accept(GetTypeSpecTokens()))
-	{
 		node.outType = ParseTypeSpec();
-	}
 
 	// identifier:
 	if (IsToken(Token::Type::SeparatorColon) || Accept(Token::Type::SeparatorColon))
@@ -650,9 +616,7 @@ Node Parser::ParseFunctionDeclaration(std::shared_ptr<Context> context)
 		auto innerContext = make<Context>::shared({ .parent = context });
 
 		for (const auto& parameter : node.parameters)
-		{
 			innerContext->AddVariableSymbol(parameter);
-		}
 
 		node.children.emplace_back(ParseExpression(innerContext));
 	}
@@ -749,18 +713,12 @@ Node Parser::ParseExpression(std::shared_ptr<Context> context)
 	}
 
 	if (expectRightOperand)
-	{
 		throw UnexpectedTokenAfterException(GetNext(), operation->token, "Expected an operand after binary operation.");
-	}
 
 	if (operations.empty())
-	{
 		return input;
-	}
 	else
-	{
 		return { .type = Node::Type::Expression, .token = GetNext(), .children = std::move(operations) };
-	}
 }
 
 // Returns Tuple, ExpressionList, Expression or Empty
@@ -781,22 +739,14 @@ Node Parser::ParseExpressionList(std::shared_ptr<Context> context)
 	std::vector<Node> items;
 
 	while (!Peek(GetExpressionTerminatorTokens()))
-	{
 		items.emplace_back(ParseExpression(context));
-	}
 
 	if (items.size() > 1)
-	{
 		return { .type = Node::Type::ExpressionList, .token = GetCurrent(), .children = std::move(items) };
-	}
 	else if (items.size() == 1)
-	{
 		return std::move(items.back());
-	}
 	else
-	{
 		return {};
-	}
 }
 
 // Returns Tuple, ExpressionList, Expression or Empty
@@ -810,17 +760,11 @@ Node Parser::ParseTuple(std::shared_ptr<Context> context)
 	} while (Accept(Token::Type::SeparatorComma));
 
 	if (items.size() > 1)
-	{
 		return { .type = Node::Type::Tuple, .token = GetCurrent(), .children = std::move(items) };
-	}
 	else if (items.size() == 1)
-	{
 		return std::move(items.back());
-	}
 	else
-	{
 		return {};
-	}
 }
 
 Node Parser::ParseOperand(std::shared_ptr<Context> context)
@@ -866,9 +810,7 @@ Node Parser::ParseFunctionCall(std::shared_ptr<Context> context)
 	// TODO: nameSpace
 
 	if (Accept(Token::Type::ParenRoundOpen))
-	{
 		node.children.emplace_back(ParseGroup(context));
-	}
 
 	return node;
 }
