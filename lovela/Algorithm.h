@@ -211,9 +211,7 @@ constexpr auto to_vector(std::ranges::range auto&& range)
 	std::vector<std::decay_t<decltype(*range.begin())>> v;
 
 	for (auto&& item : range)
-	{
 		v.emplace_back(std::move(item));
-	}
 
 	return v;
 }
@@ -237,17 +235,13 @@ struct Traverse
 		visitor(tree);
 
 		for (auto& child : tree.children)
-		{
 			DepthFirstPreorder(child, visitor);
-		}
 	}
 
 	static constexpr void DepthFirstPostorder(NodeT& tree, std::function<void(NodeT& node)> visitor) noexcept
 	{
 		for (auto& child : tree.children)
-		{
 			DepthFirstPostorder(child, visitor);
-		}
 
 		visitor(tree);
 	}
@@ -256,17 +250,13 @@ struct Traverse
 	{
 		auto end = range.end();
 		for (auto it = range.begin(); it != end; it++)
-		{
 			DepthFirstPreorder(**it, visitor);
-		}
 	}
 
 	static constexpr void DepthFirstPostorder(std::ranges::range auto& range, std::function<void(NodeT& node)> visitor) noexcept
 	{
 		auto end = range.end();
 		for (auto it = range.begin(); it != end; it++)
-		{
 			DepthFirstPostorder(*it, visitor);
-		}
 	}
 };

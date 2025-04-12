@@ -1,6 +1,6 @@
 #pragma once
 #include "ICoder.h"
-#
+
 class CoderCpp : public ICoder
 {
 public:
@@ -47,17 +47,13 @@ private:
 	void Visit(Context& context, std::vector<Node>& nodes)
 	{
 		for (auto& node : nodes)
-		{
 			Visit(context, node);
-		}
 	}
 
 	void Visit(Context& context, std::vector<Node>& nodes, size_t start, size_t count)
 	{
 		for (size_t i = start, e = nodes.size(), c = 0; i < e && c < count; ++i, ++c)
-		{
 			Visit(context, nodes[i]);
-		}
 	}
 
 	[[nodiscard]] constexpr OutputT& Cursor() noexcept
@@ -69,9 +65,7 @@ private:
 	{
 		*streamPtr << '\n';
 		for (size_t i = 0; i < indent; ++i)
-		{
 			*streamPtr << ' ' << ' ';
-		}
 		return *streamPtr;
 	}
 
