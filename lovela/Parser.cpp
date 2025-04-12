@@ -283,7 +283,7 @@ TypeSpec Parser::GetPrimitiveDecimalTypeSpec(const std::string& value)
 	{
 		// FIXME: Throw?
 		// Not a valid decimal literal.
-		return { .kind = TypeSpec::Kind::Invalid };
+		return TypeSpec::Invalid();
 	}
 
 	// The integer mantissa is all the digits.
@@ -296,7 +296,7 @@ TypeSpec Parser::GetPrimitiveDecimalTypeSpec(const std::string& value)
 	{
 		// FIXME: Throw?
 		// Invalid regex?
-		return { .kind = TypeSpec::Kind::Invalid };
+		return TypeSpec::Invalid();
 	}
 
 	bool requireDouble = false;
@@ -334,14 +334,14 @@ TypeSpec Parser::GetPrimitiveDecimalTypeSpec(const std::string& value)
 
 	// FIXME: Throw?
 	// Not a number or out of range.
-	return { .kind = TypeSpec::Kind::Invalid };
+	return TypeSpec::Invalid();
 }
 
 TypeSpec Parser::ParseTypeSpec()
 {
 	Assert(GetTypeSpecTokens());
 
-	TypeSpec t{ .kind = TypeSpec::Kind::Invalid };
+	TypeSpec t = TypeSpec::Invalid();
 
 	// []
 	if (Peek(Token::Type::ParenSquareClose))
@@ -362,13 +362,9 @@ TypeSpec Parser::ParseTypeSpec()
 	else if (Accept(Token::Type::SeparatorHash))
 	{
 		if (Accept(GetTaggedTypeSpecTokens()))
-		{
 			t = { .kind = TypeSpec::Kind::Tagged, .name = GetCurrent().value };
-		}
 		else
-		{
 			throw UnexpectedTokenException(GetNext());
-		}
 	}
 	// [/type/i32]
 	else if (Accept(Token::Type::SeparatorSlash))
@@ -791,6 +787,7 @@ Node Parser::ParseOperand(std::shared_ptr<Context> context)
 
 		case Token::Type::LiteralString:
 			node.outType = TypeSpec{ .kind = TypeSpec::Kind::Primitive, .arrayDims{0}, .primitive{.bits = 8, .signedType = true} };
+			break;
 		}
 	}
 	else
