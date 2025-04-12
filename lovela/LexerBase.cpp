@@ -77,9 +77,7 @@ bool LexerBase::Accept() noexcept
 
 	const auto currentChar = GetCharacter(Current);
 	if (!currentChar)
-	{
 		return false;
-	}
 
 	if (currentChar == LexerPatterns::separatorNewLine)
 	{
@@ -97,9 +95,7 @@ bool LexerBase::Accept() noexcept
 bool LexerBase::Accept(char pattern) noexcept
 {
 	if (GetCharacter(Next) == pattern)
-	{
 		return Accept();
-	}
 
 	return false;
 }
@@ -107,9 +103,7 @@ bool LexerBase::Accept(char pattern) noexcept
 bool LexerBase::Accept(LexerPatterns::Chars pattern) noexcept
 {
 	if (GetCharacter(Next) == pattern.next && GetCharacter(NextAfter) == pattern.nextAfter)
-	{
 		return Accept();
-	}
 
 	return false;
 }
@@ -164,9 +158,7 @@ void LexerBase::PrintErrorSourceCode(std::ostream& stream, const Token& token) n
 
 	// Write the remaining part of the line, if any.
 	if (end < length)
-	{
 		stream << sourceCode.substr(end);
-	}
 
 	stream << color.none << '\n';
 

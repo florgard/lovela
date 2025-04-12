@@ -9,9 +9,7 @@ using ParameterList = std::vector<std::shared_ptr<VariableDeclaration>>;
 inline std::ostream& operator<<(std::ostream& stream, const ParameterList& parameters)
 {
 	for (auto& param : parameters)
-	{
 		stream << *param << ',';
-	}
 	return stream;
 }
 

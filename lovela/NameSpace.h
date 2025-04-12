@@ -10,14 +10,10 @@ struct NameSpace
 	[[nodiscard]] void Print(std::ostream& stream) const
 	{
 		if (root)
-		{
 			stream << Token::Constant::NameSpaceSeparator;
-		}
 
 		for (auto& part : parts)
-		{
 			stream << part << Token::Constant::NameSpaceSeparator;
-		}
 	}
 };
 

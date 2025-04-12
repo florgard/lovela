@@ -51,13 +51,9 @@ struct TypeSpec
 		nameSpace.Print(s);
 
 		if (Is(Kind::Primitive))
-		{
 			PrintPrimitiveName(s);
-		}
 		else
-		{
 			s << name;
-		}
 
 		s << ']';
 
@@ -66,9 +62,7 @@ struct TypeSpec
 			s << '#';
 
 			if (length)
-			{
 				s << length;
-			}
 		}
 
 		return s.str();
@@ -95,9 +89,7 @@ inline std::ostream& operator<<(std::ostream& stream, const TypeSpec::Primitive&
 inline std::ostream& operator<<(std::ostream& stream, const TypeSpec::ArrayDims& arrayDims)
 {
 	for (auto& length : arrayDims)
-	{
 		stream << length << ',';
-	}
 	return stream;
 }
 

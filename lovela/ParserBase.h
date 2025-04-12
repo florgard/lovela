@@ -26,9 +26,7 @@ protected:
 	constexpr void Assert(Token::Type type)
 	{
 		if (!IsToken(type))
-		{
 			throw InvalidCurrentTokenException(GetCurrent());
-		}
 	}
 
 	// Asserts that the current token is of one of the given types.
@@ -37,9 +35,7 @@ protected:
 	constexpr void Assert(const static_set<Token::Type, Size>& types)
 	{
 		if (!IsToken(types))
-		{
 			throw InvalidCurrentTokenException(GetCurrent());
-		}
 	}
 
 	// Skips the current token and sets the next token as current token.
@@ -53,9 +49,7 @@ protected:
 	void Skip(Token::Type type)
 	{
 		if (Peek(type))
-		{
 			Skip();
-		}
 	}
 
 	// Skips the current token and sets the next token as current token, if the next token is of one of the given types.
@@ -63,9 +57,7 @@ protected:
 	constexpr void Skip(const static_set<Token::Type, Size>& types) 
 	{
 		if (Peek(types))
-		{
 			Skip();
-		}
 	}
 
 	// Checks whether the current token is of the given type.
@@ -88,9 +80,7 @@ protected:
 	void Expect(Token::Type type)
 	{
 		if (!Accept(type))
-		{
 			throw UnexpectedTokenException(GetNext(), type);
-		}
 	}
 
 	// Sets the current token to the next token that is expected to be of the given type and hold the given value.
@@ -98,14 +88,10 @@ protected:
 	void Expect(Token::Type type, std::string_view value)
 	{
 		if (!Accept(type))
-		{
 			throw UnexpectedTokenException(GetNext(), type);
-		}
 
 		if (GetCurrent().value != value)
-		{
 			throw UnexpectedTokenException(GetNext(), type, value);
-		}
 	}
 
 	// Sets the current token to the next token that is expected to be of one of the given types.
@@ -114,9 +100,7 @@ protected:
 	constexpr void Expect(const static_set<Token::Type, Size>& types)
 	{
 		if (!Accept(types))
-		{
 			throw UnexpectedTokenException(GetNext(), types.data);
-		}
 	}
 
 	// Sets the current token to the next token if it's of the given type.
@@ -146,15 +130,11 @@ protected:
 	[[nodiscard]] bool Peek()
 	{
 		if (IsDone())
-		{
 			return false;
-		}
 
 		const auto nextType = GetNext().type;
 		if (nextType == Token::Type::Error)
-		{
 			throw ErrorTokenException(GetNext());
-		}
 
 		return true;
 	}
@@ -164,9 +144,7 @@ protected:
 	[[nodiscard]] bool Peek(Token::Type type)
 	{
 		if (!Peek())
-		{
 			return false;
-		}
 
 		const auto nextType = GetNext().type;
 		return type == nextType;
@@ -178,9 +156,7 @@ protected:
 	[[nodiscard]] constexpr bool Peek(const static_set<Token::Type, Size>& types)
 	{
 		if (!Peek())
-		{
 			return false;
-		}
 
 		const auto nextType = GetNext().type;
 		return types.contains(nextType);
