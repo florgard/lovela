@@ -18,10 +18,10 @@ protected:
 template <class BaseT, std::ranges::range RangeT>
 class RangeEnumerator : public BaseT
 {
-	RangeT _range;
+	RangeT _range{};
 
 	using IteratorT = decltype(std::ranges::begin(_range));
-	IteratorT _iterator;
+	IteratorT _iterator{};
 
 	using ItemT = std::decay_t<decltype(*std::ranges::begin(_range))>;
 	static_assert(std::is_base_of_v<IEnumerator<ItemT>, BaseT>, "The base class must inherit IEnumerator for the item type.");
@@ -67,10 +67,10 @@ public:
 template <class BaseT, std::ranges::range RangeT>
 class RangeRefEnumerator : public BaseT
 {
-	RangeT* _rangePtr;
+	RangeT* _rangePtr{};
 
 	using IteratorT = decltype(std::ranges::begin(*_rangePtr));
-	IteratorT _iterator;
+	IteratorT _iterator{};
 
 	using ItemT = std::decay_t<decltype(*std::ranges::begin(*_rangePtr))>;
 	static_assert(std::is_base_of_v<IEnumerator<ItemT>, BaseT>, "The base class must inherit IEnumerator for the item type.");
@@ -116,10 +116,10 @@ public:
 template <class BaseT, std::ranges::range RangeT>
 class ConstRangeEnumerator : public BaseT
 {
-	RangeT _range;
+	RangeT _range{};
 
 	using IteratorT = decltype(std::ranges::begin(_range));
-	IteratorT _iterator;
+	IteratorT _iterator{};
 
 	using ItemT = std::decay_t<decltype(*std::ranges::begin(_range))>;
 	static_assert(std::is_base_of_v<IEnumerator<ItemT>, BaseT>, "The base class must inherit IEnumerator for the item type.");
@@ -161,7 +161,7 @@ public:
 template <class BaseT, class StreamT>
 class StreamEnumerator : public BaseT
 {
-	StreamT* _stream;
+	StreamT* _stream{};
 
 	using ItemT = StreamT::char_type;
 	static_assert(std::is_base_of_v<IEnumerator<ItemT>, BaseT>, "The base class must inherit IEnumerator for the item type.");
@@ -204,7 +204,7 @@ public:
 constexpr bool not_empty(const auto& x)
 {
 	return !!x;
-};
+}
 
 constexpr auto to_vector(std::ranges::range auto&& range)
 {

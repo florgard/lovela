@@ -67,7 +67,7 @@ protected:
 	static constexpr size_t NextAfter = 2;
 
 private:
-	std::istream* _charStream;
+	std::istream* _charStream{};
 	std::array<char, 3> characters{};
 	std::string currentLexeme;
 	bool expectWordBreak{};
