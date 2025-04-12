@@ -373,9 +373,7 @@ private:
 		StringT token;
 
 		while (std::getline(stream, token, delim))
-		{
 			co_yield token;
-		}
 	}
 
 	StreamT stream;
