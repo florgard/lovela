@@ -29,9 +29,7 @@ template<Clearable T>
 
 	const auto start = input.find_first_not_of(whitespace.data());
 	if (start == input.npos)
-	{
 		return {};
-	}
 
 	const auto end = input.find_last_not_of(whitespace.data(), input.npos, whitespace.size());
 	return input.substr(start, end - start + 1);
@@ -43,9 +41,7 @@ template<Clearable T>
 
 	const auto start = input.find_first_not_of(whitespace.data());
 	if (start == input.npos)
-	{
 		return {};
-	}
 
 	const auto end = input.find_last_not_of(whitespace.data(), input.npos, whitespace.size());
 	return input.substr(start, end - start + 1);
@@ -54,9 +50,7 @@ template<Clearable T>
 [[nodiscard]] constexpr bool is_int(std::string_view value) noexcept
 {
 	if (value.empty())
-	{
 		return false;
-	}
 
 	size_t i = 0;
 	switch (value[0])
@@ -74,13 +68,9 @@ template<Clearable T>
 	{
 		const unsigned char digit = value[i] - '0';
 		if (digit < 10)
-		{
 			++digits;
-		}
 		else
-		{
 			return false;
-		}
 	}
 
 	return digits > 0;
@@ -166,9 +156,7 @@ template <typename S, typename U = std::make_unsigned_t<S>>
 	};
 
 	if (value.empty())
-	{
 		return return_type{};
-	}
 
 	bool negative = false;
 	size_t i = 0;
@@ -207,13 +195,9 @@ template <typename S, typename U = std::make_unsigned_t<S>>
 	str.resize(value.length());
 
 	if constexpr (sizeof(wchar_t) == 2)
-	{
 		utf8::utf16to8(value.begin(), value.end(), str.begin());
-	}
 	else
-	{
 		utf8::utf32to8(value.begin(), value.end(), str.begin());
-	}
 
 	return str;
 }
@@ -224,13 +208,9 @@ template <typename S, typename U = std::make_unsigned_t<S>>
 	str.resize(value.length());
 
 	if constexpr (sizeof(wchar_t) == 2)
-	{
 		utf8::utf8to16(value.begin(), value.end(), str.begin());
-	}
 	else
-	{
 		utf8::utf8to32(value.begin(), value.end(), str.begin());
-	}
 
 	return str;
 }
@@ -318,9 +298,7 @@ template <typename Container>
 	std::string token;
 
 	while (std::getline(ss, token, delimiter))
-	{
 		tokens.emplace_back(token);
-	}
 
 	return tokens;
 }
@@ -332,9 +310,7 @@ template <typename Container>
 	std::wstring token;
 
 	while (std::getline(ss, token, delimiter))
-	{
 		tokens.emplace_back(token);
-	}
 
 	return tokens;
 }
@@ -346,9 +322,7 @@ template <typename Container>
 	std::string token;
 
 	while (std::getline(ss, token, delimiter))
-	{
 		tokens.emplace_back(token);
-	}
 
 	return tokens;
 }
@@ -360,9 +334,7 @@ template <typename Container>
 	std::wstring token;
 
 	while (std::getline(ss, token, delimiter))
-	{
 		tokens.emplace_back(token);
-	}
 
 	return tokens;
 }
