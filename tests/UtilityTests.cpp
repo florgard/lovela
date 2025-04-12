@@ -141,3 +141,23 @@ suite split_tests = [] {
 		expect(v[1] == L"b");
 	};
 };
+
+suite Defer_tests = [] {
+	"Defer_ShouldCallFunctionAtEndOfScope"_test = [] {
+		int i = 1;
+		{
+			Defer defer([&i] { i = 2; });
+			expect(i == 1);
+		}
+		expect(i == 2);
+	};
+};
+
+suite MoveClear_tests = [] {
+	"MoveClear_ShouldMoveAndClear"_test = [] {
+		std::string a = "My string";
+		std::string b = MoveClear(a);
+		expect(a == "");
+		expect(b == "My string");
+	};
+};
