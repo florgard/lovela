@@ -256,7 +256,7 @@ std::optional<std::string> CoderCpp::ConvertPrimitiveType(const TypeSpec& type)
 
 TypeSpec CoderCpp::ConvertType(const TypeSpec& type)
 {
-	auto converted = type;
+	TypeSpec converted = type;
 	converted.name = ConvertTypeName(type);
 	return converted;
 }
