@@ -89,51 +89,41 @@ namespace detail
 		for (size_t i = 0; i < value.length(); ++i)
 		{
 			const unsigned char digit = value[i] - '0';
-			if (digit < 10)
+
+			// Check for invalid digit
+			if (digit >= 10)
+				return {};
+
+			const auto prev = result;
+
+			result *= 10;
+
+			// Check for overflow
+			if (result / 10 != prev)
+				return {};
+
+			if (result >= 0)
 			{
-				const auto prev = result;
-
-				result *= 10;
-
-				if (result / 10 != prev)
-				{
-					// Overflow
+				// Check for overflow
+				if (result > std::numeric_limits<T>::max() - digit)
 					return {};
-				}
 
-				if (result >= 0)
-				{
-					if (result > std::numeric_limits<T>::max() - digit)
-					{
-						// Overflow
-						return {};
-					}
-
-					result += digit;
-				}
-				else
-				{
-					if (result < std::numeric_limits<T>::min() + digit)
-					{
-						// Overflow
-						return {};
-					}
-
-					result -= digit;
-				}
-
-				if constexpr (negative)
-				{
-					// Make the result negative at the first non-zero digit to be able to reach max negative integers.
-					if (result > 0)
-					{
-						result = -result;
-					}
-				}
+				result += digit;
 			}
 			else
 			{
-				return {};
+				// Check for overflow
+				if (result < std::numeric_limits<T>::min() + digit)
+					return {};
+
+				result -= digit;
+			}
+
+			if constexpr (negative)
+			{
+				// Make the result negative at the first non-zero digit to be able to reach max negative integers.
+				if (result > 0)
+					result = -result;
 			}
 		}
 
