@@ -72,9 +72,7 @@ void CoderCpp::Visit(Context& context, Node& node)
 	auto& v = GetInternalVisitors();
 	auto iter = v.find(node.type);
 	if (iter != v.end())
-	{
 		iter->second(this, node, context);
-	}
 }
 
 void CoderCpp::BeginScope()
@@ -86,9 +84,7 @@ void CoderCpp::BeginScope()
 void CoderCpp::EndScope()
 {
 	if (!indent)
-	{
 		throw std::exception("Scope begin and end mismatch.");
-	}
 
 	--indent;
 	Scope() << '}';
@@ -117,17 +113,13 @@ void CoderCpp::FunctionDeclarationVisitor(Node& node, Context& context)
 	const auto outType = ConvertType(node.outType);
 
 	if (node.outType.Is(TypeSpec::Kind::Tagged))
-	{
 		templateParameters.push_back(outType.name);
-	}
 
 	const auto inType = ConvertType(node.inType);
 	parameters.emplace_back(std::make_pair(inType.name, "in"));
 
 	if (node.inType.Is(TypeSpec::Kind::Tagged))
-	{
 		templateParameters.push_back(inType.name);
-	}
 
 	size_t index = 0;
 	for (auto& parameter : node.parameters)
@@ -152,9 +144,7 @@ void CoderCpp::FunctionDeclarationVisitor(Node& node, Context& context)
 		for (auto& param : templateParameters)
 		{
 			if (index++)
-			{
 				Cursor() << ',' << ' ';
-			}
 
 			Cursor() << "typename " << param;
 		}
@@ -165,27 +155,19 @@ void CoderCpp::FunctionDeclarationVisitor(Node& node, Context& context)
 	Scope() << outType.name << ' ' << FunctionName(node.value) << "(lovela::context& context";
 
 	for (auto& parameter : parameters)
-	{
 		Cursor() << ',' << ' ' << parameter.first << ' ' << parameter.second;
-	}
 
 	Cursor() << ')';
 
 	if (node.apiSpec.Is(ApiSpec::Import))
-	{
 		ImportedFunctionBody(node, context, parameters);
-	}
 	else
-	{
 		FunctionBody(node, context);
-	}
 
 	// Generate the exported function
 
 	if (node.apiSpec.Is(ApiSpec::Export))
-	{
 		ExportedFunctionDeclaration(node, context);
-	}
 }
 
 void CoderCpp::MainFunctionDeclaration(Node& node, Context& context)
@@ -236,9 +218,7 @@ std::optional<std::string> CoderCpp::ConvertPrimitiveType(const TypeSpec& type)
 
 	auto it = types.find(type.GetQualifiedName());
 	if (it != types.end())
-	{
 		return it->second;
-	}
 
 	std::ostringstream exportName;
 
@@ -247,9 +227,7 @@ std::optional<std::string> CoderCpp::ConvertPrimitiveType(const TypeSpec& type)
 	type.PrintPrimitiveName(exportName);
 
 	for (size_t i = 0, c = type.arrayDims.size(); i < c; ++i)
-	{
 		exportName << '*';
-	}
 
 	return exportName.str();
 }
@@ -297,14 +275,7 @@ std::string CoderCpp::ParameterName(const std::string& name)
 
 std::string CoderCpp::ParameterName(const std::string& name, size_t index)
 {
-	if (name.empty())
-	{
-		return "param" + to_string(index);
-	}
-	else
-	{
-		return ParameterName(name);
-	}
+	return name.empty() ? "param" + to_string(index) : ParameterName(name);
 }
 
 std::string CoderCpp::FunctionName(const std::string& name)
@@ -325,29 +296,21 @@ void CoderCpp::ExportedFunctionDeclaration(Node& node, Context&)
 
 	const auto maybeInType = CheckExportType(node.inType);
 	if (!maybeInType.has_value())
-	{
 		return;
-	}
 
 	const auto inType = maybeInType.value();
 	if (!inType.Is(TypeSpec::Kind::None))
-	{
 		parameters.emplace_back(std::make_pair(inType.name, "in"));
-	}
 
 	// Verify and convert the output type
 
 	const auto maybeOutType = CheckExportType(node.outType);
 	if (!maybeOutType.has_value())
-	{
 		return;
-	}
 
 	auto outType = maybeOutType.value();
 	if (outType.Is(TypeSpec::Kind::None))
-	{
 		outType = GetVoidType();
-	}
 
 	// Verify and convert the parameter types
 
@@ -359,9 +322,7 @@ void CoderCpp::ExportedFunctionDeclaration(Node& node, Context&)
 
 		auto maybeType = CheckExportType(parameter->type);
 		if (!maybeType.has_value())
-		{
 			return;
-		}
 
 		parameters.emplace_back(std::make_pair(maybeType.value().name, name));
 	}
@@ -375,9 +336,7 @@ void CoderCpp::ExportedFunctionDeclaration(Node& node, Context&)
 	for (auto& parameter : parameters)
 	{
 		if (index++)
-		{
 			ss << ',' << ' ';
-		}
 
 		ss << parameter.first << ' ' << parameter.second;
 	}
@@ -391,18 +350,12 @@ void CoderCpp::ExportedFunctionDeclaration(Node& node, Context&)
 	std::ostringstream exportDeclaration;
 
 	if (node.apiSpec.Is(ApiSpec::C))
-	{
 		exportDeclaration << "LOVELA_API_C ";
-	}
 	else if (node.apiSpec.Is(ApiSpec::Cpp))
-	{
 		exportDeclaration << "LOVELA_API_CPP ";
-	}
 
 	if (node.apiSpec.Is(ApiSpec::Dynamic))
-	{
 		exportDeclaration << "LOVELA_API_DYNAMIC_EXPORT ";
-	}
 
 	exportDeclaration << signature;
 
@@ -417,23 +370,17 @@ void CoderCpp::ExportedFunctionDeclaration(Node& node, Context&)
 	Scope() << "lovela::context context;";
 
 	if (inType.Is(TypeSpec::Kind::None))
-	{
 		Scope() << TypeNames::none << " in;";
-	}
 
 	// Call the actual function
 
 	Scope() << (node.outType.Is(TypeSpec::Kind::None) ? "" : "return ") << FunctionName(node.value) << "(context";
 
 	if (inType.Is(TypeSpec::Kind::None))
-	{
 		Cursor() << ", in";
-	}
 
 	for (auto& parameter : parameters)
-	{
 		Cursor() << ',' << ' ' << parameter.second;
-	}
 
 	Cursor() << ')' << ';';
 
@@ -448,13 +395,9 @@ void CoderCpp::ImportedFunctionDeclaration(Node& node, Context&)
 		// Instead attempt to find the appropriate header to add to lovela-imports.h.
 
 		if (node.apiSpec.Is(ApiSpec::C))
-		{
 			StandardCDeclarations::GetHeader(headers, node.value);
-		}
 		else if (node.apiSpec.Is(ApiSpec::Cpp))
-		{
 			StandardCppDeclarations::GetHeader(headers, node.value);
-		}
 
 		return;
 	}
@@ -471,29 +414,21 @@ void CoderCpp::ImportedFunctionDeclaration(Node& node, Context&)
 
 	const auto maybeInType = CheckExportType(node.inType);
 	if (!maybeInType.has_value())
-	{
 		return;
-	}
 
 	const auto inType = maybeInType.value();
 	if (!inType.Is(TypeSpec::Kind::None))
-	{
 		parameters.emplace_back(std::make_pair(inType.name, "in"));
-	}
 
 	// Verify and convert the output type
 
 	const auto maybeOutType = CheckExportType(node.outType);
 	if (!maybeOutType.has_value())
-	{
 		return;
-	}
 
 	auto outType = maybeOutType.value();
 	if (outType.Is(TypeSpec::Kind::None))
-	{
 		outType = GetVoidType();
-	}
 
 	// Verify and convert the parameter types
 
@@ -505,9 +440,7 @@ void CoderCpp::ImportedFunctionDeclaration(Node& node, Context&)
 
 		auto maybeType = CheckExportType(parameter->type);
 		if (!maybeType.has_value())
-		{
 			return;
-		}
 
 		parameters.emplace_back(std::make_pair(maybeType.value().name, name));
 	}
@@ -521,9 +454,7 @@ void CoderCpp::ImportedFunctionDeclaration(Node& node, Context&)
 	for (auto& parameter : parameters)
 	{
 		if (index++)
-		{
 			ss << ',' << ' ';
-		}
 
 		ss << parameter.first << ' ' << parameter.second;
 	}
@@ -537,22 +468,14 @@ void CoderCpp::ImportedFunctionDeclaration(Node& node, Context&)
 	NewLine();
 
 	if (node.apiSpec.Is(ApiSpec::C))
-	{
 		Cursor() << "LOVELA_API_C ";
-	}
 	else if (node.apiSpec.Is(ApiSpec::Cpp))
-	{
 		Cursor() << "LOVELA_API_CPP ";
-	}
 
 	if (node.apiSpec.Is(ApiSpec::Dynamic | ApiSpec::Import))
-	{
 		Cursor() << "LOVELA_API_DYNAMIC_IMPORT ";
-	}
 	else if (node.apiSpec.Is(ApiSpec::Dynamic | ApiSpec::Export))
-	{
 		Cursor() << "LOVELA_API_DYNAMIC_EXPORT ";
-	}
 
 	Cursor() << signature << ';';
 }
@@ -571,13 +494,9 @@ void CoderCpp::FunctionBody(Node& node, Context& context)
 		Visit(context, node.children, 0, 1);
 
 		if (node.outType.Is(TypeSpec::Kind::None))
-		{
 			Scope() << "return {};";
-		}
 		else
-		{
 			Scope() << "return " << LocalVar << context.variableIndex << ';';
-		}
 
 		EndScope();
 
@@ -596,9 +515,7 @@ void CoderCpp::ImportedFunctionBody(Node& node, Context&, const std::vector<std:
 	Scope() << "static_cast<void>(context);";
 
 	if (!node.outType.Is(TypeSpec::Kind::None))
-	{
 		Scope() << "return ";
-	}
 
 	Cursor() << node.value << '(';
 
@@ -606,9 +523,7 @@ void CoderCpp::ImportedFunctionBody(Node& node, Context&, const std::vector<std:
 	for (auto& parameter : parameters)
 	{
 		if (index++)
-		{
 			Cursor() << ',' << ' ';
-		}
 
 		Cursor() << parameter.second;
 	}
@@ -616,9 +531,7 @@ void CoderCpp::ImportedFunctionBody(Node& node, Context&, const std::vector<std:
 	Cursor() << ')' << ';';
 
 	if (node.outType.Is(TypeSpec::Kind::None))
-	{
 		Scope() << "return {};";
-	}
 
 	EndScope();
 
@@ -682,9 +595,7 @@ void CoderCpp::TupleVisitor(Node& node, Context& context)
 	for (bool sep{}; auto& element : node.children)
 	{
 		if (sep)
-		{
 			Cursor() << ',' << ' ';
-		}
 		sep = true;
 
 		Visit(context, element);
@@ -699,9 +610,7 @@ void CoderCpp::VariableReferenceVisitor(Node& node, Context&)
 void CoderCpp::BeginAssign(Context& context)
 {
 	if (!context.inner)
-	{
 		Scope() << "const auto " << LocalVar << ++context.variableIndex << " = ";
-	}
 }
 
 bool CoderCpp::BeginAssign(Context& context, bool inner)
@@ -716,9 +625,7 @@ bool CoderCpp::BeginAssign(Context& context, bool inner)
 void CoderCpp::EndAssign(Context& context)
 {
 	if (!context.inner)
-	{
 		Cursor() << "; " << RefVar(LocalVar, context.variableIndex) << ';';
-	}
 }
 
 void CoderCpp::EndAssign(Context& context, bool reset)
@@ -737,9 +644,7 @@ void CoderCpp::GenerateImportsFile(std::ostream& file) const
 )cpp";
 
 	for (auto& header : GetImports())
-	{
 		file << "#include <" << header << ">\n";
-	}
 
 	file << R"cpp(
 #endif
@@ -755,9 +660,7 @@ void CoderCpp::GenerateExportsFile(std::ostream& file) const
 )cpp";
 
 	for (auto& declaration : GetExports())
-	{
 		file << declaration << ";\n";
-	}
 
 	file << R"cpp(
 #endif
